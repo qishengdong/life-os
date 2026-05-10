@@ -1,38 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getUserDecisions } from '@/lib/db';
+import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
+import { fetchUserMemory } from '@/lib/memory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const db = getDb();
-    const decisions = db
-      .prepare(
-        `SELECT
-           d.id,
-           d.user_id,
-           d.question,
-           d.ai_response,
-           d.model_used,
-           d.tokens_input,
-           d.tokens_output,
-           d.created_at,
-           u.birth_date,
-           u.gender
-         FROM decisions d
-         LEFT JOIN users u ON u.id = d.user_id
-         ORDER BY d.created_at DESC
-         LIMIT 100`
-      )
-      .all();
+    const { userId } = resolveUserId(req);
 
-    return NextResponse.json({ decisions });
-  } catch (error: any) {
-    console.error('[API /history] Error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Internal error' },
-      { status: 500 }
-    );
+    const decisions = getUserDecisions(userId);
+    const memory = fetchUserMemory(userId);
+
+    return NextResponse.json({
+      decisions,
+      memory: {
+        coreState: memory.coreState,
+        factual: memory.factual,
+        boundary: memory.boundary,
+        episodic: memory.episodic,
+        relational: memory.relational,
+        psychSignal: memory.psychSignal,
+        openLoops: memory.openLoops,
+        stats: memory.stats,
+      },
+    });
+  } catch (e: any) {
+    if (e instanceof InvalidUserUidError) {
+      return NextResponse.json(
+        { error: '缺少有效的用户身份 (X-User-UID header)' },
+        { status: 400 }
+      );
+    }
+    console.error('[API /history] Error:', e);
+    return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 });
   }
 }

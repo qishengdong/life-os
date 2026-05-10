@@ -1,19 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 
 interface MetaInfo {
   framework: string;
   frameworkName: string;
   confidence: number;
   matchedKeywords: string[];
+  memoryStats?: {
+    hardAnchors: number;
+    factCards: number;
+    boundaries: number;
+    episodes: number;
+    totalCards: number;
+    totalDecisions: number;
+  };
   model?: string;
   provider?: string;
   decisionId?: number;
 }
 
 export default function Home() {
+  const [userUid, setUserUid] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('female');
   const [decision, setDecision] = useState('');
@@ -22,8 +32,15 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<MetaInfo | null>(null);
 
+  // 客户端 mount 后初始化 UUID
+  useEffect(() => {
+    setUserUid(getOrCreateClientUid());
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!userUid) return;
+
     setLoading(true);
     setAnalysis('');
     setError(null);
@@ -32,7 +49,10 @@ export default function Home() {
     try {
       const res = await fetch('/api/decision', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          [UID_HEADER]: userUid,
+        },
         body: JSON.stringify({ birthDate, gender, decision }),
       });
 
@@ -43,7 +63,6 @@ export default function Home() {
         return;
       }
 
-      // 流式读取 SSE
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
@@ -54,7 +73,7 @@ export default function Home() {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n\n');
-        buffer = lines.pop() || ''; // 保留最后不完整的部分
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
@@ -69,6 +88,7 @@ export default function Home() {
                 frameworkName: parsed.frameworkName,
                 confidence: parsed.confidence,
                 matchedKeywords: parsed.matchedKeywords || [],
+                memoryStats: parsed.memoryStats,
                 ...prev,
               }));
             } else if (parsed.type === 'text') {
@@ -106,12 +126,17 @@ export default function Home() {
           <div>
             <h1 className="text-5xl font-bold mb-3 tracking-tight">Life OS</h1>
             <p className="text-zinc-400 text-lg">反鸡汤决策伙伴 — 不给你答案,帮你看清结构</p>
+            {userUid && (
+              <p className="text-zinc-700 text-xs mt-1 font-mono">
+                你的身份: {userUid.slice(0, 8)}…{userUid.slice(-4)}
+              </p>
+            )}
           </div>
           <Link
             href="/history"
             className="text-zinc-400 hover:text-zinc-100 text-sm transition"
           >
-            历史 →
+            历史与记忆 →
           </Link>
         </header>
 
@@ -161,7 +186,7 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={loading || !birthDate || decision.length < 20}
+            disabled={loading || !userUid || !birthDate || decision.length < 20}
             className="w-full bg-zinc-100 text-zinc-900 font-semibold py-3 rounded-lg hover:bg-white disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed transition"
           >
             {loading ? '正在拆解...' : '开始拆解'}
@@ -184,9 +209,15 @@ export default function Home() {
                 </span>
               )}
             </span>
+            {meta.memoryStats && meta.memoryStats.totalCards > 0 && (
+              <span className="bg-zinc-800 text-emerald-300 px-3 py-1 rounded-full">
+                已注入 memory: {meta.memoryStats.hardAnchors} 硬锚点 ·{' '}
+                {meta.memoryStats.factCards + meta.memoryStats.boundaries + meta.memoryStats.episodes} 卡
+              </span>
+            )}
             {meta.matchedKeywords.length > 0 && (
               <span className="text-zinc-600">
-                识别关键词: {meta.matchedKeywords.join(', ')}
+                关键词: {meta.matchedKeywords.join(', ')}
               </span>
             )}
             {meta.model && (
@@ -205,7 +236,7 @@ export default function Home() {
         )}
 
         <footer className="mt-16 text-center text-zinc-700 text-xs">
-          Life OS V0 · Local-first · DeepSeek powered
+          Life OS V0 · Local-first · DeepSeek powered · 数据只在你 Mac 上
         </footer>
       </div>
     </div>

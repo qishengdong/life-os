@@ -10,6 +10,7 @@
 import type { DecisionInput } from './general-framework';
 import { buildDecisionMessages as buildGeneralMessages } from './general-framework';
 import { buildParentCareMessages } from './frameworks/parent-care';
+import type { UserMemoryContext } from '@/lib/memory/types';
 
 export type FrameworkType =
   | 'parent-care'
@@ -106,23 +107,24 @@ export function detectFramework(decisionText: string): RouteResult {
 
 export function buildMessagesForFramework(
   framework: FrameworkType,
-  input: DecisionInput
+  input: DecisionInput,
+  memory?: UserMemoryContext
 ) {
   switch (framework) {
     case 'parent-care':
-      return buildParentCareMessages(input);
+      return buildParentCareMessages(input, memory);
     // 后续场景:
     // case 'child-education':
-    //   return buildChildEducationMessages(input);
+    //   return buildChildEducationMessages(input, memory);
     // case 'career-transition':
-    //   return buildCareerTransitionMessages(input);
+    //   return buildCareerTransitionMessages(input, memory);
     // case 'marriage':
-    //   return buildMarriageMessages(input);
+    //   return buildMarriageMessages(input, memory);
     // case 'migration':
-    //   return buildMigrationMessages(input);
+    //   return buildMigrationMessages(input, memory);
     case 'general':
     default:
-      return buildGeneralMessages(input);
+      return buildGeneralMessages(input, memory);
   }
 }
 

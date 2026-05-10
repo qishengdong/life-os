@@ -4,6 +4,8 @@
  * V0 阶段的"万能决策模板"。
  * 整合 6 个经典决策科学模型: 第一性原理 / 可逆性 / 路径模拟 / PreMortem / 盲点 / Cracking Question
  *
+ * 升级后(Day 3): 接受 UserMemoryContext, 把硬锚点 + RMC 注入 prompt.
+ *
  * 未来按场景特化:
  *   - lib/decision/frameworks/career-transition.ts
  *   - lib/decision/frameworks/parent-care.ts
@@ -13,6 +15,8 @@
  */
 
 import { ANTI_CHICKEN_SOUP_CONSTITUTION } from './anti-chicken-soup';
+import { renderMemoryForPrompt } from '@/lib/memory';
+import type { UserMemoryContext } from '@/lib/memory/types';
 
 export interface DecisionInput {
   birthDate: string;
@@ -20,14 +24,33 @@ export interface DecisionInput {
   decision: string;
 }
 
-export function buildDecisionMessages(input: DecisionInput) {
+export function buildDecisionMessages(input: DecisionInput, memory?: UserMemoryContext) {
   const age = calculateAge(input.birthDate);
   const genderText = input.gender === 'female' ? '女性' : input.gender === 'male' ? '男性' : '其他';
+
+  // 注入用户 memory (硬锚点 prepend, context append)
+  const memBlocks = memory
+    ? renderMemoryForPrompt(memory)
+    : { hardAnchorsBlock: '', contextBlock: '' };
+
+  // System prompt 顺序:
+  //   1. 硬锚点 (永远成立, 第 0 行)
+  //   2. 反鸡汤宪法
+  //   3. context (factual/episodic/relational/psych_signal)
+  const systemParts: string[] = [];
+  if (memBlocks.hardAnchorsBlock) {
+    systemParts.push(memBlocks.hardAnchorsBlock);
+  }
+  systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
+  if (memBlocks.contextBlock) {
+    systemParts.push('\n# 你已经知道的关于这位用户的事 (用于自然引用,不要主动 callback)');
+    systemParts.push(memBlocks.contextBlock);
+  }
 
   return [
     {
       role: 'system' as const,
-      content: ANTI_CHICKEN_SOUP_CONSTITUTION,
+      content: systemParts.join('\n\n'),
     },
     {
       role: 'user' as const,

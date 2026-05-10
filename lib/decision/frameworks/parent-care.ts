@@ -13,6 +13,8 @@
  */
 
 import { ANTI_CHICKEN_SOUP_CONSTITUTION } from '../anti-chicken-soup';
+import { renderMemoryForPrompt } from '@/lib/memory';
+import type { UserMemoryContext } from '@/lib/memory/types';
 import type { DecisionInput } from '../general-framework';
 
 const PARENT_CARE_ADDENDUM = `
@@ -26,15 +28,30 @@ const PARENT_CARE_ADDENDUM = `
 - 如果用户的方案里完全没有自己的位置,你必须明确指出
 `;
 
-export function buildParentCareMessages(input: DecisionInput) {
+export function buildParentCareMessages(input: DecisionInput, memory?: UserMemoryContext) {
   const age = calculateAge(input.birthDate);
   const genderText =
     input.gender === 'female' ? '女性' : input.gender === 'male' ? '男性' : '其他';
 
+  const memBlocks = memory
+    ? renderMemoryForPrompt(memory)
+    : { hardAnchorsBlock: '', contextBlock: '' };
+
+  const systemParts: string[] = [];
+  if (memBlocks.hardAnchorsBlock) {
+    systemParts.push(memBlocks.hardAnchorsBlock);
+  }
+  systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
+  systemParts.push(PARENT_CARE_ADDENDUM);
+  if (memBlocks.contextBlock) {
+    systemParts.push('\n# 你已经知道的关于这位用户的事 (用于自然引用,不要主动 callback)');
+    systemParts.push(memBlocks.contextBlock);
+  }
+
   return [
     {
       role: 'system' as const,
-      content: ANTI_CHICKEN_SOUP_CONSTITUTION + '\n\n' + PARENT_CARE_ADDENDUM,
+      content: systemParts.join('\n\n'),
     },
     {
       role: 'user' as const,

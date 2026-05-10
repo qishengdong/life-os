@@ -1,8 +1,15 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { modelRouter } from '@/lib/model-router';
-import { detectFramework, buildMessagesForFramework, FRAMEWORK_DISPLAY_NAMES } from '@/lib/decision/router';
-import { findOrCreateUser, saveDecision } from '@/lib/db';
+import {
+  detectFramework,
+  buildMessagesForFramework,
+  FRAMEWORK_DISPLAY_NAMES,
+} from '@/lib/decision/router';
+import { saveDecision, updateUserProfile } from '@/lib/db';
+import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
+import { fetchUserMemory } from '@/lib/memory';
+import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,6 +21,25 @@ const RequestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // ===== 1. 解析用户身份 (X-User-UID header) =====
+  let userId: number;
+  let userUid: string;
+  try {
+    const resolved = resolveUserId(req);
+    userId = resolved.userId;
+    userUid = resolved.userUid;
+  } catch (e) {
+    if (e instanceof InvalidUserUidError) {
+      return new Response(
+        JSON.stringify({
+          error: '缺少有效的用户身份 (X-User-UID header). 请刷新页面.',
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    throw e;
+  }
+
   try {
     const body = await req.json();
     const parsed = RequestSchema.safeParse(body);
@@ -27,14 +53,17 @@ export async function POST(req: NextRequest) {
 
     const input = parsed.data;
 
-    // 1. 用户档案 (找或建)
-    const userId = findOrCreateUser(input.birthDate, input.gender);
+    // ===== 2. 更新用户 profile (birth_date / gender) =====
+    updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
 
-    // 2. 框架自动路由
+    // ===== 3. fetchUserMemory — 单一入口拿 memory =====
+    const memory = fetchUserMemory(userId);
+
+    // ===== 4. 框架自动路由 =====
     const route = detectFramework(input.decision);
-    const messages = buildMessagesForFramework(route.framework, input);
+    const messages = buildMessagesForFramework(route.framework, input, memory);
 
-    // 3. 流式调用 LLM
+    // ===== 5. 流式调用 LLM =====
     const llmStream = modelRouter.completeStream({
       messages,
       provider: 'deepseek',
@@ -42,15 +71,14 @@ export async function POST(req: NextRequest) {
       maxTokens: 4000,
     });
 
-    // 4. 转换为 Server-Sent Events 格式输出给前端
+    // ===== 6. SSE 格式输出 =====
     const encoder = new TextEncoder();
     let fullContent = '';
-    let finalMeta: any = null;
 
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // 先发送 meta (告诉前端用了哪个框架)
+          // 6a. meta — 框架 + memory 统计
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
@@ -59,11 +87,19 @@ export async function POST(req: NextRequest) {
                 frameworkName: FRAMEWORK_DISPLAY_NAMES[route.framework],
                 confidence: route.confidence,
                 matchedKeywords: route.matchedKeywords,
+                memoryStats: {
+                  hardAnchors: memory.coreState.length,
+                  factCards: memory.factual.length,
+                  boundaries: memory.boundary.length,
+                  episodes: memory.episodic.length,
+                  totalCards: memory.stats.totalCards,
+                  totalDecisions: memory.stats.totalDecisions,
+                },
               })}\n\n`
             )
           );
 
-          // 然后流式输出内容
+          // 6b. 流式输出内容
           for await (const chunk of llmStream) {
             if (chunk.type === 'text' && chunk.content) {
               fullContent += chunk.content;
@@ -74,32 +110,49 @@ export async function POST(req: NextRequest) {
               );
             }
             if (chunk.type === 'done') {
-              finalMeta = {
-                model: chunk.model,
-                provider: chunk.provider,
-                usage: chunk.usage,
-              };
-
               // 持久化决策
               const decisionId = saveDecision({
                 userId,
                 question: input.decision,
                 aiResponse: fullContent,
-                modelUsed: `${chunk.provider}/${chunk.model}/${route.framework}`,
+                modelUsed: `${chunk.provider}/${chunk.model}`,
+                framework: route.framework,
                 tokensInput: chunk.usage?.prompt_tokens,
                 tokensOutput: chunk.usage?.completion_tokens,
               });
 
-              // 发送最终 meta
+              // 发送完成事件
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
                     type: 'done',
                     decisionId,
-                    ...finalMeta,
+                    model: chunk.model,
+                    provider: chunk.provider,
+                    usage: chunk.usage,
                   })}\n\n`
                 )
               );
+
+              // 6c. 异步触发 fact extraction (fire-and-forget)
+              // 用户已经看到完整回答, fact 抽取在后台进行,不阻塞 UI
+              extractFactsFromDecision({
+                userId,
+                decisionId,
+                userQuestion: input.decision,
+                aiResponse: fullContent,
+              })
+                .then((result) => {
+                  console.log(
+                    `[fact-extractor] decision ${decisionId}: extracted ${result.extracted} facts, ${result.errors.length} errors`
+                  );
+                  if (result.errors.length > 0) {
+                    console.warn('[fact-extractor] errors:', result.errors);
+                  }
+                })
+                .catch((e) => {
+                  console.error('[fact-extractor] failed:', e);
+                });
             }
           }
 

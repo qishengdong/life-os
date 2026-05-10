@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 
 const dataDir = path.join(process.cwd(), 'data');
 if (!fs.existsSync(dataDir)) {
@@ -18,14 +19,13 @@ export function getDb(): Database.Database {
   _db.pragma('journal_mode = WAL');
   _db.pragma('foreign_keys = ON');
 
-  // Initialize schema (idempotent)
+  // ===== Initial schema (idempotent) =====
   _db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      birth_date TEXT NOT NULL,
-      gender TEXT NOT NULL,
-      created_at INTEGER DEFAULT (unixepoch()),
-      UNIQUE(birth_date, gender)
+      birth_date TEXT,
+      gender TEXT,
+      created_at INTEGER DEFAULT (unixepoch())
     );
 
     CREATE TABLE IF NOT EXISTS decisions (
@@ -36,66 +36,243 @@ export function getDb(): Database.Database {
       model_used TEXT,
       tokens_input INTEGER,
       tokens_output INTEGER,
+      framework TEXT,
       created_at INTEGER DEFAULT (unixepoch()),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
     CREATE INDEX IF NOT EXISTS idx_decisions_user_id ON decisions(user_id);
     CREATE INDEX IF NOT EXISTS idx_decisions_created_at ON decisions(created_at);
+  `);
 
-    CREATE TABLE IF NOT EXISTS facts (
+  // ===== Migration v2: user_uid (替换 birth_date+gender 复合键) =====
+  // 修复 doctrine 1.2 跨用户污染漏洞 — 不能再用 birth_date+gender 当用户 ID
+  const userColumns = _db.pragma('table_info(users)') as Array<{ name: string }>;
+  const hasUserUid = userColumns.some((c) => c.name === 'user_uid');
+
+  if (!hasUserUid) {
+    _db.exec(`ALTER TABLE users ADD COLUMN user_uid TEXT;`);
+    // 为已有用户(若有)生成 UUID
+    const orphanUsers = _db
+      .prepare(`SELECT id FROM users WHERE user_uid IS NULL OR user_uid = ''`)
+      .all() as Array<{ id: number }>;
+    const upd = _db.prepare(`UPDATE users SET user_uid = ? WHERE id = ?`);
+    for (const u of orphanUsers) {
+      upd.run(crypto.randomUUID(), u.id);
+    }
+    _db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_uid ON users(user_uid);`);
+    console.log(`[DB Migration v2] Added user_uid, migrated ${orphanUsers.length} legacy users`);
+  }
+
+  // ===== Memory Layer 0: user_core_state (硬锚点, prompt 第 0 行 prepend) =====
+  // 严重永久 fact: "我不吃午餐", "我是独生女", "我老婆反对接父母同住" 等
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS user_core_state (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      fact TEXT NOT NULL,
-      category TEXT,
-      confidence REAL DEFAULT 1.0,
-      source TEXT,
+      kind TEXT NOT NULL,                 -- 'family_structure' / 'eating_pattern' / 'financial_constraint' / etc
+      fact_text TEXT NOT NULL,            -- 注入 prompt 的人话
+      violation_pattern TEXT,             -- regex 用于 Inspector C16 detect 违反
+      severity TEXT DEFAULT 'hard' CHECK(severity IN ('hard','soft')),
+      status TEXT DEFAULT 'active' CHECK(status IN ('active','deprecated','user_overrode')),
+      source TEXT DEFAULT 'llm_extract' CHECK(source IN ('admin','user_self','llm_extract')),
       created_at INTEGER DEFAULT (unixepoch()),
-      last_seen_at INTEGER DEFAULT (unixepoch()),
+      updated_at INTEGER DEFAULT (unixepoch()),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
-    CREATE INDEX IF NOT EXISTS idx_facts_user_id ON facts(user_id);
-    CREATE INDEX IF NOT EXISTS idx_facts_category ON facts(category);
+    CREATE INDEX IF NOT EXISTS idx_core_state_user ON user_core_state(user_id, status);
   `);
+
+  // ===== Memory Layer 1: relationship_memory_cards (RMC, 中等结构化) =====
+  // 5 类卡: factual / boundary / episodic / relational / psych_signal
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS relationship_memory_cards (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      card_type TEXT NOT NULL CHECK(card_type IN ('factual','boundary','episodic','relational','psych_signal')),
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      confidence REAL NOT NULL DEFAULT 0.7 CHECK(confidence >= 0.0 AND confidence <= 1.0),
+      source TEXT NOT NULL DEFAULT 'llm_extract',
+      source_decision_id INTEGER,         -- 来自哪次决策对话(如适用)
+      tags TEXT,                          -- JSON array of tags
+      last_verified_at INTEGER DEFAULT (unixepoch()),
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (source_decision_id) REFERENCES decisions(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_rmc_user_type ON relationship_memory_cards(user_id, card_type);
+    CREATE INDEX IF NOT EXISTS idx_rmc_confidence ON relationship_memory_cards(user_id, confidence DESC);
+  `);
+
+  // ===== Memory Layer 2: relationship_open_loops (待跟进事件) =====
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS relationship_open_loops (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      kind TEXT,                           -- 'follow_up' / 'review' / 'check_in' / 'commitment'
+      status TEXT DEFAULT 'open' CHECK(status IN ('open','resolved','cancelled')),
+      due_at INTEGER,
+      source_decision_id INTEGER,
+      created_at INTEGER DEFAULT (unixepoch()),
+      resolved_at INTEGER,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (source_decision_id) REFERENCES decisions(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_open_loops_user ON relationship_open_loops(user_id, status);
+  `);
+
+  // ===== Memory Layer 3: user_brain (软记忆叙事, per-user) =====
+  // Sivon 用 Cloudflare R2 存 markdown. Life OS V0 用 SQLite text 字段简化.
+  // 后续 V1+ 可迁到 R2 或独立文件
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS user_brain (
+      user_id INTEGER PRIMARY KEY,
+      content TEXT,                        -- markdown 内容
+      version INTEGER DEFAULT 1,
+      updated_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+  `);
+
+  // ===== Inspector audit log =====
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS inspector_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      decision_id INTEGER,
+      check_code TEXT NOT NULL,            -- 'C1' / 'C2' / ... / 'C15'
+      severity TEXT CHECK(severity IN ('low','high','p0')),
+      action TEXT CHECK(action IN ('shadow','flag','block')),
+      matched_text TEXT,
+      detail TEXT,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (decision_id) REFERENCES decisions(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_audit_user ON inspector_audit(user_id);
+    CREATE INDEX IF NOT EXISTS idx_audit_check ON inspector_audit(check_code);
+  `);
+
+  // Migration: framework column on decisions (extracted from model_used)
+  const decisionColumns = _db.pragma('table_info(decisions)') as Array<{ name: string }>;
+  const hasFramework = decisionColumns.some((c) => c.name === 'framework');
+  if (!hasFramework) {
+    _db.exec(`ALTER TABLE decisions ADD COLUMN framework TEXT;`);
+    // 从老的 model_used 字段反向解析框架名 (格式: provider/model/framework)
+    _db.exec(`
+      UPDATE decisions
+      SET framework = CASE
+        WHEN model_used LIKE '%/%/%' THEN substr(model_used, instr(model_used, '/') + instr(substr(model_used, instr(model_used, '/') + 1), '/') + 1)
+        ELSE 'general'
+      END
+      WHERE framework IS NULL;
+    `);
+    console.log('[DB Migration] Added framework column to decisions');
+  }
 
   return _db;
 }
 
-export function findOrCreateUser(birthDate: string, gender: string): number {
+// ============================================================================
+// User identification (替代旧的 findOrCreateUser)
+// ============================================================================
+
+export function findOrCreateUserByUid(userUid: string): number {
   const db = getDb();
-  const existing = db
-    .prepare('SELECT id FROM users WHERE birth_date = ? AND gender = ?')
-    .get(birthDate, gender) as { id: number } | undefined;
+  const existing = db.prepare('SELECT id FROM users WHERE user_uid = ?').get(userUid) as
+    | { id: number }
+    | undefined;
   if (existing) return existing.id;
 
   const result = db
-    .prepare('INSERT INTO users (birth_date, gender) VALUES (?, ?)')
-    .run(birthDate, gender);
+    .prepare('INSERT INTO users (user_uid) VALUES (?)')
+    .run(userUid);
   return result.lastInsertRowid as number;
 }
+
+export function updateUserProfile(
+  userId: number,
+  profile: { birthDate?: string; gender?: string }
+): void {
+  const db = getDb();
+  const fields: string[] = [];
+  const values: any[] = [];
+  if (profile.birthDate) {
+    fields.push('birth_date = ?');
+    values.push(profile.birthDate);
+  }
+  if (profile.gender) {
+    fields.push('gender = ?');
+    values.push(profile.gender);
+  }
+  if (fields.length === 0) return;
+  values.push(userId);
+  db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+}
+
+export function getUser(userId: number) {
+  const db = getDb();
+  return db
+    .prepare('SELECT id, user_uid, birth_date, gender, created_at FROM users WHERE id = ?')
+    .get(userId) as
+    | {
+        id: number;
+        user_uid: string;
+        birth_date: string | null;
+        gender: string | null;
+        created_at: number;
+      }
+    | undefined;
+}
+
+// ============================================================================
+// Decision persistence
+// ============================================================================
 
 export function saveDecision(args: {
   userId: number;
   question: string;
   aiResponse: string;
   modelUsed: string;
+  framework?: string;
   tokensInput?: number;
   tokensOutput?: number;
 }): number {
   const db = getDb();
   const result = db
     .prepare(
-      `INSERT INTO decisions (user_id, question, ai_response, model_used, tokens_input, tokens_output)
-       VALUES (?, ?, ?, ?, ?, ?)`
+      `INSERT INTO decisions (user_id, question, ai_response, model_used, framework, tokens_input, tokens_output)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       args.userId,
       args.question,
       args.aiResponse,
       args.modelUsed,
+      args.framework ?? null,
       args.tokensInput ?? null,
       args.tokensOutput ?? null
     );
   return result.lastInsertRowid as number;
+}
+
+export function getUserDecisions(userId: number, limit = 100) {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT id, question, ai_response, model_used, framework,
+              tokens_input, tokens_output, created_at
+       FROM decisions
+       WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT ?`
+    )
+    .all(userId, limit);
 }
