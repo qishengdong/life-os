@@ -4,18 +4,14 @@
  * V0 阶段的"万能决策模板"。
  * 整合 6 个经典决策科学模型: 第一性原理 / 可逆性 / 路径模拟 / PreMortem / 盲点 / Cracking Question
  *
- * 升级后(Day 3): 接受 UserMemoryContext, 把硬锚点 + RMC 注入 prompt.
- *
- * 未来按场景特化:
- *   - lib/decision/frameworks/career-transition.ts
- *   - lib/decision/frameworks/parent-care.ts
- *   - lib/decision/frameworks/child-education.ts
- *   - lib/decision/frameworks/migration.ts
- *   ...
+ * Day 4 升级: 接入 4-file persona 系统 (LIFEOS_USE_4FILE_PROMPT=true 启用).
+ *   - true: 加载 persona + voice + expert + brain 拼装, 受 cache 控制 60s
+ *   - false (默认): 走老的 anti-chicken-soup.ts 单文件路径
  */
 
 import { ANTI_CHICKEN_SOUP_CONSTITUTION } from './anti-chicken-soup';
 import { renderMemoryForPrompt } from '@/lib/memory';
+import { buildPersonaSystemPrompt, shouldUse4FilePrompt } from '@/lib/personas';
 import type { UserMemoryContext } from '@/lib/memory/types';
 
 export interface DecisionInput {
@@ -28,20 +24,33 @@ export function buildDecisionMessages(input: DecisionInput, memory?: UserMemoryC
   const age = calculateAge(input.birthDate);
   const genderText = input.gender === 'female' ? '女性' : input.gender === 'male' ? '男性' : '其他';
 
-  // 注入用户 memory (硬锚点 prepend, context append)
   const memBlocks = memory
     ? renderMemoryForPrompt(memory)
     : { hardAnchorsBlock: '', contextBlock: '' };
 
-  // System prompt 顺序:
-  //   1. 硬锚点 (永远成立, 第 0 行)
-  //   2. 反鸡汤宪法
-  //   3. context (factual/episodic/relational/psych_signal)
+  // ===== System prompt 拼装 =====
+  // 顺序:
+  //   0. 硬锚点 (永远成立, 第 0 行)
+  //   1. Persona system (4-file 或 单文件)
+  //   2. Memory context (factual / episodic / relational)
+
   const systemParts: string[] = [];
+
   if (memBlocks.hardAnchorsBlock) {
     systemParts.push(memBlocks.hardAnchorsBlock);
   }
-  systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
+
+  if (shouldUse4FilePrompt()) {
+    systemParts.push(
+      buildPersonaSystemPrompt({
+        userBrainContent: memory?.brainContent,
+        framework: 'general',
+      })
+    );
+  } else {
+    systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
+  }
+
   if (memBlocks.contextBlock) {
     systemParts.push('\n# 你已经知道的关于这位用户的事 (用于自然引用,不要主动 callback)');
     systemParts.push(memBlocks.contextBlock);

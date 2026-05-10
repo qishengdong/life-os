@@ -10,6 +10,7 @@ import { saveDecision, updateUserProfile } from '@/lib/db';
 import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
 import { fetchUserMemory } from '@/lib/memory';
 import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
+import { runInspector } from '@/lib/inspector';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -134,7 +135,29 @@ export async function POST(req: NextRequest) {
                 )
               );
 
-              // 6c. 异步触发 fact extraction (fire-and-forget)
+              // 6c. 同步跑 Inspector (shadow mode, 不阻 — 只写 audit)
+              try {
+                const inspectorReport = runInspector({
+                  userId,
+                  decisionId,
+                  userQuestion: input.decision,
+                  aiResponse: fullContent,
+                  userMemory: memory,
+                  framework: route.framework,
+                });
+                if (inspectorReport.hits.length > 0) {
+                  console.log(
+                    `[inspector] decision ${decisionId}: ${inspectorReport.hits.length} hits, worst severity ${inspectorReport.worstSeverity}, action ${inspectorReport.recommendedAction}`
+                  );
+                  for (const hit of inspectorReport.hits) {
+                    console.log(`  ${hit.code}/${hit.severity}: ${hit.matchedText} — ${hit.detail}`);
+                  }
+                }
+              } catch (e) {
+                console.error('[inspector] failed:', e);
+              }
+
+              // 6d. 异步触发 fact extraction (fire-and-forget)
               // 用户已经看到完整回答, fact 抽取在后台进行,不阻塞 UI
               extractFactsFromDecision({
                 userId,

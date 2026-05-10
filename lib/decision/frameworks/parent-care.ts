@@ -1,31 +1,27 @@
 /**
  * 父母养老专项决策框架
  *
- * 中国版 Life OS 的旗舰场景之一。父母养老在中国语境下牵涉:
- *   - 医疗 / 居住 / 情感 / 财务 / 兄弟姐妹分工 / 夫妻边界 /
- *   - 城市选择 / 愧疚感 / 父母控制欲 / 子女自身人生损耗
- *
- * 这个框架不替用户做决定,核心目的是:
- *   1. 把愧疚和责任分开
- *   2. 把"孝顺"和"自我消耗"分开
- *   3. 把当下决定放进父母健康阶段的整体规划里
- *   4. 强制看见配偶/兄弟姐妹/孩子的隐性代价
+ * Day 4 升级: 接入 4-file persona 系统.
+ *   PARENT_CARE_ADDENDUM 通过 buildPersonaSystemPrompt({ addendum, framework: 'parent-care' }) 注入.
  */
 
 import { ANTI_CHICKEN_SOUP_CONSTITUTION } from '../anti-chicken-soup';
 import { renderMemoryForPrompt } from '@/lib/memory';
+import { buildPersonaSystemPrompt, shouldUse4FilePrompt } from '@/lib/personas';
 import type { UserMemoryContext } from '@/lib/memory/types';
 import type { DecisionInput } from '../general-framework';
 
-const PARENT_CARE_ADDENDUM = `
-【父母养老场景的额外人格契约】
-- 这个场景里,绝不能用"孝顺"作为论证前提
+export const PARENT_CARE_ADDENDUM = `
+## 父母养老场景的额外人格契约
+
+- 这个场景里, 绝不能用"孝顺"作为论证前提
 - 不要假设"父母接来同住"是默认正确答案
 - 不要假设用户必须牺牲自己的人生来证明孝顺
-- 中国家庭里"愧疚"经常被武器化,你的工作是帮用户分辨"真责任"和"被强加的愧疚"
-- 父母也是有局限的成年人,不是绝对道德权威
-- 兄弟姐妹之间的责任分配是合理议题,不是"独子/独女天经地义全包"
-- 如果用户的方案里完全没有自己的位置,你必须明确指出
+- 中国家庭里"愧疚"经常被武器化, 你的工作是帮用户分辨"真责任"和"被强加的愧疚"
+- 父母也是有局限的成年人, 不是绝对道德权威
+- 兄弟姐妹之间的责任分配是合理议题, 不是"独子/独女天经地义全包"
+- 如果用户的方案里完全没有自己的位置, 你必须明确指出
+- 父母健康阶段(完全自理 / 部分自理 / 失能 / 临终) 决定一切方案的现实性
 `;
 
 export function buildParentCareMessages(input: DecisionInput, memory?: UserMemoryContext) {
@@ -38,11 +34,24 @@ export function buildParentCareMessages(input: DecisionInput, memory?: UserMemor
     : { hardAnchorsBlock: '', contextBlock: '' };
 
   const systemParts: string[] = [];
+
   if (memBlocks.hardAnchorsBlock) {
     systemParts.push(memBlocks.hardAnchorsBlock);
   }
-  systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
-  systemParts.push(PARENT_CARE_ADDENDUM);
+
+  if (shouldUse4FilePrompt()) {
+    systemParts.push(
+      buildPersonaSystemPrompt({
+        userBrainContent: memory?.brainContent,
+        framework: 'parent-care',
+        addendum: PARENT_CARE_ADDENDUM,
+      })
+    );
+  } else {
+    systemParts.push(ANTI_CHICKEN_SOUP_CONSTITUTION);
+    systemParts.push(PARENT_CARE_ADDENDUM);
+  }
+
   if (memBlocks.contextBlock) {
     systemParts.push('\n# 你已经知道的关于这位用户的事 (用于自然引用,不要主动 callback)');
     systemParts.push(memBlocks.contextBlock);
