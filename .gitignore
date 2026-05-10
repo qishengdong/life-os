@@ -45,7 +45,11 @@ next-env.d.ts
 .vscode/
 .idea/
 .cursor/
-.claude/
+
+# Claude Code: 共享 settings.json, 但忽略 local 覆盖和缓存
+.claude/*
+!.claude/settings.json
+.claude/settings.local.json
 
 # OS
 Thumbs.db
