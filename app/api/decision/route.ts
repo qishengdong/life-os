@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { modelRouter } from '@/lib/model-router';
-import { buildDecisionMessages } from '@/lib/decision/general-framework';
+import { detectFramework, buildMessagesForFramework, FRAMEWORK_DISPLAY_NAMES } from '@/lib/decision/router';
 import { findOrCreateUser, saveDecision } from '@/lib/db';
 
 export const runtime = 'nodejs';
@@ -19,47 +19,115 @@ export async function POST(req: NextRequest) {
     const parsed = RequestSchema.safeParse(body);
     if (!parsed.success) {
       const firstError = parsed.error.errors[0];
-      return NextResponse.json(
-        { error: firstError?.message || '输入格式错误' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: firstError?.message || '输入格式错误' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     const input = parsed.data;
 
-    // 找或建用户
+    // 1. 用户档案 (找或建)
     const userId = findOrCreateUser(input.birthDate, input.gender);
 
-    // 构造 prompt 并调用 LLM
-    const messages = buildDecisionMessages(input);
-    const response = await modelRouter.complete({
+    // 2. 框架自动路由
+    const route = detectFramework(input.decision);
+    const messages = buildMessagesForFramework(route.framework, input);
+
+    // 3. 流式调用 LLM
+    const llmStream = modelRouter.completeStream({
       messages,
-      provider: 'deepseek', // 切换到 'claude' 或 'openai' 一行改这里
+      provider: 'deepseek',
       temperature: 0.7,
       maxTokens: 4000,
     });
 
-    // 持久化决策
-    saveDecision({
-      userId,
-      question: input.decision,
-      aiResponse: response.content,
-      modelUsed: `${response.provider}/${response.model}`,
-      tokensInput: response.usage?.prompt_tokens,
-      tokensOutput: response.usage?.completion_tokens,
+    // 4. 转换为 Server-Sent Events 格式输出给前端
+    const encoder = new TextEncoder();
+    let fullContent = '';
+    let finalMeta: any = null;
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          // 先发送 meta (告诉前端用了哪个框架)
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: 'meta',
+                framework: route.framework,
+                frameworkName: FRAMEWORK_DISPLAY_NAMES[route.framework],
+                confidence: route.confidence,
+                matchedKeywords: route.matchedKeywords,
+              })}\n\n`
+            )
+          );
+
+          // 然后流式输出内容
+          for await (const chunk of llmStream) {
+            if (chunk.type === 'text' && chunk.content) {
+              fullContent += chunk.content;
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({ type: 'text', content: chunk.content })}\n\n`
+                )
+              );
+            }
+            if (chunk.type === 'done') {
+              finalMeta = {
+                model: chunk.model,
+                provider: chunk.provider,
+                usage: chunk.usage,
+              };
+
+              // 持久化决策
+              const decisionId = saveDecision({
+                userId,
+                question: input.decision,
+                aiResponse: fullContent,
+                modelUsed: `${chunk.provider}/${chunk.model}/${route.framework}`,
+                tokensInput: chunk.usage?.prompt_tokens,
+                tokensOutput: chunk.usage?.completion_tokens,
+              });
+
+              // 发送最终 meta
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    type: 'done',
+                    decisionId,
+                    ...finalMeta,
+                  })}\n\n`
+                )
+              );
+            }
+          }
+
+          controller.close();
+        } catch (error: any) {
+          console.error('[stream] error:', error);
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`
+            )
+          );
+          controller.close();
+        }
+      },
     });
 
-    return NextResponse.json({
-      analysis: response.content,
-      model: response.model,
-      provider: response.provider,
-      tokensUsed: response.usage,
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+      },
     });
   } catch (error: any) {
     console.error('[API /decision] Error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: error.message || 'Internal server error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }

@@ -1,20 +1,31 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+
+interface MetaInfo {
+  framework: string;
+  frameworkName: string;
+  confidence: number;
+  matchedKeywords: string[];
+  model?: string;
+  provider?: string;
+  decisionId?: number;
+}
 
 export default function Home() {
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('female');
   const [decision, setDecision] = useState('');
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<{ model?: string; provider?: string } | null>(null);
+  const [meta, setMeta] = useState<MetaInfo | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setAnalysis(null);
+    setAnalysis('');
     setError(null);
     setMeta(null);
 
@@ -24,12 +35,62 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ birthDate, gender, decision }),
       });
-      const data = await res.json();
+
       if (!res.ok) {
+        const data = await res.json();
         setError(data.error || '出错了');
-      } else {
-        setAnalysis(data.analysis);
-        setMeta({ model: data.model, provider: data.provider });
+        setLoading(false);
+        return;
+      }
+
+      // 流式读取 SSE
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || ''; // 保留最后不完整的部分
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6);
+          if (!data.trim()) continue;
+
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'meta') {
+              setMeta((prev) => ({
+                framework: parsed.framework,
+                frameworkName: parsed.frameworkName,
+                confidence: parsed.confidence,
+                matchedKeywords: parsed.matchedKeywords || [],
+                ...prev,
+              }));
+            } else if (parsed.type === 'text') {
+              setAnalysis((prev) => prev + parsed.content);
+            } else if (parsed.type === 'done') {
+              setMeta((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      model: parsed.model,
+                      provider: parsed.provider,
+                      decisionId: parsed.decisionId,
+                    }
+                  : null
+              );
+            } else if (parsed.type === 'error') {
+              setError(parsed.message);
+            }
+          } catch (e) {
+            console.warn('Failed to parse SSE:', data);
+          }
+        }
       }
     } catch (err: any) {
       setError(err.message || '网络错误');
@@ -41,9 +102,17 @@ export default function Home() {
   return (
     <div className="min-h-screen p-6 md:p-12">
       <div className="max-w-3xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="text-5xl font-bold mb-3 tracking-tight">Life OS</h1>
-          <p className="text-zinc-400 text-lg">反鸡汤决策伙伴 — 不给你答案,帮你看清结构</p>
+        <header className="mb-12 flex justify-between items-baseline">
+          <div>
+            <h1 className="text-5xl font-bold mb-3 tracking-tight">Life OS</h1>
+            <p className="text-zinc-400 text-lg">反鸡汤决策伙伴 — 不给你答案,帮你看清结构</p>
+          </div>
+          <Link
+            href="/history"
+            className="text-zinc-400 hover:text-zinc-100 text-sm transition"
+          >
+            历史 →
+          </Link>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-6 mb-12">
@@ -95,7 +164,7 @@ export default function Home() {
             disabled={loading || !birthDate || decision.length < 20}
             className="w-full bg-zinc-100 text-zinc-900 font-semibold py-3 rounded-lg hover:bg-white disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed transition"
           >
-            {loading ? '正在拆解...(15-30 秒)' : '开始拆解'}
+            {loading ? '正在拆解...' : '开始拆解'}
           </button>
         </form>
 
@@ -105,17 +174,34 @@ export default function Home() {
           </div>
         )}
 
-        {analysis && (
-          <div className="space-y-2">
-            {meta && (
-              <p className="text-xs text-zinc-600">
-                模型: {meta.provider} / {meta.model}
-              </p>
+        {meta && (
+          <div className="mb-3 flex flex-wrap gap-2 items-center text-xs">
+            <span className="bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full">
+              {meta.frameworkName}
+              {meta.confidence > 0 && (
+                <span className="text-zinc-500 ml-2">
+                  匹配度 {Math.round(meta.confidence * 100)}%
+                </span>
+              )}
+            </span>
+            {meta.matchedKeywords.length > 0 && (
+              <span className="text-zinc-600">
+                识别关键词: {meta.matchedKeywords.join(', ')}
+              </span>
             )}
-            <article className="prose prose-invert prose-zinc max-w-none bg-zinc-900 border border-zinc-800 rounded-lg p-6 whitespace-pre-wrap font-sans">
-              {analysis}
-            </article>
+            {meta.model && (
+              <span className="text-zinc-600 ml-auto">
+                {meta.provider}/{meta.model}
+              </span>
+            )}
           </div>
+        )}
+
+        {analysis && (
+          <article className="prose prose-invert prose-zinc max-w-none bg-zinc-900 border border-zinc-800 rounded-lg p-6 whitespace-pre-wrap font-sans">
+            {analysis}
+            {loading && <span className="inline-block w-2 h-5 bg-zinc-400 ml-1 animate-pulse"></span>}
+          </article>
         )}
 
         <footer className="mt-16 text-center text-zinc-700 text-xs">
