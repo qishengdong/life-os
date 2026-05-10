@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { modelRouter } from '@/lib/model-router';
 import {
-  detectFramework,
+  routeDecision,
   buildMessagesForFramework,
   FRAMEWORK_DISPLAY_NAMES,
 } from '@/lib/decision/router';
@@ -12,6 +12,11 @@ import { fetchUserMemory } from '@/lib/memory';
 import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
 import { extractCommitmentsFromDecision } from '@/lib/commitments/extractor';
 import { runInspector } from '@/lib/inspector';
+import {
+  runReplikaChecks,
+  getActiveReplikaHits,
+  buildReinforcementInjection,
+} from '@/lib/inspector/replika-filter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -23,7 +28,6 @@ const RequestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  // ===== 1. 解析用户身份 (X-User-UID header) =====
   let userId: number;
   let userUid: string;
   try {
@@ -33,9 +37,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     if (e instanceof InvalidUserUidError) {
       return new Response(
-        JSON.stringify({
-          error: '缺少有效的用户身份 (X-User-UID header). 请刷新页面.',
-        }),
+        JSON.stringify({ error: '缺少有效的用户身份 (X-User-UID header). 请刷新页面.' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -54,18 +56,27 @@ export async function POST(req: NextRequest) {
     }
 
     const input = parsed.data;
-
-    // ===== 2. 更新用户 profile (birth_date / gender) =====
     updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
-
-    // ===== 3. fetchUserMemory — 单一入口拿 memory =====
     const memory = fetchUserMemory(userId);
 
-    // ===== 4. 框架自动路由 =====
-    const route = detectFramework(input.decision);
-    const messages = buildMessagesForFramework(route.framework, input, memory);
+    // ===== Replika risk check (输入端) =====
+    const replikaDetections = runReplikaChecks({
+      userId,
+      userText: input.decision,
+    });
+    const replikaHits = getActiveReplikaHits(replikaDetections);
+    const reinforcementInjection = buildReinforcementInjection(replikaHits);
 
-    // ===== 5. 流式调用 LLM =====
+    // ===== Router (混合模式) =====
+    const route = await routeDecision(input.decision);
+    const messages = await buildMessagesForFramework(route.framework, input, memory);
+
+    // 如果命中 Replika signal, 在 system prompt 末尾加 reinforcement instruction
+    if (reinforcementInjection && messages[0]?.role === 'system') {
+      messages[0].content =
+        messages[0].content + '\n\n' + reinforcementInjection;
+    }
+
     const llmStream = modelRouter.completeStream({
       messages,
       provider: 'deepseek',
@@ -73,14 +84,13 @@ export async function POST(req: NextRequest) {
       maxTokens: 4000,
     });
 
-    // ===== 6. SSE 格式输出 =====
     const encoder = new TextEncoder();
     let fullContent = '';
 
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // 6a. meta — 框架 + memory 统计
+          // meta event
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
@@ -89,6 +99,14 @@ export async function POST(req: NextRequest) {
                 frameworkName: FRAMEWORK_DISPLAY_NAMES[route.framework],
                 confidence: route.confidence,
                 matchedKeywords: route.matchedKeywords,
+                matchedPattern: route.matchedDecisionPattern,
+                secondaryFrameworks: route.secondaryFrameworks,
+                routerVersion: route.routerVersion,
+                replikaHits: replikaHits.map((h) => ({
+                  signal: h.signal,
+                  severity: h.severity,
+                  detail: h.detail,
+                })),
                 memoryStats: {
                   hardAnchors: memory.coreState.length,
                   factCards: memory.factual.length,
@@ -101,7 +119,6 @@ export async function POST(req: NextRequest) {
             )
           );
 
-          // 6b. 流式输出内容
           for await (const chunk of llmStream) {
             if (chunk.type === 'text' && chunk.content) {
               fullContent += chunk.content;
@@ -112,7 +129,6 @@ export async function POST(req: NextRequest) {
               );
             }
             if (chunk.type === 'done') {
-              // 持久化决策
               const decisionId = saveDecision({
                 userId,
                 question: input.decision,
@@ -123,7 +139,6 @@ export async function POST(req: NextRequest) {
                 tokensOutput: chunk.usage?.completion_tokens,
               });
 
-              // 发送完成事件
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -136,7 +151,7 @@ export async function POST(req: NextRequest) {
                 )
               );
 
-              // 6c. 同步跑 Inspector (shadow mode, 不阻 — 只写 audit)
+              // Inspector
               try {
                 const inspectorReport = runInspector({
                   userId,
@@ -148,18 +163,17 @@ export async function POST(req: NextRequest) {
                 });
                 if (inspectorReport.hits.length > 0) {
                   console.log(
-                    `[inspector] decision ${decisionId}: ${inspectorReport.hits.length} hits, worst severity ${inspectorReport.worstSeverity}, action ${inspectorReport.recommendedAction}`
+                    `[inspector] decision ${decisionId}: ${inspectorReport.hits.length} hits`
                   );
                   for (const hit of inspectorReport.hits) {
-                    console.log(`  ${hit.code}/${hit.severity}: ${hit.matchedText} — ${hit.detail}`);
+                    console.log(`  ${hit.code}/${hit.severity}: ${hit.matchedText}`);
                   }
                 }
               } catch (e) {
                 console.error('[inspector] failed:', e);
               }
 
-              // 6d. 异步触发 fact extraction (fire-and-forget)
-              // 用户已经看到完整回答, fact 抽取在后台进行,不阻塞 UI
+              // 异步 fact extraction
               extractFactsFromDecision({
                 userId,
                 decisionId,
@@ -168,17 +182,12 @@ export async function POST(req: NextRequest) {
               })
                 .then((result) => {
                   console.log(
-                    `[fact-extractor] decision ${decisionId}: extracted ${result.extracted} facts, ${result.errors.length} errors`
+                    `[fact-extractor] decision ${decisionId}: extracted ${result.extracted} facts`
                   );
-                  if (result.errors.length > 0) {
-                    console.warn('[fact-extractor] errors:', result.errors);
-                  }
                 })
-                .catch((e) => {
-                  console.error('[fact-extractor] failed:', e);
-                });
+                .catch((e) => console.error('[fact-extractor] failed:', e));
 
-              // 6e. 异步抽取 commitments (Sivon doctrine 1.6)
+              // 异步 commitment extraction
               extractCommitmentsFromDecision({
                 userId,
                 decisionId,
@@ -187,13 +196,11 @@ export async function POST(req: NextRequest) {
                 .then((result) => {
                   if (result.extracted > 0) {
                     console.log(
-                      `[commitment-extractor] decision ${decisionId}: extracted ${result.extracted} commitments`
+                      `[commitment-extractor] decision ${decisionId}: ${result.extracted} commitments`
                     );
                   }
                 })
-                .catch((e) => {
-                  console.error('[commitment-extractor] failed:', e);
-                });
+                .catch((e) => console.error('[commitment-extractor] failed:', e));
             }
           }
 
