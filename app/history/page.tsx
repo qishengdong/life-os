@@ -23,6 +23,7 @@ interface MemoryView {
   relational: any[];
   psychSignal: any[];
   openLoops: any[];
+  brainContent: string | null;
   stats: {
     totalCards: number;
     totalDecisions: number;
@@ -35,7 +36,7 @@ export default function HistoryPage() {
   const [memory, setMemory] = useState<MemoryView | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [tab, setTab] = useState<'decisions' | 'memory'>('decisions');
+  const [tab, setTab] = useState<'decisions' | 'memory' | 'brain'>('decisions');
 
   useEffect(() => {
     const uid = getOrCreateClientUid();
@@ -90,6 +91,16 @@ export default function HistoryPage() {
             }`}
           >
             AI 关于你的 memory ({memory?.stats.totalCards ?? 0})
+          </button>
+          <button
+            onClick={() => setTab('brain')}
+            className={`px-4 py-2 text-sm transition ${
+              tab === 'brain'
+                ? 'text-zinc-100 border-b-2 border-zinc-100 -mb-px'
+                : 'text-zinc-500 hover:text-zinc-300'
+            }`}
+          >
+            AI 写给自己的 brain {memory?.brainContent ? '✓' : ''}
           </button>
         </div>
 
@@ -272,6 +283,38 @@ export default function HistoryPage() {
                 }))}
                 color="blue"
               />
+            )}
+          </div>
+        )}
+
+        {/* Brain tab */}
+        {tab === 'brain' && !loading && memory && (
+          <div className="space-y-4">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-xs text-zinc-500">
+              <strong className="text-zinc-300">什么是 brain.md?</strong>
+              <p className="mt-1">
+                每 5 次决策或每 7 天, AI 会自动把它对你的 memory 蒸馏成一份"AI 写给未来自己的备忘录".
+                这是 AI 长期"懂你"的核心 — 不是死板记数据, 是连贯叙事.
+              </p>
+              <p className="mt-1">
+                每次新决策时这份 brain 会自动注入到 prompt 顶部, 让 AI 自然记得你是谁.
+              </p>
+            </div>
+
+            {!memory.brainContent && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 text-center text-zinc-500">
+                <p>brain.md 还没生成。需要至少 5 次决策才会触发首次蒸馏。</p>
+                <p className="mt-2">
+                  当前: <strong className="text-zinc-300">{memory.stats.totalDecisions}</strong> 次决策
+                  · {memory.stats.totalCards} 条 memory
+                </p>
+              </div>
+            )}
+
+            {memory.brainContent && (
+              <article className="prose prose-invert prose-zinc max-w-none bg-zinc-900 border border-zinc-800 rounded-lg p-6 whitespace-pre-wrap font-sans">
+                {memory.brainContent}
+              </article>
             )}
           </div>
         )}

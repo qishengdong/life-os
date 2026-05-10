@@ -157,12 +157,20 @@ export default function Home() {
               </p>
             )}
           </div>
-          <Link
-            href="/history"
-            className="text-zinc-400 hover:text-zinc-100 text-sm transition"
-          >
-            历史与记忆 →
-          </Link>
+          <div className="flex gap-4 items-baseline">
+            <Link
+              href="/onboarding"
+              className="text-zinc-400 hover:text-zinc-100 text-sm transition"
+            >
+              建档
+            </Link>
+            <Link
+              href="/history"
+              className="text-zinc-400 hover:text-zinc-100 text-sm transition"
+            >
+              历史与记忆 →
+            </Link>
+          </div>
         </header>
 
         {/* Due Commitments — Sivon doctrine 1.6 实现 */}

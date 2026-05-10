@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
         relational: memory.relational,
         psychSignal: memory.psychSignal,
         openLoops: memory.openLoops,
+        brainContent: memory.brainContent,
         stats: memory.stats,
       },
     });

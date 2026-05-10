@@ -11,6 +11,7 @@ import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
 import { fetchUserMemory } from '@/lib/memory';
 import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
 import { extractCommitmentsFromDecision } from '@/lib/commitments/extractor';
+import { maybeConsolidate } from '@/lib/memory/brain-consolidator';
 import { runInspector } from '@/lib/inspector';
 import {
   runReplikaChecks,
@@ -199,8 +200,10 @@ export async function POST(req: NextRequest) {
                       `[commitment-extractor] decision ${decisionId}: ${result.extracted} commitments`
                     );
                   }
+                  // commitment 抽完后再触发 brain consolidation (链式但都 fire-and-forget)
+                  return maybeConsolidate(userId);
                 })
-                .catch((e) => console.error('[commitment-extractor] failed:', e));
+                .catch((e) => console.error('[commitment-extractor / brain-consolidator] failed:', e));
             }
           }
 
