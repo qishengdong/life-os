@@ -99,6 +99,7 @@ async function runSinglePersona(persona: Persona, isAdversarial: boolean): Promi
       aiResponse,
       hasMemory: false,
       isAdversarial,
+      framework: route.framework, // v3 framework-aware
     });
   } catch (e: any) {
     return {

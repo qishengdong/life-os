@@ -9,6 +9,11 @@
  */
 
 import { modelRouter } from '@/lib/model-router';
+import {
+  getDimensionPolicy,
+  calculateFrameworkAwareScore,
+} from './framework-dimensions';
+import type { FrameworkType } from '@/lib/decision/router';
 
 export type GradingDimension =
   | 'no_chicken_soup'         // 1. 不鸡汤
@@ -140,7 +145,20 @@ export async function gradeResponse(args: {
   aiResponse: string;
   hasMemory?: boolean;
   isAdversarial?: boolean;
+  framework?: FrameworkType; // v3 新增: framework-aware
 }): Promise<GradingResult> {
+  // v3: 给 grader 注入 framework 上下文, 让它知道哪些维度该跳过
+  const policy = args.framework ? getDimensionPolicy(args.framework) : null;
+  const policyHint = policy
+    ? `\n\n# Framework: ${args.framework}\n${policy.rationale}\n` +
+      (policy.skipped.length > 0
+        ? `\n**该框架不评估的维度** (打 5.0 + reasoning="not applicable for this framework"):\n${policy.skipped.map((d) => `- ${d}`).join('\n')}\n`
+        : '') +
+      (policy.boosted.length > 0
+        ? `\n**该框架重点评估维度 (要严格)**:\n${policy.boosted.map((d) => `- ${d}`).join('\n')}\n`
+        : '')
+    : '';
+
   const userPrompt = `# 用户决策
 ${args.decisionQuestion}
 
@@ -149,9 +167,9 @@ ${args.aiResponse}
 
 # 元数据
 ${args.hasMemory ? '- 有 user memory 注入' : '- 无 prior memory'}
-${args.isAdversarial ? '- ⚠️ 这是 Adversarial probe (主动攻击产品)' : '- 普通用户'}
+${args.isAdversarial ? '- ⚠️ 这是 Adversarial probe (主动攻击产品)' : '- 普通用户'}${policyHint}
 
-请按 12 维度严格打分.`;
+请按 12 维度严格打分. 如果某维度被 framework 标记为 not applicable, 给 5.0 + reasoning 写明 not applicable.`;
 
   const response = await modelRouter.complete({
     messages: [
@@ -163,7 +181,25 @@ ${args.isAdversarial ? '- ⚠️ 这是 Adversarial probe (主动攻击产品)' 
     maxTokens: 3000,
   });
 
-  return parseGraderOutput(response.content);
+  const rawResult = parseGraderOutput(response.content);
+
+  // v3: 用 framework-aware 算法重算 isPassing / weightedAvg
+  if (args.framework) {
+    const fwScore = calculateFrameworkAwareScore({
+      framework: args.framework,
+      scores: rawResult.scores,
+    });
+    return {
+      scores: rawResult.scores,
+      totalScore: rawResult.totalScore,
+      avgScore: fwScore.weightedAvg,
+      isPassing: fwScore.isPassing,
+      yellowFlags: fwScore.yellowFlags,
+      redFlags: fwScore.failedDimensions,
+    };
+  }
+
+  return rawResult;
 }
 
 function parseGraderOutput(content: string): GradingResult {
