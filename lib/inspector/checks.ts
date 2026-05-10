@@ -8,6 +8,7 @@
  */
 
 import type { CheckResult, InspectorContext, CheckCode } from './types';
+import { getUserCommitments } from '@/lib/commitments/store';
 
 // ============================================================================
 // C1: 编自己做过的事
@@ -185,6 +186,48 @@ export function checkC5(ctx: InspectorContext): CheckResult {
 }
 
 // ============================================================================
+// C14: Commitment Fabrication
+//
+// 双向检查:
+//   1) AI 在回答里说"我之前承诺过 X / 我答应你 Y" → 必须在 commitments 表找到对应
+//   2) AI 在回答里许下新承诺 ("30 天后我会跟你回看") → extractor 会写表 (异步)
+//
+// 这里只检查 (1): 引用过去承诺时不能编.
+// ============================================================================
+
+export function checkC14(ctx: InspectorContext): CheckResult {
+  const refPatterns = [
+    /我(?:之前|上次|早就)(?:答应|承诺|说过要|说过会|许诺)/,
+    /(?:之前|上次)(?:我答应|我承诺|我说要)/,
+  ];
+
+  for (const pattern of refPatterns) {
+    const match = ctx.aiResponse.match(pattern);
+    if (match) {
+      // 查 commitments 表
+      try {
+        const commitments = getUserCommitments(ctx.userId);
+        if (commitments.length === 0) {
+          return {
+            code: 'C14',
+            severity: 'p0',
+            hit: true,
+            matchedText: match[0],
+            detail: 'AI 声称之前答应过, 但 commitments 表无任何记录 — 编造承诺',
+          };
+        }
+        // V0 简化: 只要表里有任何一条 commitment 就放行.
+        // V1+ 精细化: NLP 匹配引用的具体内容是否真的存在于 commitments.
+      } catch (e) {
+        // store 调用失败不算违规, 让流程继续
+      }
+    }
+  }
+
+  return { code: 'C14', severity: 'p0', hit: false };
+}
+
+// ============================================================================
 // C15: Fact Provenance
 // AI 在回答里引用具体 fact (年龄 / 城市 / 公司 / 职业 / 关系) 必须能在
 // RMC factual / boundary / core_state / episodic 找到 source.
@@ -241,6 +284,7 @@ const ALL_CHECKS: Record<CheckCode, (ctx: InspectorContext) => CheckResult> = {
   C2: checkC2,
   C3: checkC3,
   C5: checkC5,
+  C14: checkC14,
   C15: checkC15,
 };
 

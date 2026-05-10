@@ -7,14 +7,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "grade:swarm": "tsx --env-file=.env.local scripts/run-swarm.ts"
   },
   "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "dotenv": "^17.4.2",
     "next": "^15.1.0",
+    "openai": "^4.77.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "openai": "^4.77.0",
-    "better-sqlite3": "^11.7.0",
+    "tsx": "^4.21.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

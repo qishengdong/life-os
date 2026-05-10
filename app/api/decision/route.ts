@@ -10,6 +10,7 @@ import { saveDecision, updateUserProfile } from '@/lib/db';
 import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
 import { fetchUserMemory } from '@/lib/memory';
 import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
+import { extractCommitmentsFromDecision } from '@/lib/commitments/extractor';
 import { runInspector } from '@/lib/inspector';
 
 export const runtime = 'nodejs';
@@ -175,6 +176,23 @@ export async function POST(req: NextRequest) {
                 })
                 .catch((e) => {
                   console.error('[fact-extractor] failed:', e);
+                });
+
+              // 6e. 异步抽取 commitments (Sivon doctrine 1.6)
+              extractCommitmentsFromDecision({
+                userId,
+                decisionId,
+                aiResponse: fullContent,
+              })
+                .then((result) => {
+                  if (result.extracted > 0) {
+                    console.log(
+                      `[commitment-extractor] decision ${decisionId}: extracted ${result.extracted} commitments`
+                    );
+                  }
+                })
+                .catch((e) => {
+                  console.error('[commitment-extractor] failed:', e);
                 });
             }
           }

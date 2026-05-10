@@ -22,6 +22,15 @@ interface MetaInfo {
   decisionId?: number;
 }
 
+interface DueCommitment {
+  id: number;
+  commitmentText: string;
+  commitmentKind: string;
+  duePhrase: string | null;
+  promisedAt: number;
+  dueAt: number | null;
+}
+
 export default function Home() {
   const [userUid, setUserUid] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState('');
@@ -31,11 +40,27 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<MetaInfo | null>(null);
+  const [dueCommits, setDueCommits] = useState<DueCommitment[]>([]);
 
-  // 客户端 mount 后初始化 UUID
+  // 客户端 mount 后初始化 UUID + 拉 due commitments
   useEffect(() => {
-    setUserUid(getOrCreateClientUid());
+    const uid = getOrCreateClientUid();
+    setUserUid(uid);
+    fetch('/api/commitments?due=1', { headers: { [UID_HEADER]: uid } })
+      .then((r) => r.json())
+      .then((d) => setDueCommits(d.commitments || []))
+      .catch(() => {});
   }, []);
+
+  async function actCommitment(id: number, action: 'fulfill' | 'cancel') {
+    if (!userUid) return;
+    await fetch('/api/commitments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+      body: JSON.stringify({ commitmentId: id, action }),
+    });
+    setDueCommits((prev) => prev.filter((c) => c.id !== id));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -139,6 +164,45 @@ export default function Home() {
             历史与记忆 →
           </Link>
         </header>
+
+        {/* Due Commitments — Sivon doctrine 1.6 实现 */}
+        {dueCommits.length > 0 && (
+          <section className="mb-8 bg-amber-950/30 border border-amber-900/50 rounded-lg p-5">
+            <h2 className="text-amber-200 text-sm font-semibold mb-3">
+              💭 你之前跟我聊到的 {dueCommits.length} 件事 — 进展如何?
+            </h2>
+            <div className="space-y-3">
+              {dueCommits.map((c) => (
+                <div
+                  key={c.id}
+                  className="bg-zinc-900/60 border border-zinc-800 rounded-md p-3 text-sm"
+                >
+                  <p className="text-zinc-200 mb-2">{c.commitmentText}</p>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500">
+                      {c.commitmentKind}
+                      {c.duePhrase && ` · ${c.duePhrase}`}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => actCommitment(c.id, 'fulfill')}
+                        className="text-emerald-400 hover:text-emerald-300 transition"
+                      >
+                        已完成
+                      </button>
+                      <button
+                        onClick={() => actCommitment(c.id, 'cancel')}
+                        className="text-zinc-500 hover:text-zinc-400 transition"
+                      >
+                        取消
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

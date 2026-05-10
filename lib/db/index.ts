@@ -140,6 +140,60 @@ export function getDb(): Database.Database {
     );
   `);
 
+  // ===== Self-Commitments (Sivon doctrine 1.6) =====
+  // AI 嘴上承诺必须写表, 避免"信任损耗"
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS life_os_commitments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      commitment_text TEXT NOT NULL,
+      commitment_kind TEXT,                  -- 'follow_up' / 'review' / 'check_in' / 'reminder'
+      promised_at INTEGER DEFAULT (unixepoch()),
+      due_at INTEGER,                        -- 何时该兑现 (NULL = 无明确期限)
+      due_phrase TEXT,                       -- 用户原话里的时间短语 ("30 天后" "下次见面")
+      source_decision_id INTEGER,
+      status TEXT DEFAULT 'pending'
+        CHECK(status IN ('pending','fulfilled','overdue','cancelled','superseded')),
+      fulfilled_at INTEGER,
+      apology_pushed_at INTEGER,             -- 道歉路径已触发 (避免双道歉)
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (source_decision_id) REFERENCES decisions(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_commit_user_status ON life_os_commitments(user_id, status);
+    CREATE INDEX IF NOT EXISTS idx_commit_due ON life_os_commitments(due_at, status);
+  `);
+
+  // ===== Real Grader 自动测试结果 =====
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS grader_runs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      run_label TEXT,
+      persona_count INTEGER,
+      total_score REAL,
+      avg_score REAL,
+      mode TEXT CHECK(mode IN ('synthetic','real_chat')),
+      created_at INTEGER DEFAULT (unixepoch())
+    );
+
+    CREATE TABLE IF NOT EXISTS grader_scores (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      run_id INTEGER NOT NULL,
+      persona TEXT,
+      decision_question TEXT,
+      ai_response TEXT,
+      dimension TEXT NOT NULL,             -- 'no_chicken_soup' / 'quantified_costs' / ...
+      score REAL NOT NULL CHECK(score >= 0 AND score <= 5),
+      reasoning TEXT,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (run_id) REFERENCES grader_runs(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_grader_scores_run ON grader_scores(run_id);
+    CREATE INDEX IF NOT EXISTS idx_grader_scores_dim ON grader_scores(dimension);
+  `);
+
   // ===== Inspector audit log =====
   _db.exec(`
     CREATE TABLE IF NOT EXISTS inspector_audit (
