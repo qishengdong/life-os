@@ -9,6 +9,7 @@ import {
   getWeekRange,
 } from '@/lib/sunday-review/store';
 import { generateReview } from '@/lib/sunday-review/generator';
+import { sendSundayReviewNotification } from '@/lib/email/sender';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -84,6 +85,19 @@ export async function POST(req: NextRequest) {
       pulseCount: result.pulseCount,
       decisionCount: result.decisionCount,
       tokensUsed: result.tokensUsed,
+    });
+
+    // 异步发邮件 (fire-and-forget, 如果用户没 email 或 dry-run 都 OK)
+    sendSundayReviewNotification({
+      userId,
+      weekStart,
+      weekEnd,
+      reviewContent: result.content,
+      pulseCount: result.pulseCount,
+    }).then((r) => {
+      console.log(`[email/sunday_review] user ${userId}: ${('status' in r) ? r.status : 'skipped'}`);
+    }).catch((e) => {
+      console.error('[email/sunday_review] failed:', e);
     });
 
     return NextResponse.json({

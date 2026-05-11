@@ -140,6 +140,46 @@ export function getDb(): Database.Database {
     );
   `);
 
+  // ===== Email infra (Day 15) =====
+  // users 表加 email 相关字段 (本质迁移, ADD COLUMN safe)
+  const usersExtra = _db.pragma('table_info(users)') as Array<{ name: string }>;
+  const userColNames = new Set(usersExtra.map((c) => c.name));
+  if (!userColNames.has('email')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN email TEXT;`);
+  }
+  if (!userColNames.has('email_verified_at')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN email_verified_at INTEGER;`);
+  }
+  if (!userColNames.has('email_preferences')) {
+    // JSON: { sunday_review: true, outcome_due: true, welcome: true, commitment: true }
+    _db.exec(`ALTER TABLE users ADD COLUMN email_preferences TEXT DEFAULT '{"sunday_review":true,"outcome_due":true,"welcome":true,"commitment":true}';`);
+  }
+
+  // emails_sent 审计表
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS emails_sent (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      email_type TEXT NOT NULL,           -- 'welcome' / 'sunday_review' / 'outcome_due' / 'commitment_reminder'
+      recipient TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      body_text TEXT,
+      body_html TEXT,
+      send_mode TEXT DEFAULT 'dry-run' CHECK(send_mode IN ('dry-run','smtp','resend')),
+      status TEXT DEFAULT 'queued' CHECK(status IN ('queued','sent','failed','dry-run')),
+      error_message TEXT,
+      provider_message_id TEXT,
+      opened_at INTEGER,
+      clicked_at INTEGER,
+      sent_at INTEGER,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_emails_user ON emails_sent(user_id, sent_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_emails_type ON emails_sent(email_type, status);
+  `);
+
   // ===== Outcome Ledger — V1 续费证明 (Layer 4: Decision Outcome Tracking) =====
   // 每个 decision 创建 3 个 checkpoint (30/90/365 day), 到期 surface 给用户回答
   _db.exec(`
@@ -341,16 +381,66 @@ export function updateUserProfile(
 export function getUser(userId: number) {
   const db = getDb();
   return db
-    .prepare('SELECT id, user_uid, birth_date, gender, created_at FROM users WHERE id = ?')
+    .prepare('SELECT id, user_uid, birth_date, gender, email, email_verified_at, email_preferences, created_at FROM users WHERE id = ?')
     .get(userId) as
     | {
         id: number;
         user_uid: string;
         birth_date: string | null;
         gender: string | null;
+        email: string | null;
+        email_verified_at: number | null;
+        email_preferences: string | null;
         created_at: number;
       }
     | undefined;
+}
+
+export interface EmailPreferences {
+  sunday_review: boolean;
+  outcome_due: boolean;
+  welcome: boolean;
+  commitment: boolean;
+}
+
+const DEFAULT_EMAIL_PREFS: EmailPreferences = {
+  sunday_review: true,
+  outcome_due: true,
+  welcome: true,
+  commitment: true,
+};
+
+export function getUserEmailPrefs(userId: number): EmailPreferences {
+  const user = getUser(userId);
+  if (!user?.email_preferences) return DEFAULT_EMAIL_PREFS;
+  try {
+    return { ...DEFAULT_EMAIL_PREFS, ...JSON.parse(user.email_preferences) };
+  } catch {
+    return DEFAULT_EMAIL_PREFS;
+  }
+}
+
+export function updateUserEmail(args: {
+  userId: number;
+  email?: string;
+  emailPreferences?: Partial<EmailPreferences>;
+}): void {
+  const db = getDb();
+  const sets: string[] = [];
+  const params: any[] = [];
+  if (args.email !== undefined) {
+    sets.push('email = ?');
+    params.push(args.email);
+  }
+  if (args.emailPreferences !== undefined) {
+    const current = getUserEmailPrefs(args.userId);
+    const merged = { ...current, ...args.emailPreferences };
+    sets.push('email_preferences = ?');
+    params.push(JSON.stringify(merged));
+  }
+  if (sets.length === 0) return;
+  params.push(args.userId);
+  db.prepare(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`).run(...params);
 }
 
 // ============================================================================

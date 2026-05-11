@@ -174,11 +174,12 @@ export default function Home() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <div className="font-serif text-xl font-semibold tracking-tightish text-ink-900">Life OS</div>
-        <div className="flex gap-5 text-sm text-ink-500">
+        <div className="flex gap-4 text-sm text-ink-500">
           <Link href="/review" className="hover:text-seal transition-colors">Weekly</Link>
           <Link href="/outcomes" className="hover:text-seal transition-colors">决策账本</Link>
-          <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
+          <Link href="/brain" className="hover:text-seal transition-colors">Brain</Link>
           <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
+          <Link href="/account" className="hover:text-seal transition-colors">邮箱</Link>
           <Link href="/pricing" className="hover:text-seal transition-colors">定价</Link>
         </div>
       </nav>

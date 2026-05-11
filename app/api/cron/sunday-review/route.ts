@@ -16,6 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateReview } from '@/lib/sunday-review/generator';
 import { saveReview, getWeekRange } from '@/lib/sunday-review/store';
+import { sendSundayReviewNotification } from '@/lib/email/sender';
 import { getDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
@@ -71,12 +72,21 @@ export async function POST(req: NextRequest) {
           decisionCount: result.decisionCount,
           tokensUsed: result.tokensUsed,
         });
+        // 发邮件 (fire-and-forget, dry-run mode OK)
+        const emailResult = await sendSundayReviewNotification({
+          userId: c.user_id,
+          weekStart,
+          weekEnd,
+          reviewContent: result.content,
+          pulseCount: result.pulseCount,
+        });
         results.push({
           userId: c.user_id,
           status: 'generated',
           charCount: result.charCount,
           pulseCount: result.pulseCount,
           durationMs: result.durationMs,
+          emailStatus: 'status' in emailResult ? emailResult.status : 'skipped',
         });
       } else {
         results.push({ userId: c.user_id, status: 'skipped', reason: result.error });
