@@ -9,7 +9,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "grade:swarm": "tsx --env-file=.env.local scripts/run-swarm.ts",
-    "grade:long": "tsx --env-file=.env.local scripts/run-longitudinal.ts"
+    "grade:long": "tsx --env-file=.env.local scripts/run-longitudinal.ts",
+    "grade:pulse-adv": "tsx --env-file=.env.local scripts/run-pulse-adversarial.ts",
+    "grade:journey": "tsx --env-file=.env.local scripts/run-full-journey.ts"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
