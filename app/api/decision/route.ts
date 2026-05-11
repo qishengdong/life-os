@@ -12,6 +12,7 @@ import { fetchUserMemory } from '@/lib/memory';
 import { extractFactsFromDecision } from '@/lib/memory/fact-extractor';
 import { extractCommitmentsFromDecision } from '@/lib/commitments/extractor';
 import { maybeConsolidate } from '@/lib/memory/brain-consolidator';
+import { scheduleOutcomes } from '@/lib/outcomes/store';
 import { runInspector } from '@/lib/inspector';
 import {
   runReplikaChecks,
@@ -139,6 +140,16 @@ export async function POST(req: NextRequest) {
                 tokensInput: chunk.usage?.prompt_tokens,
                 tokensOutput: chunk.usage?.completion_tokens,
               });
+
+              // 自动 schedule 3 个 outcome checkpoint (30/90/365 day)
+              try {
+                const outcomeIds = scheduleOutcomes(decisionId, userId);
+                if (outcomeIds.length > 0) {
+                  console.log(`[outcomes] decision ${decisionId}: scheduled ${outcomeIds.length} checkpoints (30/90/365 day)`);
+                }
+              } catch (e) {
+                console.error('[outcomes] schedule failed:', e);
+              }
 
               controller.enqueue(
                 encoder.encode(

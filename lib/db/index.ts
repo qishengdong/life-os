@@ -140,6 +140,30 @@ export function getDb(): Database.Database {
     );
   `);
 
+  // ===== Outcome Ledger — V1 续费证明 (Layer 4: Decision Outcome Tracking) =====
+  // 每个 decision 创建 3 个 checkpoint (30/90/365 day), 到期 surface 给用户回答
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS decision_outcomes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      decision_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      checkpoint_days INTEGER NOT NULL CHECK(checkpoint_days IN (30, 90, 365)),
+      due_at INTEGER NOT NULL,            -- decision.created_at + N days
+      asked_at INTEGER,                    -- 用户被问的时间 (NULL = 未问)
+      user_response TEXT,                  -- 用户的回答
+      outcome_judgment TEXT CHECK(outcome_judgment IN ('as-expected', 'better', 'worse', 'mixed', 'too-early', 'cancelled')),
+      ai_reflection TEXT,                  -- AI 综合 reflection
+      pattern_insight TEXT,                -- 跨决策 pattern (V2)
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (decision_id) REFERENCES decisions(id),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      UNIQUE(decision_id, checkpoint_days)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_outcomes_user_due ON decision_outcomes(user_id, due_at, asked_at);
+    CREATE INDEX IF NOT EXISTS idx_outcomes_decision ON decision_outcomes(decision_id);
+  `);
+
   // ===== Sunday Review — V1 付费感峰值 (Layer 2: Weekly Pattern) =====
   // 每周日生成 800-1200 字 pattern recognition
   // 回答 3 问: 反复提到什么 / 没说出口的张力 / 下周注意什么
