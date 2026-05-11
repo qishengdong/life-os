@@ -2,11 +2,160 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Life OS 严肃出版物 base styles (2026-05-11) ===== */
+
+:root {
+  --bg-paper: #FAF7F2;
+  --ink-primary: #3A2E26;
+  --ink-secondary: #6B5D52;
+  --accent-seal: #9B2D27;
+}
+
 * {
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 html, body {
   margin: 0;
   padding: 0;
+  background: var(--bg-paper);
+  color: var(--ink-primary);
+}
+
+body {
+  /* 默认无衬线 (UI 元素), 标题和长 form 单独 .font-serif */
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+
+/* 字体调整: 中文宋体在 sans 上下文下不自动 fallback, 需 explicit */
+.font-serif {
+  font-family: var(--font-source-han-serif), var(--font-lora), 'Songti SC', 'STSong', serif;
+}
+
+/* Selection style — 暗红 tint */
+::selection {
+  background: #9B2D27;
+  color: #FAF7F2;
+}
+
+/* Scrollbar — 暖色调 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F4EFE5;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4C8B5;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9D9081;
+}
+
+/* Reading flow utilities */
+.editorial-leading {
+  line-height: 1.75;
+}
+
+.editorial-spacing > * + * {
+  margin-top: 1.25em;
+}
+
+/* Inline 暗红印章 separator */
+.seal-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #9B2D27;
+}
+.seal-divider::before,
+.seal-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #D4C8B5;
+}
+.seal-divider::before { margin-right: 1.5em; }
+.seal-divider::after { margin-left: 1.5em; }
+
+/* Animations — 克制 */
+@keyframes fade-in-soft {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-soft {
+  animation: fade-in-soft 0.35s ease-out;
+}
+
+/* Cursor blink for streaming */
+@keyframes ink-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.ink-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: #9B2D27;
+  vertical-align: middle;
+  animation: ink-blink 0.9s steps(1) infinite;
+  margin-left: 2px;
+}
+
+/* Focus states — 暗红 ring 不要默认蓝 */
+*:focus-visible {
+  outline: 2px solid #9B2D27;
+  outline-offset: 2px;
+}
+
+/* Inputs — 纸张感 */
+input, textarea, select {
+  background: #FDFBF7;
+  border: 1px solid #E8DFD0;
+  color: #3A2E26;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:hover, textarea:hover, select:hover {
+  border-color: #D4C8B5;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #9B2D27;
+  box-shadow: 0 0 0 3px rgba(155, 45, 39, 0.08);
+}
+
+/* Buttons — primary 是暗红印章 */
+.btn-seal {
+  background: #9B2D27;
+  color: #FAF7F2;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+.btn-seal:hover {
+  background: #7C231E;
+}
+.btn-seal:disabled {
+  background: #D4C8B5;
+  color: #9D9081;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #3A2E26;
+  border: 1px solid #D4C8B5;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.btn-ghost:hover {
+  background: #F4EFE5;
+  border-color: #9D9081;
 }
