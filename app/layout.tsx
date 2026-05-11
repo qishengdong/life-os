@@ -26,13 +26,12 @@ const notoSerifSC = Noto_Serif_SC({
 });
 
 export const metadata: Metadata = {
-  title: 'Life OS — 不安慰你, 只陪你看清结构',
+  title: 'Life OS — 陪你把人生难题想清楚',
   description:
-    'Life OS 是中国高知用户的日常思考伴侣 + 人生重大决策系统. 它记得你的背景, 用决策科学陪你把问题想透.',
-  // Open Graph 简版
+    '重大决定, 别一个人硬扛. Life OS 不替你做决定, 也不用鸡汤安慰你. 它记得你的背景, 陪你一步步拆开真正困住你的问题.',
   openGraph: {
-    title: 'Life OS',
-    description: '不安慰你, 不命令你, 不替你决定, 只陪你看清结构.',
+    title: 'Life OS — 陪你把人生难题想清楚',
+    description: '重大决定, 别一个人硬扛. 在人生最难选的时候, 有一个长期记得你的人.',
     type: 'website',
   },
 };

@@ -100,12 +100,15 @@ export default function PricingPage() {
           <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
             · Subscription ·
           </p>
+          <p className="font-serif text-xl md:text-2xl text-seal mb-3 tracking-tightish">
+            重大决定, 别一个人硬扛。
+          </p>
           <h1 className="font-serif text-editorial-lg text-ink-900 mb-6 tracking-tighter">
-            为长期关系付费,<br />不是为单次问答付费.
+            为"它越来越懂你"付费,<br />不是为"再问一次"付费.
           </h1>
           <p className="font-serif text-reading text-ink-500 editorial-leading max-w-prose-lg mx-auto">
             Life OS 越用越懂你, 跨决策保持一致, 12 个月后你的数据是不可迁移的人生资产.
-            按次计费惩罚高频用户; 订阅才符合产品本质.
+            按次计费惩罚高频用户, 订阅才符合产品本质.
           </p>
         </header>
 
@@ -221,7 +224,7 @@ export default function PricingPage() {
             Life OS · V1 dev · 上线后正式开通支付
           </p>
           <p className="font-serif text-sm text-ink-400 italic">
-            为长期关系付费, 不是为单次问答付费.
+            在人生最难选的时候, 有一个长期记得你的人.
           </p>
         </footer>
       </main>

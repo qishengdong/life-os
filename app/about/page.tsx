@@ -30,23 +30,29 @@ export default function AboutPage() {
         </header>
 
         <section className="mb-16 animate-fade-in-soft">
-          <h2 className="font-serif text-2xl text-ink-900 mb-5 tracking-tightish">
-            这是什么
+          <p className="font-serif text-2xl text-seal mb-3 tracking-tightish leading-tight">
+            重大决定, 别一个人硬扛。
+          </p>
+          <h2 className="font-serif text-3xl text-ink-900 mb-6 tracking-tighter leading-tight">
+            陪你把人生难题想清楚。
           </h2>
           <div className="prose prose-editorial max-w-none font-serif">
             <p>
               Life OS 是给中国 30-50 岁高知精英的<strong>日常思考伴侣 + 重大决策系统</strong>.
-              当你面对重大人生决策 (要不要离职 / 要不要送父母去养老院 / 要不要离婚 / 要不要送孩子出国),
-              它帮你把决策结构展示出来, 问你硬核问题, <strong>但不替你做决定</strong>.
+              父母养老、孩子出路、婚姻去留、职业转身、要不要迁移——
+              这些决定太重, 不能只靠冲动, 也不能靠几句安慰.
+            </p>
+            <p>
+              <strong>Life OS 不替你做决定, 也不用鸡汤安慰你.</strong>
+              它记得你的背景, 陪你一步步拆开真正困住你的问题.
             </p>
             <p>
               它不是心理咨询. 不是法律咨询. 不是投资顾问. 它是基于决策科学
               (Annie Duke / Chip Heath / Kahneman) 和中国本土心理研究
               (武志红 / 陈海贤) 设计的<em>思考伴侣</em>.
             </p>
-            <p className="italic text-ink-700 border-l-2 border-seal pl-6 my-8">
-              "Life OS 不该只在你做重大决定时出现 — 它每天轻轻接住一个人生信号,
-              然后在关键时刻证明: 我之所以懂你, 是因为我一直在场."
+            <p className="text-xl italic text-ink-900 border-l-4 border-seal pl-6 my-10 leading-snug">
+              在人生最难选的时候, 有一个长期记得你的人。
             </p>
           </div>
         </section>
@@ -148,7 +154,7 @@ export default function AboutPage() {
             Life OS · V1 dev · 备案号 TBD · 运营主体 TBD
           </p>
           <p className="font-serif text-sm text-ink-400 italic mt-4">
-            不安慰你 · 不命令你 · 不替你决定 · 只陪你看清结构
+            陪你想清楚 · 看清代价 · 长期记得你
           </p>
         </footer>
       </main>

@@ -59,11 +59,11 @@ export default function BrainPage() {
             我的 Life Brain
           </h1>
           <p className="font-serif text-reading text-ink-500 max-w-prose-lg editorial-leading">
-            这是 AI 写给"未来的自己"的, 关于你的备忘录.
-            它整合了你跟我聊过的所有重大决策、抽出来的事实、看到的人生模式. 每过一段时间自动更新.
+            这是 AI 写给"未来的自己"的、关于你的备忘录.
+            它整合了你跟我聊过的所有 Pulse、重大决策、抽出来的事实、看到的人生模式. 每过一段时间自动更新.
           </p>
-          <p className="font-serif text-sm text-ink-400 mt-4 italic">
-            "我之所以懂你, 是因为我一直在场."
+          <p className="font-serif text-lg text-ink-900 mt-6 italic border-l-4 border-seal pl-4">
+            在人生最难选的时候, 有一个长期记得你的人.
           </p>
         </header>
 

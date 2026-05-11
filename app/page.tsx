@@ -179,9 +179,49 @@ export default function Home() {
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
 
+        {/* ===== NEW USER MARKETING HERO (totalPulses === 0) ===== */}
+        {mode === 'pulse' && pulseStats.totalPulses === 0 && (
+          <section className="pt-16 pb-12 animate-fade-in-soft">
+            <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-8">
+              · Issue 001 · 2026 ·
+            </p>
+            <p className="font-serif text-2xl md:text-3xl text-seal mb-4 tracking-tightish leading-tight">
+              重大决定, 别一个人硬扛。
+            </p>
+            <h1 className="font-serif text-editorial-xl text-ink-900 mb-10 tracking-tighter leading-[1.1]">
+              陪你把<br />人生难题想清楚。
+            </h1>
+            <div className="font-serif text-reading text-ink-700 max-w-prose-lg editorial-leading editorial-spacing mb-12">
+              <p>
+                父母养老、孩子出路、婚姻去留、职业转身、要不要迁移——
+                这些决定太重, 不能只靠冲动, 也不能靠几句安慰.
+              </p>
+              <p>
+                <strong className="text-ink-900">Life OS 不替你做决定, 也不用鸡汤安慰你.</strong>
+                它记得你的背景, 陪你一步步拆开真正困住你的问题.
+              </p>
+              <p className="text-sm text-ink-400 pt-4 border-t border-paper-300 mt-8 font-sans">
+                陪你想清楚 · 看清代价 · 长期记得你
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* ===== PULSE MODE ===== */}
         {mode === 'pulse' && (
-          <section className="pt-12 animate-fade-in-soft">
+          <section className={pulseStats.totalPulses === 0 ? 'pt-4 pb-12 animate-fade-in-soft' : 'pt-12 animate-fade-in-soft'}>
+            {pulseStats.totalPulses === 0 && (
+              <div className="mb-10 pb-8 border-b border-paper-300">
+                <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-400 mb-3">
+                  · 今天就先试一个 Pulse — 3 分钟 ·
+                </p>
+                <p className="font-serif text-sm text-ink-500 max-w-prose-lg editorial-leading">
+                  Pulse 不是日记, 是"人生信号采集". 5 类轮换问题, 每天 3 分钟.
+                  累积起来, AI 看见你的 pattern; 重大决策来时, 它已经懂你的背景, 不用从头解释.
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-between items-baseline mb-6">
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal">
                 · Daily Pulse · Pulse #{pulseStats.totalPulses + 1} ·
@@ -271,17 +311,17 @@ export default function Home() {
                 {/* Decision Deep Dive — secondary CTA */}
                 <div className="mt-20 pt-8 border-t border-paper-300">
                   <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-400 mb-3">
-                    · 重大决策 ·
+                    · 真正卡了几周的决定 ·
                   </p>
                   <p className="font-serif text-reading text-ink-500 editorial-leading mb-4 max-w-prose-lg">
-                    当你面对一个想透了几周还没下决心的决定 — 父母养老、孩子留学、要不要离职、要不要离婚 —
-                    用 Decision Deep Dive. 12 维结构化拆解, 不是聊聊.
+                    Pulse 是日常信号. 真正卡了几周的决定 — 父母养老、孩子留学、要不要离职、要不要离婚 —
+                    用 Decision Deep Dive 一层层想清楚. 12 维拆解, 不替你做决定, 让你看见代价.
                   </p>
                   <button
                     onClick={() => setMode('decision')}
                     className="btn-ghost px-6 py-3 rounded-sm"
                   >
-                    Decision Deep Dive →
+                    把它想清楚 →
                   </button>
                 </div>
               </>
@@ -317,7 +357,7 @@ export default function Home() {
                 再写一条 Pulse →
               </button>
               <button onClick={() => { setMode('decision'); setPulseResponse(null); }} className="btn-ghost px-6 py-3 rounded-sm">
-                把这个升级成重大决策
+                把这件事想清楚 (Deep Dive)
               </button>
             </div>
 
@@ -339,10 +379,11 @@ export default function Home() {
               · Decision Deep Dive · 12 维协议 ·
             </p>
             <h2 className="font-serif text-editorial-lg text-ink-900 mb-3 tracking-tighter">
-              你最近最难的决定是什么?
+              你最近最难想清楚的决定是什么?
             </h2>
-            <p className="font-serif text-reading text-ink-500 mb-10 max-w-prose-lg">
+            <p className="font-serif text-reading text-ink-500 mb-10 max-w-prose-lg editorial-leading">
               说清楚背景、卡点、和你最怕的事. 越具体, 越准.
+              我不替你决定, 但会陪你看清代价.
             </p>
 
             <form onSubmit={submitDecision} className="space-y-6">

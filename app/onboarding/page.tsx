@@ -129,10 +129,11 @@ export default function OnboardingPage() {
             · 建档完成 ·
           </p>
           <h1 className="font-serif text-editorial-lg text-ink-900 mb-8 text-center tracking-tighter">
-            AI 已经认识你了
+            它已经开始记得你了
           </h1>
           <p className="font-serif text-reading text-ink-500 editorial-leading text-center mb-12 max-w-prose-lg mx-auto">
-            从你的访谈里, AI 抽出了你这个人的核心档案. 第一次跟它聊重大决策时, 它已经懂你的背景, 不需要你重头解释.
+            从你的访谈里, AI 抽出了你的核心档案.
+            下次跟它聊任何事 — 不管是今天的 Pulse 还是重大决策 — 它已经懂你的背景, 不用你从头解释.
           </p>
 
           <div className="grid grid-cols-3 gap-4 mb-12 border-y border-paper-300 py-6">
@@ -156,10 +157,10 @@ export default function OnboardingPage() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/" className="btn-seal px-8 py-3 rounded-sm text-center">
-              写下第一个决策 →
+              写今天的第一条 Pulse →
             </Link>
             <Link href="/brain" className="btn-ghost px-8 py-3 rounded-sm text-center">
-              看 AI 怎么写我的 Brain
+              看 AI 怎么记得我
             </Link>
           </div>
         </main>
