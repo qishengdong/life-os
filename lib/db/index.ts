@@ -140,6 +140,26 @@ export function getDb(): Database.Database {
     );
   `);
 
+  // ===== Daily Pulse — V1 lock-in 核心 (doctrine_pulse_is_signal_not_diary) =====
+  // 每条 Pulse 是 5 类轮换问题之一的答, 不是日记
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS daily_pulses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      question_id TEXT NOT NULL,        -- 'sinking' / 'avoidance' / 'drainage' / 'hidden-big' / 'body-signal'
+      content TEXT NOT NULL,             -- 用户原话 5-200 字
+      tags TEXT,                          -- JSON array of 10 类标签
+      ai_response TEXT,                   -- 30-80 字 思考伴侣回应
+      rmc_episodic_id INTEGER,            -- 关联到 RMC episodic 卡
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (rmc_episodic_id) REFERENCES relationship_memory_cards(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_pulses_user ON daily_pulses(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_pulses_question ON daily_pulses(user_id, question_id);
+  `);
+
   // ===== Self-Commitments (Sivon doctrine 1.6) =====
   // AI 嘴上承诺必须写表, 避免"信任损耗"
   _db.exec(`

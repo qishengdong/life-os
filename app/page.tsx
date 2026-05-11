@@ -3,23 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
+import type { PulseQuestion, PulseTag } from '@/lib/pulse/schema';
+import { TAG_DISPLAY } from '@/lib/pulse/schema';
 
-interface MetaInfo {
-  framework: string;
-  frameworkName: string;
-  confidence: number;
-  matchedKeywords: string[];
-  memoryStats?: {
-    hardAnchors: number;
-    factCards: number;
-    boundaries: number;
-    episodes: number;
-    totalCards: number;
-    totalDecisions: number;
-  };
-  model?: string;
-  provider?: string;
-  decisionId?: number;
+interface PulseStats {
+  totalPulses: number;
+  todayPulses: number;
+  weekPulses: number;
 }
 
 interface DueCommitment {
@@ -27,28 +17,56 @@ interface DueCommitment {
   commitmentText: string;
   commitmentKind: string;
   duePhrase: string | null;
-  promisedAt: number;
-  dueAt: number | null;
 }
+
+interface DecisionMeta {
+  framework: string;
+  frameworkName: string;
+  confidence: number;
+  memoryStats?: { hardAnchors: number; factCards: number; boundaries: number; episodes: number; totalCards: number; totalDecisions: number; };
+  model?: string;
+  provider?: string;
+  decisionId?: number;
+}
+
+type Mode = 'pulse' | 'pulse-response' | 'decision' | 'decision-response';
 
 export default function Home() {
   const [userUid, setUserUid] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>('pulse');
+
+  // Pulse state
+  const [todayQuestion, setTodayQuestion] = useState<PulseQuestion | null>(null);
+  const [pulseStats, setPulseStats] = useState<PulseStats>({ totalPulses: 0, todayPulses: 0, weekPulses: 0 });
+  const [pulseContent, setPulseContent] = useState('');
+  const [pulseLoading, setPulseLoading] = useState(false);
+  const [pulseError, setPulseError] = useState<string | null>(null);
+  const [pulseResponse, setPulseResponse] = useState<{ aiResponse: string; tags: PulseTag[] } | null>(null);
+
+  // Decision state
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('female');
   const [decision, setDecision] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<MetaInfo | null>(null);
+  const [decisionLoading, setDecisionLoading] = useState(false);
+  const [analysis, setAnalysis] = useState('');
+  const [decisionError, setDecisionError] = useState<string | null>(null);
+  const [decisionMeta, setDecisionMeta] = useState<DecisionMeta | null>(null);
+
+  // Misc
   const [dueCommits, setDueCommits] = useState<DueCommitment[]>([]);
-  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const uid = getOrCreateClientUid();
     setUserUid(uid);
-    fetch('/api/commitments?due=1', { headers: { [UID_HEADER]: uid } })
-      .then((r) => r.json())
-      .then((d) => setDueCommits(d.commitments || []))
+    Promise.all([
+      fetch('/api/pulse', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
+      fetch('/api/commitments?due=1', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
+    ])
+      .then(([pulseData, commitData]) => {
+        setTodayQuestion(pulseData.todayQuestion);
+        setPulseStats(pulseData.stats);
+        setDueCommits(commitData.commitments || []);
+      })
       .catch(() => {});
   }, []);
 
@@ -62,33 +80,55 @@ export default function Home() {
     setDueCommits((prev) => prev.filter((c) => c.id !== id));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function submitPulse(e: React.FormEvent) {
+    e.preventDefault();
+    if (!userUid || !todayQuestion) return;
+    setPulseLoading(true); setPulseError(null);
+    try {
+      const res = await fetch('/api/pulse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+        body: JSON.stringify({ questionId: todayQuestion.id, content: pulseContent }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setPulseError(data.error || '出错了'); setPulseLoading(false); return; }
+      setPulseResponse({ aiResponse: data.aiResponse, tags: data.tags });
+      setPulseStats(data.stats);
+      setTodayQuestion(data.nextQuestion);
+      setMode('pulse-response');
+    } catch (e: any) {
+      setPulseError(e.message || '网络错误');
+    } finally {
+      setPulseLoading(false);
+    }
+  }
+
+  function startAnotherPulse() {
+    setPulseContent('');
+    setPulseResponse(null);
+    setMode('pulse');
+  }
+
+  async function submitDecision(e: React.FormEvent) {
     e.preventDefault();
     if (!userUid) return;
-
-    setLoading(true);
-    setAnalysis('');
-    setError(null);
-    setMeta(null);
-
+    setDecisionLoading(true); setAnalysis(''); setDecisionError(null); setDecisionMeta(null);
+    setMode('decision-response');
     try {
       const res = await fetch('/api/decision', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
         body: JSON.stringify({ birthDate, gender, decision }),
       });
-
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || '出错了');
-        setLoading(false);
+        setDecisionError(data.error || '出错了');
+        setDecisionLoading(false);
         return;
       }
-
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -97,141 +137,206 @@ export default function Home() {
         buffer = lines.pop() || '';
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6);
-          if (!data.trim()) continue;
           try {
-            const parsed = JSON.parse(data);
+            const parsed = JSON.parse(line.slice(6));
             if (parsed.type === 'meta') {
-              setMeta((prev) => ({
+              setDecisionMeta((prev) => ({
                 framework: parsed.framework,
                 frameworkName: parsed.frameworkName,
                 confidence: parsed.confidence,
-                matchedKeywords: parsed.matchedKeywords || [],
                 memoryStats: parsed.memoryStats,
                 ...prev,
               }));
             } else if (parsed.type === 'text') {
               setAnalysis((prev) => prev + parsed.content);
             } else if (parsed.type === 'done') {
-              setMeta((prev) =>
-                prev ? { ...prev, model: parsed.model, provider: parsed.provider, decisionId: parsed.decisionId } : null
-              );
+              setDecisionMeta((prev) => prev ? { ...prev, model: parsed.model, provider: parsed.provider, decisionId: parsed.decisionId } : null);
             } else if (parsed.type === 'error') {
-              setError(parsed.message);
+              setDecisionError(parsed.message);
             }
-          } catch (e) {}
+          } catch {}
         }
       }
     } catch (err: any) {
-      setError(err.message || '网络错误');
+      setDecisionError(err.message || '网络错误');
     } finally {
-      setLoading(false);
+      setDecisionLoading(false);
     }
   }
 
   return (
     <div className="min-h-screen bg-paper">
-      {/* Top Nav — 极简 */}
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <div className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
-        </div>
+        <div className="font-serif text-xl font-semibold tracking-tightish text-ink-900">Life OS</div>
         <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/brain" className="hover:text-seal transition-colors">
-            Life Brain
-          </Link>
-          <Link href="/history" className="hover:text-seal transition-colors">
-            历史
-          </Link>
-          <Link href="/onboarding" className="hover:text-seal transition-colors">
-            建档
-          </Link>
-          <Link href="/pricing" className="hover:text-seal transition-colors">
-            定价
-          </Link>
-          <Link href="/about" className="hover:text-seal transition-colors">
-            关于
-          </Link>
+          <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
+          <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
+          <Link href="/onboarding" className="hover:text-seal transition-colors">建档</Link>
+          <Link href="/pricing" className="hover:text-seal transition-colors">定价</Link>
+          <Link href="/about" className="hover:text-seal transition-colors">关于</Link>
         </div>
       </nav>
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
-        {/* Hero — 严肃出版物头版 */}
-        {!showForm && !analysis && (
-          <section className="pt-16 pb-12 animate-fade-in-soft">
-            <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
-              · Issue 001 · 2026 ·
-            </p>
-            <h1 className="font-serif text-editorial-xl text-ink-900 mb-8 tracking-tighter">
-              35 岁后, 最难的<br />
-              不是没有建议.<br />
-              <span className="text-seal">是每个建议背后都有立场.</span>
-            </h1>
-            <div className="font-serif text-reading text-ink-500 max-w-prose-lg editorial-leading editorial-spacing">
-              <p>
-                父母养老、孩子出路、婚姻去留、职业转身、要不要迁移——
-                这些决定太重, 不能靠鸡汤, 也不能靠冲动.
+
+        {/* ===== PULSE MODE ===== */}
+        {mode === 'pulse' && (
+          <section className="pt-12 animate-fade-in-soft">
+            <div className="flex justify-between items-baseline mb-6">
+              <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal">
+                · Daily Pulse · Pulse #{pulseStats.totalPulses + 1} ·
               </p>
-              <p className="text-ink-700">
-                <strong className="text-ink-900 font-semibold">Life OS 不替你决定.</strong>
-                它记得你的背景, 用决策科学陪你把问题想透.
-              </p>
-              <p className="text-sm text-ink-400 pt-4 border-t border-paper-300 mt-8">
-                不安慰你 · 不命令你 · 不替你决定 · 只陪你看清结构
-              </p>
+              {pulseStats.weekPulses > 0 && (
+                <p className="font-mono text-xs text-ink-400">
+                  本周 {pulseStats.weekPulses} 条
+                </p>
+              )}
             </div>
 
-            <div className="mt-12 flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => setShowForm(true)}
-                className="btn-seal px-8 py-4 rounded-sm font-medium"
-              >
-                写下我最近最难的决定 →
-              </button>
-              <Link
-                href="/onboarding"
-                className="btn-ghost px-8 py-4 rounded-sm text-center"
-              >
-                先做 30 分钟深度建档
-              </Link>
-            </div>
-          </section>
-        )}
+            {!todayQuestion && (
+              <p className="text-ink-400 font-serif">加载中...</p>
+            )}
 
-        {/* Due Commitments — 编辑提醒 */}
-        {!showForm && !analysis && dueCommits.length > 0 && (
-          <section className="my-12 border-l-2 border-seal pl-6">
-            <p className="font-sans text-xs uppercase tracking-[0.15em] text-seal mb-4">
-              · 你之前跟我聊到的事 ·
-            </p>
-            <div className="space-y-4">
-              {dueCommits.slice(0, 3).map((c) => (
-                <div key={c.id}>
-                  <p className="font-serif text-reading text-ink-700">
-                    {c.commitmentText}
-                  </p>
-                  <div className="mt-2 flex items-center gap-4 text-xs">
-                    <span className="text-ink-400">
-                      {c.duePhrase || c.commitmentKind}
+            {todayQuestion && (
+              <>
+                <h1 className="font-serif text-editorial-lg text-ink-900 mb-3 tracking-tighter leading-tight">
+                  {todayQuestion.prompt}
+                </h1>
+                <p className="font-serif text-sm text-ink-500 mb-8 italic">
+                  {todayQuestion.helper}
+                </p>
+
+                <form onSubmit={submitPulse} className="space-y-4">
+                  <textarea
+                    value={pulseContent}
+                    onChange={(e) => setPulseContent(e.target.value)}
+                    placeholder={todayQuestion.exampleAnswer || '5-500 字 — 不需要工整, 真实就好.'}
+                    rows={6}
+                    minLength={5}
+                    maxLength={500}
+                    required
+                    className="w-full px-4 py-4 rounded-sm font-serif text-reading text-ink-700 resize-none"
+                  />
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-ink-400 font-mono">
+                      {pulseContent.length} / 500
                     </span>
-                    <button onClick={() => actCommitment(c.id, 'fulfill')} className="text-sage hover:text-ink-700">
-                      已完成
-                    </button>
-                    <button onClick={() => actCommitment(c.id, 'cancel')} className="text-ink-400 hover:text-ink-700">
-                      取消
-                    </button>
+                    <div className="flex gap-3">
+                      {pulseStats.totalPulses >= 1 && (
+                        <Link
+                          href="/history"
+                          className="text-sm text-ink-500 hover:text-seal transition-colors px-4 py-2"
+                        >
+                          看我的 Pulse 历史
+                        </Link>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={pulseLoading || !userUid || pulseContent.length < 5}
+                        className="btn-seal px-8 py-3 rounded-sm"
+                      >
+                        {pulseLoading ? '处理中...' : '记下来 →'}
+                      </button>
+                    </div>
                   </div>
+                </form>
+
+                {pulseError && (
+                  <div className="mt-6 p-4 border-l-2 border-ember bg-paper-200">
+                    <p className="text-sm text-ember font-sans">{pulseError}</p>
+                  </div>
+                )}
+
+                {/* Due commitments — 编辑提醒 */}
+                {dueCommits.length > 0 && (
+                  <div className="mt-16 pt-8 border-t border-paper-300">
+                    <p className="font-sans text-xs uppercase tracking-[0.15em] text-seal mb-4">
+                      · 你之前跟我聊到的事 ·
+                    </p>
+                    <div className="space-y-4">
+                      {dueCommits.slice(0, 3).map((c) => (
+                        <div key={c.id} className="border-l-2 border-paper-300 pl-4">
+                          <p className="font-serif text-reading text-ink-700">{c.commitmentText}</p>
+                          <div className="mt-2 flex items-center gap-4 text-xs">
+                            <span className="text-ink-400">{c.duePhrase || c.commitmentKind}</span>
+                            <button onClick={() => actCommitment(c.id, 'fulfill')} className="text-sage hover:text-ink-700">已完成</button>
+                            <button onClick={() => actCommitment(c.id, 'cancel')} className="text-ink-400 hover:text-ink-700">取消</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Decision Deep Dive — secondary CTA */}
+                <div className="mt-20 pt-8 border-t border-paper-300">
+                  <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-400 mb-3">
+                    · 重大决策 ·
+                  </p>
+                  <p className="font-serif text-reading text-ink-500 editorial-leading mb-4 max-w-prose-lg">
+                    当你面对一个想透了几周还没下决心的决定 — 父母养老、孩子留学、要不要离职、要不要离婚 —
+                    用 Decision Deep Dive. 12 维结构化拆解, 不是聊聊.
+                  </p>
+                  <button
+                    onClick={() => setMode('decision')}
+                    className="btn-ghost px-6 py-3 rounded-sm"
+                  >
+                    Decision Deep Dive →
+                  </button>
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </section>
         )}
 
-        {/* Decision Form */}
-        {showForm && (
+        {/* ===== PULSE RESPONSE ===== */}
+        {mode === 'pulse-response' && pulseResponse && (
+          <section className="pt-12 animate-fade-in-soft">
+            <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
+              · Recorded ·
+            </p>
+
+            {/* Tag chips */}
+            {pulseResponse.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-8">
+                {pulseResponse.tags.map((tag) => (
+                  <span key={tag} className="text-xs px-3 py-1 bg-paper-200 text-ink-700 rounded-sm font-sans">
+                    {TAG_DISPLAY[tag] || tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* AI response — 编辑部 pullquote 风格 */}
+            <blockquote className="font-serif text-2xl text-ink-900 leading-snug border-l-4 border-seal pl-6 mb-12 italic">
+              {pulseResponse.aiResponse}
+            </blockquote>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={startAnotherPulse} className="btn-seal px-6 py-3 rounded-sm">
+                再写一条 Pulse →
+              </button>
+              <button onClick={() => { setMode('decision'); setPulseResponse(null); }} className="btn-ghost px-6 py-3 rounded-sm">
+                把这个升级成重大决策
+              </button>
+            </div>
+
+            <p className="mt-10 pt-6 border-t border-paper-300 font-sans text-xs text-ink-400">
+              这条 Pulse 已写入你的 RMC episodic.
+              累积到一定量, AI 会在 Weekly Review 里识别你的 pattern.
+              当前共 {pulseStats.totalPulses} 条 / 本周 {pulseStats.weekPulses} 条.
+            </p>
+          </section>
+        )}
+
+        {/* ===== DECISION MODE ===== */}
+        {mode === 'decision' && (
           <section className="pt-8 pb-12 animate-fade-in-soft">
+            <button onClick={() => setMode('pulse')} className="text-sm text-ink-500 hover:text-seal mb-4">
+              ← 回到 Pulse
+            </button>
             <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-4">
-              · Decision Deep Dive ·
+              · Decision Deep Dive · 12 维协议 ·
             </p>
             <h2 className="font-serif text-editorial-lg text-ink-900 mb-3 tracking-tighter">
               你最近最难的决定是什么?
@@ -240,29 +345,17 @@ export default function Home() {
               说清楚背景、卡点、和你最怕的事. 越具体, 越准.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={submitDecision} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">
-                    生日
-                  </label>
-                  <input
-                    type="date"
-                    value={birthDate}
-                    onChange={(e) => setBirthDate(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 rounded-sm font-sans"
-                  />
+                  <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">生日</label>
+                  <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required
+                    className="w-full px-4 py-3 rounded-sm font-sans" />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">
-                    性别
-                  </label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    className="w-full px-4 py-3 rounded-sm font-sans"
-                  >
+                  <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">性别</label>
+                  <select value={gender} onChange={(e) => setGender(e.target.value)}
+                    className="w-full px-4 py-3 rounded-sm font-sans">
                     <option value="female">女</option>
                     <option value="male">男</option>
                     <option value="other">其他</option>
@@ -271,80 +364,56 @@ export default function Home() {
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">
-                  你的决定
-                </label>
-                <textarea
-                  value={decision}
-                  onChange={(e) => setDecision(e.target.value)}
-                  required
-                  minLength={20}
-                  maxLength={2000}
-                  rows={10}
+                <label className="block text-xs uppercase tracking-wider text-ink-500 mb-2">你的决定</label>
+                <textarea value={decision} onChange={(e) => setDecision(e.target.value)} required minLength={20} maxLength={2000} rows={10}
                   placeholder="例如: 我 38 岁, 在大厂年薪 80 万. 想离职做独立咨询, 但有两个孩子要养、老婆刚停薪、上海一套房子贷款还有 12 年. 最近半年这个念头反复来反复去, 卡住了."
-                  className="w-full px-4 py-4 rounded-sm font-serif text-reading text-ink-700 resize-none"
-                />
-                <p className="mt-2 text-xs text-ink-400 text-right">
-                  {decision.length} / 2000
-                </p>
+                  className="w-full px-4 py-4 rounded-sm font-serif text-reading text-ink-700 resize-none" />
+                <p className="mt-2 text-xs text-ink-400 text-right font-mono">{decision.length} / 2000</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={loading || !userUid || !birthDate || decision.length < 20}
-                  className="btn-seal px-8 py-3.5 rounded-sm flex-1"
-                >
-                  {loading ? '正在拆解...' : '开始拆解 →'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="btn-ghost px-8 py-3.5 rounded-sm"
-                >
-                  返回
-                </button>
-              </div>
+              <button type="submit" disabled={decisionLoading || !userUid || !birthDate || decision.length < 20}
+                className="btn-seal w-full px-8 py-3.5 rounded-sm">
+                {decisionLoading ? '正在拆解...' : '开始拆解 →'}
+              </button>
             </form>
           </section>
         )}
 
-        {/* Error */}
-        {error && (
-          <div className="my-8 p-4 border-l-2 border-ember bg-paper-200">
-            <p className="text-sm text-ember">{error}</p>
-          </div>
-        )}
+        {/* ===== DECISION RESPONSE ===== */}
+        {mode === 'decision-response' && (
+          <section className="pt-12 animate-fade-in-soft">
+            <button onClick={() => { setMode('pulse'); setAnalysis(''); setDecisionMeta(null); }} className="text-sm text-ink-500 hover:text-seal mb-4">
+              ← 完成
+            </button>
 
-        {/* Meta tag */}
-        {meta && (
-          <div className="mt-12 mb-6 flex flex-wrap gap-3 items-center text-xs font-sans">
-            <span className="px-3 py-1.5 bg-paper-200 text-ink-700 rounded-sm">
-              {meta.frameworkName}
-              {meta.confidence > 0 && (
-                <span className="text-ink-400 ml-2 font-mono">{Math.round(meta.confidence * 100)}%</span>
-              )}
-            </span>
-            {meta.memoryStats && meta.memoryStats.totalCards > 0 && (
-              <span className="px-3 py-1.5 bg-seal-50 text-seal-600 rounded-sm">
-                已注入 memory · {meta.memoryStats.hardAnchors} 锚点 ·{' '}
-                {meta.memoryStats.factCards + meta.memoryStats.boundaries + meta.memoryStats.episodes} 卡
-              </span>
+            {decisionError && (
+              <div className="mb-8 p-4 border-l-2 border-ember bg-paper-200">
+                <p className="text-sm text-ember">{decisionError}</p>
+              </div>
             )}
-            {meta.model && (
-              <span className="text-ink-400 ml-auto font-mono">
-                {meta.provider}/{meta.model}
-              </span>
-            )}
-          </div>
-        )}
 
-        {/* Analysis Report — 严肃出版物排版 */}
-        {analysis && (
-          <article className="prose prose-editorial max-w-none font-serif animate-fade-in-soft whitespace-pre-wrap">
-            {analysis}
-            {loading && <span className="ink-cursor" />}
-          </article>
+            {decisionMeta && (
+              <div className="mb-6 flex flex-wrap gap-3 items-center text-xs font-sans">
+                <span className="px-3 py-1.5 bg-paper-200 text-ink-700 rounded-sm">
+                  {decisionMeta.frameworkName}
+                  {decisionMeta.confidence > 0 && <span className="text-ink-400 ml-2 font-mono">{Math.round(decisionMeta.confidence * 100)}%</span>}
+                </span>
+                {decisionMeta.memoryStats && decisionMeta.memoryStats.totalCards > 0 && (
+                  <span className="px-3 py-1.5 bg-seal-50 text-seal-600 rounded-sm">
+                    已注入 memory · {decisionMeta.memoryStats.hardAnchors} 锚 · {decisionMeta.memoryStats.factCards + decisionMeta.memoryStats.boundaries + decisionMeta.memoryStats.episodes} 卡
+                  </span>
+                )}
+                {decisionMeta.model && (
+                  <span className="text-ink-400 ml-auto font-mono">{decisionMeta.provider}/{decisionMeta.model}</span>
+                )}
+              </div>
+            )}
+
+            <article className="prose prose-editorial max-w-none font-serif whitespace-pre-wrap">
+              {analysis}
+              {decisionLoading && <span className="ink-cursor" />}
+            </article>
+          </section>
         )}
 
         {/* Footer */}
