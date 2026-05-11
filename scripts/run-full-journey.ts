@@ -196,13 +196,20 @@ async function main() {
   const paddedUid = `${journeyUid.slice(0, 8)}-${journeyUid.slice(8, 12)}-0000-0000-000000000000`;
   const userId = findOrCreateUserByUid(paddedUid);
 
-  // 清空 journey 用户历史 (保证可重跑)
+  // 清空 journey 用户历史 (保证可重跑) — 按 FK 反向顺序删除
   const db = getDb();
-  db.prepare('DELETE FROM decisions WHERE user_id = ?').run(userId);
+  // 1) 删 daily_pulses (FK: rmc_episodic_id → relationship_memory_cards)
   db.prepare('DELETE FROM daily_pulses WHERE user_id = ?').run(userId);
-  db.prepare('DELETE FROM relationship_memory_cards WHERE user_id = ?').run(userId);
-  db.prepare('DELETE FROM user_core_state WHERE user_id = ?').run(userId);
+  // 2) 删 life_os_commitments (FK: source_decision_id → decisions)
   db.prepare('DELETE FROM life_os_commitments WHERE user_id = ?').run(userId);
+  // 3) 删 inspector_audit (FK: decision_id → decisions)
+  db.prepare('DELETE FROM inspector_audit WHERE user_id = ?').run(userId);
+  // 4) 删 relationship_memory_cards (FK: source_decision_id → decisions)
+  db.prepare('DELETE FROM relationship_memory_cards WHERE user_id = ?').run(userId);
+  // 5) 现在可以删 decisions
+  db.prepare('DELETE FROM decisions WHERE user_id = ?').run(userId);
+  // 6) user-only 表
+  db.prepare('DELETE FROM user_core_state WHERE user_id = ?').run(userId);
   db.prepare('DELETE FROM user_brain WHERE user_id = ?').run(userId);
 
   console.log(`\n🤖 Full Journey Simulator`);
