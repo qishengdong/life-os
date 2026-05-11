@@ -138,13 +138,16 @@ export default function Home() {
         </div>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/brain" className="hover:text-seal transition-colors">
-            我的 Life Brain
+            Life Brain
           </Link>
           <Link href="/history" className="hover:text-seal transition-colors">
             历史
           </Link>
           <Link href="/onboarding" className="hover:text-seal transition-colors">
             建档
+          </Link>
+          <Link href="/pricing" className="hover:text-seal transition-colors">
+            定价
           </Link>
           <Link href="/about" className="hover:text-seal transition-colors">
             关于

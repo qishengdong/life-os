@@ -1,88 +1,157 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '关于 / 隐私 / 协议 — Life OS',
+  title: '关于 Life OS',
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen p-6 md:p-12">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-12 flex justify-between items-baseline">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">关于 Life OS</h1>
-            <p className="text-zinc-400">服务说明 / 隐私 / 协议</p>
-          </div>
-          <Link href="/" className="text-zinc-400 hover:text-zinc-100 text-sm transition">
-            ← 返回
-          </Link>
+    <div className="min-h-screen bg-paper">
+      <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
+        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
+          Life OS
+        </Link>
+        <div className="flex gap-6 text-sm text-ink-500">
+          <Link href="/" className="hover:text-seal transition-colors">← 回主页</Link>
+        </div>
+      </nav>
+
+      <main className="max-w-prose-xl mx-auto px-6 pb-20">
+        <header className="pt-12 pb-12 animate-fade-in-soft">
+          <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
+            · Colophon ·
+          </p>
+          <h1 className="font-serif text-editorial-lg text-ink-900 mb-4 tracking-tighter">
+            关于 Life OS
+          </h1>
+          <p className="font-serif text-reading text-ink-500 editorial-leading max-w-prose-lg">
+            服务说明 / 边界 / 隐私 / 紧急资源
+          </p>
         </header>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">这是什么?</h2>
-          <p className="text-zinc-300 leading-relaxed mb-4">
-            Life OS 是一个 AI 决策辅助工具, 给中国 30-50 岁高知精英用. 当你面对重大人生决策
-            (要不要离职 / 要不要送父母去养老院 / 要不要离婚 / 要不要送孩子出国), 它帮你把决策结构展示出来,
-            问你硬核问题, <strong className="text-zinc-100">但不替你做决定</strong>.
-          </p>
-          <p className="text-zinc-300 leading-relaxed">
-            它不是心理咨询 / 不是法律咨询 / 不是投资顾问. 它是基于决策科学 (Annie Duke / Chip Heath / Kahneman)
-            和中国本土心理研究 (武志红 / 陈海贤) 设计的"反鸡汤决策伴侣".
-          </p>
+        <section className="mb-16 animate-fade-in-soft">
+          <h2 className="font-serif text-2xl text-ink-900 mb-5 tracking-tightish">
+            这是什么
+          </h2>
+          <div className="prose prose-editorial max-w-none font-serif">
+            <p>
+              Life OS 是给中国 30-50 岁高知精英的<strong>日常思考伴侣 + 重大决策系统</strong>.
+              当你面对重大人生决策 (要不要离职 / 要不要送父母去养老院 / 要不要离婚 / 要不要送孩子出国),
+              它帮你把决策结构展示出来, 问你硬核问题, <strong>但不替你做决定</strong>.
+            </p>
+            <p>
+              它不是心理咨询. 不是法律咨询. 不是投资顾问. 它是基于决策科学
+              (Annie Duke / Chip Heath / Kahneman) 和中国本土心理研究
+              (武志红 / 陈海贤) 设计的<em>思考伴侣</em>.
+            </p>
+            <p className="italic text-ink-700 border-l-2 border-seal pl-6 my-8">
+              "Life OS 不该只在你做重大决定时出现 — 它每天轻轻接住一个人生信号,
+              然后在关键时刻证明: 我之所以懂你, 是因为我一直在场."
+            </p>
+          </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">这不是什么</h2>
-          <ul className="space-y-2 text-zinc-300 list-disc list-inside">
-            <li>不是心理治疗师 — 涉及自伤 / 抑郁请联系 010-82951332</li>
-            <li>不是律师 — 涉及法律纠纷请咨询律师</li>
-            <li>不是医生 — 涉及医疗决策请咨询医生</li>
-            <li>不是财务顾问 — 涉及具体投资请咨询财务顾问</li>
-            <li>不是真人朋友的替代 — AI 是 supplement, 不是 substitute</li>
-          </ul>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">数据隐私底线</h2>
-          <ul className="space-y-3 text-zinc-300">
-            <li>✦ 你的全部数据存在我们 VPS, 不出境 (中国大陆主版)</li>
-            <li>✦ 我们不卖数据 / 不做广告画像 / 不训练模型</li>
-            <li>✦ 我们调 DeepSeek API 时不带你的 user_id</li>
-            <li>✦ 你可一键导出 / 删除全部数据 (V1.5)</li>
-            <li>
-              ✦ 完整隐私政策见{' '}
-              <Link href="/privacy" className="text-zinc-100 underline hover:text-white">
-                /privacy
-              </Link>
+        <section className="mb-16 animate-fade-in-soft">
+          <h2 className="font-serif text-2xl text-ink-900 mb-5 tracking-tightish">
+            这不是什么
+          </h2>
+          <ul className="font-serif text-reading text-ink-700 space-y-3 editorial-leading">
+            <li className="flex gap-3">
+              <span className="text-seal">·</span>
+              <span>不是心理治疗师 — 涉及自伤 / 抑郁请联系 <span className="font-mono text-seal">010-82951332</span></span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal">·</span>
+              <span>不是律师 — 涉及法律纠纷请咨询律师</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal">·</span>
+              <span>不是医生 — 涉及医疗决策请咨询医生</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal">·</span>
+              <span>不是财务顾问 — 涉及具体投资请咨询财务顾问</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal">·</span>
+              <span>不是真人朋友的替代 — AI 是 supplement, 不是 substitute</span>
             </li>
           </ul>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">紧急资源</h2>
-          <p className="text-zinc-300 mb-3">如果你或身边人正面临心理危机:</p>
-          <ul className="space-y-2 text-zinc-300">
-            <li>北京心理危机干预中心 24h: <strong className="text-amber-300">010-82951332</strong></li>
-            <li>全国心理援助热线: <strong className="text-amber-300">400-161-9995</strong></li>
-            <li>反家暴全国热线: <strong className="text-amber-300">12338</strong></li>
+        <section className="mb-16 animate-fade-in-soft">
+          <h2 className="font-serif text-2xl text-ink-900 mb-5 tracking-tightish">
+            隐私底线
+          </h2>
+          <ul className="font-serif text-reading text-ink-700 space-y-3 editorial-leading">
+            <li className="flex gap-3">
+              <span className="text-seal font-mono">01</span>
+              <span>你的全部数据存在我们的服务器, 不出境 (中国大陆主版)</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal font-mono">02</span>
+              <span>我们不卖数据 / 不做广告画像 / 不训练模型</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal font-mono">03</span>
+              <span>我们调用 DeepSeek API 时不附带你的 user_id</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal font-mono">04</span>
+              <span>你可一键导出 / 删除全部数据 (V1.5)</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-seal font-mono">05</span>
+              <span>完整隐私政策见{' '}
+                <Link href="/privacy" className="text-seal underline hover:text-seal-600">privacy</Link>
+              </span>
+            </li>
           </ul>
         </section>
 
-        <section className="mb-12 grid grid-cols-2 gap-4">
-          <Link href="/privacy" className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-600 transition">
-            <h3 className="font-semibold mb-2">隐私政策</h3>
-            <p className="text-zinc-500 text-sm">数据收集 / 存储 / 你的权利</p>
-          </Link>
-          <Link href="/terms" className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-600 transition">
-            <h3 className="font-semibold mb-2">服务协议</h3>
-            <p className="text-zinc-500 text-sm">使用规则 / 责任边界 / 付费</p>
-          </Link>
+        <section className="mb-16 animate-fade-in-soft">
+          <h2 className="font-serif text-2xl text-ink-900 mb-5 tracking-tightish">
+            紧急资源
+          </h2>
+          <p className="font-serif text-reading text-ink-500 mb-4">
+            如果你或身边的人正面临心理危机:
+          </p>
+          <div className="bg-paper-200 border-l-4 border-seal p-6 space-y-2 font-serif text-ink-700">
+            <div className="flex justify-between items-baseline">
+              <span>北京心理危机干预中心 24h</span>
+              <span className="font-mono text-seal">010-82951332</span>
+            </div>
+            <div className="flex justify-between items-baseline">
+              <span>全国心理援助热线</span>
+              <span className="font-mono text-seal">400-161-9995</span>
+            </div>
+            <div className="flex justify-between items-baseline">
+              <span>反家暴全国热线</span>
+              <span className="font-mono text-seal">12338</span>
+            </div>
+          </div>
         </section>
 
-        <footer className="text-center text-zinc-700 text-xs pt-8 border-t border-zinc-900">
-          Life OS V0 · 备案号 TBD · 运营主体 TBD
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+          <Link href="/privacy" className="border border-paper-300 rounded-sm p-6 hover:border-seal transition-colors group">
+            <h3 className="font-serif text-lg text-ink-900 mb-2 group-hover:text-seal">隐私政策</h3>
+            <p className="text-sm text-ink-500 font-sans">数据收集 / 存储 / 你的权利</p>
+          </Link>
+          <Link href="/terms" className="border border-paper-300 rounded-sm p-6 hover:border-seal transition-colors group">
+            <h3 className="font-serif text-lg text-ink-900 mb-2 group-hover:text-seal">服务协议</h3>
+            <p className="text-sm text-ink-500 font-sans">使用规则 / 责任边界 / 付费</p>
+          </Link>
+        </div>
+
+        <footer className="text-center pt-8 border-t border-paper-300">
+          <p className="font-mono text-xs text-ink-400">
+            Life OS · V1 dev · 备案号 TBD · 运营主体 TBD
+          </p>
+          <p className="font-serif text-sm text-ink-400 italic mt-4">
+            不安慰你 · 不命令你 · 不替你决定 · 只陪你看清结构
+          </p>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }
