@@ -10,6 +10,7 @@
 
 import { modelRouter } from '@/lib/model-router';
 import { addMemoryCard, fetchUserMemory } from '@/lib/memory';
+import { checkInputSafety, sanitizeOutput } from '@/lib/safety';
 import type { PulseTag } from './schema';
 import { TAG_DISPLAY } from './schema';
 import type { PulseQuestionId } from './schema';
@@ -20,6 +21,7 @@ interface ProcessResult {
   aiResponse: string;
   rmcEpisodicId: number | null;
   durationMs: number;
+  safetyTrigger?: string;
 }
 
 const PULSE_PROCESSOR_PROMPT = `你是 Life OS 的 Pulse 处理器. 用户写了今天的一条 Pulse — 这不是日记, 是"人生信号采集".
@@ -116,6 +118,50 @@ export async function processPulse(args: {
 }): Promise<ProcessResult> {
   const startTime = Date.now();
   const question = getQuestion(args.questionId);
+
+  // ============================================================================
+  // Safety gate (pre-LLM): 命中红线直接 short-circuit, 不烧 token
+  // ============================================================================
+  const safetyCheck = checkInputSafety(args.content);
+  if (safetyCheck.triggered && safetyCheck.response) {
+    console.log(`[pulse-tagger] ${safetyCheck.logTag} hit — short-circuit`);
+
+    // 危机 / 医疗 / 法律 / 财务都打 emotion 标签 + 对应类别
+    const tags: PulseTag[] = (() => {
+      if (safetyCheck.trigger === 'crisis') return ['emotion', 'health'];
+      if (safetyCheck.trigger === 'medical') return ['health'];
+      if (safetyCheck.trigger === 'legal') return ['potential-major-decision'];
+      if (safetyCheck.trigger === 'finance') return ['wealth'];
+      return ['emotion']; // blocklist 不存内容信号, 给中性 emotion
+    })();
+
+    // Blocklist 不写 RMC (不存这条内容)
+    let rmcEpisodicId: number | null = null;
+    if (safetyCheck.trigger !== 'blocklist') {
+      try {
+        rmcEpisodicId = addMemoryCard({
+          userId: args.userId,
+          cardType: 'episodic',
+          title: `Pulse (${question?.name || args.questionId}, ${safetyCheck.trigger}): ${args.content.slice(0, 40)}...`,
+          content: args.content,
+          confidence: 1.0,
+          source: 'pulse',
+          tags,
+        });
+      } catch (e) {
+        console.error('[pulse-tagger] failed to write RMC (safety branch):', e);
+      }
+    }
+
+    return {
+      tags,
+      aiResponse: safetyCheck.response,
+      rmcEpisodicId,
+      durationMs: Date.now() - startTime,
+      safetyTrigger: safetyCheck.trigger,
+    };
+  }
+
   const memory = fetchUserMemory(args.userId);
 
   // 拼装 brain context (压缩版, 给 tagger 用)
@@ -149,7 +195,13 @@ ${args.content}
 
     const parsed = parseProcessorOutput(response.content);
     tags = parsed.tags;
-    aiResponse = parsed.aiResponse;
+
+    // 输出 sanitize 兜底 — LLM 万一吐 blocklist, 拦
+    const cleaned = sanitizeOutput(parsed.aiResponse);
+    if (cleaned.modified) {
+      console.warn('[pulse-tagger] LLM output sanitized for blocklist');
+    }
+    aiResponse = cleaned.clean;
   } catch (e: any) {
     console.error('[pulse-tagger] LLM call failed:', e);
     // Fallback: 留空 tags + 一句中性回应

@@ -19,6 +19,7 @@ import {
   getActiveReplikaHits,
   buildReinforcementInjection,
 } from '@/lib/inspector/replika-filter';
+import { checkInputSafety, appendAIDisclosure } from '@/lib/safety';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -60,6 +61,22 @@ export async function POST(req: NextRequest) {
     const input = parsed.data;
     updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
     const memory = fetchUserMemory(userId);
+
+    // ===== Safety gate (输入端 short-circuit) =====
+    // 决策入口对 crisis / blocklist short-circuit. medical/legal/finance 不 short-circuit
+    // (用户提到这些话题, 决策框架自身有边界提示, 不挡用户思考).
+    const safety = checkInputSafety(input.decision);
+    if (safety.triggered && (safety.trigger === 'crisis' || safety.trigger === 'blocklist')) {
+      console.log(`[decision] ${safety.logTag} hit — short-circuit (no LLM call)`);
+      return new Response(
+        JSON.stringify({
+          shortCircuit: true,
+          trigger: safety.trigger,
+          response: safety.response,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     // ===== Replika risk check (输入端) =====
     const replikaDetections = runReplikaChecks({
@@ -131,10 +148,12 @@ export async function POST(req: NextRequest) {
               );
             }
             if (chunk.type === 'done') {
+              // 合规: 给保存的内容追加 AI 生成标识 footer
+              const contentWithDisclosure = appendAIDisclosure(fullContent);
               const decisionId = saveDecision({
                 userId,
                 question: input.decision,
-                aiResponse: fullContent,
+                aiResponse: contentWithDisclosure,
                 modelUsed: `${chunk.provider}/${chunk.model}`,
                 framework: route.framework,
                 tokensInput: chunk.usage?.prompt_tokens,

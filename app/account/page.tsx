@@ -189,6 +189,64 @@ export default function AccountPage() {
                 </div>
               </section>
             )}
+
+            {/* 数据权利 — PIPL 第 44/45/47 条 */}
+            <section className="mb-12 pb-8 border-t border-paper-300 pt-8">
+              <p className="font-sans text-xs uppercase tracking-[0.15em] text-seal mb-3">· 你的数据权利 ·</p>
+              <p className="font-serif text-sm text-ink-500 editorial-leading mb-5">
+                《个人信息保护法》: 你可以随时导出或删除你的全部数据. 不需要给理由.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="/api/account/data?download=1"
+                  className="px-5 py-2.5 rounded-sm border border-paper-300 hover:border-seal hover:text-seal font-serif text-sm transition-colors"
+                  onClick={(e) => {
+                    if (userUid) {
+                      e.preventDefault();
+                      fetch('/api/account/data?download=1', { headers: { [UID_HEADER]: userUid } })
+                        .then((r) => r.blob())
+                        .then((blob) => {
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `life-os-data-${Date.now()}.json`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        });
+                    }
+                  }}
+                >
+                  导出全部数据 (JSON)
+                </a>
+                <button
+                  className="px-5 py-2.5 rounded-sm border border-ember/40 text-ember hover:bg-ember/5 font-serif text-sm transition-colors"
+                  onClick={async () => {
+                    if (!userUid) return;
+                    const confirm1 = window.prompt(
+                      '这会永久删除你在 Life OS 上的全部数据 (Pulse, 决策, Brain, Sunday Review, Commitment, Outcome, 邮件历史).\n\n这个操作不可逆.\n\n如果确定, 请输入: 删除我的全部数据'
+                    );
+                    if (confirm1 !== '删除我的全部数据') {
+                      alert('已取消.');
+                      return;
+                    }
+                    const res = await fetch('/api/account/data', {
+                      method: 'DELETE',
+                      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+                      body: JSON.stringify({ confirm: '删除我的全部数据' }),
+                    });
+                    const d = await res.json();
+                    if (res.ok) {
+                      alert(`删除完成. 共 ${d.totalRowsDeleted} 行被删除.\n\n刷新页面后会创建新的匿名身份.`);
+                      window.location.href = '/';
+                    } else {
+                      alert(`删除失败: ${d.error}`);
+                    }
+                  }}
+                >
+                  永久删除全部数据
+                </button>
+              </div>
+            </section>
           </>
         )}
 

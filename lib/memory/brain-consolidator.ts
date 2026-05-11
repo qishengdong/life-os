@@ -270,6 +270,10 @@ ${commitmentsSection}
     // 去掉可能的 ```markdown 包裹
     brainContent = brainContent.replace(/^```markdown\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
 
+    // 合规: AI 生成内容标识
+    const { appendAIDisclosure } = await import('@/lib/safety');
+    brainContent = appendAIDisclosure(brainContent);
+
     // 6. 写入 user_brain
     const existingRow = db
       .prepare('SELECT user_id, version FROM user_brain WHERE user_id = ?')

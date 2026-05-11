@@ -185,6 +185,10 @@ ${brainSection}
     let content = response.content.trim();
     content = content.replace(/^```markdown\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
 
+    // 合规: AI 生成内容标识 (《生成式人工智能服务管理暂行办法》)
+    const { appendAIDisclosure } = await import('@/lib/safety');
+    content = appendAIDisclosure(content);
+
     return {
       success: true,
       content,
