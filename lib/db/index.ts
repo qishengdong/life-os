@@ -140,6 +140,29 @@ export function getDb(): Database.Database {
     );
   `);
 
+  // ===== Sunday Review — V1 付费感峰值 (Layer 2: Weekly Pattern) =====
+  // 每周日生成 800-1200 字 pattern recognition
+  // 回答 3 问: 反复提到什么 / 没说出口的张力 / 下周注意什么
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS sunday_reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      week_start INTEGER NOT NULL,         -- 这周周一 unix timestamp (本地 00:00)
+      week_end INTEGER NOT NULL,           -- 这周周日 23:59 unix timestamp
+      content TEXT NOT NULL,                -- 完整 markdown
+      pulse_count INTEGER DEFAULT 0,
+      decision_count INTEGER DEFAULT 0,
+      char_count INTEGER DEFAULT 0,
+      tokens_used INTEGER,
+      read_at INTEGER,                     -- 用户首次阅读时间 (NULL = 未读)
+      generated_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      UNIQUE(user_id, week_start)          -- 每周每用户唯一
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_review_user ON sunday_reviews(user_id, week_start DESC);
+  `);
+
   // ===== Daily Pulse — V1 lock-in 核心 (doctrine_pulse_is_signal_not_diary) =====
   // 每条 Pulse 是 5 类轮换问题之一的答, 不是日记
   _db.exec(`

@@ -54,6 +54,7 @@ export default function Home() {
 
   // Misc
   const [dueCommits, setDueCommits] = useState<DueCommitment[]>([]);
+  const [hasUnreadReview, setHasUnreadReview] = useState(false);
 
   useEffect(() => {
     const uid = getOrCreateClientUid();
@@ -61,11 +62,13 @@ export default function Home() {
     Promise.all([
       fetch('/api/pulse', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
       fetch('/api/commitments?due=1', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
+      fetch('/api/sunday-review', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
     ])
-      .then(([pulseData, commitData]) => {
+      .then(([pulseData, commitData, reviewData]) => {
         setTodayQuestion(pulseData.todayQuestion);
         setPulseStats(pulseData.stats);
         setDueCommits(commitData.commitments || []);
+        setHasUnreadReview(reviewData.hasUnread || false);
       })
       .catch(() => {});
   }, []);
@@ -169,15 +172,33 @@ export default function Home() {
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <div className="font-serif text-xl font-semibold tracking-tightish text-ink-900">Life OS</div>
         <div className="flex gap-6 text-sm text-ink-500">
+          <Link href="/review" className="hover:text-seal transition-colors relative">
+            Weekly Review
+          </Link>
           <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
           <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
-          <Link href="/onboarding" className="hover:text-seal transition-colors">建档</Link>
           <Link href="/pricing" className="hover:text-seal transition-colors">定价</Link>
-          <Link href="/about" className="hover:text-seal transition-colors">关于</Link>
         </div>
       </nav>
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
+
+        {/* ===== UNREAD WEEKLY REVIEW BANNER ===== */}
+        {hasUnreadReview && mode === 'pulse' && (
+          <Link
+            href="/review"
+            className="block mb-6 mt-6 group animate-fade-in-soft"
+          >
+            <div className="border-l-4 border-seal bg-seal-50 px-5 py-4 hover:bg-paper-200 transition-colors">
+              <p className="font-sans text-xs uppercase tracking-[0.15em] text-seal mb-1">
+                · 这周的 Weekly Review 已生成 ·
+              </p>
+              <p className="font-serif text-reading text-ink-900 group-hover:text-seal transition-colors">
+                这周 AI 看见了什么 — 点开看 →
+              </p>
+            </div>
+          </Link>
+        )}
 
         {/* ===== NEW USER MARKETING HERO (totalPulses === 0) ===== */}
         {mode === 'pulse' && pulseStats.totalPulses === 0 && (
