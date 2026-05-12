@@ -99,7 +99,7 @@ export default function AccountPage() {
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
           Life OS
         </Link>
-        <Link href="/" className="text-sm text-ink-500 hover:text-seal transition-colors">← Pulse</Link>
+        <Link href="/pulse" className="text-sm text-ink-500 hover:text-seal transition-colors">← Pulse</Link>
       </nav>
 
       <main className="max-w-prose-lg mx-auto px-6 pb-20">

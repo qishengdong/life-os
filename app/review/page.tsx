@@ -79,7 +79,7 @@ export default function ReviewPage() {
           Life OS
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/" className="hover:text-seal transition-colors">← Pulse</Link>
+          <Link href="/pulse" className="hover:text-seal transition-colors">← Pulse</Link>
           <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
           <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
         </div>

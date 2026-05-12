@@ -156,7 +156,7 @@ export default function OnboardingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/" className="btn-seal px-8 py-3 rounded-sm text-center">
+            <Link href="/pulse" className="btn-seal px-8 py-3 rounded-sm text-center">
               写今天的第一条 Pulse →
             </Link>
             <Link href="/brain" className="btn-ghost px-8 py-3 rounded-sm text-center">

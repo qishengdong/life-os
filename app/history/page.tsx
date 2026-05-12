@@ -57,7 +57,7 @@ export default function HistoryPage() {
           Life OS
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/" className="hover:text-seal transition-colors">← 决策</Link>
+          <Link href="/pulse" className="hover:text-seal transition-colors">← 决策</Link>
           <Link href="/brain" className="hover:text-seal transition-colors">我的 Life Brain</Link>
         </div>
       </nav>
@@ -114,7 +114,7 @@ export default function HistoryPage() {
                 <p className="font-serif text-reading text-ink-500 mb-6">
                   还没有决策记录.
                 </p>
-                <Link href="/" className="btn-seal px-6 py-3 rounded-sm">
+                <Link href="/pulse" className="btn-seal px-6 py-3 rounded-sm">
                   写下第一个决策 →
                 </Link>
               </div>

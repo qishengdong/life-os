@@ -40,7 +40,7 @@ export default function BrainPage() {
           Life OS
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/" className="hover:text-seal transition-colors">
+          <Link href="/pulse" className="hover:text-seal transition-colors">
             ← 决策
           </Link>
           <Link href="/history" className="hover:text-seal transition-colors">
@@ -101,7 +101,7 @@ export default function BrainPage() {
               <Link href="/onboarding" className="btn-seal px-6 py-3 rounded-sm">
                 深度建档 →
               </Link>
-              <Link href="/" className="btn-ghost px-6 py-3 rounded-sm">
+              <Link href="/pulse" className="btn-ghost px-6 py-3 rounded-sm">
                 先聊一个决策
               </Link>
             </div>

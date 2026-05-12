@@ -113,7 +113,7 @@ export default function OutcomesPage() {
           Life OS
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/" className="hover:text-seal transition-colors">← Pulse</Link>
+          <Link href="/pulse" className="hover:text-seal transition-colors">← Pulse</Link>
           <Link href="/review" className="hover:text-seal transition-colors">Weekly Review</Link>
           <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
         </div>
@@ -176,7 +176,7 @@ export default function OutcomesPage() {
               你还没做过重大决策. 写下第一个之后, 30 天后 AI 会回来问"当时担心的事现在怎么样了".
             </p>
             <div className="mt-8">
-              <Link href="/" className="btn-seal px-6 py-3 rounded-sm">
+              <Link href="/pulse" className="btn-seal px-6 py-3 rounded-sm">
                 写下第一个决策 →
               </Link>
             </div>
