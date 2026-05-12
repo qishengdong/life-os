@@ -63,6 +63,9 @@ export default async function HomePage() {
           <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">
             样品
           </Link>
+          <Link href="/membership" className="hover:text-seal-500 transition-colors">
+            会员
+          </Link>
           <Link href="/pulse" className="hover:text-seal-500 transition-colors">
             进入
           </Link>
@@ -246,10 +249,10 @@ export default async function HomePage() {
           </div>
           <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
             <Link
-              href="/pulse"
+              href="/membership"
               className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              开始第一次咨询 →
+              看完整会员制度 →
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
@@ -276,6 +279,7 @@ export default async function HomePage() {
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>
+              <Link href="/membership" className="hover:text-seal-500 transition-colors">会员</Link>
               <Link href="/pulse" className="hover:text-seal-500 transition-colors">进入</Link>
               <Link href="/terms" className="hover:text-seal-500 transition-colors">服务条款</Link>
               <Link href="/privacy" className="hover:text-seal-500 transition-colors">隐私</Link>

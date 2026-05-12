@@ -239,5 +239,5 @@ export const METHODOLOGY_CLOSING = {
     'LifeOS 是把这 40 年的最佳实践 — Checklist Manifesto / PreMortem / Naturalistic Decision Making / Thinking in Bets / Noise / Anti-Chicken-Soup — 用 AI 的边际成本固化下来. 你不需要请一位资深顾问 (一小时 ¥1000-3000), 也不需要把这些书全部读完. 你需要一份契约, 让 AI 在你面对重大决定时, 不漏掉任何该问的事.',
   ],
   ctaPrimary: { label: '读三份真实的 sample brief', href: '/sample-brief' },
-  ctaSecondary: { label: '开始第一次咨询', href: '/onboarding' },
+  ctaSecondary: { label: '看会员制度', href: '/membership' },
 };

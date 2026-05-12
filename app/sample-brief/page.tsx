@@ -171,10 +171,10 @@ async function SampleBriefContent({
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/onboarding"
+              href="/membership"
               className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              开始第一次咨询 →
+              看完整会员制度 →
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
