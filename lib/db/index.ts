@@ -338,7 +338,104 @@ export function getDb(): Database.Database {
     console.log('[DB Migration] Added framework column to decisions');
   }
 
+  // ===== Migration v17: decision_briefs table (Day 17 publication-grade output) =====
+  // 跟 decisions 表分开 — decisions 是单 LLM call 老路径, decision_briefs 是新两 pass 管线
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS decision_briefs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      decision_id INTEGER,             -- 可选: 关联 decisions 表 (如果同时双写)
+      brief_number TEXT NOT NULL UNIQUE,
+      topic TEXT NOT NULL,
+      framework TEXT NOT NULL,
+      brief_json TEXT NOT NULL,        -- DecisionBrief 序列化 JSON (full)
+      rendered_markdown TEXT,          -- 渲染好的 markdown (BriefRenderer 也可以从 JSON 重渲, 这里缓存一份)
+      total_char_count INTEGER,
+      editor_pass_used INTEGER DEFAULT 0,
+      tokens_used INTEGER,
+      duration_analyst_ms INTEGER,
+      duration_editor_ms INTEGER,
+      authored_at INTEGER DEFAULT (unixepoch()),
+      is_sample INTEGER DEFAULT 0,     -- 1 = 公开 sample brief (用于 /sample-brief 页)
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (decision_id) REFERENCES decisions(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_briefs_user ON decision_briefs(user_id, authored_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_briefs_sample ON decision_briefs(is_sample, authored_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_briefs_number ON decision_briefs(brief_number);
+  `);
+
   return _db;
+}
+
+// ============================================================================
+// Decision Brief storage helpers (Day 17)
+// ============================================================================
+export function saveBrief(args: {
+  userId: number;
+  decisionId?: number;
+  briefJson: string;          // 已 JSON.stringify 的 DecisionBrief
+  briefNumber: string;
+  topic: string;
+  framework: string;
+  renderedMarkdown?: string;
+  totalCharCount: number;
+  editorPassUsed: boolean;
+  tokensUsed: number;
+  durationAnalystMs: number;
+  durationEditorMs: number;
+  isSample?: boolean;
+}): number {
+  const db = getDb();
+  const res = db
+    .prepare(
+      `INSERT INTO decision_briefs (
+         user_id, decision_id, brief_number, topic, framework,
+         brief_json, rendered_markdown, total_char_count,
+         editor_pass_used, tokens_used, duration_analyst_ms, duration_editor_ms, is_sample
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+    .run(
+      args.userId,
+      args.decisionId ?? null,
+      args.briefNumber,
+      args.topic,
+      args.framework,
+      args.briefJson,
+      args.renderedMarkdown ?? null,
+      args.totalCharCount,
+      args.editorPassUsed ? 1 : 0,
+      args.tokensUsed,
+      args.durationAnalystMs,
+      args.durationEditorMs,
+      args.isSample ? 1 : 0
+    );
+  return res.lastInsertRowid as number;
+}
+
+export function getBriefByNumber(briefNumber: string) {
+  const db = getDb();
+  return db
+    .prepare(`SELECT * FROM decision_briefs WHERE brief_number = ?`)
+    .get(briefNumber) as any;
+}
+
+export function getSampleBriefs(): any[] {
+  const db = getDb();
+  return db
+    .prepare(`SELECT * FROM decision_briefs WHERE is_sample = 1 ORDER BY authored_at DESC`)
+    .all() as any[];
+}
+
+export function getBriefsForUser(userId: number, limit = 50): any[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT id, brief_number, topic, framework, total_char_count, authored_at, editor_pass_used
+       FROM decision_briefs WHERE user_id = ? ORDER BY authored_at DESC LIMIT ?`
+    )
+    .all(userId, limit) as any[];
 }
 
 // ============================================================================
