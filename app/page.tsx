@@ -66,6 +66,9 @@ export default async function HomePage() {
           <Link href="/membership" className="hover:text-seal-500 transition-colors">
             会员
           </Link>
+          <Link href="/transparency" className="hover:text-seal-500 transition-colors">
+            透明度
+          </Link>
           <Link href="/pulse" className="hover:text-seal-500 transition-colors">
             进入
           </Link>
@@ -280,6 +283,7 @@ export default async function HomePage() {
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>
               <Link href="/membership" className="hover:text-seal-500 transition-colors">会员</Link>
+              <Link href="/transparency" className="hover:text-seal-500 transition-colors">透明度</Link>
               <Link href="/pulse" className="hover:text-seal-500 transition-colors">进入</Link>
               <Link href="/terms" className="hover:text-seal-500 transition-colors">服务条款</Link>
               <Link href="/privacy" className="hover:text-seal-500 transition-colors">隐私</Link>
