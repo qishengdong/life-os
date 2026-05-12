@@ -8,7 +8,8 @@ export type CheckCode =
   | 'C3' // 时间错乱 (今天/昨天/上周引用错误)
   | 'C5' // 表格客服腔 (机械列表 / "尊敬的用户")
   | 'C14' // commitment fabrication (用户问"你说要..." 必须能在 commitments 表查到)
-  | 'C15'; // fact provenance (具体事实必须能在 RMC 找到 source)
+  | 'C15' // fact provenance (具体事实必须能在 RMC 找到 source)
+  | 'C16'; // user self-contradiction surfaced (用户跨决策矛盾必须被 Brief 主动 surface)
 
 export type Severity = 'low' | 'high' | 'p0';
 

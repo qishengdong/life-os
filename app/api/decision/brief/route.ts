@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
 import { generateBrief } from '@/lib/decision/brief-pipeline';
 import { renderBriefMarkdown } from '@/lib/decision/brief-schema';
+import { writeC16Audit } from '@/lib/decision/contradiction-detector';
 import { saveBrief, saveDecision, updateUserProfile } from '@/lib/db';
 import { scheduleOutcomes } from '@/lib/outcomes/store';
 
@@ -124,6 +125,15 @@ export async function POST(req: NextRequest) {
       console.error('[decision/brief] scheduleOutcomes failed:', e);
     }
 
+    // C16 audit (写入 inspector_audit, 跟其他 C* check 一起入表)
+    if (result.contradictions && result.contradictions.length > 0) {
+      try {
+        writeC16Audit({ userId, decisionId, contradictions: result.contradictions });
+      } catch (e) {
+        console.error('[decision/brief] writeC16Audit failed:', e);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       briefRowId,
@@ -131,11 +141,13 @@ export async function POST(req: NextRequest) {
       brief, // 完整结构化 brief
       renderedMarkdown,
       validationIssues: result.validationIssues,
+      contradictions: result.contradictions, // C16 检测结果 (供 UI debug)
       timings: result.timings,
       meta: {
         editorPassUsed: brief.meta.editorPassUsed,
         totalCharCount: brief.meta.totalCharCount,
         framework: brief.meta.framework,
+        contradictionsFound: (result.contradictions?.length || 0),
       },
     });
   } catch (e: any) {

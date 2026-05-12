@@ -279,7 +279,9 @@ function extractRealAge(ctx: InspectorContext): number | null {
 // 主入口: 跑所有检查
 // ============================================================================
 
-const ALL_CHECKS: Record<CheckCode, (ctx: InspectorContext) => CheckResult> = {
+// C16 (用户跨决策矛盾) 是 pre-generation 检测, 不在这里跑.
+// 它由 lib/decision/contradiction-detector.ts 在 brief-pipeline 里前置注入.
+const ALL_CHECKS: Partial<Record<CheckCode, (ctx: InspectorContext) => CheckResult>> = {
   C1: checkC1,
   C2: checkC2,
   C3: checkC3,
@@ -291,6 +293,7 @@ const ALL_CHECKS: Record<CheckCode, (ctx: InspectorContext) => CheckResult> = {
 export function runAllChecks(ctx: InspectorContext): CheckResult[] {
   const results: CheckResult[] = [];
   for (const [code, fn] of Object.entries(ALL_CHECKS)) {
+    if (!fn) continue;
     try {
       const result = fn(ctx);
       results.push(result);

@@ -28,6 +28,12 @@ import {
   countCharsCN,
 } from './brief-schema';
 import { appendAIDisclosure, checkInputSafety } from '@/lib/safety';
+import {
+  detectContradictions,
+  renderContradictionsForAnalyst,
+  writeC16Audit,
+  type Contradiction,
+} from './contradiction-detector';
 
 export interface BriefGenerationInput {
   userId: number;
@@ -54,8 +60,11 @@ export interface BriefGenerationResult {
     trigger: string;
     response: string;
   };
+  /** C16 检测到的矛盾 (供 UI 展示 / debug) */
+  contradictions?: Contradiction[];
   /** 各阶段耗时 (毫秒) */
   timings: {
+    contradictionDetection?: number;
     analyst?: number;
     editor?: number;
     total: number;
@@ -96,24 +105,38 @@ export async function generateBrief(
   const age = calculateAge(input.birthDate);
 
   // ============================================================
+  // 1.5. Contradiction Detection (Inspector C16, pre-Analyst)
+  // ============================================================
+  const contradictionResult = await detectContradictions({
+    currentDecision: input.decision,
+    memoryContext,
+  });
+  const contradictionInjection = renderContradictionsForAnalyst(
+    contradictionResult.contradictions
+  );
+
+  // ============================================================
   // 2. Analyst pass — 出 JSON 草稿
   // ============================================================
   const tAnalyst0 = Date.now();
   let analystResp: any;
   try {
+    const analystUserMsg = buildAnalystUserMessage({
+      decision: input.decision,
+      age,
+      gender: input.gender,
+      framework: route.framework,
+      memoryContext,
+    });
+    // 如果检测到矛盾, 把它注入 user message 末尾
+    const finalUserMsg = contradictionInjection
+      ? `${analystUserMsg}\n\n${contradictionInjection}`
+      : analystUserMsg;
+
     analystResp = await modelRouter.complete({
       messages: [
         { role: 'system', content: ANALYST_SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: buildAnalystUserMessage({
-            decision: input.decision,
-            age,
-            gender: input.gender,
-            framework: route.framework,
-            memoryContext,
-          }),
-        },
+        { role: 'user', content: finalUserMsg },
       ],
       provider: 'deepseek',
       temperature: 0.5,
@@ -123,7 +146,11 @@ export async function generateBrief(
     return {
       success: false,
       error: `Analyst pass failed: ${e.message}`,
-      timings: { total: Date.now() - t0 },
+      contradictions: contradictionResult.contradictions,
+      timings: {
+        contradictionDetection: contradictionResult.durationMs,
+        total: Date.now() - t0,
+      },
     };
   }
   const tAnalyst = Date.now() - tAnalyst0;
@@ -236,11 +263,17 @@ export async function generateBrief(
   // 5. 验证
   const v = validateBrief(brief);
 
+  // 6. 写 C16 audit (异步, 不阻塞返回)
+  // 注: 这里 decisionId 还没有 — 调用方 (API route) 会负责真写表
+  // 这里只把 contradictions 透传出去
+
   return {
     success: true,
     brief,
     validationIssues: v.issues.length > 0 ? v.issues : undefined,
+    contradictions: contradictionResult.contradictions,
     timings: {
+      contradictionDetection: contradictionResult.durationMs,
       analyst: tAnalyst,
       editor: tEditor,
       total: Date.now() - t0,

@@ -17,6 +17,7 @@
 import 'dotenv/config';
 import { getDb, saveBrief, findOrCreateUserByUid } from '../lib/db';
 import { addMemoryCard } from '../lib/memory';
+import { writeC16Audit } from '../lib/decision/contradiction-detector';
 import { generateBrief } from '../lib/decision/brief-pipeline';
 import { renderBriefMarkdown } from '../lib/decision/brief-schema';
 import crypto from 'crypto';
@@ -391,9 +392,24 @@ async function main() {
       isSample: true,
     });
 
+    // C16 audit (跟其他 inspector check 一起入表)
+    if (result.contradictions && result.contradictions.length > 0) {
+      try {
+        writeC16Audit({ userId, decisionId: null, contradictions: result.contradictions });
+      } catch (e) {
+        console.error('writeC16Audit failed:', e);
+      }
+    }
+
     console.log(`✓ saved as briefRowId=${briefRowId}, briefNumber=${brief.briefNumber}`);
     console.log(`  字数 ${brief.meta.totalCharCount}, editor=${brief.meta.editorPassUsed}, tokens=${brief.meta.tokensUsed}`);
     console.log(`  耗时: analyst ${brief.meta.durationMs.analyst}ms, editor ${brief.meta.durationMs.editor}ms`);
+    if (result.contradictions && result.contradictions.length > 0) {
+      console.log(`  🔴 C16 检测到 ${result.contradictions.length} 个矛盾 (已注入 brief + 写入 audit):`);
+      for (const c of result.contradictions) {
+        console.log(`    - [${c.severity}] ${c.pastStatement.slice(0, 50)}... (${c.attribution})`);
+      }
+    }
     if (result.validationIssues && result.validationIssues.length > 0) {
       console.log(`  ⚠ validation issues:`);
       for (const issue of result.validationIssues) console.log(`    - ${issue}`);
