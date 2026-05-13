@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 02 · Color Palette · V2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../../_shared/editorial.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../01-key-wordmark/v2/key-favicon-32.png">
+  <style>
+    /* Status color cards */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin: 24px 0 56px;
+      border: 0.5px solid var(--ink);
+    }
+    .status-card {
+      padding: 28px 28px 24px;
+      border-right: 0.5px solid var(--ink);
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .status-card:last-child { border-right: none; }
+    .status-card__swatch {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-card__name {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+    .status-card__meta {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.6;
+      color: var(--ink-500);
+    }
+    .status-card__use {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-700);
+      margin-top: auto;
+    }
+    .status-card__use strong { font-style: normal; color: var(--ink); }
+
+    /* Sample text on each status */
+    .status-sample {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 2px;
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Use rules block: ✓ / ✗ list */
+    .uselist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 28px;
+      margin: 12px 0 24px;
+    }
+    .uselist h4 {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+    .uselist h4.ok   { color: var(--burgundy); }
+    .uselist h4.no   { color: var(--ink-400); }
+    .uselist ul { list-style: none; padding: 0; margin: 0; }
+    .uselist li {
+      font-family: var(--serif-en);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink-700);
+      padding-left: 22px;
+      position: relative;
+    }
+    .uselist li::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: var(--serif-en);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .uselist .ok-list li::before { content: '✓'; color: var(--burgundy); }
+    .uselist .no-list li::before { content: '✗'; color: var(--ink-400); }
+
+    /* Print Pantone table */
+    table.print-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--serif-en);
+      font-size: 14px;
+      margin: 24px 0 48px;
+    }
+    table.print-table th, table.print-table td {
+      text-align: left;
+      padding: 14px 18px 14px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+      vertical-align: top;
+    }
+    table.print-table th {
+      font-family: var(--sans-en);
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      border-bottom-color: var(--burgundy);
+    }
+    table.print-table td.swatch-cell {
+      width: 48px;
+    }
+    .swatch-pill {
+      display: inline-block;
+      width: 32px;
+      height: 16px;
+      border: 0.5px solid var(--paper-400);
+    }
+    table.print-table td.mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; }
+    table.print-table td.note {
+      font-style: italic;
+      font-size: 13.5px;
+      color: var(--ink-500);
+      line-height: 1.55;
+      max-width: 36em;
+    }
+
+    /* Reserved-tint cards */
+    .reserved {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 56px;
+    }
+    .reserved-card {
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      padding: 24px 26px;
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .reserved-card__sample {
+      height: 88px;
+      border: 0.5px solid var(--ink-300);
+    }
+    .reserved-card__name {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 1.2;
+      margin: 0 0 4px;
+    }
+    .reserved-card__hex {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      margin-bottom: 12px;
+    }
+    .reserved-card__use {
+      font-family: var(--serif-en);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--ink-700);
+    }
+
+    /* Dark mode statement block */
+    .dm-statement {
+      background: var(--navy);
+      color: var(--paper-100);
+      padding: 56px 48px;
+      margin: 32px 0 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: end;
+    }
+    .dm-statement__q {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 26px;
+      line-height: 1.4;
+      color: var(--paper-100);
+      margin: 0;
+      text-wrap: pretty;
+    }
+    .dm-statement__q em { color: #B05863; }
+    .dm-statement__why {
+      font-family: var(--serif-en);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--paper-300);
+      max-width: 32em;
+    }
+    .dm-statement__why .mono { color: var(--warm-gray); }
+    .dm-statement__label {
+      grid-column: 1 / -1;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--paper-300);
+      margin-bottom: 8px;
+    }
+
+    /* Body-color comparison */
+    .body-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 0.5px solid var(--paper-400);
+      margin: 24px 0 56px;
+    }
+    .body-compare__col {
+      padding: 36px 32px;
+      border-right: 0.5px solid var(--paper-400);
+      background: var(--paper-100);
+    }
+    .body-compare__col:last-child { border-right: none; }
+    .body-compare__cap {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 12px;
+    }
+    .body-compare__cap .mono {
+      letter-spacing: 0.04em;
+      color: var(--ink-400);
+      margin-left: 8px;
+      font-size: 10px;
+    }
+    .body-compare__sample {
+      font-family: var(--serif-en);
+      font-size: 16px;
+      line-height: 1.75;
+      max-width: 30em;
+    }
+    .body-compare__sample em { font-style: italic; }
+
+    @media (max-width: 768px) {
+      .status-grid { grid-template-columns: 1fr; }
+      .status-card { border-right: none; border-bottom: 0.5px solid var(--ink); min-height: auto; }
+      .uselist { grid-template-columns: 1fr; }
+      .reserved { grid-template-columns: 1fr; }
+      .dm-statement { grid-template-columns: 1fr; padding: 44px 28px; }
+      .body-compare { grid-template-columns: 1fr; }
+      .body-compare__col { border-right: none; border-bottom: 0.5px solid var(--paper-400); }
+    }
+  </style>
+</head>
+<body>
+  <img src="../../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V2</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 02 · V2 · production grade</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-02 · v2 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">Palette <em>V2</em></h1>
+
+    <p class="subtitle">
+      Status colors added (3). Print Pantone reference codified. Dark-mode
+      policy declared. Reserved scale steps (paper-500, burgundy-300) earn
+      explicit roles. Long-form reading preference set to Ink 700.
+    </p>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; What changed since V1</span>Five additions</h2>
+
+    <ol class="roman">
+      <li><strong>Status colors</strong> — three: success (sage), warning (amber), danger (ember). Inherited from existing code use; codified into the palette with explicit usage rules.</li>
+      <li><strong>Print Pantone reference</strong> — five core colors, each with a Pantone equivalent, recommended stock, and a printer note. Indicative — wet proof required before commitment.</li>
+      <li><strong>Dark-mode policy</strong> — explicit: KEY does not support OS-level dark mode. Night Navy is a reserved surface, never an inverted theme.</li>
+      <li><strong>Reserved scale steps documented</strong> — paper-500 and burgundy-300 each get an explicit role rather than sitting in the JSON unexplained.</li>
+      <li><strong>Long-form body color</strong> — Ink 700 (<span class="mono">#2A2622</span>) is the new default for sustained-reading surfaces. Ink 500 is short secondary type only.</li>
+    </ol>
+
+    <hr class="rule">
+
+    <!-- ────────── STATUS COLORS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; Status colors</span>Sage, amber, ember</h2>
+
+    <p>Three colors, inherited from the existing code stack and now formalised. The role is narrow: short text inline, small icon fills, badge backgrounds. Never page backgrounds. Never large fills.</p>
+
+    <div class="status-grid">
+
+      <div class="status-card">
+        <div class="status-card__swatch" style="background:#5C8576;"></div>
+        <div>
+          <div class="status-card__name">Status · Success</div>
+          <div class="status-card__meta">
+            <div>HEX &nbsp; #5C8576 &nbsp; · &nbsp; <em>sage</em></div>
+            <div>RGB &nbsp; 92 133 118</div>
+            <div>WCAG &nbsp; 4.2 : 1 on Paper · AA large</div>
+            <div>Tint bg · #EAEFEC</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="status-sample" style="background:#EAEFEC;color:#5C8576;">Confirmed</span>
+          <span class="status-sample" style="background:#5C8576;color:#F7F3EA;">Sent</span>
+        </div>
+        <div class="status-card__use">
+          <strong>Use for</strong>: Outcome &ldquo;applied/held&rdquo; signal, email sent confirmation, validation pass, follow-up answered.
+        </div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-card__swatch" style="background:#B8843C;"></div>
+        <div>
+          <div class="status-card__name">Status · Warning</div>
+          <div class="status-card__meta">
+            <div>HEX &nbsp; #B8843C &nbsp; · &nbsp; <em>amber</em></div>
+            <div>RGB &nbsp; 184 132 60</div>
+            <div>WCAG &nbsp; 3.8 : 1 on Paper · AA large</div>
+            <div>Tint bg · #F4ECDC</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="status-sample" style="background:#F4ECDC;color:#B8843C;">Draft · short</span>
+          <span class="status-sample" style="background:#B8843C;color:#F7F3EA;">Dry-run</span>
+        </div>
+        <div class="status-card__use">
+          <strong>Use for</strong>: Brief under word count, email dry-run, validation soft-warning, &ldquo;answer still pending&rdquo; reminder.
+        </div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-card__swatch" style="background:#A8442F;"></div>
+        <div>
+          <div class="status-card__name">Status · Danger</div>
+          <div class="status-card__meta">
+            <div>HEX &nbsp; #A8442F &nbsp; · &nbsp; <em>ember</em></div>
+            <div>RGB &nbsp; 168 68 47</div>
+            <div>WCAG &nbsp; 5.1 : 1 on Paper · AA</div>
+            <div>Tint bg · #F1E2DD</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="status-sample" style="background:#F1E2DD;color:#A8442F;">Failed</span>
+          <span class="status-sample" style="background:#A8442F;color:#F7F3EA;">Error</span>
+        </div>
+        <div class="status-card__use">
+          <strong>Use for</strong>: Outcome &ldquo;reversed/abandoned&rdquo;, LLM timeout, email failed, hard validation error.
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">Usage rules — applies to all three</h3>
+
+    <div class="uselist">
+      <div>
+        <h4 class="ok">✓ &nbsp; Allowed</h4>
+        <ul class="ok-list">
+          <li>Inline text in body — <em>10–15 chars at most</em></li>
+          <li>Small icon fills (≤ 16 px)</li>
+          <li>Badge / pill backgrounds (≤ pill size)</li>
+          <li>Focus ring on form fields</li>
+          <li>The tint variant as an emphasis-block background (small region only)</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="no">✗ &nbsp; Forbidden</h4>
+        <ul class="no-list">
+          <li>Page background</li>
+          <li>Card / section background (anything larger than a badge)</li>
+          <li>Button face — KEY has no SaaS buttons</li>
+          <li>Headlines or body type — accent only</li>
+          <li>Combining two status tints in the same visual region</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Burgundy remains the primary accent. Status colors are only invoked when the underlying state genuinely requires <em>red / orange / green</em> semantics — not as decoration.</p>
+
+    <hr class="rule">
+
+    <!-- ────────── BURGUNDY TINT — Explicit rules ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; Burgundy tint</span>#F5E8E9 — kept, with rules</h2>
+
+    <p>The single field-grade color in the system. Reserved for small emphasis regions only.</p>
+
+    <div class="uselist">
+      <div>
+        <h4 class="ok">✓ &nbsp; Allowed</h4>
+        <ul class="ok-list">
+          <li>Follow-up reminder block (30 / 90 / 365 day prompt)</li>
+          <li>Brief callout — Inspector C16 surface, matched_text highlight</li>
+          <li>Email validation soft hint (paired with burgundy text)</li>
+          <li>End-of-section &ldquo;decision point&rdquo; emphasis</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="no">✗ &nbsp; Forbidden</h4>
+        <ul class="no-list">
+          <li>Page or section background</li>
+          <li>Card default background — that&rsquo;s Paper 100</li>
+          <li>Button hover state — collides with focus / pressed states</li>
+          <li>Used together with status warning tint in the same view</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── DARK MODE POLICY ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Dark mode policy</span>The Night Navy line</h2>
+
+    <section class="dm-statement">
+      <div class="dm-statement__label">Policy · locked</div>
+      <p class="dm-statement__q">
+        KEY does not support <em>OS-level dark mode</em>. Night Navy is a
+        reserved surface, never an inverted theme.
+      </p>
+      <div class="dm-statement__why">
+        <strong style="color:var(--paper-100);">Why.</strong> KEY&rsquo;s constitution
+        is &ldquo;a serious publication, not an app.&rdquo; A magazine doesn&rsquo;t
+        invert at sundown. The Paper background is the document — it stays
+        Paper. Night Navy is reserved for surfaces the brief explicitly names:
+        KEY Brief PDF cover, KEY Letter cover, admin, investor-deck dark
+        pages.
+        <br><br>
+        <span class="mono">@media (prefers-color-scheme: dark) { … }</span> MUST NOT
+        swap Paper to a dark theme on the public web.
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ────────── RESERVED SCALE STEPS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">V &nbsp;·&nbsp; Reserved scale steps</span>Paper 500 + Burgundy 300</h2>
+
+    <p>Two values flagged in V1 as &ldquo;reserved with no current use.&rdquo; V2 commits each to one specific role.</p>
+
+    <div class="reserved">
+
+      <div class="reserved-card">
+        <div class="reserved-card__sample" style="background:#D6CFC2;"></div>
+        <div>
+          <div class="reserved-card__name">Paper 500</div>
+          <div class="reserved-card__hex">#D6CFC2 &nbsp; · &nbsp; deep sunken</div>
+          <div class="reserved-card__use">
+            Deep-sunken surface — used <em>inside</em> Paper 100 cards, never
+            as page background. Example: a fold-down aside on a Brief page
+            (further sunken than Paper 300), or the inset region of a
+            membership tier card. Reserved use; expect 1–2 instances per
+            page maximum.
+          </div>
+        </div>
+      </div>
+
+      <div class="reserved-card">
+        <div class="reserved-card__sample" style="background:#B05863;"></div>
+        <div>
+          <div class="reserved-card__name">Burgundy 300</div>
+          <div class="reserved-card__hex">#B05863 &nbsp; · &nbsp; muted accent</div>
+          <div class="reserved-card__use">
+            Muted-state burgundy. Used for revoked-invite strike-through,
+            disabled tier indicator, &ldquo;closed&rdquo; status (e.g. founder
+            cohort full). Reads as &ldquo;burgundy but past tense.&rdquo; Not
+            a substitute for status danger — different semantic.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── LONG-FORM READING ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VI &nbsp;·&nbsp; Long-form preference</span>Ink 700, not Ink 500</h2>
+
+    <p>For sustained-reading surfaces — KEY Brief body, KEY Letter, /methodology long-form — body type should be Ink 700, not Ink 500. The half-step is small in isolation and significant over many paragraphs.</p>
+
+    <div class="body-compare">
+      <div class="body-compare__col">
+        <div class="body-compare__cap">Ink 700 <span class="mono">#2A2622 · 12.8:1</span></div>
+        <p class="body-compare__sample" style="color:#2A2622;">
+          You came in asking whether to leave the job. The job is the
+          symptom. The decision underneath — and the only one you can act
+          on this quarter — is whether to lower the cost of being wrong
+          about your last move. <em>That</em> is the work.
+        </p>
+      </div>
+      <div class="body-compare__col">
+        <div class="body-compare__cap">Ink 500 <span class="mono">#5A554F · 6.9:1</span></div>
+        <p class="body-compare__sample" style="color:#5A554F;">
+          You came in asking whether to leave the job. The job is the
+          symptom. The decision underneath — and the only one you can act
+          on this quarter — is whether to lower the cost of being wrong
+          about your last move. <em>That</em> is the work.
+        </p>
+      </div>
+    </div>
+
+    <p>
+      Ink 500 keeps its role: short secondary type — footnotes, captions,
+      mast-meta. Anywhere the reader stays for more than a paragraph, Ink 700.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── PRINT PANTONE TABLE ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VII &nbsp;·&nbsp; Print reference</span>Pantone &amp; CMYK</h2>
+
+    <p>Indicative press values. A printer must pull a wet proof before committing — these are starting points, not contract.</p>
+
+    <table class="print-table">
+      <thead>
+        <tr><th></th><th>Color</th><th>HEX</th><th>CMYK</th><th>Pantone</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="swatch-cell"><span class="swatch-pill" style="background:#6E1F2A;"></span></td>
+          <td>Deep Burgundy</td>
+          <td class="mono">#6E1F2A</td>
+          <td class="mono">32 / 89 / 72 / 42</td>
+          <td class="mono">1815 C</td>
+          <td class="note">Four-color build leans purple on coated stock. PMS 1815 C gives a slightly redder, more consistent result — recommended for Founder Edition.</td>
+        </tr>
+        <tr>
+          <td class="swatch-cell"><span class="swatch-pill" style="background:#111111;"></span></td>
+          <td>Ink Black</td>
+          <td class="mono">#111111</td>
+          <td class="mono">0 / 0 / 0 / 93</td>
+          <td class="mono">Black 6 C</td>
+          <td class="note">Slightly off pure K to retain ink-on-paper feel. For richer black on cover stock, request rich-black build 60-40-40-100.</td>
+        </tr>
+        <tr>
+          <td class="swatch-cell"><span class="swatch-pill" style="background:#F7F3EA;"></span></td>
+          <td>Paper White</td>
+          <td class="mono">#F7F3EA</td>
+          <td class="mono">2 / 4 / 9 / 0</td>
+          <td class="mono">7527 C</td>
+          <td class="note">Stock recommendation: warm-white uncoated text stock, 100–120 gsm (e.g. Mohawk Superfine eggshell, GF Smith Colorplan natural white).</td>
+        </tr>
+        <tr>
+          <td class="swatch-cell"><span class="swatch-pill" style="background:#141923;"></span></td>
+          <td>Night Navy</td>
+          <td class="mono">#141923</td>
+          <td class="mono">78 / 67 / 53 / 80</td>
+          <td class="mono">Black 6 C + 5% PMS 281 C</td>
+          <td class="note">Pure CMYK build tends muddy. Two-pass (black + 5% deep blue) keeps Night Navy's cool cast on press.</td>
+        </tr>
+        <tr>
+          <td class="swatch-cell"><span class="swatch-pill" style="background:#BDB6AA;"></span></td>
+          <td>Warm Gray</td>
+          <td class="mono">#BDB6AA</td>
+          <td class="mono">10 / 11 / 18 / 16</td>
+          <td class="mono">7535 C</td>
+          <td class="note">Specify hairlines at 0.25–0.5 pt at press; thinner reproduces inconsistently.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="rule">
+
+    <!-- ────────── FILES ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VIII &nbsp;·&nbsp; Files</span>What&rsquo;s shipped</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:42%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">palette.json</td><td>Core 5 + scale + status + semantic + print reference + dark-mode policy + long-form preference + WCAG audit.</td></tr>
+        <tr><td class="mono">index.html</td><td>This V2 presentation — status, print, scenes, usage.</td></tr>
+        <tr><td class="mono">README.md</td><td>V2 decisions, deltas from V1, V2 → V3 feedback expected.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Deferred to V2.5 / V3</h3>
+
+    <ol class="roman">
+      <li><strong>palette-swatches.pdf</strong> — printable A3 visual swatch sheet.</li>
+      <li><strong>palette-usage-guide.pdf</strong> — printable 6-8 page usage guide.</li>
+      <li><strong>palette-source.afpub</strong> — layered source for design partners.</li>
+    </ol>
+
+    <p>JSON + WCAG audit are engineering-ready and unblocked. The PDFs are press artefacts that don&rsquo;t affect code integration — schedule for V2.5.</p>
+
+    <nav class="crossnav">
+      <a href="../../01-key-wordmark/v2/index.html">← 01 · Wordmark V2</a>
+      <span class="crossnav__center">Brief 02 · Palette · V2</span>
+      <a href="../../03-typography/v2/index.html">03 · Typography V2 →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 02 · V2<br>2026-05-13</div>
+      <div class="colophon__right">5 core + 3 status · locked<br>Derived scale + print reference</div>
+    </footer>
+
+  </main>
+</body>
+</html>

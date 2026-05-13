@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
+import KeyWordmark from '@/components/KeyWordmark';
 
 interface AccountData {
   email: string | null;
@@ -96,8 +97,8 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          KEY
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
         </Link>
         <Link href="/pulse" className="text-sm text-ink-500 hover:text-seal transition-colors">← Pulse</Link>
       </nav>

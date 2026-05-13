@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$comment": "KEY · Color Palette · V2 · 2026-05-13. Core 5 + derived scales + semantic tokens + status colors + print metadata. The 5 core values remain locked per KEY Brand Brief v1 §12.",
+
+  "meta": {
+    "brand": "KEY",
+    "version": "2.0.0-v2",
+    "date": "2026-05-13",
+    "locked": ["core.ink", "core.paper", "core.warmGray", "core.burgundy", "core.navy"],
+    "darkModePolicy": "KEY does not support OS-level dark mode. Night Navy surfaces are intentional, limited, and never inverted from Paper surfaces. Setting `prefers-color-scheme: dark` MUST NOT swap the public-web Paper background to a dark theme."
+  },
+
+  "core": {
+    "ink":       "#111111",
+    "paper":     "#F7F3EA",
+    "warmGray":  "#BDB6AA",
+    "burgundy":  "#6E1F2A",
+    "navy":      "#141923"
+  },
+
+  "scale": {
+    "ink": {
+      "900": "#111111",
+      "700": "#2A2622",
+      "500": "#5A554F",
+      "400": "#7A7570",
+      "300": "#9F9B95",
+      "200": "#C2BFB8"
+    },
+    "paper": {
+      "100": "#FBF8F1",
+      "200": "#F7F3EA",
+      "300": "#EFEAE0",
+      "400": "#E2DCD0",
+      "500": "#D6CFC2"
+    },
+    "burgundy": {
+      "700":     "#561822",
+      "500":     "#6E1F2A",
+      "400":     "#8A2F3B",
+      "300":     "#B05863",
+      "tintBg":  "#F5E8E9"
+    },
+    "navy": {
+      "900": "#0C1018",
+      "700": "#141923",
+      "500": "#1F2632",
+      "300": "#3A4250"
+    }
+  },
+
+  "status": {
+    "$comment": "Status colors. Never appear as page background or large fill. Used only as: body text inline, small icon fills, badge backgrounds (size ≤ pill), and focus rings.",
+    "success":      "#5C8576",
+    "successTint":  "#EAEFEC",
+    "warning":      "#B8843C",
+    "warningTint":  "#F4ECDC",
+    "danger":       "#A8442F",
+    "dangerTint":   "#F1E2DD"
+  },
+
+  "semantic": {
+    "textPrimary":         "#111111",
+    "textSecondary":       "#2A2622",
+    "textTertiary":        "#5A554F",
+    "textQuaternary":      "#7A7570",
+    "textOnDark":          "#F7F3EA",
+    "textOnDarkSecondary": "#BDB6AA",
+
+    "background":          "#F7F3EA",
+    "backgroundElevated":  "#FBF8F1",
+    "backgroundSunken":    "#EFEAE0",
+    "backgroundDeepSunken":"#E2DCD0",
+    "darkSurface":         "#141923",
+    "darkSurfaceElevated": "#1F2632",
+
+    "border":              "#E2DCD0",
+    "borderEmphasis":      "#BDB6AA",
+    "borderInk":           "#111111",
+    "borderBurgundy":      "#6E1F2A",
+
+    "accent":              "#6E1F2A",
+    "accentHover":         "#561822",
+    "accentTint":          "#F5E8E9",
+    "accentMuted":         "#B05863",
+
+    "stamp":               "#6E1F2A",
+    "stampOnNavy":         "#8A2F3B",
+    "ruleHairline":        "#BDB6AA",
+    "ruleAccent":          "#6E1F2A",
+
+    "statusSuccess":       "#5C8576",
+    "statusWarning":       "#B8843C",
+    "statusDanger":        "#A8442F"
+  },
+
+  "longFormReadingPreference": {
+    "$comment": "For sustained reading surfaces (KEY Brief body, KEY Letter, /methodology long-form). Preference: Ink 700 over Ink 500 — slightly heavier, less visual fatigue at 17-19px over many paragraphs.",
+    "body":      "#2A2622",
+    "secondary": "#5A554F"
+  },
+
+  "print": {
+    "$comment": "Indicative press values. A printer must pull a wet proof before committing — these are starting points, not contract.",
+    "burgundy": {
+      "cmyk":    [32, 89, 72, 42],
+      "pantone": "1815 C",
+      "note":    "The four-color build leans purple on coated stock. PMS 1815 C gives a slightly redder, more consistent result and is the safer choice for any Founder Edition or KEY Brief PDF cover. For uncoated stock, PMS 1815 U."
+    },
+    "ink": {
+      "cmyk":    [0, 0, 0, 93],
+      "pantone": "Black 6 C",
+      "note":    "Stays slightly off pure K to retain ink-on-paper feel. PMS Black 6 C is the closest match; for richer black on cover stock, request rich-black build 60-40-40-100."
+    },
+    "paper": {
+      "cmyk":    [2, 4, 9, 0],
+      "pantone": "7527 C",
+      "note":    "Stock recommendation: a warm-white uncoated text stock at 100–120 gsm (e.g. Mohawk Superfine eggshell, GF Smith Colorplan natural white)."
+    },
+    "navy": {
+      "cmyk":    [78, 67, 53, 80],
+      "pantone": "Black 6 C with a 5% PMS 281 C tint",
+      "note":    "Pure CMYK build is acceptable but tends muddy. A two-pass build (black + 5% deep blue) keeps the cool cast of Night Navy on press."
+    },
+    "warmGray": {
+      "cmyk":    [10, 11, 18, 16],
+      "pantone": "7535 C",
+      "note":    "Hairlines should be specified at 0.25–0.5 pt at press; thinner reproduces inconsistently."
+    }
+  },
+
+  "wcag": {
+    "ink-on-paper":            { "fg": "#111111", "bg": "#F7F3EA", "ratio": 15.4, "rating": "AAA" },
+    "ink700-on-paper":         { "fg": "#2A2622", "bg": "#F7F3EA", "ratio": 12.8, "rating": "AAA · recommended body color for long-form" },
+    "ink500-on-paper":         { "fg": "#5A554F", "bg": "#F7F3EA", "ratio": 6.9,  "rating": "AA · use for short secondary type, footnotes" },
+    "ink400-on-paper":         { "fg": "#7A7570", "bg": "#F7F3EA", "ratio": 4.7,  "rating": "AA · large only" },
+    "warmGray-on-paper":       { "fg": "#BDB6AA", "bg": "#F7F3EA", "ratio": 1.9,  "rating": "FAIL · decorative only" },
+    "burgundy-on-paper":       { "fg": "#6E1F2A", "bg": "#F7F3EA", "ratio": 8.4,  "rating": "AAA" },
+    "burgundy300-on-paper":    { "fg": "#B05863", "bg": "#F7F3EA", "ratio": 3.6,  "rating": "AA · large only · for muted accent / revoked states" },
+    "paper-on-navy":           { "fg": "#F7F3EA", "bg": "#141923", "ratio": 14.8, "rating": "AAA" },
+    "warmGray-on-navy":        { "fg": "#BDB6AA", "bg": "#141923", "ratio": 9.6,  "rating": "AAA" },
+    "burgundy-on-navy":        { "fg": "#6E1F2A", "bg": "#141923", "ratio": 1.8,  "rating": "FAIL · text · intentional · for stamps/seals only" },
+    "burgundy400-on-navy":     { "fg": "#8A2F3B", "bg": "#141923", "ratio": 2.9,  "rating": "FAIL · text · intentional · stamps + mark accents" },
+    "paper-on-burgundy":       { "fg": "#F7F3EA", "bg": "#6E1F2A", "ratio": 8.4,  "rating": "AAA" },
+    "statusSuccess-on-paper":  { "fg": "#5C8576", "bg": "#F7F3EA", "ratio": 4.2,  "rating": "AA · large only" },
+    "statusWarning-on-paper":  { "fg": "#B8843C", "bg": "#F7F3EA", "ratio": 3.8,  "rating": "AA · large only" },
+    "statusDanger-on-paper":   { "fg": "#A8442F", "bg": "#F7F3EA", "ratio": 5.1,  "rating": "AA" }
+  }
+}

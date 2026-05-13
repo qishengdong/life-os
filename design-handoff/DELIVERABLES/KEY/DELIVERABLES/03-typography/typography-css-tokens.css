@@ -1,0 +1,156 @@
+/* ----------------------------------------------------------------
+ * KEY · Typography Tokens · V1 · 2026-05-13
+ *
+ * Drop into the codebase as a sibling of any reset/normalize.
+ * Tokens are the source of truth; component styles consume them.
+ *
+ * Recommended pairing: PLAN A (all-Google-Fonts, free commercial)
+ *   Source Serif 4   — English serif
+ *   Inter            — English sans
+ *   Noto Serif SC    — 中文 serif (Source Han Serif SC)
+ *   Noto Sans SC     — 中文 sans  (Source Han Sans SC)
+ *   JetBrains Mono   — monospace
+ *
+ * Variable axes (Source Serif 4): wght 200..900, opsz 8..60
+ * Variable axes (Inter):          wght 100..900
+ * ---------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ── Stacks ────────────────────────────────────────────── */
+  --font-serif-en: 'Source Serif 4', 'Newsreader', 'Noto Serif SC', Georgia, serif;
+  --font-serif-cn: 'Noto Serif SC', 'Source Serif 4', 'Songti SC', serif;
+  --font-sans-en:  'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-sans-cn:  'Noto Sans SC', 'Inter', 'PingFang SC', sans-serif;
+  --font-mono:     'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* ── English scale (px) ─────────────────────────────────
+     "px" values assume a 17px reading base. Each step pairs
+     a font-size with line-height and letter-spacing. */
+
+  --t-display-1-size:    96px;
+  --t-display-1-lh:      1.04;
+  --t-display-1-track:   -0.02em;
+
+  --t-display-2-size:    72px;
+  --t-display-2-lh:      1.08;
+  --t-display-2-track:   -0.015em;
+
+  --t-hero-size:         56px;
+  --t-hero-lh:           1.10;
+  --t-hero-track:        -0.01em;
+
+  --t-h1-size:           40px;
+  --t-h1-lh:             1.18;
+  --t-h1-track:          -0.005em;
+
+  --t-h2-size:           28px;
+  --t-h2-lh:             1.30;
+  --t-h2-track:          0;
+
+  --t-h3-size:           22px;
+  --t-h3-lh:             1.35;
+  --t-h3-track:          0;
+
+  --t-quote-size:        24px;
+  --t-quote-lh:          1.50;
+  --t-quote-track:       0;
+
+  --t-body-size:         17px;
+  --t-body-lh:           1.78;     /* note: brief asked 1.75; we set 1.78 to settle */
+  --t-body-track:        0;
+
+  --t-body-small-size:   15px;
+  --t-body-small-lh:     1.72;
+  --t-body-small-track:  0;
+
+  --t-caption-size:      13px;
+  --t-caption-lh:        1.60;
+  --t-caption-track:     0;
+
+  --t-label-size:        10.5px;
+  --t-label-lh:          1.40;
+  --t-label-track:       0.32em;   /* mandatory wide tracking for caps */
+
+  --t-mono-size:         14px;
+  --t-mono-lh:           1.55;
+  --t-mono-track:        0.02em;
+
+  /* ── Chinese scale (px) — slightly tighter steps, looser leading ─ */
+
+  --t-cn-display-size:   64px;
+  --t-cn-display-lh:     1.16;
+
+  --t-cn-hero-size:      44px;
+  --t-cn-hero-lh:        1.22;
+
+  --t-cn-h1-size:        32px;
+  --t-cn-h1-lh:          1.32;
+
+  --t-cn-h2-size:        24px;
+  --t-cn-h2-lh:          1.45;
+
+  --t-cn-h3-size:        20px;
+  --t-cn-h3-lh:          1.55;
+
+  --t-cn-quote-size:     22px;
+  --t-cn-quote-lh:       1.65;
+
+  --t-cn-body-size:      17px;
+  --t-cn-body-lh:        1.88;     /* CN body needs more breathing */
+
+  --t-cn-small-size:     15px;
+  --t-cn-small-lh:       1.82;
+
+  --t-cn-caption-size:   13px;
+  --t-cn-caption-lh:     1.72;
+
+  --t-cn-label-size:     11px;
+  --t-cn-label-track:    0.28em;
+
+  /* ── Measure ────────────────────────────────────────────
+     Maximum line length for prose. Use --measure-en for
+     English, --measure-cn for Chinese. */
+  --measure-en: 66ch;
+  --measure-cn: 32em;   /* ~32 CJK characters */
+}
+
+/* ── Reusable utility classes ──────────────────────────── */
+
+.t-display-1   { font-family: var(--font-serif-en); font-weight: 600; font-size: var(--t-display-1-size); line-height: var(--t-display-1-lh); letter-spacing: var(--t-display-1-track); }
+.t-display-2   { font-family: var(--font-serif-en); font-weight: 600; font-size: var(--t-display-2-size); line-height: var(--t-display-2-lh); letter-spacing: var(--t-display-2-track); }
+.t-hero        { font-family: var(--font-serif-en); font-weight: 500; font-size: var(--t-hero-size);      line-height: var(--t-hero-lh);      letter-spacing: var(--t-hero-track); }
+.t-h1          { font-family: var(--font-serif-en); font-weight: 500; font-size: var(--t-h1-size);        line-height: var(--t-h1-lh);        letter-spacing: var(--t-h1-track); }
+.t-h2          { font-family: var(--font-serif-en); font-weight: 500; font-size: var(--t-h2-size);        line-height: var(--t-h2-lh);        letter-spacing: var(--t-h2-track); }
+.t-h3          { font-family: var(--font-serif-en); font-weight: 500; font-size: var(--t-h3-size);        line-height: var(--t-h3-lh);        letter-spacing: var(--t-h3-track); }
+.t-quote       { font-family: var(--font-serif-en); font-style: italic; font-size: var(--t-quote-size);   line-height: var(--t-quote-lh); }
+.t-body        { font-family: var(--font-serif-en); font-size: var(--t-body-size);                        line-height: var(--t-body-lh);   max-width: var(--measure-en); }
+.t-body-small  { font-family: var(--font-serif-en); font-size: var(--t-body-small-size);                  line-height: var(--t-body-small-lh); }
+.t-caption     { font-family: var(--font-serif-en); font-size: var(--t-caption-size);                     line-height: var(--t-caption-lh); }
+.t-label       { font-family: var(--font-sans-en);  font-size: var(--t-label-size);                       letter-spacing: var(--t-label-track); text-transform: uppercase; line-height: var(--t-label-lh); }
+.t-mono        { font-family: var(--font-mono);     font-size: var(--t-mono-size);                        line-height: var(--t-mono-lh);   letter-spacing: var(--t-mono-track); }
+
+.t-cn-display  { font-family: var(--font-serif-cn); font-weight: 500; font-size: var(--t-cn-display-size); line-height: var(--t-cn-display-lh); }
+.t-cn-hero     { font-family: var(--font-serif-cn); font-weight: 500; font-size: var(--t-cn-hero-size);    line-height: var(--t-cn-hero-lh); }
+.t-cn-h1       { font-family: var(--font-serif-cn); font-weight: 500; font-size: var(--t-cn-h1-size);      line-height: var(--t-cn-h1-lh); }
+.t-cn-h2       { font-family: var(--font-serif-cn); font-weight: 500; font-size: var(--t-cn-h2-size);      line-height: var(--t-cn-h2-lh); }
+.t-cn-h3       { font-family: var(--font-serif-cn); font-weight: 500; font-size: var(--t-cn-h3-size);      line-height: var(--t-cn-h3-lh); }
+.t-cn-quote    { font-family: var(--font-serif-cn); font-size: var(--t-cn-quote-size);  line-height: var(--t-cn-quote-lh); }
+.t-cn-body     { font-family: var(--font-serif-cn); font-size: var(--t-cn-body-size);   line-height: var(--t-cn-body-lh); max-width: var(--measure-cn); }
+.t-cn-small    { font-family: var(--font-serif-cn); font-size: var(--t-cn-small-size);  line-height: var(--t-cn-small-lh); }
+.t-cn-caption  { font-family: var(--font-serif-cn); font-size: var(--t-cn-caption-size);line-height: var(--t-cn-caption-lh); }
+.t-cn-label    { font-family: var(--font-sans-cn);  font-size: var(--t-cn-label-size);  letter-spacing: var(--t-cn-label-track); }
+
+/* ── Feature settings, defaults applied to everything ─── */
+
+html {
+  font-feature-settings: "kern", "liga", "calt";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numerals: old-style by default (warm), tabular when in tables */
+.num-onum { font-feature-settings: "kern", "liga", "onum"; }
+.num-tnum { font-feature-settings: "kern", "liga", "tnum"; }
+.num-pnum { font-feature-settings: "kern", "liga", "pnum"; }

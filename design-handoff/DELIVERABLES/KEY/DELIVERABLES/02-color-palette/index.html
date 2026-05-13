@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 02 · Color Palette · V1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../_shared/editorial.css">
+  <style>
+    /* ── Core 5 — the big swatch grid ───────────────────────── */
+    .core-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin: 32px 0 64px;
+      border: 0.5px solid var(--ink);
+    }
+    .core {
+      position: relative;
+      padding: 20px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 0.5px solid var(--ink);
+    }
+    .core:last-child { border-right: none; }
+    .core__name {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 20px;
+      letter-spacing: -0.005em;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .core__cn {
+      font-family: var(--serif-cn);
+      font-size: 13px;
+      color: inherit;
+      opacity: 0.6;
+      margin-bottom: 8px;
+    }
+    .core__hex {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      opacity: 0.78;
+    }
+    .core__meta {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.7;
+      opacity: 0.65;
+    }
+    .core__meta div { white-space: nowrap; }
+    .core__role {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13.5px;
+      line-height: 1.45;
+      opacity: 0.78;
+      max-width: 18ch;
+    }
+    .core--ink     { background: var(--ink);       color: var(--paper-100); }
+    .core--paper   { background: var(--paper-200); color: var(--ink); }
+    .core--gray    { background: var(--warm-gray); color: var(--ink); }
+    .core--burg    { background: var(--burgundy);  color: var(--paper-100); }
+    .core--navy    { background: var(--navy);      color: var(--paper-100); }
+
+    /* ── Scale rows ─────────────────────────────────────────── */
+    .scale-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .scale-row__label {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 18px;
+      color: var(--ink);
+    }
+    .scale-row__label .mono { font-style: normal; }
+    .scale-row__strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+      border: 0.5px solid var(--ink);
+    }
+    .scale-cell {
+      padding: 16px 14px;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 0.5px solid var(--ink);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
+    .scale-cell:last-child { border-right: none; }
+    .scale-cell__name { letter-spacing: 0.08em; }
+    .scale-cell__hex { opacity: 0.7; }
+
+    /* ── WCAG matrix ────────────────────────────────────────── */
+    .wcag {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 24px 0 56px;
+    }
+    .wcag__row {
+      display: grid;
+      grid-template-columns: 1.4fr 80px 60px;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 0.5px solid var(--paper-400);
+      background: var(--paper-100);
+    }
+    .wcag__sample {
+      padding: 10px 14px;
+      font-family: var(--serif-en);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .wcag__ratio {
+      font-family: var(--mono);
+      font-size: 12px;
+      text-align: right;
+      color: var(--ink-700);
+    }
+    .wcag__rating {
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      text-align: right;
+    }
+    .wcag__rating--fail { color: var(--ink-400); }
+    .wcag__rating--pass { color: var(--burgundy); }
+
+    /* ── Application scenarios ──────────────────────────────── */
+    .scenes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 32px 0 64px;
+    }
+    .scene {
+      border: 0.5px solid var(--paper-400);
+      background: var(--paper-100);
+      padding: 32px;
+      min-height: 320px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .scene__cap {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .scene--dark {
+      background: var(--navy);
+      color: var(--paper-100);
+      border-color: var(--navy);
+    }
+    .scene--dark .scene__cap { color: var(--paper-300); }
+    .scene--burgundy {
+      background: var(--burgundy);
+      color: var(--paper-100);
+      border-color: var(--burgundy);
+    }
+    .scene--burgundy .scene__cap { color: var(--paper-300); }
+
+    /* Scene 1 — hero */
+    .scene--hero { padding: 56px 48px 40px; }
+    .scene--hero .h {
+      font-family: var(--serif-en);
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 16px 0 18px;
+    }
+    .scene--hero .h em { font-style: italic; color: var(--ink); }
+    .scene--hero .line {
+      width: 56px; height: 0.5px; background: var(--burgundy);
+      margin: 22px 0;
+    }
+    .scene--hero .sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--ink-500);
+      max-width: 26em;
+    }
+    .scene--hero .wm {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.16em;
+      color: var(--ink);
+    }
+
+    /* Scene 2 — brief interior */
+    .scene--brief .roman {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--burgundy);
+      margin-top: 24px;
+    }
+    .scene--brief .h2 {
+      font-family: var(--serif-en);
+      font-size: 26px;
+      line-height: 1.15;
+      margin: 6px 0 14px;
+      color: var(--ink);
+    }
+    .scene--brief .body {
+      font-family: var(--serif-en);
+      font-size: 14.5px;
+      line-height: 1.78;
+      color: var(--ink-700);
+    }
+    .scene--brief .stamp {
+      position: absolute;
+      right: 22px;
+      bottom: 22px;
+      width: 60px; height: 60px;
+      border: 1.5px solid var(--burgundy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--burgundy);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      transform: rotate(-6deg);
+    }
+
+    /* Scene 3 — PDF cover (navy) */
+    .scene--cover { padding: 56px 40px; }
+    .scene--cover .wm {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 56px;
+      letter-spacing: 0.16em;
+      color: var(--paper-100);
+    }
+    .scene--cover .line {
+      width: 56px; height: 0.5px;
+      background: #8A2F3B;
+      margin: 28px 0 22px;
+    }
+    .scene--cover .meta {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--paper-300);
+      line-height: 1.55;
+    }
+    .scene--cover .corner {
+      position: absolute;
+      bottom: 24px; right: 28px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--paper-300);
+      opacity: 0.6;
+    }
+
+    /* Scene 4 — email header */
+    .scene--email {
+      padding: 28px 32px;
+      background: var(--paper-100);
+    }
+    .scene--email .wm {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.16em;
+      color: var(--ink);
+    }
+    .scene--email .sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      color: var(--ink-500);
+      font-size: 13.5px;
+      margin-top: 2px;
+    }
+    .scene--email .rule {
+      border: none; border-top: 0.5px solid var(--burgundy);
+      margin: 22px 0 18px;
+    }
+    .scene--email .body {
+      font-family: var(--serif-en);
+      font-size: 14.5px;
+      color: var(--ink-700);
+      line-height: 1.7;
+    }
+    .scene--email .salutation {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14.5px;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .scene--email .gray {
+      font-family: var(--sans-en);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+      margin-top: 18px;
+    }
+
+    /* ── Usage table ───────────────────────────────────────── */
+    .usage {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      column-gap: 32px;
+      margin: 32px 0 56px;
+    }
+    .usage > dt {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 20px;
+      color: var(--ink);
+      padding-top: 18px;
+      padding-bottom: 12px;
+      border-top: 0.5px solid var(--paper-400);
+    }
+    .usage > dd {
+      font-family: var(--serif-en);
+      font-size: 15.5px;
+      line-height: 1.7;
+      color: var(--ink-700);
+      padding-top: 18px;
+      padding-bottom: 12px;
+      border-top: 0.5px solid var(--paper-400);
+      margin: 0;
+      max-width: 56ch;
+    }
+    .usage > dd .swatch {
+      display: inline-block;
+      width: 12px; height: 12px;
+      vertical-align: -1px;
+      margin-right: 8px;
+      border: 0.5px solid var(--ink-300);
+    }
+    .usage > dd ul { margin: 6px 0 0; padding-left: 18px; }
+    .usage > dd ul li { margin-bottom: 2px; line-height: 1.55; }
+
+    /* ── Don'ts list ───────────────────────────────────────── */
+    .donts {
+      background: var(--paper-100);
+      border-left: 2px solid var(--burgundy);
+      padding: 28px 32px;
+      margin: 32px 0 56px;
+      max-width: 56ch;
+    }
+    .donts__title {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 14px;
+    }
+    .donts ul { list-style: none; padding: 0; margin: 0; }
+    .donts li {
+      font-family: var(--serif-en);
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--ink-700);
+      padding-left: 22px;
+      position: relative;
+    }
+    .donts li::before {
+      content: "×";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--burgundy);
+      font-family: var(--serif-en);
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .core-grid { grid-template-columns: 1fr; }
+      .core {
+        min-height: auto;
+        padding: 24px 22px;
+        border-right: none;
+        border-bottom: 0.5px solid var(--ink);
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .core > div:first-child { flex: 1; min-width: 0; }
+      .core__role {
+        font-size: 12.5px;
+        max-width: none;
+        flex: 1.4;
+      }
+      .core__meta {
+        font-size: 9.5px;
+        line-height: 1.6;
+      }
+
+      .scale-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .scale-row__strip { grid-template-columns: repeat(3, 1fr); }
+      .scale-cell { min-height: 72px; padding: 12px; font-size: 10px; }
+
+      .wcag { grid-template-columns: 1fr; gap: 10px; }
+      .wcag__row {
+        grid-template-columns: 1fr 70px 60px;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+      .wcag__sample { font-size: 14px; padding: 8px 10px; }
+      .wcag__ratio { font-size: 11px; }
+      .wcag__rating { font-size: 9px; letter-spacing: 0.18em; }
+
+      .scenes { grid-template-columns: 1fr; gap: 16px; margin: 24px 0 40px; }
+      .scene { padding: 28px 22px; min-height: 240px; }
+      .scene--hero { padding: 48px 22px 32px; }
+      .scene--hero .h { font-size: 32px; }
+      .scene--cover .wm { font-size: 44px; }
+      .scene--cover { padding: 44px 24px; }
+
+      .usage {
+        grid-template-columns: 1fr;
+        column-gap: 0;
+        row-gap: 0;
+      }
+      .usage > dt { padding: 18px 0 6px; border-bottom: none; }
+      .usage > dd { padding: 0 0 18px; border-top: none; }
+
+      .donts { padding: 22px 22px; max-width: none; }
+    }
+
+    @media (max-width: 460px) {
+      .wcag__row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 14px;
+      }
+      .wcag__ratio,
+      .wcag__rating { text-align: left; }
+      .scale-row__strip { grid-template-columns: repeat(2, 1fr); }
+      .core { flex-direction: column; }
+    }
+
+  </style>
+</head>
+<body>
+  <img src="../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V1</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 02 · P0 · Week 1</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-02 · v1 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">Color <em>Palette</em></h1>
+
+    <p class="subtitle">
+      Five colors, locked. This deliverable validates them in real reading
+      situations, derives a working scale, and writes the discipline that
+      keeps them from being misused.
+    </p>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; Core</span>The five</h2>
+
+    <p>
+      Each swatch carries its working name, the locked hex, an approximate
+      CMYK for press, and a closest Pantone equivalent for coated stock.
+      The CMYK and Pantone values are <em>indicative</em>, not contract — a
+      printer should pull a wet proof before committing.
+    </p>
+
+    <div class="core-grid">
+      <div class="core core--ink">
+        <div>
+          <div class="core__name">Ink Black</div>
+          <div class="core__cn">墨黑</div>
+          <div class="core__hex">#111111</div>
+        </div>
+        <div class="core__meta">
+          <div>RGB &nbsp; 17 17 17</div>
+          <div>CMYK &nbsp; 0 0 0 93</div>
+          <div>PMS &nbsp; Black 6 C</div>
+        </div>
+        <div class="core__role">Body type, wordmark, all primary lockups.</div>
+      </div>
+
+      <div class="core core--paper">
+        <div>
+          <div class="core__name">Paper White</div>
+          <div class="core__cn">纸白</div>
+          <div class="core__hex">#F7F3EA</div>
+        </div>
+        <div class="core__meta">
+          <div>RGB &nbsp; 247 243 234</div>
+          <div>CMYK &nbsp; 2 4 9 0</div>
+          <div>PMS &nbsp; 7527 C</div>
+        </div>
+        <div class="core__role">Main background. Never pure white.</div>
+      </div>
+
+      <div class="core core--gray">
+        <div>
+          <div class="core__name">Warm Gray</div>
+          <div class="core__cn">暖灰</div>
+          <div class="core__hex">#BDB6AA</div>
+        </div>
+        <div class="core__meta">
+          <div>RGB &nbsp; 189 182 170</div>
+          <div>CMYK &nbsp; 10 11 18 16</div>
+          <div>PMS &nbsp; 7535 C</div>
+        </div>
+        <div class="core__role">Hairlines, secondary type at large sizes.</div>
+      </div>
+
+      <div class="core core--burg">
+        <div>
+          <div class="core__name">Deep Burgundy</div>
+          <div class="core__cn">酒红</div>
+          <div class="core__hex">#6E1F2A</div>
+        </div>
+        <div class="core__meta">
+          <div>RGB &nbsp; 110 31 42</div>
+          <div>CMYK &nbsp; 32 89 72 42</div>
+          <div>PMS &nbsp; 1815 C</div>
+        </div>
+        <div class="core__role">Stamps, accents, numerals. Never blocks.</div>
+      </div>
+
+      <div class="core core--navy">
+        <div>
+          <div class="core__name">Night Navy</div>
+          <div class="core__cn">夜青</div>
+          <div class="core__hex">#141923</div>
+        </div>
+        <div class="core__meta">
+          <div>RGB &nbsp; 20 25 35</div>
+          <div>CMYK &nbsp; 78 67 53 80</div>
+          <div>PMS &nbsp; Black 6 C / 532 dark</div>
+        </div>
+        <div class="core__role">Premium covers, admin, never the open web.</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; My judgments</span>On each of the five</h2>
+
+    <p>
+      The five core values are <em>locked</em>; nothing below changes them.
+      What follows is my color-eye for the Founder and Claude to weigh — to
+      be acted on, deferred, or ignored.
+    </p>
+
+    <dl class="usage">
+      <dt>Ink Black <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-400);font-weight:400;">#111111</span></dt>
+      <dd>
+        <strong>Hold.</strong> The 6% lift off pure <span class="mono">#000000</span> reads as ink-on-paper rather than screen-on-pixel. It pairs correctly with Paper. No adjustment recommended.
+      </dd>
+
+      <dt>Paper White <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-400);font-weight:400;">#F7F3EA</span></dt>
+      <dd>
+        <strong>Hold.</strong> The warm cast (yellow + a touch of red, almost no blue) gives the surface a <em>printed</em> quality. On retina displays in a daylit room it reads as off-white book stock. The only risk is OLED phones at night, where it can read amber — but that&rsquo;s correct for KEY&rsquo;s tone.
+      </dd>
+
+      <dt>Warm Gray <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-400);font-weight:400;">#BDB6AA</span></dt>
+      <dd>
+        <strong>Hold — but mind the role.</strong> At <span class="mono">~1.9:1</span> contrast on Paper, this is <em>not body type</em>. It&rsquo;s a hairline / border / decorative color. The brief already treats it that way. If we later need a true reading secondary, use Ink 500 (<span class="mono">#5A554F</span>) from the scale below — not Warm Gray.
+      </dd>
+
+      <dt>Deep Burgundy <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-400);font-weight:400;">#6E1F2A</span></dt>
+      <dd>
+        <strong>Hold.</strong> Worth a printer&rsquo;s wet proof — the four-color build leans purple on coated stock. The Pantone match (1815 C) gives a slightly redder result and is the safer choice for any Founder Edition. Reads correctly on screen.
+      </dd>
+
+      <dt>Night Navy <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-400);font-weight:400;">#141923</span></dt>
+      <dd>
+        <strong>Hold.</strong> Slightly cool relative to Paper&rsquo;s warmth — intentional. The contrast is what reads as <em>document</em>, not <em>theme</em>. Keep it strictly for the surfaces the brief names (covers, admin); not the open web.
+      </dd>
+    </dl>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; Scale</span>Derived values</h2>
+
+    <p>
+      Derivations are kept conservative: enough range to layer cards and
+      hairlines, not so much that the system starts to look like a
+      framework. The Ink scale rotates very slightly warmer as it lightens
+      (toward <span class="mono">oklch</span> hue 75°), so secondaries don&rsquo;t turn cold.
+    </p>
+
+    <div class="scale-row">
+      <div class="scale-row__label"><em>Ink</em> &nbsp; <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-500);">scale</span></div>
+      <div class="scale-row__strip">
+        <div class="scale-cell" style="background:#111111;color:#F7F3EA;"><span class="scale-cell__name">900</span><span class="scale-cell__hex">#111111</span></div>
+        <div class="scale-cell" style="background:#2A2622;color:#F7F3EA;"><span class="scale-cell__name">700</span><span class="scale-cell__hex">#2A2622</span></div>
+        <div class="scale-cell" style="background:#5A554F;color:#F7F3EA;"><span class="scale-cell__name">500</span><span class="scale-cell__hex">#5A554F</span></div>
+        <div class="scale-cell" style="background:#7A7570;color:#F7F3EA;"><span class="scale-cell__name">400</span><span class="scale-cell__hex">#7A7570</span></div>
+        <div class="scale-cell" style="background:#9F9B95;color:#111;"><span class="scale-cell__name">300</span><span class="scale-cell__hex">#9F9B95</span></div>
+        <div class="scale-cell" style="background:#C2BFB8;color:#111;"><span class="scale-cell__name">200</span><span class="scale-cell__hex">#C2BFB8</span></div>
+      </div>
+    </div>
+
+    <div class="scale-row">
+      <div class="scale-row__label"><em>Paper</em> &nbsp; <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-500);">scale</span></div>
+      <div class="scale-row__strip">
+        <div class="scale-cell" style="background:#FBF8F1;color:#111;"><span class="scale-cell__name">100</span><span class="scale-cell__hex">#FBF8F1</span></div>
+        <div class="scale-cell" style="background:#F7F3EA;color:#111;"><span class="scale-cell__name">200</span><span class="scale-cell__hex">#F7F3EA</span></div>
+        <div class="scale-cell" style="background:#EFEAE0;color:#111;"><span class="scale-cell__name">300</span><span class="scale-cell__hex">#EFEAE0</span></div>
+        <div class="scale-cell" style="background:#E2DCD0;color:#111;"><span class="scale-cell__name">400</span><span class="scale-cell__hex">#E2DCD0</span></div>
+        <div class="scale-cell" style="background:#D6CFC2;color:#111;"><span class="scale-cell__name">500</span><span class="scale-cell__hex">#D6CFC2</span></div>
+        <div class="scale-cell" style="background:#BDB6AA;color:#111;"><span class="scale-cell__name">gray</span><span class="scale-cell__hex">#BDB6AA</span></div>
+      </div>
+    </div>
+
+    <div class="scale-row">
+      <div class="scale-row__label"><em>Burgundy</em> &nbsp; <span class="mono" style="font-family:var(--mono);font-size:12px;color:var(--ink-500);">scale</span></div>
+      <div class="scale-row__strip">
+        <div class="scale-cell" style="background:#561822;color:#F7F3EA;"><span class="scale-cell__name">700</span><span class="scale-cell__hex">#561822</span></div>
+        <div class="scale-cell" style="background:#6E1F2A;color:#F7F3EA;"><span class="scale-cell__name">500</span><span class="scale-cell__hex">#6E1F2A</span></div>
+        <div class="scale-cell" style="background:#8A2F3B;color:#F7F3EA;"><span class="scale-cell__name">400</span><span class="scale-cell__hex">#8A2F3B</span></div>
+        <div class="scale-cell" style="background:#B05863;color:#F7F3EA;"><span class="scale-cell__name">300</span><span class="scale-cell__hex">#B05863</span></div>
+        <div class="scale-cell" style="background:#F5E8E9;color:#111;"><span class="scale-cell__name">tint</span><span class="scale-cell__hex">#F5E8E9</span></div>
+        <div class="scale-cell" style="background:#F7F3EA;color:#111;border-left:0.5px solid var(--paper-400);"><span class="scale-cell__name">on</span><span class="scale-cell__hex">paper</span></div>
+      </div>
+    </div>
+
+    <p>
+      Burgundy <span class="mono">tintBg</span> (<span class="mono">#F5E8E9</span>)
+      is the only color in the system that&rsquo;s allowed to function as a
+      <em>field</em> color — and only for small emphasis blocks (a 30-day
+      follow-up reminder, an &ldquo;important&rdquo; status indicator). It
+      must never be a full-page background.
+    </p>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Readability</span>Combinations · WCAG</h2>
+
+    <p>Each row shows the text-on-background pair as it would actually appear, with the contrast ratio and rating.</p>
+
+    <div class="wcag">
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#111111;">Ink on Paper · primary body</div>
+        <div class="wcag__ratio">15.4 : 1</div>
+        <div class="wcag__rating">AAA</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#5A554F;">Ink 500 on Paper · secondary</div>
+        <div class="wcag__ratio">6.9 : 1</div>
+        <div class="wcag__rating">AA</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#6E1F2A;">Burgundy on Paper · accent</div>
+        <div class="wcag__ratio">8.4 : 1</div>
+        <div class="wcag__rating">AAA</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#7A7570;">Ink 400 on Paper · caption</div>
+        <div class="wcag__ratio">4.7 : 1</div>
+        <div class="wcag__rating">AA · large</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#BDB6AA;">Warm Gray on Paper · not for type</div>
+        <div class="wcag__ratio">1.9 : 1</div>
+        <div class="wcag__rating wcag__rating--fail">FAIL · decorative only</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#F7F3EA;color:#141923;">Navy on Paper · not recommended</div>
+        <div class="wcag__ratio">14.8 : 1</div>
+        <div class="wcag__rating wcag__rating--fail">PASS · but wrong role</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#141923;color:#F7F3EA;">Paper on Navy · cover</div>
+        <div class="wcag__ratio">14.8 : 1</div>
+        <div class="wcag__rating">AAA</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#141923;color:#BDB6AA;">Warm Gray on Navy · cover sub</div>
+        <div class="wcag__ratio">9.6 : 1</div>
+        <div class="wcag__rating">AAA</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#141923;color:#8A2F3B;">Burgundy 400 on Navy · stamps</div>
+        <div class="wcag__ratio">2.9 : 1</div>
+        <div class="wcag__rating wcag__rating--fail">FAIL · non-text only</div>
+      </div>
+
+      <div class="wcag__row">
+        <div class="wcag__sample" style="background:#6E1F2A;color:#F7F3EA;">Paper on Burgundy · button face</div>
+        <div class="wcag__ratio">8.4 : 1</div>
+        <div class="wcag__rating">AAA</div>
+      </div>
+
+    </div>
+
+    <div class="note">
+      <span class="label">A note on Burgundy as a stamp on Navy</span>
+      <p style="font-size:15px;line-height:1.6;color:var(--ink-700);">
+        <span class="mono">#6E1F2A</span> on <span class="mono">#141923</span>
+        fails text-contrast tests by a wide margin. This is intentional and correct
+        for stamp / seal usage — the seal is <em>read as an image</em>, not as
+        type. For any actual text on Navy (a Brief PDF cover subtitle, e.g.)
+        use Paper or Warm Gray.
+      </p>
+    </div>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">V &nbsp;·&nbsp; In context</span>Four scenes</h2>
+
+    <p>The same five colors, applied to the four surfaces the brief names. Each scene is a working layout, not a sketch.</p>
+
+    <div class="scenes">
+
+      <!-- Scene 1 — landing hero -->
+      <div class="scene scene--hero">
+        <div class="scene__cap">i · /  · landing hero</div>
+        <div class="wm">KEY</div>
+        <div class="h">Find the key<br><em>before you decide.</em></div>
+        <div class="line"></div>
+        <div class="sub">Decision counsel for the moments that matter — authored, not generated.</div>
+      </div>
+
+      <!-- Scene 2 — brief interior -->
+      <div class="scene scene--brief">
+        <div class="scene__cap">ii · KEY Brief · § ii interior</div>
+        <div class="roman">II.</div>
+        <div class="h2">The trade-off you can&rsquo;t un-see</div>
+        <div class="body">
+          You came in asking whether to leave the job. The job is the symptom.
+          The decision underneath — and the only one you can act on this
+          quarter — is whether to lower the cost of being wrong about your
+          last move.
+        </div>
+        <div class="stamp">KB · 001</div>
+      </div>
+
+      <!-- Scene 3 — PDF cover, navy -->
+      <div class="scene scene--cover scene--dark">
+        <div class="scene__cap">iii · KEY Brief PDF · cover</div>
+        <div class="wm">KEY</div>
+        <div class="line"></div>
+        <div class="meta">
+          Brief № I &nbsp;·&nbsp; 2026 春<br>
+          A private brief for one reader.<br>
+          <span style="color:rgba(247,243,234,0.55);">For the person whose name is on the cover.</span>
+        </div>
+        <div class="corner">authored · not generated</div>
+      </div>
+
+      <!-- Scene 4 — email header -->
+      <div class="scene scene--email">
+        <div class="scene__cap">iv · email · welcome</div>
+        <div class="wm">KEY</div>
+        <div class="sub">— Editorial Office</div>
+        <hr class="rule" style="margin:22px 0 18px;border-top:0.5px solid var(--burgundy);">
+        <div class="salutation">— 我们已收到你的入会函。</div>
+        <div class="body">
+          下周一上午，你的第一份 KEY Brief 会到达。在那之前，请安静地把
+          那个让你睡不好的决定写下来 — 不必给我们看。
+        </div>
+        <div class="gray">KEY · Editorial Office · No. 001</div>
+      </div>
+
+    </div>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">VI &nbsp;·&nbsp; Usage rules</span>What goes where</h2>
+
+    <dl class="usage">
+      <dt><span class="swatch" style="background:#111111;"></span>Ink Black</dt>
+      <dd>
+        Primary type at every weight. Wordmark in default lockup. Section dividers as 0.5 pt rules at large breaks.
+        <ul>
+          <li><strong>Use for</strong>: body, headings, wordmark, callouts.</li>
+          <li><strong>Do not use for</strong>: large color fields, button fills (KEY has no buttons that look like SaaS buttons), background of the open web.</li>
+        </ul>
+      </dd>
+
+      <dt><span class="swatch" style="background:#F7F3EA;"></span>Paper White</dt>
+      <dd>
+        The site, the brief, the print page. Use Paper 200 (<span class="mono">#F7F3EA</span>) as canonical; Paper 100 (<span class="mono">#FBF8F1</span>) only as a slight lift for cards or quotes; Paper 300+ only for dividers and sunken regions.
+        <ul>
+          <li><strong>Do not</strong>: use pure white anywhere. Pure white reads as &ldquo;app.&rdquo;</li>
+        </ul>
+      </dd>
+
+      <dt><span class="swatch" style="background:#BDB6AA;"></span>Warm Gray</dt>
+      <dd>
+        0.5 pt hairlines (dividers, table borders, footer rules), and decorative captions/labels at <strong>13 pt and up</strong>. Use Ink 500 — not Warm Gray — for any secondary type that has to be <em>read</em>.
+      </dd>
+
+      <dt><span class="swatch" style="background:#6E1F2A;"></span>Deep Burgundy</dt>
+      <dd>
+        Always a point, never a plane.
+        <ul>
+          <li><strong>Use for</strong>: stamps and seals, roman numerals, the left-rule of a blockquote, the hairline between sections of a Brief, the wax-stamp number on a cover, the redaction mark on the wordmark.</li>
+          <li><strong>Do not use for</strong>: CTA backgrounds, hero gradients, full-bleed cover fields, any large area larger than a coin.</li>
+        </ul>
+      </dd>
+
+      <dt><span class="swatch" style="background:#141923;"></span>Night Navy</dt>
+      <dd>
+        Reserved surfaces only.
+        <ul>
+          <li><strong>Use for</strong>: KEY Brief PDF cover, KEY Letter cover, admin dashboard, investor deck dark pages.</li>
+          <li><strong>Do not use for</strong>: any public-web page, any marketing surface, any email background.</li>
+        </ul>
+      </dd>
+    </dl>
+
+    <div class="donts">
+      <div class="donts__title">Absolute prohibitions</div>
+      <ul>
+        <li>Any color outside the five (and their derived scales).</li>
+        <li>Gradients of any kind — including 5%-to-5% &ldquo;subtle&rdquo; ones.</li>
+        <li>Overlay opacity below 95% (the system is opaque ink, not glass).</li>
+        <li>Blue-violet &ldquo;AI&rdquo; tints. <span class="mono">#5B6EF5</span>, <span class="mono">#7B68EE</span>, and their cousins are banned.</li>
+        <li>Glassmorphism, frosted backdrops, drop shadows on color.</li>
+        <li>Status colors (success-green, warning-orange, danger-red) introduced ad-hoc. None until a product flow demands it.</li>
+      </ul>
+    </div>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">VII &nbsp;·&nbsp; Files</span>What&rsquo;s in this folder</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:40%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">palette.json</td><td>Core 5 + derived scales + semantic tokens + WCAG audit. Engineering-side import.</td></tr>
+        <tr><td class="mono">index.html</td><td>This page — swatches, scales, scenes, usage rules.</td></tr>
+        <tr><td class="mono">README.md</td><td>Decisions, judgments on each of the 5, and V2 expectations.</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      A printable PDF version of the swatch sheet and the usage guide is
+      deferred to V2 once the JSON is approved — there&rsquo;s no point printing
+      a version that&rsquo;s about to move.
+    </p>
+
+    <nav class="crossnav">
+      <a href="../01-key-wordmark/index.html">← 01 · Wordmark</a>
+      <span class="crossnav__center">Brief 02 · Color Palette · V1</span>
+      <a href="../03-typography/index.html">03 · Typography →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 02 · V1<br>2026-05-13</div>
+      <div class="colophon__right">5 core colors · locked<br>Derived scale · advisory · subject to V2 review</div>
+    </footer>
+
+  </main>
+</body>
+</html>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import type { PulseQuestion, PulseTag } from '@/lib/pulse/schema';
 import { TAG_DISPLAY } from '@/lib/pulse/schema';
+import KeyWordmark from '@/components/KeyWordmark';
 
 interface PulseStats {
   totalPulses: number;
@@ -173,7 +174,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal transition-colors">KEY</Link>
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
+        </Link>
         <div className="flex gap-4 text-sm text-ink-500">
           <Link href="/methodology" className="hover:text-seal transition-colors">方法论</Link>
           <Link href="/sample-brief" className="hover:text-seal transition-colors">样品</Link>

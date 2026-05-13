@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Design Handoff · V1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="DELIVERABLES/_shared/editorial.css">
+  <style>
+    body { background: var(--paper-200); }
+
+    /* Cover */
+    .cover {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 64px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .top-mast {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: baseline;
+      padding-bottom: 18px;
+      border-bottom: 0.5px solid var(--ink);
+      font-family: var(--sans-en);
+      font-size: 11.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .top-mast__mid { text-align: center; color: var(--burgundy); letter-spacing: 0.4em; }
+    .top-mast__right { text-align: right; color: var(--burgundy); }
+
+    .cover__brand {
+      text-align: center;
+      padding: 88px 0 36px;
+    }
+    .cover__brand .km {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 224px;
+      letter-spacing: 0.16em;
+      line-height: 0.88;
+      color: var(--ink);
+    }
+    .cover__brand .sub {
+      margin-top: 22px;
+      font-family: var(--sans-en);
+      font-size: 12px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .cover__brand .rule {
+      width: 80px;
+      height: 0.5px;
+      background: var(--burgundy);
+      margin: 28px auto;
+    }
+    .cover__title {
+      text-align: center;
+      font-family: var(--serif-en);
+      font-weight: 400;
+      font-size: 84px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+      margin: 16px 0 24px;
+      color: var(--ink);
+    }
+    .cover__title em { font-style: italic; color: var(--burgundy); }
+    .cover__lede {
+      max-width: 36em;
+      margin: 0 auto 64px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 22px;
+      line-height: 1.55;
+      color: var(--ink-500);
+      text-align: center;
+      text-wrap: pretty;
+    }
+
+    /* The TOC — 4 cards in a row, stacking down */
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      max-width: 980px;
+      margin: 64px auto 0;
+      border-top: 0.5px solid var(--ink);
+    }
+    .toc__row {
+      display: grid;
+      grid-template-columns: 80px 1fr 220px 28px;
+      align-items: center;
+      padding: 36px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+      text-decoration: none;
+      color: var(--ink);
+      gap: 28px;
+      transition: padding-left 0.18s;
+    }
+    .toc__row:hover { padding-left: 12px; }
+    .toc__row:hover .toc__arrow { color: var(--burgundy); }
+
+    .toc__num {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 56px;
+      color: var(--burgundy);
+      font-feature-settings: "onum";
+      line-height: 1;
+    }
+    .toc__name {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.005em;
+      margin: 0;
+    }
+    .toc__name em { font-style: italic; color: var(--ink-500); font-weight: 400; }
+    .toc__desc {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink-500);
+      margin: 6px 0 0;
+      max-width: 40em;
+    }
+    .toc__meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--ink-500);
+      letter-spacing: 0.04em;
+    }
+    .toc__meta b { color: var(--burgundy); font-weight: 500; }
+    .toc__arrow {
+      font-family: var(--serif-en);
+      font-size: 28px;
+      color: var(--ink-400);
+      text-align: right;
+      transition: color 0.18s;
+    }
+
+    /* Process / How to read this */
+    .process {
+      max-width: 880px;
+      margin: 120px auto 0;
+      padding: 64px 0;
+      border-top: 0.5px solid var(--ink);
+    }
+    .process h2 {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 32px;
+      letter-spacing: -0.005em;
+      margin: 0 0 8px;
+    }
+    .process .eyebrow {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 6px;
+    }
+    .process__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      margin-top: 40px;
+    }
+    .process__col h3 {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 19px;
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+    .process__col ol {
+      list-style: none;
+      padding: 0;
+      counter-reset: r;
+      margin: 0;
+    }
+    .process__col ol li {
+      counter-increment: r;
+      padding-left: 40px;
+      position: relative;
+      margin-bottom: 14px;
+      font-family: var(--serif-en);
+      font-size: 15.5px;
+      line-height: 1.6;
+      color: var(--ink-700);
+    }
+    .process__col ol li::before {
+      content: counter(r, upper-roman) ".";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-style: italic;
+      color: var(--burgundy);
+      font-feature-settings: "onum";
+      width: 30px;
+      text-align: right;
+    }
+
+    /* Founder's note */
+    .note-block {
+      background: var(--ink);
+      color: var(--paper-100);
+      padding: 80px 64px;
+      margin: 120px -64px 0;
+      position: relative;
+    }
+    .note-block__eyebrow {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--paper-300);
+      margin-bottom: 24px;
+    }
+    .note-block__q {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 32px;
+      line-height: 1.42;
+      max-width: 30em;
+      margin: 0 0 32px;
+      color: var(--paper-100);
+      text-wrap: pretty;
+    }
+    .note-block__q em { color: #B05863; font-style: italic; }
+    .note-block__sig {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--paper-300);
+    }
+
+    /* Colophon */
+    .colophon-full {
+      padding: 80px 0 120px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .colophon-full__col h4 {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--burgundy);
+      margin: 0 0 10px;
+    }
+    .colophon-full__col p {
+      margin: 4px 0;
+      letter-spacing: 0.22em;
+      font-size: 10.5px;
+    }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .cover { padding: 32px 22px 0; max-width: 100%; }
+
+      .top-mast {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        text-align: left;
+        padding-bottom: 14px;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+      }
+      .top-mast__mid,
+      .top-mast__right { text-align: left; }
+
+      .cover__brand { padding: 56px 0 20px; }
+      .cover__brand .km {
+        font-size: clamp(96px, 28vw, 160px);
+        letter-spacing: 0.14em;
+      }
+      .cover__brand .sub {
+        margin-top: 14px;
+        font-size: 10.5px;
+        letter-spacing: 0.28em;
+      }
+      .cover__brand .rule { margin: 22px auto; }
+
+      .cover__title {
+        font-size: clamp(40px, 12vw, 64px);
+        line-height: 0.98;
+        margin: 8px 0 18px;
+        letter-spacing: -0.015em;
+      }
+      .cover__lede {
+        font-size: 19px;
+        line-height: 1.5;
+        margin-bottom: 40px;
+        max-width: none;
+      }
+
+      .toc { margin-top: 32px; }
+      .toc__row {
+        grid-template-columns: 56px 1fr 24px;
+        gap: 18px;
+        padding: 24px 0;
+      }
+      .toc__row:hover { padding-left: 0; }
+      .toc__num { font-size: 40px; }
+      .toc__name { font-size: 22px; line-height: 1.18; }
+      .toc__desc { font-size: 15px; margin-top: 8px; }
+      .toc__meta { display: none; }   /* keep on mobile? — hide, prefer breathing */
+      .toc__arrow { font-size: 22px; }
+
+      .process { margin: 72px auto 0; padding: 40px 0; }
+      .process h2 { font-size: 26px; }
+      .process .eyebrow { font-size: 10px; letter-spacing: 0.22em; }
+      .process__grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .process__col h3 { font-size: 17px; }
+      .process__col ol li {
+        padding-left: 32px;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .process__col ol li::before { width: 24px; }
+
+      .note-block {
+        margin: 72px -22px 0;
+        padding: 56px 28px;
+      }
+      .note-block__eyebrow { font-size: 10px; letter-spacing: 0.28em; }
+      .note-block__q { font-size: 22px; line-height: 1.4; }
+      .note-block__sig { font-size: 11px; }
+
+      .colophon-full {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 56px 0 96px;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .cover { padding: 24px 18px 0; }
+      .cover__brand .km { letter-spacing: 0.12em; }
+      .cover__title { font-size: clamp(36px, 13vw, 56px); }
+      .toc__row { padding: 20px 0; gap: 14px; }
+      .toc__name { font-size: 20px; }
+      .toc__desc { font-size: 14.5px; }
+      .toc__num { font-size: 36px; }
+    }
+
+  </style>
+</head>
+<body>
+  <img src="DELIVERABLES/_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="cover">
+
+    <header class="top-mast">
+      <div>KEY · Editorial Office</div>
+      <div class="top-mast__mid">Design Handoff · V1 + V2</div>
+      <div class="top-mast__right">2026 · No. 001</div>
+    </header>
+
+    <section class="cover__brand">
+      <div class="km">KEY</div>
+      <div class="sub">Design Handoff · V1 + V2</div>
+      <div class="rule"></div>
+    </section>
+
+    <h1 class="cover__title">Four briefs, <em>two iterations.</em></h1>
+    <p class="cover__lede">
+      V1 shipped four P0 deliverables. V2 closes every <span style="color:var(--burgundy);font-style:italic;">V1 → V2</span>
+      feedback note from the technical lead — outlined SVGs, status colors,
+      tightened body lh, sharper EN method, photographer brief. V1 archive
+      remains.
+    </p>
+
+    <nav class="toc">
+
+      <a class="toc__row" href="DELIVERABLES/01-key-wordmark/v2/index.html">
+        <div class="toc__num">I.</div>
+        <div>
+          <h2 class="toc__name">Wordmark <em>— the masthead</em></h2>
+          <p class="toc__desc">Direction A locked. Outlined paths (no font dependency). Mark repositioned. Y-fork shipped as exploration. Favicons + OG image.</p>
+        </div>
+        <div class="toc__meta">
+          <b>V2 · Brief 01</b><br>
+          7 outlined SVGs<br>
+          favicons + OG + README
+        </div>
+        <div class="toc__arrow">→</div>
+      </a>
+
+      <a class="toc__row" href="DELIVERABLES/02-color-palette/v2/index.html">
+        <div class="toc__num">II.</div>
+        <div>
+          <h2 class="toc__name">Color Palette <em>— the press regimen</em></h2>
+          <p class="toc__desc">5 core + 3 status (sage, amber, ember). Print Pantone reference codified. Dark-mode policy declared. Long-form body = Ink 700.</p>
+        </div>
+        <div class="toc__meta">
+          <b>V2 · Brief 02</b><br>
+          palette.json · expanded<br>
+          README + index.html
+        </div>
+        <div class="toc__arrow">→</div>
+      </a>
+
+      <a class="toc__row" href="DELIVERABLES/03-typography/v2/index.html">
+        <div class="toc__num">III.</div>
+        <div>
+          <h2 class="toc__name">Typography <em>— the load-bearing wall</em></h2>
+          <p class="toc__desc">Plan A adopted. Body lh pushed back to 1.75. New <span class="mono" style="font-family:var(--mono);font-size:13px;">body-large</span> at 19 px for KEY Letter long-form.</p>
+        </div>
+        <div class="toc__meta">
+          <b>V2 · Brief 03</b><br>
+          tokens.css · updated<br>
+          recommendations.md
+        </div>
+        <div class="toc__arrow">→</div>
+      </a>
+
+      <a class="toc__row" href="DELIVERABLES/04-internal-poster/v2/index.html">
+        <div class="toc__num">IV.</div>
+        <div>
+          <h2 class="toc__name">Internal Poster <em>— Issue No. 001</em></h2>
+          <p class="toc__desc">Sharp EN method. New 1920×1080 digital share view. Photographer brief shipped. CN bleed / EN clean stamp pair retained.</p>
+        </div>
+        <div class="toc__meta">
+          <b>V2 · Brief 04</b><br>
+          CN · EN · Print · Digital<br>
+          photographer-brief.md
+        </div>
+        <div class="toc__arrow">→</div>
+      </a>
+
+    </nav>
+
+    <details style="max-width:980px;margin:24px auto 0;padding:18px 0 0;border-top:0.5px solid var(--paper-400);">
+      <summary style="font-family:var(--sans-en);font-size:10.5px;letter-spacing:0.32em;text-transform:uppercase;color:var(--burgundy);cursor:pointer;list-style:none;">
+        ▸ V1 archive (the original delivery, for reference)
+      </summary>
+      <ul style="list-style:none;padding:16px 0 0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px 32px;font-family:var(--serif-en);font-style:italic;font-size:15px;">
+        <li><a href="DELIVERABLES/01-key-wordmark/index.html" style="color:var(--ink-500);">I. Wordmark V1 — 3 directions</a></li>
+        <li><a href="DELIVERABLES/02-color-palette/index.html" style="color:var(--ink-500);">II. Palette V1</a></li>
+        <li><a href="DELIVERABLES/03-typography/index.html" style="color:var(--ink-500);">III. Typography V1</a></li>
+        <li><a href="DELIVERABLES/04-internal-poster/index.html" style="color:var(--ink-500);">IV. Internal Poster V1</a></li>
+      </ul>
+    </details>
+
+    <section class="process">
+      <div class="eyebrow">How to read this</div>
+      <h2>The handoff rhythm</h2>
+      <p style="font-family:var(--serif-en);font-size:17px;line-height:1.7;color:var(--ink-700);max-width:42em;margin-top:16px;">
+        Each deliverable is a self-contained page. Each ends with a list of
+        questions I expect back. Review at whichever pace suits — the four
+        are independent of each other except where flagged inside.
+      </p>
+
+      <div class="process__grid">
+        <div class="process__col">
+          <h3>For the Founder</h3>
+          <ol>
+            <li>Skim each deliverable in TOC order — 5 minutes each.</li>
+            <li>Note anything that feels wrong against your magazine instincts.</li>
+            <li>Forward this URL (or the folder) to Claude · technical lead.</li>
+            <li>Relay feedback back to me, in the form Claude writes it.</li>
+          </ol>
+        </div>
+        <div class="process__col">
+          <h3>For Claude · technical lead</h3>
+          <ol>
+            <li>Read each README.md before the visual file — context first.</li>
+            <li>Use the &ldquo;V1 &rarr; V2 feedback I expect&rdquo; section at the bottom of each as the question template.</li>
+            <li>JSON / CSS / Markdown files are engineering-ready; SVG outlines arrive in V2.</li>
+            <li>Iterations expected: 2–3 per brief. P0 deliverables should converge inside three weeks.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="note-block">
+      <div class="note-block__eyebrow">From the Editorial Office · V2</div>
+      <p class="note-block__q">
+        V2 closes the loop. Every feedback note from the technical lead is
+        answered — by a path, a token, a line of CSS, or a position fix.
+        <em>Authored, not generated</em> survives the second pass.
+      </p>
+      <div class="note-block__sig">— Design, via the Founder · KB-DH-00 · V2 · 2026-05-13</div>
+    </section>
+
+    <footer class="colophon-full">
+      <div class="colophon-full__col">
+        <h4>Version</h4>
+        <p>V2 · 2026-05-13</p>
+        <p>4 P0 briefs · V1 + V2 delivered</p>
+        <p>Next: V3 microtune or P1 page polish</p>
+      </div>
+      <div class="colophon-full__col">
+        <h4>Set in</h4>
+        <p>Source Serif 4 · Noto Serif SC</p>
+        <p>Inter · Noto Sans SC</p>
+        <p>JetBrains Mono · Bodoni Moda</p>
+      </div>
+    </footer>
+
+  </main>
+</body>
+</html>

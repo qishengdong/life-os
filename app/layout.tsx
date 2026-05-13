@@ -47,10 +47,19 @@ export const metadata: Metadata = {
   title: 'KEY · Find the key before you decide.',
   description:
     '决定之前, 先找到关键. KEY 是一项 AI 原生人生决策顾问服务. 它记得你的真实背景, 把复杂选择整理成一份可阅读、可行动、可复盘的私人决策简报.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: 'KEY · Find the key before you decide.',
     description: '决定之前, 先找到关键. AI 原生人生决策顾问, 以私人简报交付.',
     type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
 };
 

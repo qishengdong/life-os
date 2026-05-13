@@ -16,6 +16,7 @@
 import Link from 'next/link';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
+import KeyWordmark from '@/components/KeyWordmark';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -49,12 +50,9 @@ export default async function HomePage() {
       {/* ============================================ */}
       {/* 顶部导航                                       */}
       {/* ============================================ */}
-      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-        <Link
-          href="/"
-          className="font-serif text-xl font-semibold tracking-tightish text-ink-900"
-        >
-          KEY
+      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-center">
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
         </Link>
         <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
           <Link href="/methodology" className="hover:text-seal-500 transition-colors">
@@ -276,9 +274,12 @@ export default async function HomePage() {
       <footer className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
-            <p className="font-serif text-base text-ink-900">
-              KEY Editorial Office
-            </p>
+            <div className="flex items-center gap-3">
+              <KeyWordmark variant="mark-only" height={20} ariaLabel="KEY mark" />
+              <p className="font-serif text-base text-ink-900">
+                KEY Editorial Office
+              </p>
+            </div>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>

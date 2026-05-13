@@ -60,4 +60,6 @@ design-handoff/DELIVERABLES/_unpacked/
 design-handoff/DELIVERABLES/**/*.woff2
 design-handoff/DELIVERABLES/**/*.woff
 design-handoff/DELIVERABLES/KEY V1 Handoff.html
+design-handoff/DELIVERABLES/KEY/KEY V1 Handoff.html
 design-handoff/DELIVERABLES/*.zip
+design-handoff/*.zip

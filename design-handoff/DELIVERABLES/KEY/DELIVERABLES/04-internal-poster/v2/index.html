@@ -1,0 +1,1293 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 04 · Internal Poster · V1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../../_shared/editorial.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../01-key-wordmark/v2/key-favicon-32.png">
+  <style>
+    /* ─── Page chrome that's NOT the poster ──────────────────────── */
+    body { background: #1d1916; }
+    .stage {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      background: #1d1916;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 24px 48px 0;
+      color: rgba(247,243,234,0.7);
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+    .stage-header__mid {
+      color: rgba(247,243,234,0.45);
+      letter-spacing: 0.36em;
+    }
+    .stage-header__right {
+      color: rgba(247,243,234,0.45);
+      font-family: var(--mono);
+      text-transform: none;
+      letter-spacing: 0.04em;
+      font-size: 11px;
+    }
+
+    /* Segmented control */
+    .segments {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 24px;
+      flex-wrap: wrap;
+    }
+    .seg {
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(247,243,234,0.55);
+      padding: 10px 22px;
+      border: 0.5px solid rgba(247,243,234,0.25);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .seg + .seg { border-left: none; }
+    .seg:hover { color: rgba(247,243,234,0.9); }
+    .seg[aria-pressed="true"] {
+      background: var(--paper-200);
+      color: var(--ink);
+      border-color: var(--paper-200);
+    }
+
+    /* Stage view */
+    .view {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 24px 96px;
+    }
+    .view__hidden { display: none; }
+
+    /* The poster's own scaled wrapper */
+    .scaler {
+      position: relative;
+      transform-origin: top center;
+    }
+
+    /* ─── Poster — fixed design size ────────────────────────────── */
+    .poster {
+      width: 1417px;
+      height: 2008px;
+      background: var(--paper-200);
+      color: var(--ink);
+      position: relative;
+      overflow: hidden;
+      font-family: var(--serif-en);
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.2);
+    }
+
+    .poster__noise {
+      position: absolute; inset: 0;
+      opacity: 0.18;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .poster__well {
+      position: absolute;
+      inset: 84px;          /* 25mm at 3.374 px/mm ≈ 84px */
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* corner crop registration marks — print artisan touch */
+    .crop {
+      position: absolute;
+      width: 24px; height: 24px;
+      pointer-events: none;
+    }
+    .crop--tl { top: 36px; left: 36px; border-top: 0.5px solid var(--burgundy); border-left: 0.5px solid var(--burgundy); }
+    .crop--tr { top: 36px; right: 36px; border-top: 0.5px solid var(--burgundy); border-right: 0.5px solid var(--burgundy); }
+    .crop--bl { bottom: 36px; left: 36px; border-bottom: 0.5px solid var(--burgundy); border-left: 0.5px solid var(--burgundy); }
+    .crop--br { bottom: 36px; right: 36px; border-bottom: 0.5px solid var(--burgundy); border-right: 0.5px solid var(--burgundy); }
+
+    /* ─── Top — Brand mark ─────────────────────────────────────── */
+    .p-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 18px;
+      border-bottom: 0.5px solid var(--ink);
+    }
+    .p-top__left,
+    .p-top__right {
+      font-family: var(--sans-en);
+      font-size: 12.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .p-top__right { color: var(--burgundy); }
+
+    .p-wordmark {
+      text-align: center;
+      margin: 64px 0 14px;
+    }
+    .p-wordmark__km {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 224px;
+      letter-spacing: 0.16em;
+      line-height: 0.86;
+      color: var(--ink);
+    }
+    .p-wordmark__sub {
+      margin-top: 18px;
+      font-family: var(--sans-en);
+      font-size: 12px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+
+    /* ─── Tagline ─────────────────────────────────────────────── */
+    .p-tagline {
+      margin: 32px auto 24px;
+      text-align: center;
+      max-width: 760px;
+    }
+    .p-tagline__en {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 34px;
+      line-height: 1.2;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    .p-tagline__rule {
+      width: 270px;             /* 80 mm */
+      height: 0.5px;
+      background: var(--burgundy);
+      margin: 18px auto;
+    }
+    .p-tagline__cn {
+      font-family: var(--serif-cn);
+      font-size: 28px;
+      line-height: 1.3;
+      color: var(--ink);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── Image (placeholder for still-life photograph) ────────── */
+    .p-image {
+      width: 100%;
+      height: 720px;             /* ~36% of 2008 — within brief's 35-40% */
+      background:
+        radial-gradient(80% 60% at 50% 55%, #1a1612 0%, #0c0907 100%);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      margin: 12px 0 32px;
+    }
+    .p-image::before {
+      /* grain overlay */
+      content: '';
+      position: absolute; inset: 0;
+      background: url("../../_shared/paper-noise.svg");
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      filter: contrast(1.4) brightness(0.6);
+    }
+    .p-image__frame {
+      position: absolute;
+      inset: 14px;
+      border: 0.5px solid rgba(239,231,216,0.18);
+      pointer-events: none;
+    }
+    /* corner inner marks */
+    .p-image__crop {
+      position: absolute;
+      width: 22px; height: 22px;
+      border-color: rgba(239,231,216,0.4);
+      border-style: solid;
+      border-width: 0;
+    }
+    .p-image__crop--tl { top: 28px; left: 28px; border-top-width: 0.5px; border-left-width: 0.5px; }
+    .p-image__crop--tr { top: 28px; right: 28px; border-top-width: 0.5px; border-right-width: 0.5px; }
+    .p-image__crop--bl { bottom: 28px; left: 28px; border-bottom-width: 0.5px; border-left-width: 0.5px; }
+    .p-image__crop--br { bottom: 28px; right: 28px; border-bottom-width: 0.5px; border-right-width: 0.5px; }
+
+    .p-image__caption-tl,
+    .p-image__caption-tr {
+      position: absolute;
+      top: 40px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: rgba(239,231,216,0.55);
+    }
+    .p-image__caption-tl { left: 44px; }
+    .p-image__caption-tr { right: 44px; }
+
+    .p-image__center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      color: rgba(239,231,216,0.88);
+      padding: 56px;
+    }
+    .p-image__roman {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 200px;
+      line-height: 0.85;
+      color: rgba(239,231,216,0.92);
+      letter-spacing: -0.04em;
+      font-feature-settings: "onum";
+    }
+    .p-image__rule {
+      width: 96px; height: 0.5px;
+      background: rgba(155,45,55,0.85);
+      margin: 6px 0;
+    }
+    .p-image__legend {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.5;
+      color: rgba(239,231,216,0.75);
+      max-width: 26em;
+    }
+
+    .p-image__caption-bl,
+    .p-image__caption-br {
+      position: absolute;
+      bottom: 38px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      color: rgba(239,231,216,0.45);
+    }
+    .p-image__caption-bl { left: 44px; }
+    .p-image__caption-br { right: 44px; }
+
+    .p-image__placeholder-note {
+      position: absolute;
+      bottom: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: rgba(239,231,216,0.5);
+    }
+
+    /* ─── Manifesto ───────────────────────────────────────────── */
+    .p-manifest {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      margin-bottom: 36px;
+    }
+    .p-manifest__line {
+      font-family: var(--serif-cn);
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 1.52;
+      color: var(--ink);
+      margin: 0;
+      text-wrap: pretty;
+      letter-spacing: 0.02em;
+    }
+    .p-manifest__line--en {
+      font-family: var(--serif-en);
+      letter-spacing: -0.005em;
+      font-size: 36px;
+      line-height: 1.32;
+    }
+    .p-manifest__line em {
+      font-style: italic;
+    }
+    /* the five-phrase line is given balance */
+    .p-manifest__phrases {
+      text-wrap: balance;
+      max-width: 56em;
+    }
+
+    /* ─── Method · K-E-Y ──────────────────────────────────────── */
+    .p-method {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .p-method__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 10px;
+      border-bottom: 0.5px solid var(--burgundy);
+    }
+    .p-method__title {
+      font-family: var(--sans-en);
+      font-size: 13.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .p-method__tag {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--burgundy);
+    }
+    .p-method__grid {
+      display: grid;
+      grid-template-columns: 56px 360px 1fr;
+      column-gap: 28px;
+      row-gap: 8px;
+      padding-top: 8px;
+      align-items: baseline;
+    }
+    .p-method__letter {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 36px;
+      color: var(--burgundy);
+      line-height: 1;
+    }
+    .p-method__phrase {
+      font-family: var(--serif-en);
+      font-size: 22px;
+      line-height: 1.3;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .p-method__phrase em { font-style: italic; font-weight: 400; }
+    .p-method__cn {
+      font-family: var(--serif-cn);
+      font-size: 19px;
+      line-height: 1.5;
+      color: var(--ink-500);
+    }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    .p-foot {
+      margin-top: auto;
+      padding-top: 22px;
+      border-top: 0.5px solid var(--burgundy);
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 130px;
+      gap: 40px;
+      align-items: end;
+    }
+    .p-foot__line1 {
+      font-family: var(--sans-en);
+      font-size: 11.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .p-foot__line2 {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink-700);
+      margin-bottom: 12px;
+      max-width: 56em;
+    }
+    .p-foot__line3 {
+      font-family: var(--sans-cn);
+      font-size: 12px;
+      color: var(--warm-gray);
+      letter-spacing: 0.08em;
+    }
+    .p-foot__line3--en {
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+    }
+
+    /* Stamp */
+    .p-stamp {
+      width: 130px;
+      height: 130px;
+      position: relative;
+      transform: rotate(-6deg);
+      color: var(--burgundy);
+    }
+    .p-stamp svg { display: block; width: 100%; height: 100%; }
+
+    /* ─── Bilingual spread ────────────────────────────────────── */
+    .spread {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    /* ─── Header context section (above the stage) ───────────── */
+    .context {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 96px 32px 8px;
+      color: var(--paper-100);
+    }
+    .context h1 {
+      font-family: var(--serif-en);
+      font-weight: 400;
+      font-size: 72px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--paper-100);
+      margin: 24px 0 16px;
+    }
+    .context h1 em { color: #B05863; }
+    .context p {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 19px;
+      line-height: 1.55;
+      color: rgba(247,243,234,0.7);
+      max-width: 32em;
+      margin: 0 0 12px;
+    }
+    .context .folio__eyebrow {
+      color: #B05863;
+    }
+    .context .folio__brief-no {
+      color: rgba(247,243,234,0.5);
+    }
+
+    /* ─── Crossnav at the bottom — keep dark ─────────────────── */
+    .stage-foot {
+      padding: 32px 48px;
+      color: rgba(247,243,234,0.55);
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border-top: 0.5px solid rgba(247,243,234,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stage-foot a {
+      color: rgba(247,243,234,0.85);
+      text-decoration: none;
+      border-bottom: 0.5px solid transparent;
+      padding-bottom: 2px;
+    }
+    .stage-foot a:hover { border-bottom-color: #B05863; }
+    /* ─── Digital 1920×1080 canvas ───────────────────────────── */
+    .digital-canvas {
+      width: 1920px;
+      height: 1080px;
+      background: var(--paper-200);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5);
+    }
+    .digital-canvas .poster__noise {
+      /* re-use same noise overlay on canvas bg */
+      position: absolute; inset: 0;
+      opacity: 0.12;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    .digital-top {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 36px 64px 18px;
+      border-bottom: 0.5px solid var(--ink);
+      font-family: var(--sans-en);
+      font-size: 13px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .digital-top .mid { color: var(--burgundy); letter-spacing: 0.42em; }
+    .digital-top .right { color: var(--burgundy); }
+
+    .digital-posters {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+      padding: 32px 64px;
+      overflow: hidden;
+    }
+    .digital-posters .poster {
+      width: 1417px;
+      height: 2008px;
+      transform: scale(0.46);
+      transform-origin: top center;
+      flex-shrink: 0;
+      margin: 0 -382px;  /* compensate for scale to keep gap proportional */
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.4);
+    }
+
+    .digital-bottom {
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: baseline;
+      gap: 32px;
+      padding: 18px 64px 36px;
+      border-top: 0.5px solid var(--burgundy);
+    }
+    .digital-bottom__left {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 17px;
+      color: var(--ink-700);
+    }
+    .digital-bottom__mid {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--ink-500);
+    }
+    .digital-bottom__right {
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      text-align: right;
+    }
+
+    .stage-foot__center { color: rgba(247,243,234,0.4); }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .stage-header {
+        flex-direction: column;
+        gap: 6px;
+        padding: 18px 22px 0;
+        font-size: 9.5px;
+        letter-spacing: 0.22em;
+      }
+      .context { padding: 48px 22px 4px; max-width: 100%; }
+      .context h1 { font-size: 44px; }
+      .context p { font-size: 16px; }
+
+      .segments { padding: 18px 12px; gap: 0; }
+      .seg {
+        font-size: 9.5px;
+        padding: 9px 12px;
+        letter-spacing: 0.18em;
+      }
+
+      .view { padding: 0 12px 64px; }
+
+      .stage-foot {
+        flex-direction: column;
+        gap: 12px;
+        padding: 22px;
+        font-size: 9.5px;
+        letter-spacing: 0.22em;
+        align-items: flex-start;
+      }
+      .stage-foot__center { order: -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+
+    <div class="stage-header">
+      <div>KEY · Editorial Office</div>
+      <div class="stage-header__mid">Brief 04 · Internal Poster · V2</div>
+      <div class="stage-header__right">KB-DH-04 · v2 · 2026-05-13</div>
+    </div>
+
+    <section class="context">
+      <div class="folio">
+        <div class="folio__eyebrow">Brief 04 · V2 · production grade</div>
+        <div class="folio__brief-no">A2 · 420 × 594 mm · 1417 × 2008 px · plus digital spread 1920 × 1080</div>
+      </div>
+      <h1>Internal <em>demo poster · V2</em></h1>
+      <p>EN method tightened to the sharp version. Bilingual digital spread (1920 × 1080) added for messaging and email forwards. Photographer brief shipped.</p>
+    </section>
+
+    <div class="segments" role="tablist">
+      <button class="seg" data-target="cn" aria-pressed="true">中文主版 · CN</button>
+      <button class="seg" data-target="en" aria-pressed="false">English Edition · EN</button>
+      <button class="seg" data-target="spread" aria-pressed="false">Print Spread · A2 × 2</button>
+      <button class="seg" data-target="digital" aria-pressed="false">Digital · 1920 × 1080</button>
+    </div>
+
+    <!-- CN POSTER -->
+    <div class="view" data-view="cn">
+      <div class="scaler" id="scaler-cn">
+        <article class="poster" data-screen-label="04 Internal Poster · CN">
+          <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+          <div class="crop crop--tl"></div>
+          <div class="crop crop--tr"></div>
+          <div class="crop crop--bl"></div>
+          <div class="crop crop--br"></div>
+
+          <div class="poster__well">
+
+            <header class="p-top">
+              <div class="p-top__left">KEY · Editorial Office</div>
+              <div class="p-top__right">No. 001 · MMXXVI 春</div>
+            </header>
+
+            <div class="p-wordmark">
+              <div class="p-wordmark__km">KEY</div>
+              <div class="p-wordmark__sub">项目内部 demo · v1 · 2026</div>
+            </div>
+
+            <div class="p-tagline">
+              <div class="p-tagline__en">Find the key before you decide.</div>
+              <div class="p-tagline__rule"></div>
+              <div class="p-tagline__cn">决定之前，先找到关键。</div>
+            </div>
+
+            <figure class="p-image" aria-label="Still-life photograph placeholder">
+              <div class="p-image__frame"></div>
+              <div class="p-image__crop p-image__crop--tl"></div>
+              <div class="p-image__crop p-image__crop--tr"></div>
+              <div class="p-image__crop p-image__crop--bl"></div>
+              <div class="p-image__crop p-image__crop--br"></div>
+
+              <div class="p-image__caption-tl">A · Still life</div>
+              <div class="p-image__caption-tr">Photograph to follow</div>
+
+              <div class="p-image__center">
+                <div class="p-image__roman">№ I</div>
+                <div class="p-image__rule"></div>
+                <div class="p-image__legend">
+                  桌上一支钢笔，半暗的台灯，<br>
+                  茶尚未冷尽。刚刚有人离开。
+                </div>
+              </div>
+
+              <div class="p-image__caption-bl">B/W · Tri-X · grain</div>
+              <div class="p-image__caption-br">35-40% of poster</div>
+              <div class="p-image__placeholder-note">Image placeholder · final photograph to be commissioned</div>
+            </figure>
+
+            <section class="p-manifest">
+              <p class="p-manifest__line">
+                有些决定，不能冲动，不能外包，也不能只靠安慰。
+              </p>
+              <p class="p-manifest__line p-manifest__phrases">
+                父母养老。孩子出路。婚姻去留。职业转身。要不要迁移。
+              </p>
+              <p class="p-manifest__line">
+                我们把这些决定，整理成一份<br>
+                像被写出来的 — 不是被生成出来的<br>
+                私人决策简报。
+              </p>
+            </section>
+
+            <section class="p-method">
+              <header class="p-method__head">
+                <div class="p-method__title">方法 · Method</div>
+                <div class="p-method__tag">K — E — Y</div>
+              </header>
+              <div class="p-method__grid">
+                <div class="p-method__letter">K</div>
+                <div class="p-method__phrase">Know the context.</div>
+                <div class="p-method__cn">记得你的真实背景，不每次重新问。</div>
+
+                <div class="p-method__letter">E</div>
+                <div class="p-method__phrase">Expose the trade-offs.</div>
+                <div class="p-method__cn">揭示每条路的代价，不替你选。</div>
+
+                <div class="p-method__letter">Y</div>
+                <div class="p-method__phrase">You decide.</div>
+                <div class="p-method__cn">最终判断仍属于你。</div>
+              </div>
+            </section>
+
+            <footer class="p-foot">
+              <div>
+                <div class="p-foot__line1">KEY Editorial Office &nbsp;·&nbsp; Founder Edition &nbsp;·&nbsp; Issue No. 001</div>
+                <div class="p-foot__line2">A service disguised as a publication. Decision counsel for the moments that matter.</div>
+                <div class="p-foot__line3">仅供内部讨论 &nbsp;·&nbsp; KEY 由 LifeOS 架构驱动 &nbsp;·&nbsp; 创始会员限 100 名 &nbsp;·&nbsp; AIGC 备案中</div>
+              </div>
+              <div class="p-stamp">
+                <svg viewBox="0 0 130 130" aria-label="KEY stamp">
+                  <defs>
+                    <filter id="stamp-bleed-cn" x="-20%" y="-20%" width="140%" height="140%">
+                      <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="5"/>
+                      <feDisplacementMap in="SourceGraphic" scale="1.6"/>
+                    </filter>
+                  </defs>
+                  <g filter="url(#stamp-bleed-cn)" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="65" cy="65" r="58"/>
+                    <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                  </g>
+                  <g fill="currentColor">
+                    <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                    <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                    <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                  </g>
+                </svg>
+              </div>
+            </footer>
+
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- EN POSTER -->
+    <div class="view view__hidden" data-view="en">
+      <div class="scaler" id="scaler-en">
+        <article class="poster" data-screen-label="04 Internal Poster · EN">
+          <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+          <div class="crop crop--tl"></div>
+          <div class="crop crop--tr"></div>
+          <div class="crop crop--bl"></div>
+          <div class="crop crop--br"></div>
+
+          <div class="poster__well">
+
+            <header class="p-top">
+              <div class="p-top__left">KEY · Editorial Office</div>
+              <div class="p-top__right">No. 001 · MMXXVI · Spring</div>
+            </header>
+
+            <div class="p-wordmark">
+              <div class="p-wordmark__km">KEY</div>
+              <div class="p-wordmark__sub">Internal Demo &nbsp;·&nbsp; v1 &nbsp;·&nbsp; 2026</div>
+            </div>
+
+            <div class="p-tagline">
+              <div class="p-tagline__en">Find the key before you decide.</div>
+              <div class="p-tagline__rule"></div>
+              <div class="p-tagline__cn" style="font-family:var(--serif-en);font-style:italic;font-size:22px;letter-spacing:0;color:var(--ink-500);">
+                Decision counsel for the moments that matter.
+              </div>
+            </div>
+
+            <figure class="p-image" aria-label="Still-life photograph placeholder">
+              <div class="p-image__frame"></div>
+              <div class="p-image__crop p-image__crop--tl"></div>
+              <div class="p-image__crop p-image__crop--tr"></div>
+              <div class="p-image__crop p-image__crop--bl"></div>
+              <div class="p-image__crop p-image__crop--br"></div>
+
+              <div class="p-image__caption-tl">A · Still life</div>
+              <div class="p-image__caption-tr">Photograph to follow</div>
+
+              <div class="p-image__center">
+                <div class="p-image__roman">№ I</div>
+                <div class="p-image__rule"></div>
+                <div class="p-image__legend">
+                  A desk, half-lit. A pen at rest.<br>
+                  Tea still warm. Someone has just left the room.
+                </div>
+              </div>
+
+              <div class="p-image__caption-bl">B/W · Tri-X · grain</div>
+              <div class="p-image__caption-br">35-40% of poster</div>
+              <div class="p-image__placeholder-note">Image placeholder · final photograph to be commissioned</div>
+            </figure>
+
+            <section class="p-manifest">
+              <p class="p-manifest__line p-manifest__line--en">
+                Some decisions can&rsquo;t be made on impulse.<br>
+                Can&rsquo;t be outsourced. Can&rsquo;t be soothed away.
+              </p>
+              <p class="p-manifest__line p-manifest__line--en p-manifest__phrases">
+                Aging parents. A child&rsquo;s path. A marriage. A career turn. Whether to move.
+              </p>
+              <p class="p-manifest__line p-manifest__line--en">
+                We turn these decisions into a private brief —<br>
+                <em>authored, not generated.</em>
+              </p>
+            </section>
+
+            <section class="p-method">
+              <header class="p-method__head">
+                <div class="p-method__title">Method &nbsp;·&nbsp; K — E — Y</div>
+                <div class="p-method__tag">Three commitments</div>
+              </header>
+              <div class="p-method__grid">
+                <div class="p-method__letter">K</div>
+                <div class="p-method__phrase">Know the context.</div>
+                <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We remember what you said. We don’t ask twice.</div>
+
+                <div class="p-method__letter">E</div>
+                <div class="p-method__phrase">Expose the trade-offs.</div>
+                <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We surface what you’re avoiding.</div>
+
+                <div class="p-method__letter">Y</div>
+                <div class="p-method__phrase">You decide.</div>
+                <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">The call is yours. We won’t take it.</div>
+              </div>
+            </section>
+
+            <footer class="p-foot">
+              <div>
+                <div class="p-foot__line1">KEY Editorial Office &nbsp;·&nbsp; Founder Edition &nbsp;·&nbsp; Issue No. 001</div>
+                <div class="p-foot__line2">A service disguised as a publication. Decision counsel for the moments that matter.</div>
+                <div class="p-foot__line3 p-foot__line3--en">For internal discussion only &nbsp;·&nbsp; KEY runs on the LifeOS architecture &nbsp;·&nbsp; Charter membership limited to 100</div>
+              </div>
+              <div class="p-stamp">
+                <svg viewBox="0 0 130 130" aria-label="KEY stamp">
+                  <defs>
+                    <filter id="stamp-bleed-en" x="-20%" y="-20%" width="140%" height="140%">
+                      <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="7"/>
+                      <feDisplacementMap in="SourceGraphic" scale="1.6"/>
+                    </filter>
+                  </defs>
+                  <g filter="url(#stamp-bleed-en)" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="65" cy="65" r="58"/>
+                    <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                  </g>
+                  <g fill="currentColor">
+                    <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                    <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                    <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                  </g>
+                </svg>
+              </div>
+            </footer>
+
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- BILINGUAL SPREAD -->
+    <div class="view view__hidden" data-view="spread">
+      <div class="scaler" id="scaler-spread">
+        <div class="spread">
+
+          <article class="poster" data-screen-label="04 Internal Poster · CN (spread)">
+            <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+            <div class="crop crop--tl"></div>
+            <div class="crop crop--tr"></div>
+            <div class="crop crop--bl"></div>
+            <div class="crop crop--br"></div>
+
+            <div class="poster__well">
+              <header class="p-top">
+                <div class="p-top__left">KEY · Editorial Office</div>
+                <div class="p-top__right">No. 001 · MMXXVI 春</div>
+              </header>
+              <div class="p-wordmark">
+                <div class="p-wordmark__km">KEY</div>
+                <div class="p-wordmark__sub">项目内部 demo · v1 · 2026</div>
+              </div>
+              <div class="p-tagline">
+                <div class="p-tagline__en">Find the key before you decide.</div>
+                <div class="p-tagline__rule"></div>
+                <div class="p-tagline__cn">决定之前，先找到关键。</div>
+              </div>
+              <figure class="p-image">
+                <div class="p-image__frame"></div>
+                <div class="p-image__crop p-image__crop--tl"></div>
+                <div class="p-image__crop p-image__crop--tr"></div>
+                <div class="p-image__crop p-image__crop--bl"></div>
+                <div class="p-image__crop p-image__crop--br"></div>
+                <div class="p-image__caption-tl">A · Still life</div>
+                <div class="p-image__caption-tr">Photograph to follow</div>
+                <div class="p-image__center">
+                  <div class="p-image__roman">№ I</div>
+                  <div class="p-image__rule"></div>
+                  <div class="p-image__legend">桌上一支钢笔，半暗的台灯，<br>茶尚未冷尽。刚刚有人离开。</div>
+                </div>
+                <div class="p-image__caption-bl">B/W · Tri-X · grain</div>
+                <div class="p-image__caption-br">35-40% of poster</div>
+              </figure>
+              <section class="p-manifest">
+                <p class="p-manifest__line">有些决定，不能冲动，不能外包，也不能只靠安慰。</p>
+                <p class="p-manifest__line p-manifest__phrases">父母养老。孩子出路。婚姻去留。职业转身。要不要迁移。</p>
+                <p class="p-manifest__line">我们把这些决定，整理成一份<br>像被写出来的 — 不是被生成出来的<br>私人决策简报。</p>
+              </section>
+              <section class="p-method">
+                <header class="p-method__head">
+                  <div class="p-method__title">方法 · Method</div>
+                  <div class="p-method__tag">K — E — Y</div>
+                </header>
+                <div class="p-method__grid">
+                  <div class="p-method__letter">K</div>
+                  <div class="p-method__phrase">Know the context.</div>
+                  <div class="p-method__cn">记得你的真实背景，不每次重新问。</div>
+                  <div class="p-method__letter">E</div>
+                  <div class="p-method__phrase">Expose the trade-offs.</div>
+                  <div class="p-method__cn">揭示每条路的代价，不替你选。</div>
+                  <div class="p-method__letter">Y</div>
+                  <div class="p-method__phrase">You decide.</div>
+                  <div class="p-method__cn">最终判断仍属于你。</div>
+                </div>
+              </section>
+              <footer class="p-foot">
+                <div>
+                  <div class="p-foot__line1">KEY Editorial Office &nbsp;·&nbsp; Founder Edition &nbsp;·&nbsp; Issue No. 001</div>
+                  <div class="p-foot__line2">A service disguised as a publication. Decision counsel for the moments that matter.</div>
+                  <div class="p-foot__line3">仅供内部讨论 · KEY 由 LifeOS 架构驱动 · 创始会员限 100 名 · AIGC 备案中</div>
+                </div>
+                <div class="p-stamp">
+                  <svg viewBox="0 0 130 130">
+                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="65" cy="65" r="58"/>
+                      <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                    </g>
+                    <g fill="currentColor">
+                      <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                      <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                      <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                    </g>
+                  </svg>
+                </div>
+              </footer>
+            </div>
+          </article>
+
+          <article class="poster" data-screen-label="04 Internal Poster · EN (spread)">
+            <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+            <div class="crop crop--tl"></div>
+            <div class="crop crop--tr"></div>
+            <div class="crop crop--bl"></div>
+            <div class="crop crop--br"></div>
+            <div class="poster__well">
+              <header class="p-top">
+                <div class="p-top__left">KEY · Editorial Office</div>
+                <div class="p-top__right">No. 001 · MMXXVI · Spring</div>
+              </header>
+              <div class="p-wordmark">
+                <div class="p-wordmark__km">KEY</div>
+                <div class="p-wordmark__sub">Internal Demo &nbsp;·&nbsp; v1 &nbsp;·&nbsp; 2026</div>
+              </div>
+              <div class="p-tagline">
+                <div class="p-tagline__en">Find the key before you decide.</div>
+                <div class="p-tagline__rule"></div>
+                <div class="p-tagline__cn" style="font-family:var(--serif-en);font-style:italic;font-size:22px;letter-spacing:0;color:var(--ink-500);">Decision counsel for the moments that matter.</div>
+              </div>
+              <figure class="p-image">
+                <div class="p-image__frame"></div>
+                <div class="p-image__crop p-image__crop--tl"></div>
+                <div class="p-image__crop p-image__crop--tr"></div>
+                <div class="p-image__crop p-image__crop--bl"></div>
+                <div class="p-image__crop p-image__crop--br"></div>
+                <div class="p-image__caption-tl">A · Still life</div>
+                <div class="p-image__caption-tr">Photograph to follow</div>
+                <div class="p-image__center">
+                  <div class="p-image__roman">№ I</div>
+                  <div class="p-image__rule"></div>
+                  <div class="p-image__legend">A desk, half-lit. A pen at rest.<br>Tea still warm. Someone has just left the room.</div>
+                </div>
+                <div class="p-image__caption-bl">B/W · Tri-X · grain</div>
+                <div class="p-image__caption-br">35-40% of poster</div>
+              </figure>
+              <section class="p-manifest">
+                <p class="p-manifest__line p-manifest__line--en">Some decisions can&rsquo;t be made on impulse.<br>Can&rsquo;t be outsourced. Can&rsquo;t be soothed away.</p>
+                <p class="p-manifest__line p-manifest__line--en p-manifest__phrases">Aging parents. A child&rsquo;s path. A marriage. A career turn. Whether to move.</p>
+                <p class="p-manifest__line p-manifest__line--en">We turn these decisions into a private brief —<br><em>authored, not generated.</em></p>
+              </section>
+              <section class="p-method">
+                <header class="p-method__head">
+                  <div class="p-method__title">Method &nbsp;·&nbsp; K — E — Y</div>
+                  <div class="p-method__tag">Three commitments</div>
+                </header>
+                <div class="p-method__grid">
+                  <div class="p-method__letter">K</div>
+                  <div class="p-method__phrase">Know the context.</div>
+                  <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We remember what you said. We don’t ask twice.</div>
+                  <div class="p-method__letter">E</div>
+                  <div class="p-method__phrase">Expose the trade-offs.</div>
+                  <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We surface what you’re avoiding.</div>
+                  <div class="p-method__letter">Y</div>
+                  <div class="p-method__phrase">You decide.</div>
+                  <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">The call is yours. We won’t take it.</div>
+                </div>
+              </section>
+              <footer class="p-foot">
+                <div>
+                  <div class="p-foot__line1">KEY Editorial Office &nbsp;·&nbsp; Founder Edition &nbsp;·&nbsp; Issue No. 001</div>
+                  <div class="p-foot__line2">A service disguised as a publication. Decision counsel for the moments that matter.</div>
+                  <div class="p-foot__line3 p-foot__line3--en">For internal discussion only &nbsp;·&nbsp; KEY runs on the LifeOS architecture &nbsp;·&nbsp; Charter membership limited to 100</div>
+                </div>
+                <div class="p-stamp">
+                  <svg viewBox="0 0 130 130">
+                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="65" cy="65" r="58"/>
+                      <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                    </g>
+                    <g fill="currentColor">
+                      <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                      <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                      <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                    </g>
+                  </svg>
+                </div>
+              </footer>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIGITAL · 1920×1080 (WeChat / email share friendly) -->
+    <div class="view view__hidden" data-view="digital">
+      <div class="scaler" id="scaler-digital">
+        <div class="digital-canvas" data-screen-label="04 Internal Poster · Digital 1920×1080">
+          <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+
+          <header class="digital-top">
+            <div>KEY · Editorial Office</div>
+            <div class="mid">Bilingual Edition · Issue No. 001</div>
+            <div class="right">2026 · MMXXVI · 春</div>
+          </header>
+
+          <div class="digital-posters">
+
+            <!-- CN side, compressed -->
+            <article class="poster">
+              <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+              <div class="crop crop--tl"></div>
+              <div class="crop crop--tr"></div>
+              <div class="crop crop--bl"></div>
+              <div class="crop crop--br"></div>
+              <div class="poster__well">
+                <header class="p-top">
+                  <div class="p-top__left">KEY · 中文主版</div>
+                  <div class="p-top__right">No. 001</div>
+                </header>
+                <div class="p-wordmark">
+                  <div class="p-wordmark__km">KEY</div>
+                  <div class="p-wordmark__sub">项目内部 demo · v1 · 2026</div>
+                </div>
+                <div class="p-tagline">
+                  <div class="p-tagline__en">Find the key before you decide.</div>
+                  <div class="p-tagline__rule"></div>
+                  <div class="p-tagline__cn">决定之前，先找到关键。</div>
+                </div>
+                <figure class="p-image" style="height:520px;">
+                  <div class="p-image__frame"></div>
+                  <div class="p-image__crop p-image__crop--tl"></div>
+                  <div class="p-image__crop p-image__crop--tr"></div>
+                  <div class="p-image__crop p-image__crop--bl"></div>
+                  <div class="p-image__crop p-image__crop--br"></div>
+                  <div class="p-image__caption-tl">A · Still life</div>
+                  <div class="p-image__caption-tr">Photograph to follow</div>
+                  <div class="p-image__center">
+                    <div class="p-image__roman">№ I</div>
+                    <div class="p-image__rule"></div>
+                    <div class="p-image__legend">桌上一支钢笔，半暗的台灯，<br>茶尚未冷尽。</div>
+                  </div>
+                </figure>
+                <section class="p-manifest">
+                  <p class="p-manifest__line">有些决定，不能冲动，不能外包，也不能只靠安慰。</p>
+                  <p class="p-manifest__line p-manifest__phrases">父母养老。孩子出路。婚姻去留。职业转身。要不要迁移。</p>
+                  <p class="p-manifest__line">我们把这些决定，整理成一份<br>像被写出来的 — 不是被生成出来的<br>私人决策简报。</p>
+                </section>
+                <section class="p-method">
+                  <header class="p-method__head">
+                    <div class="p-method__title">方法 · Method</div>
+                    <div class="p-method__tag">K — E — Y</div>
+                  </header>
+                  <div class="p-method__grid">
+                    <div class="p-method__letter">K</div>
+                    <div class="p-method__phrase">Know the context.</div>
+                    <div class="p-method__cn">记得你的真实背景，不每次重新问。</div>
+                    <div class="p-method__letter">E</div>
+                    <div class="p-method__phrase">Expose the trade-offs.</div>
+                    <div class="p-method__cn">揭示每条路的代价，不替你选。</div>
+                    <div class="p-method__letter">Y</div>
+                    <div class="p-method__phrase">You decide.</div>
+                    <div class="p-method__cn">最终判断仍属于你。</div>
+                  </div>
+                </section>
+                <footer class="p-foot">
+                  <div>
+                    <div class="p-foot__line1">KEY Editorial Office · Founder Edition · Issue No. 001</div>
+                    <div class="p-foot__line2">A service disguised as a publication.</div>
+                    <div class="p-foot__line3">仅供内部讨论 · 创始会员限 100 名 · AIGC 备案中</div>
+                  </div>
+                  <div class="p-stamp">
+                    <svg viewBox="0 0 130 130">
+                      <g fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="65" cy="65" r="58"/>
+                        <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                      </g>
+                      <g fill="currentColor">
+                        <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                        <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                        <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                      </g>
+                    </svg>
+                  </div>
+                </footer>
+              </div>
+            </article>
+
+            <!-- EN side, compressed -->
+            <article class="poster">
+              <img class="poster__noise" src="../../_shared/paper-noise.svg" alt="">
+              <div class="crop crop--tl"></div>
+              <div class="crop crop--tr"></div>
+              <div class="crop crop--bl"></div>
+              <div class="crop crop--br"></div>
+              <div class="poster__well">
+                <header class="p-top">
+                  <div class="p-top__left">KEY · English Edition</div>
+                  <div class="p-top__right">No. 001</div>
+                </header>
+                <div class="p-wordmark">
+                  <div class="p-wordmark__km">KEY</div>
+                  <div class="p-wordmark__sub">Internal Demo · v1 · 2026</div>
+                </div>
+                <div class="p-tagline">
+                  <div class="p-tagline__en">Find the key before you decide.</div>
+                  <div class="p-tagline__rule"></div>
+                  <div class="p-tagline__cn" style="font-family:var(--serif-en);font-style:italic;font-size:22px;letter-spacing:0;color:var(--ink-500);">Decision counsel for the moments that matter.</div>
+                </div>
+                <figure class="p-image" style="height:520px;">
+                  <div class="p-image__frame"></div>
+                  <div class="p-image__crop p-image__crop--tl"></div>
+                  <div class="p-image__crop p-image__crop--tr"></div>
+                  <div class="p-image__crop p-image__crop--bl"></div>
+                  <div class="p-image__crop p-image__crop--br"></div>
+                  <div class="p-image__caption-tl">A · Still life</div>
+                  <div class="p-image__caption-tr">Photograph to follow</div>
+                  <div class="p-image__center">
+                    <div class="p-image__roman">№ I</div>
+                    <div class="p-image__rule"></div>
+                    <div class="p-image__legend">A desk, half-lit. A pen at rest.<br>Tea still warm.</div>
+                  </div>
+                </figure>
+                <section class="p-manifest">
+                  <p class="p-manifest__line p-manifest__line--en">Some decisions can&rsquo;t be made on impulse.<br>Can&rsquo;t be outsourced. Can&rsquo;t be soothed away.</p>
+                  <p class="p-manifest__line p-manifest__line--en p-manifest__phrases">Aging parents. A child&rsquo;s path. A marriage. A career turn. Whether to move.</p>
+                  <p class="p-manifest__line p-manifest__line--en">We turn these decisions into a private brief —<br><em>authored, not generated.</em></p>
+                </section>
+                <section class="p-method">
+                  <header class="p-method__head">
+                    <div class="p-method__title">Method · K — E — Y</div>
+                    <div class="p-method__tag">Three commitments</div>
+                  </header>
+                  <div class="p-method__grid">
+                    <div class="p-method__letter">K</div>
+                    <div class="p-method__phrase">Know the context.</div>
+                    <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We remember what you said. We don&rsquo;t ask twice.</div>
+                    <div class="p-method__letter">E</div>
+                    <div class="p-method__phrase">Expose the trade-offs.</div>
+                    <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">We surface what you&rsquo;re avoiding.</div>
+                    <div class="p-method__letter">Y</div>
+                    <div class="p-method__phrase">You decide.</div>
+                    <div class="p-method__cn" style="font-family:var(--serif-en);font-style:italic;font-size:18px;">The call is yours. We won&rsquo;t take it.</div>
+                  </div>
+                </section>
+                <footer class="p-foot">
+                  <div>
+                    <div class="p-foot__line1">KEY Editorial Office · Founder Edition · Issue No. 001</div>
+                    <div class="p-foot__line2">A service disguised as a publication.</div>
+                    <div class="p-foot__line3 p-foot__line3--en">For internal discussion only · Charter membership limited to 100</div>
+                  </div>
+                  <div class="p-stamp">
+                    <svg viewBox="0 0 130 130">
+                      <g fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="65" cy="65" r="58"/>
+                        <circle cx="65" cy="65" r="50" stroke-width="0.5"/>
+                      </g>
+                      <g fill="currentColor">
+                        <text x="65" y="55" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-weight="600" font-size="22">KEY</text>
+                        <line x1="40" y1="65" x2="90" y2="65" stroke="currentColor" stroke-width="0.6"/>
+                        <text x="65" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">001</text>
+                      </g>
+                    </svg>
+                  </div>
+                </footer>
+              </div>
+            </article>
+
+          </div>
+
+          <footer class="digital-bottom">
+            <div class="digital-bottom__left">A service disguised as a publication. <em>Decision counsel for the moments that matter.</em></div>
+            <div class="digital-bottom__mid">1920 × 1080 · 16:9 · WeChat / email share</div>
+            <div class="digital-bottom__right">Authored · Not Generated</div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="stage-foot">
+      <a href="../../03-typography/v2/index.html">← 03 · Typography V2</a>
+      <span class="stage-foot__center">Brief 04 · Internal Poster · V2 · A2 + Digital</span>
+      <a href="../../../index.html">Handoff Index →</a>
+    </div>
+
+  </div>
+
+  <script>
+    // Fit-to-viewport scaler for each poster view.
+    // Single poster: design = 1417 × ~2008. Spread: 1417*2 + 28 gap.
+    const VIEWS = {
+      cn:      { el: document.getElementById('scaler-cn'),      designW: 1417, designH: 2008 },
+      en:      { el: document.getElementById('scaler-en'),      designW: 1417, designH: 2008 },
+      spread:  { el: document.getElementById('scaler-spread'),  designW: 1417 * 2 + 28, designH: 2008 },
+      digital: { el: document.getElementById('scaler-digital'), designW: 1920, designH: 1080 },
+    };
+
+    function rescale() {
+      const padding = 80;
+      const viewportW = Math.min(window.innerWidth - padding, window.innerWidth);
+      const viewportH = window.innerHeight - 260;
+      for (const v of Object.values(VIEWS)) {
+        const scaleW = viewportW / v.designW;
+        const scaleH = viewportH / v.designH;
+        const scale  = Math.min(scaleW, scaleH, 0.85);
+        v.el.style.transform = 'scale(' + scale + ')';
+        v.el.style.width  = v.designW + 'px';
+        v.el.style.height = v.designH + 'px';
+        v.el.parentElement.style.height = (v.designH * scale + 40) + 'px';
+      }
+    }
+    rescale();
+    window.addEventListener('resize', rescale);
+
+    // Segmented control
+    const segs = document.querySelectorAll('.seg');
+    const views = document.querySelectorAll('[data-view]');
+    segs.forEach(s => s.addEventListener('click', () => {
+      const t = s.dataset.target;
+      segs.forEach(x => x.setAttribute('aria-pressed', x === s ? 'true' : 'false'));
+      views.forEach(v => v.classList.toggle('view__hidden', v.dataset.view !== t));
+      rescale();
+    }));
+  </script>
+
+</body>
+</html>

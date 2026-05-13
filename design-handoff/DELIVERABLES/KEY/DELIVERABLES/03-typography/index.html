@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 03 · Typography · V1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../_shared/editorial.css">
+  <style>
+    /* ── Type-specimen rows ─────────────────────────────── */
+    .specimen-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 200px;
+      align-items: baseline;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+    }
+    .specimen-row:last-child { border-bottom: none; }
+    .specimen-row__name {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      align-self: start;
+      padding-top: 12px;
+    }
+    .specimen-row__sample {
+      color: var(--ink);
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+    .specimen-row__meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      line-height: 1.7;
+      text-align: right;
+      align-self: start;
+      padding-top: 12px;
+    }
+    .specimen-row__meta div { white-space: nowrap; }
+
+    /* English style classes — drive the actual specimens. */
+    .s-display-1   { font-family: var(--serif-en); font-weight: 600; font-size: 96px; line-height: 1.04; letter-spacing: -0.02em; }
+    .s-display-2   { font-family: var(--serif-en); font-weight: 600; font-size: 72px; line-height: 1.08; letter-spacing: -0.015em; }
+    .s-hero        { font-family: var(--serif-en); font-weight: 500; font-size: 56px; line-height: 1.10; letter-spacing: -0.01em; }
+    .s-h1          { font-family: var(--serif-en); font-weight: 500; font-size: 40px; line-height: 1.18; letter-spacing: -0.005em; }
+    .s-h2          { font-family: var(--serif-en); font-weight: 500; font-size: 28px; line-height: 1.30; }
+    .s-h3          { font-family: var(--serif-en); font-weight: 500; font-size: 22px; line-height: 1.35; }
+    .s-quote       { font-family: var(--serif-en); font-style: italic; font-size: 24px; line-height: 1.50; }
+    .s-body        { font-family: var(--serif-en); font-size: 17px; line-height: 1.78; }
+    .s-body-small  { font-family: var(--serif-en); font-size: 15px; line-height: 1.72; }
+    .s-caption     { font-family: var(--serif-en); font-size: 13px; line-height: 1.60; color: var(--ink-500); }
+    .s-label       { font-family: var(--sans-en); font-size: 10.5px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-500); }
+    .s-mono        { font-family: var(--mono); font-size: 14px; letter-spacing: 0.02em; }
+
+    /* Chinese style classes */
+    .c-display     { font-family: var(--serif-cn); font-weight: 500; font-size: 64px; line-height: 1.16; }
+    .c-hero        { font-family: var(--serif-cn); font-weight: 500; font-size: 44px; line-height: 1.22; }
+    .c-h1          { font-family: var(--serif-cn); font-weight: 500; font-size: 32px; line-height: 1.32; }
+    .c-h2          { font-family: var(--serif-cn); font-weight: 500; font-size: 24px; line-height: 1.45; }
+    .c-h3          { font-family: var(--serif-cn); font-weight: 500; font-size: 20px; line-height: 1.55; }
+    .c-quote       { font-family: var(--serif-cn); font-size: 22px; line-height: 1.65; }
+    .c-body        { font-family: var(--serif-cn); font-size: 17px; line-height: 1.88; }
+    .c-small       { font-family: var(--serif-cn); font-size: 15px; line-height: 1.82; }
+    .c-caption     { font-family: var(--serif-cn); font-size: 13px; line-height: 1.72; color: var(--ink-500); }
+    .c-label       { font-family: var(--sans-cn); font-size: 11px; letter-spacing: 0.28em; color: var(--ink-500); }
+
+    /* ── Plan comparison cards ─────────────────────────── */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--paper-400);
+      border: 0.5px solid var(--paper-400);
+      margin: 32px 0 64px;
+    }
+    .plan {
+      background: var(--paper-100);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .plan--featured { background: var(--paper-200); }
+    .plan__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .plan__num {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 32px;
+      color: var(--burgundy);
+      line-height: 1;
+    }
+    .plan__cost {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      letter-spacing: 0.04em;
+    }
+    .plan__name {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 24px;
+      line-height: 1.15;
+      margin: 0;
+    }
+    .plan__tag {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--ink-500);
+      line-height: 1.5;
+    }
+    .plan__stack {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.9;
+      color: var(--ink-700);
+      padding-top: 14px;
+      border-top: 0.5px solid var(--paper-400);
+    }
+    .plan__stack b { color: var(--burgundy); font-weight: 500; }
+    .plan__verdict {
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      padding: 6px 0 0;
+      border-top: 0.5px solid var(--paper-400);
+      color: var(--ink-500);
+    }
+    .plan--featured .plan__verdict { color: var(--burgundy); }
+
+    /* ── Pair-up demo (the actual feel) ─────────────────── */
+    .pair {
+      background: var(--paper-100);
+      padding: 56px 48px;
+      margin: 24px 0 48px;
+      border: 0.5px solid var(--paper-400);
+    }
+    .pair__h {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 1.15;
+      letter-spacing: -0.005em;
+      margin: 0 0 16px;
+      max-width: 16ch;
+    }
+    .pair__h em { font-style: italic; color: var(--burgundy); }
+    .pair__lede {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--ink-500);
+      margin: 0 0 32px;
+      max-width: 32em;
+    }
+    .pair__body {
+      font-family: var(--serif-en);
+      font-size: 16px;
+      line-height: 1.78;
+      color: var(--ink-700);
+      max-width: 56ch;
+    }
+    .pair__body em { font-style: italic; }
+    .pair__cn {
+      font-family: var(--serif-cn);
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--ink-700);
+      max-width: 28em;
+      margin-top: 16px;
+    }
+    .pair__rule {
+      border: none;
+      border-top: 0.5px solid var(--burgundy);
+      width: 56px;
+      margin: 32px 0;
+    }
+    .pair__label {
+      font-family: var(--sans-en);
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 24px;
+    }
+
+    /* ── Micro-rules examples ──────────────────────────── */
+    .rule-block {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      padding: 32px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+    }
+    .rule-block:last-child { border-bottom: none; }
+    .rule-block__title {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 19px;
+      line-height: 1.3;
+    }
+    .rule-block__sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--ink-500);
+      margin-top: 4px;
+    }
+    .rule-block__demo {
+      background: var(--paper-100);
+      border-left: 2px solid var(--burgundy);
+      padding: 24px 28px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink-700);
+      max-width: 56ch;
+    }
+    .rule-block__demo > * { margin: 0; }
+    .rule-block__demo > * + * { margin-top: 12px; }
+
+    /* drop-cap demo */
+    .demo-dc::first-letter {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      font-size: 4.2em;
+      float: left;
+      line-height: 0.85;
+      padding: 6px 10px 0 0;
+      color: var(--ink);
+    }
+
+    .demo-bq {
+      font-style: italic;
+      color: var(--ink);
+      padding-left: 16px;
+      border-left: 2px solid var(--burgundy);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    /* roman demo */
+    ol.demo-roman {
+      list-style: none;
+      padding: 0;
+      counter-reset: r;
+      margin: 0;
+    }
+    ol.demo-roman li {
+      counter-increment: r;
+      padding-left: 44px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    ol.demo-roman li::before {
+      content: counter(r, upper-roman) ".";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-style: italic;
+      color: var(--burgundy);
+      font-feature-settings: "onum";
+      width: 34px;
+      text-align: right;
+    }
+
+    /* punctuation demo */
+    .demo-punct .right { color: var(--burgundy); }
+    .demo-punct .wrong { color: var(--ink-400); text-decoration: line-through; }
+
+    /* numbers demo */
+    .num-onum { font-feature-settings: "kern", "liga", "onum"; }
+    .num-tnum { font-feature-settings: "kern", "liga", "tnum"; }
+
+    /* caps tracking demo */
+    .demo-caps {
+      font-family: var(--sans-en);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    /* recommendation block */
+    .recommend {
+      background: var(--ink);
+      color: var(--paper-100);
+      padding: 72px 56px;
+      margin: 80px 0 40px;
+    }
+    .recommend__label {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--paper-300);
+      margin-bottom: 20px;
+    }
+    .recommend__quote {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 30px;
+      line-height: 1.42;
+      max-width: 24em;
+      color: var(--paper-100);
+      margin: 0 0 24px;
+    }
+    .recommend__pick {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--paper-300);
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+    }
+    .recommend__pick b { color: var(--burgundy); font-weight: 500; }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .plans { grid-template-columns: 1fr; margin: 24px 0 40px; }
+      .plan { padding: 26px 22px; }
+      .plan__name { font-size: 22px; }
+
+      .pair { padding: 36px 22px; margin: 20px 0 36px; }
+      .pair__h { font-size: 28px; }
+      .pair__lede { font-size: 17px; }
+      .pair__body { font-size: 16px; max-width: none; }
+      .pair__cn { font-size: 16px; max-width: none; }
+
+      .specimen-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 24px 0;
+      }
+      .specimen-row__name {
+        padding-top: 0;
+        font-size: 9.5px;
+      }
+      .specimen-row__meta {
+        text-align: left;
+        padding-top: 0;
+        font-size: 10.5px;
+      }
+      /* Cap monstrous display sizes on mobile so they don't overflow */
+      .specimen-row__sample.s-display-1 { font-size: 56px !important; line-height: 1.05 !important; }
+      .specimen-row__sample.s-display-2 { font-size: 44px !important; line-height: 1.1 !important; }
+      .specimen-row__sample.s-hero      { font-size: 36px !important; line-height: 1.15 !important; }
+      .specimen-row__sample.s-h1        { font-size: 30px !important; }
+      .specimen-row__sample.s-h2        { font-size: 24px !important; }
+      .specimen-row__sample.s-h3        { font-size: 20px !important; }
+      .specimen-row__sample.s-quote     { font-size: 20px !important; }
+      .specimen-row__sample.s-body      { font-size: 16px !important; }
+      .specimen-row__sample.c-display   { font-size: 44px !important; }
+      .specimen-row__sample.c-hero      { font-size: 32px !important; }
+      .specimen-row__sample.c-h1        { font-size: 26px !important; }
+      .specimen-row__sample.c-h2        { font-size: 22px !important; }
+      .specimen-row__sample.c-h3        { font-size: 19px !important; }
+      .specimen-row__sample.c-quote     { font-size: 19px !important; }
+      .specimen-row__sample.c-body      { font-size: 16px !important; }
+
+      .rule-block {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 24px 0;
+      }
+      .rule-block__title { font-size: 18px; }
+      .rule-block__demo { padding: 18px 20px; }
+
+      .recommend { padding: 52px 22px; margin: 56px 0 28px; }
+      .recommend__quote { font-size: 22px; line-height: 1.4; }
+    }
+
+  </style>
+</head>
+<body>
+  <img src="../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V1</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 03 · P0 · Week 1</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-03 · v1 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title"><em>Typography</em> spec</h1>
+
+    <p class="subtitle">
+      The 70% of the visual difference between a serious publication and an
+      AI landing page is in type. This deliverable picks the families, sets
+      the scale, and writes the micro-rules — the discipline that keeps a
+      page from sliding back into &ldquo;default web&rdquo;.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── I. CURRENT-STACK JUDGMENT ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; Diagnosis</span>Reading the code-side stack</h2>
+
+    <p>
+      The current code is built on <strong>Lora + Inter + Noto Serif SC +
+      Noto Sans SC</strong>. It works. It does not earn its keep at large
+      sizes.
+    </p>
+
+    <p>
+      Lora was drawn for screen body comfort — its letterforms <em>round</em>.
+      At 17 px, set at 1.75 leading, it is excellent. At 56 px (a brief cover)
+      or 96 px (a poster headline), it loses bone. The reader doesn&rsquo;t
+      register weight; they register pleasantness. KEY needs weight.
+    </p>
+
+    <p>
+      Inter is correct for labels and small caps, which is the only role
+      it has in this brief. The Chinese stack — Noto Serif SC and Noto Sans
+      SC — is the right default; nothing in the paid Chinese market improves
+      on it at this price point. <em>I would not change the CJK choices.</em>
+    </p>
+
+    <p>
+      My recommendation is to swap <strong>Lora → Source Serif 4</strong> and
+      keep everything else. Same delivery channel (Google Fonts), same
+      license, no cost. The system gains an editorial display register
+      without losing any of the body comfort.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── II. THE THREE PLANS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; Three plans</span>The font pairings</h2>
+
+    <div class="plans">
+
+      <div class="plan plan--featured">
+        <div class="plan__header">
+          <div class="plan__num">A.</div>
+          <div class="plan__cost">$0 / yr</div>
+        </div>
+        <div class="plan__name">All Google Fonts<br><em style="font-weight:400;font-style:italic;color:var(--ink-500);">— my pick</em></div>
+        <div class="plan__tag">Reads as Substack body, The Drift display, with CJK discipline.</div>
+        <div class="plan__stack">
+          <b>SERIF EN</b>&nbsp; Source Serif 4<br>
+          <b>SERIF CN</b>&nbsp; Noto Serif SC<br>
+          <b>SANS EN</b>&nbsp; Inter<br>
+          <b>SANS CN</b>&nbsp; Noto Sans SC<br>
+          <b>MONO</b>&nbsp; JetBrains Mono
+        </div>
+        <div class="plan__verdict">Adopt for V1.</div>
+      </div>
+
+      <div class="plan">
+        <div class="plan__header">
+          <div class="plan__num">B.</div>
+          <div class="plan__cost">~$1,000 / yr</div>
+        </div>
+        <div class="plan__name">Mixed commercial</div>
+        <div class="plan__tag">The fully-realised version. Air Mail at body, Aperture at display.</div>
+        <div class="plan__stack">
+          <b>SERIF EN DISP</b>&nbsp; GT Sectra<br>
+          <b>SERIF EN BODY</b>&nbsp; Source Serif 4<br>
+          <b>SERIF CN</b>&nbsp; Noto Serif SC<br>
+          <b>SANS EN</b>&nbsp; Söhne<br>
+          <b>SANS CN</b>&nbsp; Noto Sans SC<br>
+          <b>MONO</b>&nbsp; JetBrains Mono
+        </div>
+        <div class="plan__verdict">Hold for V2 site relaunch.</div>
+      </div>
+
+      <div class="plan">
+        <div class="plan__header">
+          <div class="plan__num">C.</div>
+          <div class="plan__cost">$0 / yr</div>
+        </div>
+        <div class="plan__name">Wildcard · literary</div>
+        <div class="plan__tag">MUBI Notebook + Penguin Modern Classics. Softer voice.</div>
+        <div class="plan__stack">
+          <b>SERIF EN DISP</b>&nbsp; Newsreader<br>
+          <b>SERIF EN BODY</b>&nbsp; Source Serif 4<br>
+          <b>SERIF CN</b>&nbsp; Noto Serif SC<br>
+          <b>SANS EN</b>&nbsp; Inter<br>
+          <b>SANS CN</b>&nbsp; Noto Sans SC<br>
+          <b>MONO</b>&nbsp; JetBrains Mono
+        </div>
+        <div class="plan__verdict">Only if Wordmark B selected.</div>
+      </div>
+    </div>
+
+    <p>
+      Long-form rationale, license details, and CN/EN compatibility notes
+      live in <a href="font-pairing-recommendations.md" style="color:var(--burgundy);">font-pairing-recommendations.md</a>.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── III. PAIR-UP DEMO ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; The pair</span>Plan A · in situ</h2>
+
+    <p>How Source Serif 4 + Inter + Noto Serif SC reads on a real page, mid-document.</p>
+
+    <article class="pair">
+      <div class="pair__label">§ ii · the trade-off</div>
+      <h3 class="pair__h">The decision under the decision <em>is rarely the one you walked in with.</em></h3>
+      <div class="pair__lede">
+        Decision counsel for the moments that matter — authored, not generated.
+      </div>
+      <p class="pair__body">
+        You came in asking whether to leave the job. The job is the symptom.
+        The decision underneath — and the only one you can act on this
+        quarter — is whether to lower the cost of being wrong about your
+        last move. We say so plainly because <em>that</em> is the work; the
+        rest is consolation. A good brief earns the reader&rsquo;s second
+        reading.
+      </p>
+      <hr class="pair__rule">
+      <p class="pair__cn">
+        你来的时候问的是要不要离职。离职是症状。<br>
+        真正的问题，是你愿不愿意降低上一次判断错的成本 ——
+        这一句不是劝告，是这份简报存在的理由。
+      </p>
+    </article>
+
+    <hr class="rule">
+
+    <!-- ────────── IV. SCALE — ENGLISH ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Scale · English</span>Display down to caption</h2>
+
+    <p>Each row pairs a name with its sample, set at its actual size/leading/tracking. Hover hands off to the CSS tokens.</p>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">display-1</div>
+      <div class="specimen-row__sample s-display-1">Find the key.</div>
+      <div class="specimen-row__meta">
+        <div>96 / 100</div>
+        <div>-0.02em</div>
+        <div>wght 600</div>
+        <div>poster</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">display-2</div>
+      <div class="specimen-row__sample s-display-2">Before you decide.</div>
+      <div class="specimen-row__meta">
+        <div>72 / 78</div>
+        <div>-0.015em</div>
+        <div>wght 600</div>
+        <div>cover</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">hero</div>
+      <div class="specimen-row__sample s-hero">A private brief for the decision in front of you.</div>
+      <div class="specimen-row__meta">
+        <div>56 / 62</div>
+        <div>-0.01em</div>
+        <div>wght 500</div>
+        <div>landing hero</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">h1</div>
+      <div class="specimen-row__sample s-h1">The method behind the brief.</div>
+      <div class="specimen-row__meta">
+        <div>40 / 47</div>
+        <div>-0.005em</div>
+        <div>wght 500</div>
+        <div>page title</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">h2</div>
+      <div class="specimen-row__sample s-h2">Section II · The trade-off you can&rsquo;t un-see</div>
+      <div class="specimen-row__meta">
+        <div>28 / 36</div>
+        <div>0</div>
+        <div>wght 500</div>
+        <div>section</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">h3</div>
+      <div class="specimen-row__sample s-h3">Premortem — the failure you can imagine</div>
+      <div class="specimen-row__meta">
+        <div>22 / 30</div>
+        <div>0</div>
+        <div>wght 500</div>
+        <div>subsection</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">quote</div>
+      <div class="specimen-row__sample s-quote">&ldquo;You may be mistaking guilt for responsibility.&rdquo;</div>
+      <div class="specimen-row__meta">
+        <div>24 / 36</div>
+        <div>italic</div>
+        <div>wght 400</div>
+        <div>blockquote</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">body</div>
+      <div class="specimen-row__sample s-body" style="max-width:50ch;">
+        Some decisions can&rsquo;t be made on impulse. Can&rsquo;t be
+        outsourced. Can&rsquo;t be soothed away. We turn the ones that
+        matter into a brief — authored, not generated.
+      </div>
+      <div class="specimen-row__meta">
+        <div>17 / 30</div>
+        <div>0</div>
+        <div>wght 400</div>
+        <div>reading</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">body-small</div>
+      <div class="specimen-row__sample s-body-small" style="max-width:50ch;">
+        For internal discussion only. KEY runs on the LifeOS architecture.
+        Charter membership is limited to one hundred readers, by invitation.
+      </div>
+      <div class="specimen-row__meta">
+        <div>15 / 26</div>
+        <div>0</div>
+        <div>wght 400</div>
+        <div>footnote</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">caption</div>
+      <div class="specimen-row__sample s-caption">Figure 1 · A reader&rsquo;s margin-note, transcribed from the manuscript.</div>
+      <div class="specimen-row__meta">
+        <div>13 / 21</div>
+        <div>0</div>
+        <div>wght 400</div>
+        <div>caption</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">label</div>
+      <div class="specimen-row__sample s-label">From the Editorial Office · 2026 · No. 001</div>
+      <div class="specimen-row__meta">
+        <div>10.5 / 15</div>
+        <div>+0.32em</div>
+        <div>Inter 500</div>
+        <div>eyebrow</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">mono</div>
+      <div class="specimen-row__sample s-mono">KB-20260513-001 · authored, not generated</div>
+      <div class="specimen-row__meta">
+        <div>14 / 22</div>
+        <div>+0.02em</div>
+        <div>JetBrains 400</div>
+        <div>code · IDs</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── V. SCALE — CHINESE ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">V &nbsp;·&nbsp; Scale · 中文</span>Display down to caption</h2>
+
+    <p>Chinese steps don&rsquo;t mirror English 1:1 — character density and stroke complexity demand slightly different leading. The CN body is set at 1.88, not 1.78.</p>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-display</div>
+      <div class="specimen-row__sample c-display">决定之前，先找到关键。</div>
+      <div class="specimen-row__meta">
+        <div>64 / 74</div>
+        <div>wght 500</div>
+        <div>poster</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-hero</div>
+      <div class="specimen-row__sample c-hero">为眼前那个重大决定，写一份私人简报。</div>
+      <div class="specimen-row__meta">
+        <div>44 / 54</div>
+        <div>wght 500</div>
+        <div>landing hero</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-h1</div>
+      <div class="specimen-row__sample c-h1">方法论 · 简报背后的写作纪律</div>
+      <div class="specimen-row__meta">
+        <div>32 / 42</div>
+        <div>wght 500</div>
+        <div>page title</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-h2</div>
+      <div class="specimen-row__sample c-h2">第二节 · 你看不到的那个代价</div>
+      <div class="specimen-row__meta">
+        <div>24 / 35</div>
+        <div>wght 500</div>
+        <div>section</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-h3</div>
+      <div class="specimen-row__sample c-h3">反向尸检：你能想见的失败</div>
+      <div class="specimen-row__meta">
+        <div>20 / 31</div>
+        <div>wght 500</div>
+        <div>subsection</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-quote</div>
+      <div class="specimen-row__sample c-quote">&ldquo;你可能把愧疚误认为责任。&rdquo;</div>
+      <div class="specimen-row__meta">
+        <div>22 / 36</div>
+        <div>wght 400</div>
+        <div>blockquote</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-body</div>
+      <div class="specimen-row__sample c-body" style="max-width:26em;">
+        有些决定，不能冲动，不能外包，也不能只靠安慰。
+        我们把这些决定，整理成一份像被写出来的 —— 不是被生成出来的 —— 私人简报。
+      </div>
+      <div class="specimen-row__meta">
+        <div>17 / 32</div>
+        <div>wght 400</div>
+        <div>reading</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-small</div>
+      <div class="specimen-row__sample c-small" style="max-width:26em;">
+        仅供内部讨论。创始会员限 100 名。KEY 由 LifeOS 架构驱动。
+      </div>
+      <div class="specimen-row__meta">
+        <div>15 / 27</div>
+        <div>wght 400</div>
+        <div>footnote</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-caption</div>
+      <div class="specimen-row__sample c-caption">图一 · 一位读者在书页边写下的批注。</div>
+      <div class="specimen-row__meta">
+        <div>13 / 22</div>
+        <div>wght 400</div>
+        <div>caption</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-label</div>
+      <div class="specimen-row__sample c-label">编辑部 · 二〇二六 · 第一号</div>
+      <div class="specimen-row__meta">
+        <div>11</div>
+        <div>+0.28em</div>
+        <div>Noto Sans SC</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── VI. MICRO-RULES ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VI &nbsp;·&nbsp; Micro-rules</span>The discipline</h2>
+
+    <p>Nine rules. Each is a non-negotiable on the page. Each shows what right looks like next to a description of when to use it.</p>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">I. Drop cap</div>
+        <div class="rule-block__sub">First letter of a manifesto or Brief § I&rsquo;s opening paragraph only. Never on body. 2 lines deep, 70% leading.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p class="demo-dc">Some decisions can&rsquo;t be made on impulse. They can&rsquo;t be outsourced, softened, or reduced to a list of pros and cons. The hardest choices are rarely the one you walked in with.</p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">II. Blockquote</div>
+        <div class="rule-block__sub">Always italic. 2 pt burgundy left rule, 16 px padding. Used for the reader&rsquo;s own words quoted back at them.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p class="demo-bq">&ldquo;If I leave now I&rsquo;ll lose the equity, but if I stay another year I&rsquo;ll lose myself&mdash; and I keep telling myself those are the same calculation.&rdquo;</p>
+        <p style="font-family:var(--mono);font-size:11px;color:var(--ink-500);">— from the intake of KB-20260213-117</p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">III. Lists</div>
+        <div class="rule-block__sub">Roman numerals, italic, burgundy. Never bullet dots. The number is part of the prose, not chrome.</div>
+      </div>
+      <div class="rule-block__demo">
+        <ol class="demo-roman">
+          <li>Know the context — we remember what you said.</li>
+          <li>Expose the trade-offs — we surface the costs you can&rsquo;t un-see.</li>
+          <li>You decide — the call remains yours.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">IV. Punctuation</div>
+        <div class="rule-block__sub">Smart quotes, em-dash, ellipsis. Never straight quotes. Never <span class="mono">---</span> for em-dash. Chinese punctuation is full-width.</div>
+      </div>
+      <div class="rule-block__demo demo-punct">
+        <p>
+          EN &nbsp;<span class="right">&ldquo;authored&rdquo; — not &ldquo;generated&rdquo;…</span>
+          &nbsp;&nbsp;
+          <span class="wrong">"authored" -- not "generated"...</span>
+        </p>
+        <p>
+          CN &nbsp;<span class="right cn">「决定之前，先找到关键。」</span>
+          &nbsp;&nbsp;
+          <span class="wrong cn">"决定之前,先找到关键."</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">V. Numerals</div>
+        <div class="rule-block__sub">Old-style (lowercase) in prose. Tabular (equal-width) in tables. Always for currency and IDs.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p>Prose: <span class="num-onum">In 2026 the Founder cohort opens to 100 readers, for ¥4,988 over 3 years.</span></p>
+        <p>Tabular: <span class="num-tnum">Brief No. KB-20260513-001 &nbsp;·&nbsp; followup 30 / 90 / 365</span></p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">VI. Caps tracking</div>
+        <div class="rule-block__sub">Uppercase Latin gets +0.28em to +0.36em. Line-height 1.4. Sans-serif only. Used for eyebrows, mast labels, footers.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p class="demo-caps" style="letter-spacing:0.32em;color:var(--burgundy);">Editorial Office · No. 001 · MMXXVI</p>
+        <p class="demo-caps" style="letter-spacing:0.10em;color:var(--ink-400);text-decoration:line-through;">Editorial Office · No. 001 · MMXXVI</p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">VII. CN + EN mixing</div>
+        <div class="rule-block__sub">Half-width space between CJK and Latin. Never italicize Chinese. Numbers in Chinese sentences get spaces around them.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p class="cn">读了 <span style="font-family:var(--serif-en);font-style:italic;">KEY</span> 的第一份简报，在 2026 年春。</p>
+        <p class="cn" style="color:var(--ink-400);text-decoration:line-through;">读了<em style="font-family:var(--serif-cn);">KEY</em>的第一份简报,在2026年春.</p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">VIII. Measure</div>
+        <div class="rule-block__sub">EN body: 60–75 characters. CN body: 28–42 characters. Anything wider becomes a sea of leading.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p style="font-family:var(--mono);font-size:11px;color:var(--ink-500);">EN max-width: 66ch · CN max-width: 32em</p>
+        <p style="font-family:var(--serif-en);max-width:66ch;font-size:15px;line-height:1.7;">A brief is a piece of writing addressed to one reader. The line length must agree.</p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div>
+        <div class="rule-block__title">IX. Paragraph spacing</div>
+        <div class="rule-block__sub">EN: 1.4–1.6× line-height. CN: 1.6–1.8× line-height. Never first-line indent on the web.</div>
+      </div>
+      <div class="rule-block__demo">
+        <p style="font-family:var(--serif-en);font-size:15px;line-height:1.7;margin-bottom:1.5em;">First paragraph. The space between paragraphs is part of the reading rhythm.</p>
+        <p style="font-family:var(--serif-en);font-size:15px;line-height:1.7;margin:0;">Second paragraph. Indent only on print stock that has earned it.</p>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── VII. RECOMMENDATION ────────── -->
+
+    <section class="recommend">
+      <div class="recommend__label">My recommendation</div>
+      <p class="recommend__quote">
+        Adopt <em>Plan A</em> as the V1 stack. Swap Lora out for Source Serif 4.
+        Hold Plan B until the site relaunch — and only then if the cohort
+        has earned the licence cost.
+      </p>
+      <div class="recommend__pick">
+        <b>PICK · A</b>&nbsp; &nbsp; Source Serif 4 · Inter · Noto Serif SC · Noto Sans SC · JetBrains Mono
+      </div>
+    </section>
+
+    <p>
+      The tokens above are written into <a href="typography-css-tokens.css" style="color:var(--burgundy);">typography-css-tokens.css</a>
+      as CSS variables — Claude can <span class="mono">@import</span> it
+      directly and the existing Tailwind tokens map onto it cleanly. The
+      change is non-breaking: any element currently using <span class="mono">font-serif</span>
+      will pick up Source Serif 4 once the stack swaps.
+    </p>
+
+    <h3 class="sub">Known trade-offs</h3>
+
+    <ol class="roman">
+      <li>Source Serif is widely used on the web for body text. At body size
+        it could read as &ldquo;tasteful default&rdquo;. Mitigated by the
+        wordmark choice (Brief 01) and the wide tracking on labels — the
+        <em>system</em> reads as edited, even when the body font is common.</li>
+      <li>Chinese leading at <span class="mono">1.88</span> looks generous on
+        long-form pages and risks looking sparse on cards. We&rsquo;ll likely
+        tune card-density CN to <span class="mono">1.75</span> in V2.</li>
+      <li>Inter is technically a &ldquo;tech-company sans&rdquo;. It does
+        no harm here because it never carries a headline; only labels at
+        small sizes. If it ever bothers anyone we swap to Söhne (Plan B).</li>
+    </ol>
+
+    <h3 class="sub">V1 → V2 — what I expect back</h3>
+
+    <ol class="roman">
+      <li>Plan selection — A, B, or C.</li>
+      <li>Token adjustments — any single step can move <span class="mono">±2 px</span> in size or <span class="mono">±0.05</span> in leading without disturbing the scale.</li>
+      <li>Whether to add <span class="mono">body-large</span> (19 px) for KEY Letter long-form.</li>
+      <li>Whether to commit to print-grade Source Serif weights for the printable assets, or stay with regular/bold only.</li>
+    </ol>
+
+    <hr class="rule">
+
+    <!-- ────────── FILES ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VIII &nbsp;·&nbsp; Files</span>What&rsquo;s in this folder</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:40%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">index.html</td><td>This spec — specimen, scale, micro-rules, plans.</td></tr>
+        <tr><td class="mono">typography-css-tokens.css</td><td>Drop-in CSS variables for the codebase. Engineering-side import.</td></tr>
+        <tr><td class="mono">font-pairing-recommendations.md</td><td>Long-form rationale for the three plans.</td></tr>
+        <tr><td class="mono">README.md</td><td>V1 decisions and expected V2 feedback.</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Printable PDF versions of the specimen sheet and the spec sheet are
+      <strong>deferred to V2</strong>, once the plan is selected — the same
+      logic as the palette: no point printing what is about to move.
+    </p>
+
+    <nav class="crossnav">
+      <a href="../02-color-palette/index.html">← 02 · Color Palette</a>
+      <span class="crossnav__center">Brief 03 · Typography · V1</span>
+      <a href="../04-internal-poster/index.html">04 · Internal Poster →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 03 · V1<br>2026-05-13</div>
+      <div class="colophon__right">Source Serif 4 · Inter · Noto Serif SC · Noto Sans SC · JetBrains Mono</div>
+    </footer>
+
+  </main>
+</body>
+</html>

@@ -15,6 +15,7 @@ import {
   METHODOLOGY_CLOSING,
   type Contract,
 } from '@/lib/content/methodology/contracts';
+import KeyWordmark from '@/components/KeyWordmark';
 
 export const runtime = 'nodejs';
 
@@ -24,12 +25,9 @@ export const runtime = 'nodejs';
 function TopNav() {
   return (
     <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-      <Link
-        href="/"
-        className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
-      >
-        KEY
-      </Link>
+      <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
+        </Link>
       <Link
         href="/"
         className="text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 hover:text-seal-500 transition-colors"
@@ -271,8 +269,11 @@ export default function MethodologyPage() {
         </div>
 
         <div className="border-t border-paper-300">
-          <div className="max-w-prose-xl mx-auto px-6 py-8 text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400 text-center">
-            KEY Editorial Office · Methodology · 决策科学 40 年最佳实践的工程化
+          <div className="max-w-prose-xl mx-auto px-6 py-8 flex flex-col items-center gap-3 text-center">
+            <KeyWordmark variant="mark-only" height={18} ariaLabel="KEY mark" />
+            <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400">
+              KEY Editorial Office · Methodology · 决策科学 40 年最佳实践的工程化
+            </p>
           </div>
         </div>
       </footer>

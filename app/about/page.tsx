@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import KeyWordmark from '@/components/KeyWordmark';
 
 export const metadata = {
   title: '关于 KEY',
@@ -8,8 +9,8 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          KEY
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/" className="hover:text-seal transition-colors">← 回主页</Link>

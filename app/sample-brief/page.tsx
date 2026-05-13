@@ -16,6 +16,7 @@ import { getSampleBriefs } from '@/lib/db';
 import BriefRenderer from '@/components/BriefRenderer';
 import Link from 'next/link';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
+import KeyWordmark from '@/components/KeyWordmark';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -72,11 +73,8 @@ async function SampleBriefContent({
       {/* 顶部导航 — 极简                                  */}
       {/* ============================================ */}
       <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-        <Link
-          href="/"
-          className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
-        >
-          KEY
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
         </Link>
         <Link
           href="/"
@@ -189,8 +187,11 @@ async function SampleBriefContent({
         </div>
 
         <div className="border-t border-paper-300">
-          <div className="max-w-prose-xl mx-auto px-6 py-8 text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400 text-center">
-            KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物
+          <div className="max-w-prose-xl mx-auto px-6 py-8 flex flex-col items-center gap-3 text-center">
+            <KeyWordmark variant="mark-only" height={18} ariaLabel="KEY mark" />
+            <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400">
+              KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物
+            </p>
           </div>
         </div>
       </footer>

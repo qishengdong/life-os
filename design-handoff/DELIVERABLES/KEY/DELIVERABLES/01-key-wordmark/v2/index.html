@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 01 · Wordmark · V2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../../_shared/editorial.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="key-favicon-32.png">
+  <link rel="icon" type="image/png" sizes="180x180" href="key-favicon-180.png">
+  <link rel="apple-touch-icon" href="key-favicon-180.png">
+  <style>
+    /* Direction A · outlined SVG specimens. No font dependency — paths only. */
+    .specimen {
+      background: var(--paper-100);
+      padding: 64px 56px 56px;
+      margin: 24px 0;
+      position: relative;
+      border-top: 0.5px solid var(--ink);
+      border-bottom: 0.5px solid var(--ink);
+    }
+    .specimen__cap {
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .specimen__num {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+    }
+    .specimen img { display: block; width: 100%; height: auto; max-width: 880px; margin: 0 auto; }
+
+    /* Side-by-side V1 vs V2 (mark fix) */
+    .v1v2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--paper-400);
+      border: 0.5px solid var(--paper-400);
+      margin: 24px 0 56px;
+    }
+    .v1v2__col {
+      background: var(--paper-200);
+      padding: 56px 32px 28px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+    }
+    .v1v2__col img { width: 100%; max-width: 480px; }
+    .v1v2__label {
+      position: absolute;
+      top: 14px;
+      left: 22px;
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .v1v2__note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-500);
+      margin-top: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Variants grid */
+    .variants {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--paper-400);
+      border: 0.5px solid var(--paper-400);
+      margin: 16px 0 40px;
+    }
+    .variant {
+      padding: 48px 24px 24px;
+      position: relative;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper-200);
+    }
+    .variant--paper100 { background: var(--paper-100); }
+    .variant--dark { background: var(--navy); }
+    .variant--burgundy { background: var(--burgundy); }
+    .variant__label {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .variant--dark .variant__label,
+    .variant--burgundy .variant__label { color: rgba(247,243,234,0.65); }
+    .variant__cap {
+      position: absolute;
+      bottom: 12px;
+      right: 18px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-400);
+    }
+    .variant--dark .variant__cap,
+    .variant--burgundy .variant__cap { color: rgba(247,243,234,0.4); }
+    .variant img { width: 100%; max-width: 360px; }
+
+    /* Y fork zoom block */
+    .yfork {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+      margin: 24px 0 56px;
+      background: var(--paper-100);
+      padding: 40px 32px;
+      border: 0.5px solid var(--paper-400);
+    }
+    .yfork__big img { width: 100%; }
+    .yfork__zoom {
+      background: var(--paper-200);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1/1;
+    }
+    .yfork__zoom svg { width: 100%; height: 100%; }
+    .yfork__zoom::after {
+      content: '5×';
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--burgundy);
+    }
+    .yfork__cap {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 10px;
+    }
+
+    /* Favicons row */
+    .favicons {
+      display: flex;
+      gap: 48px;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 64px 32px 40px;
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      margin: 24px 0 40px;
+    }
+    .favicons__col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .favicons__col img { border: 0.5px solid var(--paper-400); }
+    .favicons__cap {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      letter-spacing: 0.04em;
+    }
+
+    /* OG card */
+    .og {
+      background: var(--paper-100);
+      padding: 32px;
+      border: 0.5px solid var(--paper-400);
+      margin: 24px 0 40px;
+      text-align: center;
+    }
+    .og img {
+      width: 100%;
+      max-width: 720px;
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.2);
+    }
+    .og__cap {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      margin-top: 16px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Size variants row (display vs nav) */
+    .sizes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 24px 0 48px;
+    }
+    .sizes__cell {
+      background: var(--paper-100);
+      padding: 56px 32px 28px;
+      position: relative;
+      border: 0.5px solid var(--paper-400);
+      text-align: center;
+    }
+    .sizes__cell img { width: 100%; max-width: 540px; }
+    .sizes__head {
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .sizes__num {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+    }
+    .sizes__note {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--ink-500);
+      margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .v1v2, .variants, .sizes { grid-template-columns: 1fr; }
+      .yfork { grid-template-columns: 1fr; }
+      .favicons { gap: 28px; padding: 36px 16px 24px; flex-wrap: wrap; }
+      .specimen { padding: 44px 18px 36px; }
+    }
+  </style>
+</head>
+<body>
+  <img src="../../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V2</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 01 · V2 · production grade</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-01 · v2 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">KEY <em>Wordmark · V2</em></h1>
+
+    <p class="subtitle">
+      Direction A locked in. All assets re-rendered as outlined paths — no
+      webfont dependency. Mark repositioned. Y-fork shipped as a separate
+      exploration. Favicon + OG suite included.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── WHAT CHANGED ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; What changed since V1</span>The five lifts</h2>
+
+    <ol class="roman">
+      <li><strong>SVGs are outlined paths.</strong> No more <span class="mono">class="km"</span> referring to nothing. Every wordmark file is a self-contained <span class="mono">&lt;path&gt;</span> that renders identically wherever it lands — React component, email signature, press PDF, dev preview.</li>
+      <li><strong>Mark moved inward.</strong> From x≈850 (V1) to <span class="mono">endX + 14px</span> — sits within visual gravity of the Y. Length reduced to 48px (from 68px). Burgundy on light, Burgundy 400 on dark.</li>
+      <li><strong>Nav-size variant.</strong> Tracking eased to <span class="mono">+0.19em</span> for sub-24px lockups (top-nav, email sig). Display lockup keeps <span class="mono">+0.16em</span>.</li>
+      <li><strong>Y-fork — shipped as exploration.</strong> Subtle path extension at the bottom of Y&rsquo;s left arm. Visible only on close inspection. Shipped as a separate file so it can be reviewed before promoting into the canonical lockup.</li>
+      <li><strong>Favicon + OG suite.</strong> Single-letter K favicon (16/32/180). 1200×630 OG image. Mark-only SVG for stamp/signature use.</li>
+    </ol>
+
+    <hr class="rule">
+
+    <!-- ────────── CANONICAL ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; Canonical</span>Direction A · production</h2>
+
+    <p>Outlined Source Serif 4 Bold (700) at <span class="mono">+0.16em</span>. The single source of truth for every other variant.</p>
+
+    <section class="specimen">
+      <span class="specimen__cap">Primary · outlined</span>
+      <span class="specimen__num">Source Serif 4 · 700 · +0.16em · paths only</span>
+      <img src="key-wordmark.svg" alt="KEY wordmark · primary">
+    </section>
+
+    <div class="variants">
+      <div class="variant variant--paper100">
+        <span class="variant__label">With mark</span>
+        <img src="key-wordmark-with-mark.svg" alt="KEY · with mark">
+        <span class="variant__cap">Burgundy hairline · gap 14px · y 100</span>
+      </div>
+      <div class="variant variant--paper100">
+        <span class="variant__label">Monochrome · transparent</span>
+        <img src="key-wordmark-monochrome.svg" alt="KEY · monochrome">
+        <span class="variant__cap">Ink only · press</span>
+      </div>
+      <div class="variant variant--dark">
+        <span class="variant__label">On Night Navy</span>
+        <img src="key-wordmark-on-dark.svg" alt="KEY · on dark">
+        <span class="variant__cap">#141923 · #F7F3EA · mark #8A2F3B</span>
+      </div>
+      <div class="variant variant--burgundy">
+        <span class="variant__label">On Burgundy</span>
+        <img src="key-wordmark-monochrome.svg" alt="KEY · on burgundy" style="filter:invert(1) brightness(1.05);">
+        <span class="variant__cap">#6E1F2A · #F7F3EA · cover stock</span>
+      </div>
+    </div>
+
+    <h3 class="sub">Mark — V1 vs V2 positioning</h3>
+
+    <div class="v1v2">
+      <div class="v1v2__col">
+        <span class="v1v2__label">V1 · before</span>
+        <svg viewBox="0 0 1024 256" width="100%" style="max-width:480px;">
+          <text x="512" y="186" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-weight="700" font-size="200" letter-spacing="32" fill="#111111">KEY</text>
+          <line x1="850" y1="100" x2="918" y2="100" stroke="#6E1F2A" stroke-width="3"/>
+        </svg>
+        <div class="v1v2__note">mark x=850 · length 68 · floats away from Y</div>
+      </div>
+      <div class="v1v2__col">
+        <span class="v1v2__label">V2 · corrected</span>
+        <img src="key-wordmark-with-mark.svg" alt="V2 mark position">
+        <div class="v1v2__note">mark x=endX+14 · length 48 · reads as a stamp on KEY</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── SIZE VARIANTS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; Size variants</span>Display vs nav</h2>
+
+    <p>
+      Letter-spacing in <span class="mono">em</span> units doesn&rsquo;t scale
+      linearly — what reads as &ldquo;wide masthead&rdquo; at 224 pt reads as
+      &ldquo;cramped&rdquo; at 18 pt. Two lockups handle the range. Threshold:
+      <strong>48 px cap-height</strong>. Above it, display. Below, nav.
+    </p>
+
+    <div class="sizes">
+      <div class="sizes__cell">
+        <span class="sizes__head">Display</span>
+        <span class="sizes__num">+0.16em · ≥ 48px</span>
+        <img src="key-wordmark.svg" alt="display lockup">
+        <div class="sizes__note">Hero, poster, brief cover, OG, footer mast.</div>
+      </div>
+      <div class="sizes__cell">
+        <span class="sizes__head">Nav</span>
+        <span class="sizes__num">+0.19em · &lt; 48px</span>
+        <img src="key-wordmark-nav.svg" alt="nav lockup">
+        <div class="sizes__note">Top nav, email signature, business card.</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── Y FORK ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Y fork · exploration</span>The fingerprint</h2>
+
+    <p>
+      Subtle path extension at the bottom of Y&rsquo;s left arm — a 6&ndash;7%
+      vertical &ldquo;continuation&rdquo; past the natural junction. The goal,
+      per V2 feedback: <em>five minutes don&rsquo;t see it, fifteen minutes
+      notice it</em>. Shipped as a separate file so the reviewer can decide
+      whether to promote it into the canonical lockup or keep Y clean.
+    </p>
+
+    <div class="yfork">
+      <div class="yfork__big">
+        <div class="yfork__cap">At native size · 1× </div>
+        <img src="key-wordmark-A-y-fork-explore.svg" alt="Y fork at full size">
+      </div>
+      <div class="yfork__zoom">
+        <object type="image/svg+xml" data="key-wordmark-A-y-fork-explore.svg" style="width: 500%; height: 500%; transform: translate(-65%, -25%); display: block;"></object>
+      </div>
+    </div>
+
+    <h3 class="sub">My take</h3>
+
+    <p>
+      I&rsquo;m on the fence. The fork is real, but subtle to the point of
+      being deniable. The Y in Source Serif 4 Bold already has a structurally
+      strong junction — the extension reads as <em>intentional</em> on close
+      inspection, but at 24 px nav size it disappears.
+    </p>
+    <p>
+      <strong>Two ways to go in V3</strong>:
+    </p>
+    <ol class="roman">
+      <li><strong>Promote.</strong> Bake the fork into the canonical
+        <span class="mono">key-wordmark.svg</span> and treat it as the brand&rsquo;s
+        invisible signature — visible only at large display sizes.</li>
+      <li><strong>Drop.</strong> Accept that Source Serif 4 Bold&rsquo;s native
+        Y already does the work. Save the fork for a custom-drawn V3 (with
+        proper font-editor tooling) if we still want a fingerprint.</li>
+    </ol>
+
+    <p>I lean (1). The fork is craft — and craft that only the careful reader sees is exactly the brand promise. But I won&rsquo;t commit without your call.</p>
+
+    <hr class="rule">
+
+    <!-- ────────── FAVICONS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">V &nbsp;·&nbsp; Favicons + OG</span>Small marks</h2>
+
+    <p>
+      The full <span class="mono">KEY</span> wordmark blurs at favicon scale.
+      Solution: single-letter <span class="mono">K</span> as the icon. Source
+      Serif 4 Bold K is distinctive enough — strong serifs, recognizable
+      junction, weight — to read as KEY&rsquo;s mark in a browser tab.
+    </p>
+
+    <div class="favicons">
+      <div class="favicons__col">
+        <img src="key-favicon-180.png" alt="180px favicon" width="180" height="180">
+        <div class="favicons__cap">180 × 180 · apple-touch-icon</div>
+      </div>
+      <div class="favicons__col">
+        <img src="key-favicon-32.png" alt="32px favicon" width="32" height="32">
+        <div class="favicons__cap">32 · favicon</div>
+      </div>
+      <div class="favicons__col">
+        <img src="key-favicon-16.png" alt="16px favicon" width="16" height="16">
+        <div class="favicons__cap">16 · favicon</div>
+      </div>
+    </div>
+
+    <h3 class="sub">Key-mark alone</h3>
+
+    <p>
+      For wax-stamp uses (email signature footer, end-of-letter ornament,
+      brief seal): the burgundy hairline alone. <span class="mono">96 × 24 viewBox</span>.
+    </p>
+
+    <div class="variant variant--paper100" style="min-height:120px;margin:16px 0 40px;">
+      <span class="variant__label">key-mark-only.svg</span>
+      <img src="key-mark-only.svg" alt="key mark only" style="max-width:240px;">
+      <span class="variant__cap">96 × 24 · burgundy 3px</span>
+    </div>
+
+    <h3 class="sub">OG image · 1200 × 630</h3>
+
+    <p>Social cards and rich-preview surfaces. The Founder Edition cover, compressed to one frame.</p>
+
+    <div class="og">
+      <img src="key-og-image.png" alt="KEY OG image 1200×630">
+      <div class="og__cap">key-og-image.png · 1200 × 630 · for og:image, twitter:image, WeChat sharing</div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── FILE LIST ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">VI &nbsp;·&nbsp; Files</span>What&rsquo;s shipped</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:42%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">key-wordmark.svg</td><td>Canonical · outlined · display tracking +0.16em.</td></tr>
+        <tr><td class="mono">key-wordmark-nav.svg</td><td>Nav-size lockup · outlined · tracking +0.19em.</td></tr>
+        <tr><td class="mono">key-wordmark-with-mark.svg</td><td>Canonical + repositioned mark (gap 14, y 100).</td></tr>
+        <tr><td class="mono">key-wordmark-on-dark.svg</td><td>Outlined · on Night Navy · mark in Burgundy 400.</td></tr>
+        <tr><td class="mono">key-wordmark-monochrome.svg</td><td>Outlined · transparent · ink only · press.</td></tr>
+        <tr><td class="mono">key-wordmark-A-y-fork-explore.svg</td><td><em>Exploration.</em> Subtle fork on Y left arm. For review.</td></tr>
+        <tr><td class="mono">key-mark-only.svg</td><td>Burgundy hairline alone · 96 × 24 viewBox.</td></tr>
+        <tr><td class="mono">key-favicon-src.svg</td><td>Source SVG for favicons · Source Serif K · 256 × 256.</td></tr>
+        <tr><td class="mono">key-favicon-16.png</td><td>16 × 16 favicon.</td></tr>
+        <tr><td class="mono">key-favicon-32.png</td><td>32 × 32 favicon.</td></tr>
+        <tr><td class="mono">key-favicon-180.png</td><td>180 × 180 apple-touch-icon.</td></tr>
+        <tr><td class="mono">key-og-image.svg</td><td>Source SVG for OG image · 1200 × 630.</td></tr>
+        <tr><td class="mono">key-og-image.png</td><td>Rasterized OG image · 1200 × 630.</td></tr>
+        <tr><td class="mono">index.html</td><td>This V2 presentation.</td></tr>
+        <tr><td class="mono">README.md</td><td>V2 decisions, deltas from V1, V2 → V3 feedback expected.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Deferred to V2.5 / V3</h3>
+
+    <ol class="roman">
+      <li><strong>Direction C poster lockup.</strong> Bodoni Moda outlining is queued — needs jsDelivr fetch path verified. Brief 04 in V2 still uses Source Serif 4 for the poster wordmark.</li>
+      <li><strong>OG / favicon text rasterization fidelity.</strong> The OG PNG currently rasterizes the small italic tagline using a system fallback serif. Functional but not press-grade. V3 will either outline that text too or rasterize via headless browser with embedded fonts.</li>
+      <li><strong>Y-fork decision.</strong> Promote into canonical (V3 path edit) or drop (canonical stays clean).</li>
+    </ol>
+
+    <nav class="crossnav">
+      <a href="../../../index.html">← V1 / V2 Handoff Index</a>
+      <span class="crossnav__center">Brief 01 · Wordmark · V2</span>
+      <a href="../../02-color-palette/v2/index.html">02 · Palette V2 →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 01 · V2<br>2026-05-13</div>
+      <div class="colophon__right">Source Serif 4 Bold · outlined<br>opentype.js v1.3.4 · paths-only</div>
+    </footer>
+
+  </main>
+</body>
+</html>

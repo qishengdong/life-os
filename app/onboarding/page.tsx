@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import { STAGES, type StageId, type OnboardingQuestion } from '@/lib/onboarding/schema';
+import KeyWordmark from '@/components/KeyWordmark';
 
 function DraggableRank({
   options, value, onChange,
@@ -171,8 +172,8 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-lg mx-auto px-6 pt-8 pb-6">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          KEY
+        <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
         </Link>
       </nav>
 

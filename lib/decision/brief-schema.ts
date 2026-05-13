@@ -171,7 +171,8 @@ export function generateBriefNumber(date?: Date): string {
 // ============================================================================
 // 工具: 中文字数计算 (不含空白 / 标点)
 // ============================================================================
-export function countCharsCN(text: string): number {
+export function countCharsCN(text: unknown): number {
+  if (typeof text !== 'string') return 0;
   return text.replace(/\s+/g, '').replace(/[\p{P}]/gu, '').length;
 }
 
@@ -198,6 +199,10 @@ export function validateBrief(brief: DecisionBrief): {
   ];
 
   for (const [name, content, min, max] of checks) {
+    if (typeof content !== 'string' || content.length === 0) {
+      issues.push(`section "${name}" 缺失或非字符串 (got ${typeof content})`);
+      continue;
+    }
     const n = countCharsCN(content);
     if (n < min * 0.8) issues.push(`section "${name}" 偏短: ${n} 字 (期望 ${min}-${max})`);
     if (n > max * 1.2) issues.push(`section "${name}" 偏长: ${n} 字 (期望 ${min}-${max})`);

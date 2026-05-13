@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 256" width="1024" height="256" role="img" aria-label="KEY">
+  <title>KEY · Wordmark · Direction C · on dark</title>
+  <defs>
+    
+  </defs>
+  <rect width="1024" height="256" fill="#141923"></rect>
+  <line x1="80" y1="56" x2="944" y2="56" stroke="#F7F3EA" stroke-width="0.75" opacity="0.6"></line>
+  <text x="512" y="174" text-anchor="middle" class="km" fill="#F7F3EA">KEY</text>
+  <line x1="80" y1="208" x2="944" y2="208" stroke="#F7F3EA" stroke-width="0.75" opacity="0.6"></line>
+  <path d="M 502 56 L 512 70 L 522 56" fill="none" stroke="#8A2F3B" stroke-width="1.5" stroke-linejoin="miter"></path>
+</svg>

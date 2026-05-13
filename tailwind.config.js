@@ -127,8 +127,8 @@ module.exports = {
         'editorial':    ['1.75rem', { lineHeight: '1.30' }],                            // h2, 28px
         'editorial-sm': ['1.375rem', { lineHeight: '1.35' }],                           // h3, 22px
         'quote':        ['1.5rem', { lineHeight: '1.50' }],                             // 24px italic
-        'reading':      ['1.0625rem', { lineHeight: '1.75' }],                          // body, 17px (1.75 per brief, NOT 1.78)
-        'reading-large': ['1.1875rem', { lineHeight: '1.80' }],                         // KEY Letter long-form, 19px
+        'reading':      ['1.0625rem', { lineHeight: '1.75' }],                          // body, 17px / 1.75 (per Brand Brief, designer pushed back to this in V2)
+        'reading-large': ['1.1875rem', { lineHeight: '1.80' }],                         // KEY Letter / methodology long-form, 19px (V2 add)
         'reading-small': ['0.9375rem', { lineHeight: '1.72' }],                         // 15px
         'caption':      ['0.8125rem', { lineHeight: '1.60' }],                          // 13px
         'label':        ['0.65625rem', { lineHeight: '1.40', letterSpacing: '0.32em' }], // 10.5px uppercase

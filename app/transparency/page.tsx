@@ -33,6 +33,7 @@ import {
   getCheckStats,
   getBriefStats,
 } from '@/lib/grader/aggregations';
+import KeyWordmark from '@/components/KeyWordmark';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -40,12 +41,9 @@ export const dynamic = 'force-dynamic';
 function TopNav() {
   return (
     <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-      <Link
-        href="/"
-        className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
-      >
-        KEY
-      </Link>
+      <Link href="/" aria-label="KEY home" className="block">
+          <KeyWordmark variant="nav" height={22} />
+        </Link>
       <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
         <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
         <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>

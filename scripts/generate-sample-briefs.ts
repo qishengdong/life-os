@@ -338,16 +338,33 @@ function setupPersona(p: SamplePersona): number {
 // 主流程
 // ============================================================================
 async function main() {
-  const personas: SamplePersona[] = [
+  // CLI: 可指定 only=parent-care|marriage|child-education,... 单跑某几条
+  const onlyArg = process.argv.find((a) => a.startsWith('--only='));
+  const only = onlyArg ? onlyArg.slice('--only='.length).split(',') : null;
+
+  const allPersonas: SamplePersona[] = [
     PERSONA_PARENT_CARE,
     PERSONA_MARRIAGE,
     PERSONA_CHILD_EDUCATION,
   ];
+  const personas = only
+    ? allPersonas.filter((p) => only.includes(p.forceFramework))
+    : allPersonas;
+
+  if (only) {
+    console.log(`[setup] only running: ${personas.map((p) => p.forceFramework).join(', ')}`);
+  }
 
   const db = getDb();
 
-  // 先清掉之前的 sample brief (允许重跑)
-  const removed = db.prepare(`DELETE FROM decision_briefs WHERE is_sample = 1`).run();
+  // 单跑模式: 只清掉指定 framework, 不清全部
+  const removed = only
+    ? db
+        .prepare(
+          `DELETE FROM decision_briefs WHERE is_sample = 1 AND framework IN (${personas.map(() => '?').join(',')})`,
+        )
+        .run(...personas.map((p) => p.forceFramework))
+    : db.prepare(`DELETE FROM decision_briefs WHERE is_sample = 1`).run();
   console.log(`[setup] removed ${removed.changes} previous sample briefs\n`);
 
   for (const p of personas) {

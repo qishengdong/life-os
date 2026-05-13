@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 03 · Typography · V2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../../_shared/editorial.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../01-key-wordmark/v2/key-favicon-32.png">
+  <style>
+    /* Reuse V1's specimen-row style, light tweaks */
+    .specimen-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 200px;
+      align-items: baseline;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+    }
+    .specimen-row:last-child { border-bottom: none; }
+    .specimen-row__name {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      padding-top: 10px;
+      align-self: start;
+    }
+    .specimen-row__name--new {
+      color: var(--burgundy);
+    }
+    .specimen-row__name--new::after {
+      content: 'NEW';
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 7px;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      background: var(--burgundy);
+      color: var(--paper-100);
+      vertical-align: 2px;
+    }
+    .specimen-row__sample {
+      color: var(--ink);
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+    .specimen-row__meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      line-height: 1.7;
+      text-align: right;
+      align-self: start;
+      padding-top: 10px;
+    }
+    .specimen-row__meta div { white-space: nowrap; }
+
+    /* Sample text classes (V2 tokens applied inline) */
+    .v2-body-1-75 { font-family: var(--serif-en); font-size: 17px; line-height: 1.75; }
+    .v2-body-1-78 { font-family: var(--serif-en); font-size: 17px; line-height: 1.78; }
+    .v2-body-large { font-family: var(--serif-en); font-size: 19px; line-height: 1.80; }
+    .v2-cn-body-large { font-family: var(--serif-cn); font-size: 19px; line-height: 1.92; }
+    .v2-cn-body { font-family: var(--serif-cn); font-size: 17px; line-height: 1.88; }
+
+    /* Side-by-side lh comparison */
+    .lh-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: 24px 0 56px;
+      border: 0.5px solid var(--paper-400);
+    }
+    .lh-compare__col {
+      padding: 36px 32px;
+      border-right: 0.5px solid var(--paper-400);
+      background: var(--paper-100);
+    }
+    .lh-compare__col:last-child { border-right: none; }
+    .lh-compare__cap {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 14px;
+    }
+    .lh-compare__cap .mono { letter-spacing: 0.04em; color: var(--ink-400); margin-left: 8px; font-size: 10px; }
+    .lh-compare__col p { max-width: 30em; color: var(--ink); margin: 0; }
+    .lh-compare__col p em { font-style: italic; }
+    .lh-compare__col--featured { background: var(--paper-200); }
+
+    /* body-large showcase */
+    .bl-demo {
+      background: var(--paper-100);
+      padding: 56px 48px;
+      margin: 24px 0 40px;
+      border: 0.5px solid var(--paper-400);
+    }
+    .bl-demo__label {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 24px;
+    }
+    .bl-demo p + p { margin-top: 1em; }
+    .bl-demo p { max-width: 36em; color: var(--ink); }
+    .bl-demo p em { font-style: italic; }
+    .bl-demo__cn { margin-top: 24px; max-width: 26em; color: var(--ink); }
+
+    @media (max-width: 768px) {
+      .specimen-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .specimen-row__name, .specimen-row__meta { padding-top: 0; }
+      .specimen-row__meta { text-align: left; }
+      .lh-compare { grid-template-columns: 1fr; }
+      .lh-compare__col { border-right: none; border-bottom: 0.5px solid var(--paper-400); }
+      .bl-demo { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <img src="../../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V2</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 03 · V2 · production grade</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-03 · v2 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">Typography <em>V2</em></h1>
+
+    <p class="subtitle">
+      Plan A locked. Two precise lifts from V1: <span class="mono">body lh
+      1.78 → 1.75</span>, and a new <span class="mono">body-large</span> step
+      at 19 px for KEY Letter long-form. Everything else unchanged.
+    </p>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; What changed since V1</span>Two lifts, no drama</h2>
+
+    <ol class="roman">
+      <li><strong>Body line-height pushed back to 1.75.</strong> V1 raised it to 1.78 with the note &ldquo;set to settle.&rdquo; That wasn&rsquo;t a real reason. 1.75 is what the Brand Brief and Master Directive both specified, and at 17 px with Source Serif 4 it&rsquo;s the publication standard. Accepted.</li>
+      <li><strong>Added <span class="mono">body-large</span> step</strong> — 19 px / 1.80 EN, 19 px / 1.92 CN. For KEY Letter (Brief 15), <code>/methodology</code> long-form, and any surface where 17 px feels tight. Sustained-reading register.</li>
+    </ol>
+
+    <p>Plan A is now annotated as <strong>adopted</strong> in the recommendations file. No font changes. No new families. No new weights. The full variable-axes import URL (200–900, 8..60 opsz, both italic and roman) stays as V1 shipped it.</p>
+
+    <hr class="rule">
+
+    <!-- ────────── BODY LH FIX ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; Body lh · before / after</span>1.78 → 1.75</h2>
+
+    <p>The same paragraph, two leadings. The shift is small. Over a Brief&rsquo;s nine sections it matters.</p>
+
+    <div class="lh-compare">
+      <div class="lh-compare__col">
+        <div class="lh-compare__cap">V1 &nbsp;·&nbsp; lh <span class="mono">1.78</span></div>
+        <p class="v2-body-1-78">
+          You came in asking whether to leave the job. The job is the
+          symptom. The decision underneath — and the only one you can act
+          on this quarter — is whether to lower the cost of being wrong
+          about your last move. <em>That</em> is the work; the rest is
+          consolation. A good brief earns the reader&rsquo;s second reading.
+        </p>
+      </div>
+      <div class="lh-compare__col lh-compare__col--featured">
+        <div class="lh-compare__cap">V2 &nbsp;·&nbsp; lh <span class="mono">1.75</span></div>
+        <p class="v2-body-1-75">
+          You came in asking whether to leave the job. The job is the
+          symptom. The decision underneath — and the only one you can act
+          on this quarter — is whether to lower the cost of being wrong
+          about your last move. <em>That</em> is the work; the rest is
+          consolation. A good brief earns the reader&rsquo;s second reading.
+        </p>
+      </div>
+    </div>
+
+    <p>The V1 setting (1.78) reads slightly &ldquo;floaty&rdquo; — paragraphs land softer than they should. 1.75 is the publication standard for Source Serif at 17 px, and stays consistent with the Brand Brief.</p>
+
+    <hr class="rule">
+
+    <!-- ────────── BODY-LARGE ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; body-large · new</span>19 px / 1.80</h2>
+
+    <p>A new step for KEY Letter (Brief 15) and any long-form reading surface where 17 px feels tight. Used sparingly — not the default body.</p>
+
+    <div class="bl-demo">
+      <div class="bl-demo__label">.t-body-large &nbsp; · &nbsp; 19 / 34.2 &nbsp; · &nbsp; max-width 36em</div>
+      <p class="v2-body-large">
+        You came in asking whether to leave the job. The job is the symptom.
+        The decision underneath — and the only one you can act on this
+        quarter — is whether to lower the cost of being wrong about your
+        last move.
+      </p>
+      <p class="v2-body-large">
+        We say so plainly because <em>that</em> is the work; the rest is
+        consolation. A good brief earns the reader&rsquo;s second reading.
+        A great one earns the reader&rsquo;s pen — annotations in the
+        margin, the kind of underlines that survive the move into a folder
+        beside the bed.
+      </p>
+      <div class="v2-cn-body-large bl-demo__cn">
+        你来的时候问的是要不要离职。离职是症状。<br>
+        真正的问题，是你愿不愿意降低上一次判断错的成本 —— 这一句不是劝告，是这份简报存在的理由。
+      </div>
+    </div>
+
+    <p>
+      <strong>When to use</strong>: KEY Letter (Brief 15) body, <code>/methodology</code>
+      long-form, the opening manifesto on any Brief PDF. Anywhere the reader
+      stays for many minutes.
+    </p>
+    <p>
+      <strong>When not to use</strong>: defaults, cards, captions, nav, app
+      surfaces. The default body stays 17 px.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── SCALE — VISUAL ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Scale · V2</span>The full ladder</h2>
+
+    <p>Same scale as V1 — only the two changes flagged above. Italics, weights and tracking unchanged.</p>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">hero</div>
+      <div class="specimen-row__sample" style="font-family:var(--serif-en);font-size:56px;line-height:1.10;letter-spacing:-0.01em;font-weight:500;">A private brief for the decision in front of you.</div>
+      <div class="specimen-row__meta">
+        <div>56 / 62</div>
+        <div>−0.01em</div>
+        <div>wght 500</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">h1</div>
+      <div class="specimen-row__sample" style="font-family:var(--serif-en);font-size:40px;line-height:1.18;letter-spacing:-0.005em;font-weight:500;">The method behind the brief.</div>
+      <div class="specimen-row__meta">
+        <div>40 / 47</div>
+        <div>wght 500</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">h2</div>
+      <div class="specimen-row__sample" style="font-family:var(--serif-en);font-size:28px;line-height:1.30;font-weight:500;">Section II · The trade-off you can&rsquo;t un-see</div>
+      <div class="specimen-row__meta">
+        <div>28 / 36</div>
+        <div>wght 500</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">quote</div>
+      <div class="specimen-row__sample" style="font-family:var(--serif-en);font-style:italic;font-size:24px;line-height:1.50;">&ldquo;You may be mistaking guilt for responsibility.&rdquo;</div>
+      <div class="specimen-row__meta">
+        <div>24 / 36</div>
+        <div>italic</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name specimen-row__name--new">body-large</div>
+      <div class="specimen-row__sample v2-body-large" style="max-width:36em;">
+        Some decisions can&rsquo;t be made on impulse. Can&rsquo;t be
+        outsourced. Can&rsquo;t be soothed away. We turn the ones that
+        matter into a brief — <em>authored, not generated.</em>
+      </div>
+      <div class="specimen-row__meta">
+        <div>19 / 34.2</div>
+        <div>wght 400</div>
+        <div>KEY Letter, long-form</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">body</div>
+      <div class="specimen-row__sample v2-body-1-75" style="max-width:42em;">
+        Some decisions can&rsquo;t be made on impulse. Can&rsquo;t be
+        outsourced. Can&rsquo;t be soothed away. We turn the ones that
+        matter into a brief — <em>authored, not generated.</em>
+      </div>
+      <div class="specimen-row__meta">
+        <div>17 / 29.75</div>
+        <div>wght 400</div>
+        <div><strong>1.75 — V2</strong></div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">body-small</div>
+      <div class="specimen-row__sample" style="font-family:var(--serif-en);font-size:15px;line-height:1.72;max-width:42em;">
+        For internal discussion only. KEY runs on the LifeOS architecture.
+        Charter membership is limited to one hundred readers, by invitation.
+      </div>
+      <div class="specimen-row__meta">
+        <div>15 / 26</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name specimen-row__name--new">cn-body-large</div>
+      <div class="specimen-row__sample v2-cn-body-large" style="max-width:26em;">
+        你来的时候问的是要不要离职。离职是症状。真正的问题，是你愿不愿意降低上一次判断错的成本。
+      </div>
+      <div class="specimen-row__meta">
+        <div>19 / 36.5</div>
+        <div>wght 400</div>
+        <div>KEY Letter CN</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">cn-body</div>
+      <div class="specimen-row__sample v2-cn-body" style="max-width:26em;">
+        你来的时候问的是要不要离职。离职是症状。真正的问题，是你愿不愿意降低上一次判断错的成本。
+      </div>
+      <div class="specimen-row__meta">
+        <div>17 / 32</div>
+        <div>wght 400</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">label</div>
+      <div class="specimen-row__sample" style="font-family:var(--sans-en);font-size:10.5px;letter-spacing:0.32em;text-transform:uppercase;color:var(--burgundy);">From the Editorial Office · 2026 · No. 001</div>
+      <div class="specimen-row__meta">
+        <div>10.5 / 15</div>
+        <div>+0.32em</div>
+        <div>Inter 500</div>
+      </div>
+    </div>
+
+    <div class="specimen-row">
+      <div class="specimen-row__name">mono</div>
+      <div class="specimen-row__sample" style="font-family:var(--mono);font-size:14px;letter-spacing:0.02em;">KB-20260513-001 · authored, not generated</div>
+      <div class="specimen-row__meta">
+        <div>14 / 22</div>
+        <div>+0.02em</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── FILES ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">V &nbsp;·&nbsp; Files</span>What&rsquo;s shipped</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:42%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">typography-css-tokens.css</td><td>V2 tokens · body lh 1.75 · body-large 19px added.</td></tr>
+        <tr><td class="mono">font-pairing-recommendations.md</td><td>V1 + status header marking Plan A adopted.</td></tr>
+        <tr><td class="mono">index.html</td><td>This V2 presentation.</td></tr>
+        <tr><td class="mono">README.md</td><td>V2 decisions, deltas from V1, V2 → V3 expected.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Deferred to V2.5</h3>
+
+    <ol class="roman">
+      <li><code>typography-spec.pdf</code> — printable spec sheet (V1 deferred, still).</li>
+      <li><code>typography-samples.pdf</code> — printable type samples (V1 deferred, still).</li>
+      <li><strong>Webfont loading optimisation</strong> — split CN into a deferred async load, subset Latin to latin-ext only. Net ~9–10 MB saved on first paint. Not blocking, schedule for V2.5.</li>
+    </ol>
+
+    <nav class="crossnav">
+      <a href="../../02-color-palette/v2/index.html">← 02 · Palette V2</a>
+      <span class="crossnav__center">Brief 03 · Typography · V2</span>
+      <a href="../../04-internal-poster/v2/index.html">04 · Poster V2 →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 03 · V2<br>2026-05-13</div>
+      <div class="colophon__right">Plan A · adopted<br>body 17/1.75 · body-large 19/1.80</div>
+    </footer>
+
+  </main>
+</body>
+</html>
