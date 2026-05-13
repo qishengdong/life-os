@@ -55,6 +55,9 @@ export default async function HomePage() {
           <KeyWordmark variant="nav" height={22} />
         </Link>
         <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
+          <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">
+            通信集
+          </Link>
           <Link href="/methodology" className="hover:text-seal-500 transition-colors">
             方法论
           </Link>
@@ -97,31 +100,40 @@ export default async function HomePage() {
           </p>
 
           <h1 className="font-serif text-[clamp(2.5rem,6vw,5rem)] text-ink-900 tracking-tighter leading-[1.05] mb-12">
-            有些决定,
+            那些跟谁都
             <br />
-            不能一个人想.
+            说不出口的,
+            <br />
+            写给 KEY.
           </h1>
 
           <div className="max-w-prose-lg space-y-5">
             <p className="font-serif text-reading text-ink-700 editorial-leading">
-              父母养老. 孩子出路. 婚姻去留. 职业转身. 要不要迁移. 这些决定太重, 不能只靠冲动,
-              不能只靠 ChatGPT, 也不能只靠几句安慰.
+              每天心里那一小段没说出口的话. 父母变老的预兆. 婚姻里那个不能说的瞬间.
+              职业疲倦. "我做这一切到底为了什么".
+              这些跟伴侣说不清, 跟同事不能说, 跟朋友说了改变关系的话 — 写给 KEY.
             </p>
             <p className="font-serif text-reading text-ink-700 editorial-leading">
-              KEY 是一项 AI-Native 决策顾问服务. 我们以软件的边际成本,
-              交付私人顾问级的人生决策结果 — 装在一份你愿意每天打开的杂志级阅读体验里.
+              我们不是 chatbot. 我们是一个有距离感的编辑部. 我们 3-10 分钟回信, 一次一封,
+              真有引用, 真记得你. 重大决策时, 同一个编辑部为你撰一份私人简报.
             </p>
             <p className="font-serif text-reading text-ink-500 italic editorial-leading">
-              不替你做决定. 不哄你. 不假装记得你 — 真的记得你.
+              不评价对错. 不"加油". 不哄你. 不假装记得你 — 真的记得你.
             </p>
           </div>
 
           <div className="mt-16 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
             <Link
+              href="/letters/new"
+              className="font-serif text-lg bg-seal-500 hover:bg-seal-700 text-paper-100 px-6 py-2 transition-colors"
+            >
+              写一封新的信 →
+            </Link>
+            <Link
               href="/sample-brief"
               className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              读三份匿名 sample brief →
+              读 sample brief
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
@@ -296,7 +308,8 @@ export default async function HomePage() {
                 KEY Editorial Office
               </p>
             </div>
-            <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
+            <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400 flex-wrap">
+              <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">通信集</Link>
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>
               <Link href="/membership" className="hover:text-seal-500 transition-colors">会员</Link>
