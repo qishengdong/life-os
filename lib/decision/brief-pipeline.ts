@@ -205,13 +205,13 @@ export async function generateBrief(
   const briefNumber = generateBriefNumber();
   const authoredAt = Math.floor(Date.now() / 1000);
   const aiDisclosure =
-    '本简报由 LifeOS Editorial Office (AI) 生成. 仅作为决策辅助参考, 不构成医疗、法律或财务建议. 重大决定请结合专业意见.';
+    '本简报由 KEY Editorial Office (AI) 生成. 仅作为决策辅助参考, 不构成医疗、法律或财务建议. 重大决定请结合专业意见.';
 
   const brief: DecisionBrief = {
     briefNumber,
     topic: finalJson.topic || input.decision.slice(0, 30),
     authoredAt,
-    authoredBy: 'LifeOS Editorial Office',
+    authoredBy: 'KEY Editorial Office',
     authoredFor: input.displayName || `用户 #${input.userId}`,
     sections: {
       summary: finalJson.sections?.summary || '',

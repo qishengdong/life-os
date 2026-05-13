@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '服务协议 — Life OS',
+  title: '服务协议 — KEY',
 };
 
 export default function TermsPage() {
@@ -9,7 +9,7 @@ export default function TermsPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <Link href="/about" className="text-sm text-ink-500 hover:text-seal transition-colors">
           ← 关于
@@ -33,7 +33,7 @@ export default function TermsPage() {
 
           <h2>1. 服务说明</h2>
           <p>
-            Life OS 是一个由 [运营主体 TBD] 提供的 AI 决策辅助 SaaS.
+            KEY 是一个由 [运营主体 TBD] 提供的 AI 决策辅助 SaaS.
           </p>
           <p><strong>我们提供</strong>:</p>
           <ul>
@@ -126,8 +126,8 @@ export default function TermsPage() {
           <h2>6. 禁止行为</h2>
           <p>不能:</p>
           <ul>
-            <li>用 Life OS 试图获取自伤 / 伤人方法</li>
-            <li>滥用 AI 帮其他人 (Life OS 是 1对1 长期关系)</li>
+            <li>用 KEY 试图获取自伤 / 伤人方法</li>
+            <li>滥用 AI 帮其他人 (KEY 是 1对1 长期关系)</li>
             <li>攻击系统 / 反向工程</li>
             <li>抓取 / 转售 AI 输出</li>
             <li>创建多账号绕过限额</li>
@@ -150,7 +150,7 @@ export default function TermsPage() {
 
           <h3>7.3 我们的</h3>
           <p>
-            Life OS 的 brand / 代码 / 决策框架 / Synthetic personas 库 等知识产权归我们.
+            KEY 的 brand / 代码 / 决策框架 / Synthetic personas 库 等知识产权归我们.
           </p>
 
           <h2>8. 协议变更</h2>
@@ -169,7 +169,7 @@ export default function TermsPage() {
 
           <h2>10. 接受协议</h2>
           <p>
-            打开 Life OS 网站 + 提交第一个 Pulse / 决策 = 同意本协议.
+            打开 KEY 网站 + 提交第一个 Pulse / 决策 = 同意本协议.
           </p>
         </article>
 

@@ -76,7 +76,7 @@ async function SampleBriefContent({
           href="/"
           className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
         >
-          LifeOS
+          KEY
         </Link>
         <Link
           href="/"
@@ -91,14 +91,14 @@ async function SampleBriefContent({
       {/* ============================================ */}
       <header className="max-w-prose-lg mx-auto px-6 pt-16 pb-16 border-b border-paper-300">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          · LifeOS Editorial Office · Sample Briefs ·
+          · KEY Editorial Office · Sample Briefs ·
         </p>
         <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-8">
           我们交付的东西, 长这样.
         </h1>
         <div className="font-serif text-reading text-ink-700 editorial-leading max-w-prose-lg space-y-4">
           <p>
-            下面是 LifeOS 为三位匿名读者撰写的私人决策简报. 内容经本人同意公开,
+            下面是 KEY 为三位匿名读者撰写的私人决策简报. 内容经本人同意公开,
             姓名 / 城市 / 关键身份信息已做隐去处理.
           </p>
           <p>
@@ -160,7 +160,7 @@ async function SampleBriefContent({
       <footer className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-lg mx-auto px-6 py-20 text-center">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-            · 进入 LifeOS 编辑部 ·
+            · 进入 KEY 编辑部 ·
           </p>
           <h2 className="font-serif text-editorial text-ink-900 mb-6 tracking-tightish">
             你的下一个重大决定, <br />
@@ -190,7 +190,7 @@ async function SampleBriefContent({
 
         <div className="border-t border-paper-300">
           <div className="max-w-prose-xl mx-auto px-6 py-8 text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400 text-center">
-            LifeOS Editorial Office · 中国第一份 AI-Native 决策顾问刊物
+            KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物
           </div>
         </div>
       </footer>

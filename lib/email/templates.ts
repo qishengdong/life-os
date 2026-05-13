@@ -12,7 +12,7 @@
 const BRAND_FOOTER_HTML = `
 <div style="margin-top:48px;padding-top:24px;border-top:1px solid #E8DFD0;font-family:'Source Han Serif',Lora,serif;font-size:13px;color:#9D9081;line-height:1.6;">
   <p style="margin:0 0 6px 0;font-style:italic;color:#3A2E26;">陪你想清楚 · 看清代价 · 长期记得你</p>
-  <p style="margin:0;">Life OS · 一份关于人生重大决策的长期陪伴</p>
+  <p style="margin:0;">KEY · 一份关于人生重大决策的长期陪伴</p>
   <p style="margin:6px 0 0 0;font-size:11px;color:#9D9081;">不想再收到这类邮件? <a href="{unsubscribe_url}" style="color:#9B2D27;text-decoration:none;">取消订阅</a></p>
 </div>
 `;
@@ -20,7 +20,7 @@ const BRAND_FOOTER_HTML = `
 const BRAND_FOOTER_TEXT = `
 ---
 陪你想清楚 · 看清代价 · 长期记得你
-Life OS — 一份关于人生重大决策的长期陪伴
+KEY — 一份关于人生重大决策的长期陪伴
 
 不想再收到这类邮件? {unsubscribe_url}
 `;
@@ -31,7 +31,7 @@ function htmlShell(innerHtml: string, unsubscribeUrl: string): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Life OS</title>
+<title>KEY</title>
 </head>
 <body style="margin:0;padding:0;background:#FAF7F2;">
   <div style="max-width:620px;margin:0 auto;padding:40px 28px;font-family:'Source Han Serif',Lora,'PingFang SC',serif;color:#3A2E26;line-height:1.7;font-size:16px;">
@@ -65,7 +65,7 @@ export function buildWelcomeEmail(args: WelcomeArgs) {
 
   const text = `${greeting}
 
-欢迎来到 Life OS — 一份关于人生重大决策的长期陪伴.
+欢迎来到 KEY — 一份关于人生重大决策的长期陪伴.
 
 我不是 ChatGPT. 我不会每次都问你"你是谁". 我也不会替你做决定.
 我会在你写下今天的 Pulse 时, 看见那个你没说出口的张力.
@@ -80,7 +80,7 @@ ${args.appUrl}
   const html = htmlShell(`
     <p style="margin:0 0 24px 0;font-size:14px;color:#9B2D27;text-transform:uppercase;letter-spacing:0.2em;">· Welcome ·</p>
     <h1 style="font-size:32px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;margin:0 0 24px 0;">${greeting}<br/>它已经开始记得你了.</h1>
-    <p style="margin:0 0 16px 0;">欢迎来到 Life OS — 一份关于人生重大决策的长期陪伴.</p>
+    <p style="margin:0 0 16px 0;">欢迎来到 KEY — 一份关于人生重大决策的长期陪伴.</p>
     <p style="margin:0 0 16px 0;">我不是 ChatGPT. 我不会每次都问你"你是谁". 我也不会替你做决定.</p>
     <p style="margin:0 0 16px 0;">我会在你写下今天的 Pulse 时, 看见那个你没说出口的张力. 我会在你做完重大决策 30 天后回来问"当时担心的事现在怎么样了". 我会在你卡了几周的事上, 陪你一步步把它想清楚.</p>
     ${args.brainSnippet ? `
@@ -90,7 +90,7 @@ ${args.appUrl}
       </div>
     ` : ''}
     <p style="margin:32px 0 16px 0;">现在去写今天的第一条 Pulse:</p>
-    <a href="${args.appUrl}" style="display:inline-block;padding:14px 28px;background:#9B2D27;color:#FAF7F2;text-decoration:none;font-weight:500;">打开 Life OS →</a>
+    <a href="${args.appUrl}" style="display:inline-block;padding:14px 28px;background:#9B2D27;color:#FAF7F2;text-decoration:none;font-weight:500;">打开 KEY →</a>
     <p style="margin:32px 0 0 0;font-size:13px;color:#9D9081;">你的数据只在你的服务器上. 永不上传第三方. 永不卖. 永不训练模型.</p>
   `, args.unsubscribeUrl);
 
@@ -239,7 +239,7 @@ ${args.appUrl}`;
     <blockquote style="margin:0 0 24px 0;padding:16px 24px;border-left:4px solid #9B2D27;background:#F4EFE5;font-style:italic;color:#3A2E26;">${args.commitmentText}</blockquote>
     <p style="margin:0 0 16px 0;">不是检查你. 是想知道你当时说这话的那个状态, 跟现在比, 有没有什么变化.</p>
     <p style="margin:0 0 24px 0;">如果办了, 简单说一句; 没办, 也简单说一句 — 都比假装它没说过更有用.</p>
-    <a href="${args.appUrl}" style="display:inline-block;padding:14px 28px;background:#9B2D27;color:#FAF7F2;text-decoration:none;font-weight:500;">打开 Life OS →</a>
+    <a href="${args.appUrl}" style="display:inline-block;padding:14px 28px;background:#9B2D27;color:#FAF7F2;text-decoration:none;font-weight:500;">打开 KEY →</a>
   `, args.unsubscribeUrl);
 
   return {

@@ -291,7 +291,7 @@ export default function BriefRenderer({
           {showSeal && (
             <div className="absolute right-0 top-12">
               <div className="w-20 h-20 rounded-full border-2 border-seal-500 flex flex-col items-center justify-center text-seal-500 transform rotate-[-8deg] opacity-90">
-                <div className="font-serif text-[10px] uppercase tracking-[0.2em]">LifeOS</div>
+                <div className="font-serif text-[10px] uppercase tracking-[0.2em]">KEY</div>
                 <div className="font-sans text-[9px] mt-0.5">
                   {brief.briefNumber.split('-').pop()}
                 </div>
@@ -304,7 +304,7 @@ export default function BriefRenderer({
               {brief.meta.aiDisclosure}
             </p>
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mt-4">
-              LifeOS Editorial Office · {brief.briefNumber}
+              KEY Editorial Office · {brief.briefNumber}
             </p>
             {brief.meta.totalCharCount > 0 && (
               <p className="font-sans text-[10px] text-ink-400 mt-2">

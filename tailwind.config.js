@@ -1,3 +1,13 @@
+/**
+ * Tailwind config · KEY V1 (Phase 1)
+ *
+ * Source of truth: design-handoff/DELIVERABLES/02-color-palette/palette.json
+ *                  design-handoff/DELIVERABLES/03-typography/typography-css-tokens.css
+ *
+ * Body line-height = 1.75 (per Brand Brief; rejected designer's 1.78 in feedback 03).
+ * Fonts = Plan A (Source Serif 4 + Inter + Noto Serif SC + Noto Sans SC + JetBrains Mono).
+ */
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -8,118 +18,149 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // ===== KEY 视觉系统 (2026-05-13 锁定, 替换 LifeOS v2) =====
-        // Source: KEY Brand Brief v1 第 12 节 + docs/BRAND_BRIEF_V3_KEY.md
-        // 5 core 色 + 派生 scale + 状态色
+        // ============================================================
+        // KEY · Core 5 (locked per Brand Brief v1 §12)
+        // ============================================================
 
-        // Paper — 主背景, 大面积底色 (从 LifeOS 暖白 #FAF7F2 → KEY paper #F7F3EA, 略冷)
         paper: {
-          DEFAULT: '#F7F3EA',      // KEY core
-          50:  '#FAF8F2',          // 最亮 (卡片层次)
-          100: '#F7F3EA',          // KEY core (背景默认)
-          200: '#EFEAE0',          // 卡片底
-          300: '#E2DCD0',          // 边框
-          400: '#D6CFC2',          // 分割线深
+          DEFAULT: '#F7F3EA',
+          100: '#FBF8F1',          // elevated surface
+          200: '#F7F3EA',          // KEY core background
+          300: '#EFEAE0',          // sunken / cards
+          400: '#E2DCD0',          // borders
+          500: '#D6CFC2',          // deep dividers
         },
 
-        // Ink — 主文字 (从 LifeOS 深棕 #3A2E26 → KEY ink #111111 真黑, 增加重量感)
         ink: {
-          DEFAULT: '#111111',       // KEY core
-          50:  '#F0EDE9',
-          100: '#D6CFC6',
-          300: '#9F9B95',          // 微弱
-          400: '#7A7570',          // 弱文字
-          500: '#5A554F',          // 副文字
-          700: '#2A2622',          // 强调
-          900: '#111111',          // KEY core (主文字默认)
+          DEFAULT: '#111111',
+          900: '#111111',          // KEY core
+          700: '#2A2622',          // emphasis
+          500: '#5A554F',          // secondary text
+          400: '#7A7570',          // tertiary text
+          300: '#9F9B95',          // muted
+          200: '#C2BFB8',          // very muted
         },
 
-        // Burgundy — 关键标记 / 印章 (从 LifeOS seal #9B2D27 → KEY burgundy #6E1F2A, 深 30%, 更书本感)
         burgundy: {
-          DEFAULT: '#6E1F2A',      // KEY core
-          400: '#8A2F3B',          // hover
+          DEFAULT: '#6E1F2A',
+          700: '#561822',          // pressed
           500: '#6E1F2A',          // KEY core
-          600: '#561822',          // active
-          50:  '#F5E8E9',          // tint bg
+          400: '#8A2F3B',          // hover / stamp on dark
+          300: '#B05863',          // muted accent (V2 will document use)
+          50:  '#F5E8E9',          // tint bg (callout only, never page bg)
         },
 
-        // Warm Gray — 次文字 / 边框 (KEY 新加色, LifeOS 没有专门的中性灰)
         warmGray: {
-          DEFAULT: '#BDB6AA',      // KEY core
-          50:  '#F0EDE6',
-          100: '#E8E2D7',
-          200: '#D5CEC0',
-          300: '#BDB6AA',          // KEY core
-          400: '#9F9889',
-          500: '#807A6E',
+          DEFAULT: '#BDB6AA',
+          300: '#BDB6AA',          // KEY core (hairlines, decorative captions ONLY)
+          // Not body type. WCAG on paper = 1.9. See palette.json wcag table.
         },
 
-        // Night Navy — 深色 cover / Admin / Premium 印刷 (KEY 新加, 仅用于深色场景)
         navy: {
-          DEFAULT: '#141923',      // KEY core
-          400: '#2A3142',
-          500: '#141923',          // KEY core
-          600: '#0A0D14',
+          DEFAULT: '#141923',
+          900: '#0C1018',          // deepest
+          700: '#141923',          // KEY core
+          500: '#1F2632',          // elevated dark surface
+          300: '#3A4250',          // muted on dark
         },
 
-        // ===== Legacy aliases (向后兼容, v3.5 移除) =====
-        // 旧代码用 seal 引用红色, 重定向到 burgundy
+        // ============================================================
+        // Status colors (added to V1 per feedback 02 — rejected designer's
+        // "wait for flow demands". Outcome / Email / Validation already use them.)
+        // ============================================================
+        sage:  '#5C8576',          // success / 应验信号
+        amber: '#B8843C',          // warning / validation issue
+        ember: '#A8442F',          // danger / 塌方信号
+
+        // ============================================================
+        // Legacy aliases (向后兼容, v3.5 移除)
+        // Old code uses 'seal' for accent red → redirect to burgundy
+        // ============================================================
         seal: {
-          DEFAULT: '#6E1F2A',      // 别名 → burgundy
+          DEFAULT: '#6E1F2A',
           400: '#8A2F3B',
           500: '#6E1F2A',
           600: '#561822',
           50:  '#F5E8E9',
         },
-        // 次 accent: 哑光金 (保留, V2 Premium 场景可能用)
         gilt: {
           DEFAULT: '#9B7E3A',
           400: '#C9A961',
           500: '#9B7E3A',
         },
+      },
 
-        // ===== 状态色 (跟 v2 一致, 不变) =====
-        sage: '#5C8576',           // success / 稳定
-        amber: '#B8843C',          // warning
-        ember: '#A8442F',          // danger (跟 burgundy 拉开)
-      },
       fontFamily: {
-        // ===== 字体系统 =====
-        // 中文/英文 serif: 阅读杂志感 (用于 Hero / 决策报告 / Brain 长 form)
-        serif: ['var(--font-source-han-serif)', 'var(--font-lora)', 'serif'],
-        // sans: UI 元素 / 按钮 / 表单 (用 Inter)
-        sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        // mono: 数字 / 代码 / 时间戳
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // Plan A · Source Serif 4 → primary editorial serif
+        serif: [
+          'var(--font-source-serif)',
+          'var(--font-noto-serif-sc)',
+          'Georgia',
+          'serif',
+        ],
+        // Inter for UI / labels / nav
+        sans: [
+          'var(--font-inter)',
+          'var(--font-noto-sans-sc)',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
+        // JetBrains Mono for IDs / brief number / timestamps
+        mono: [
+          'var(--font-jetbrains-mono)',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'monospace',
+        ],
       },
+
       fontSize: {
-        // 编辑部式 type scale (relaxed leading)
-        'editorial-xl': ['3.5rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
-        'editorial-lg': ['2.5rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
-        'editorial': ['1.875rem', { lineHeight: '1.35' }],
-        'reading': ['1.0625rem', { lineHeight: '1.7' }],  // 主阅读体
+        // ============================================================
+        // KEY type scale (per typography-css-tokens.css V1, body lh = 1.75)
+        // ============================================================
+        'display-1':    ['96px', { lineHeight: '1.04', letterSpacing: '-0.02em' }],
+        'display-2':    ['72px', { lineHeight: '1.08', letterSpacing: '-0.015em' }],
+        'editorial-xl': ['3.5rem', { lineHeight: '1.10', letterSpacing: '-0.01em' }],  // hero, 56px
+        'editorial-lg': ['2.5rem', { lineHeight: '1.18', letterSpacing: '-0.005em' }], // h1, 40px
+        'editorial':    ['1.75rem', { lineHeight: '1.30' }],                            // h2, 28px
+        'editorial-sm': ['1.375rem', { lineHeight: '1.35' }],                           // h3, 22px
+        'quote':        ['1.5rem', { lineHeight: '1.50' }],                             // 24px italic
+        'reading':      ['1.0625rem', { lineHeight: '1.75' }],                          // body, 17px (1.75 per brief, NOT 1.78)
+        'reading-large': ['1.1875rem', { lineHeight: '1.80' }],                         // KEY Letter long-form, 19px
+        'reading-small': ['0.9375rem', { lineHeight: '1.72' }],                         // 15px
+        'caption':      ['0.8125rem', { lineHeight: '1.60' }],                          // 13px
+        'label':        ['0.65625rem', { lineHeight: '1.40', letterSpacing: '0.32em' }], // 10.5px uppercase
       },
+
       letterSpacing: {
-        tightish: '-0.01em',
-        tighter: '-0.02em',
+        tightish: '-0.005em',
+        tighter: '-0.01em',
+        tightest: '-0.02em',
+        wordmark: '0.16em',   // KEY wordmark (Direction A)
       },
+
       maxWidth: {
-        'prose-lg': '38rem',       // editorial column
+        'prose-lg': '38rem',
         'prose-xl': '44rem',
+        'measure-en': '66ch',
+        'measure-cn': '32em',
       },
+
       typography: ({ theme }) => ({
         editorial: {
           css: {
             '--tw-prose-body': theme('colors.ink.700'),
             '--tw-prose-headings': theme('colors.ink.900'),
             '--tw-prose-lead': theme('colors.ink.500'),
-            '--tw-prose-links': theme('colors.seal.500'),
+            '--tw-prose-links': theme('colors.burgundy.500'),
             '--tw-prose-bold': theme('colors.ink.900'),
             '--tw-prose-counters': theme('colors.ink.400'),
             '--tw-prose-bullets': theme('colors.ink.300'),
             '--tw-prose-hr': theme('colors.paper.300'),
             '--tw-prose-quotes': theme('colors.ink.700'),
-            '--tw-prose-quote-borders': theme('colors.seal.500'),
+            '--tw-prose-quote-borders': theme('colors.burgundy.500'),
             '--tw-prose-captions': theme('colors.ink.400'),
             '--tw-prose-code': theme('colors.ink.900'),
             '--tw-prose-pre-code': theme('colors.paper.100'),

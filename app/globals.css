@@ -2,13 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Life OS 严肃出版物 base styles (2026-05-11) ===== */
+/* ============================================================
+ * KEY · Global Styles · v1 (Phase 1)
+ *
+ * Source of truth:
+ *   design-handoff/DELIVERABLES/02-color-palette/palette.json
+ *   design-handoff/DELIVERABLES/03-typography/typography-css-tokens.css
+ *
+ * Body line-height = 1.75 (per Brand Brief; rejected designer's 1.78).
+ * ============================================================ */
 
 :root {
-  --bg-paper: #FAF7F2;
-  --ink-primary: #3A2E26;
-  --ink-secondary: #6B5D52;
-  --accent-seal: #9B2D27;
+  /* ---- KEY Core 5 ---- */
+  --ink:        #111111;
+  --paper:      #F7F3EA;
+  --warm-gray:  #BDB6AA;
+  --burgundy:   #6E1F2A;
+  --navy:       #141923;
+
+  /* ---- Derived ink scale ---- */
+  --ink-900: #111111;
+  --ink-700: #2A2622;
+  --ink-500: #5A554F;
+  --ink-400: #7A7570;
+  --ink-300: #9F9B95;
+
+  /* ---- Derived paper scale ---- */
+  --paper-100: #FBF8F1;
+  --paper-200: #F7F3EA;
+  --paper-300: #EFEAE0;
+  --paper-400: #E2DCD0;
+  --paper-500: #D6CFC2;
+
+  /* ---- Burgundy scale ---- */
+  --burgundy-700:    #561822;
+  --burgundy-500:    #6E1F2A;
+  --burgundy-400:    #8A2F3B;
+  --burgundy-tint:   #F5E8E9;
 }
 
 * {
@@ -20,71 +50,87 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg-paper);
-  color: var(--ink-primary);
+  background: var(--paper-200);
+  color: var(--ink-900);
 }
 
 body {
-  /* 默认无衬线 (UI 元素), 标题和长 form 单独 .font-serif */
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  /* Default sans for UI, .font-serif for editorial reading */
+  font-family: var(--font-inter), var(--font-noto-sans-sc), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   font-size: 16px;
   line-height: 1.6;
   letter-spacing: -0.005em;
+  font-feature-settings: "kern", "liga", "calt";
+  text-rendering: optimizeLegibility;
 }
 
-/* 字体调整: 中文宋体在 sans 上下文下不自动 fallback, 需 explicit */
+/* Editorial serif stack — Source Serif 4 primary, Noto Serif SC for CN fallback */
 .font-serif {
-  font-family: var(--font-source-han-serif), var(--font-lora), 'Songti SC', 'STSong', serif;
+  font-family: var(--font-source-serif), var(--font-noto-serif-sc), Georgia, 'Songti SC', 'STSong', serif;
 }
 
-/* Selection style — 暗红 tint */
+/* Selection — burgundy tint */
 ::selection {
-  background: #9B2D27;
-  color: #FAF7F2;
+  background: var(--burgundy-500);
+  color: var(--paper-100);
 }
 
-/* Scrollbar — 暖色调 */
+/* Scrollbar — warm paper */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #F4EFE5;
+  background: var(--paper-300);
 }
 ::-webkit-scrollbar-thumb {
-  background: #D4C8B5;
+  background: var(--paper-500);
   border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9D9081;
+  background: var(--warm-gray);
 }
 
-/* Reading flow utilities */
+/* ============================================================
+ * Reading flow utilities
+ * ============================================================ */
+
 .editorial-leading {
-  line-height: 1.75;
+  line-height: 1.75; /* per KEY Brand Brief, NOT designer's 1.78 */
+}
+
+.editorial-leading-cn {
+  line-height: 1.88; /* CN needs more breathing */
 }
 
 .editorial-spacing > * + * {
   margin-top: 1.25em;
 }
 
-/* Inline 暗红印章 separator */
+/* Numerals: old-style for prose, tabular for tables */
+.num-onum { font-feature-settings: "kern", "liga", "onum"; }
+.num-tnum { font-feature-settings: "kern", "liga", "tnum"; }
+
+/* Burgundy印章 separator */
 .seal-divider {
   display: flex;
   align-items: center;
   text-align: center;
-  color: #9B2D27;
+  color: var(--burgundy-500);
 }
 .seal-divider::before,
 .seal-divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid #D4C8B5;
+  border-bottom: 1px solid var(--paper-400);
 }
 .seal-divider::before { margin-right: 1.5em; }
 .seal-divider::after { margin-left: 1.5em; }
 
-/* Animations — 克制 */
+/* ============================================================
+ * Animations — restrained
+ * ============================================================ */
+
 @keyframes fade-in-soft {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -102,60 +148,77 @@ body {
   display: inline-block;
   width: 2px;
   height: 1.1em;
-  background: #9B2D27;
+  background: var(--burgundy-500);
   vertical-align: middle;
   animation: ink-blink 0.9s steps(1) infinite;
   margin-left: 2px;
 }
 
-/* Focus states — 暗红 ring 不要默认蓝 */
+/* Focus — burgundy ring */
 *:focus-visible {
-  outline: 2px solid #9B2D27;
+  outline: 2px solid var(--burgundy-500);
   outline-offset: 2px;
 }
 
-/* Inputs — 纸张感 */
+/* ============================================================
+ * Form elements — paper texture
+ * ============================================================ */
+
 input, textarea, select {
-  background: #FDFBF7;
-  border: 1px solid #E8DFD0;
-  color: #3A2E26;
+  background: var(--paper-100);
+  border: 1px solid var(--paper-400);
+  color: var(--ink-900);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:hover, textarea:hover, select:hover {
-  border-color: #D4C8B5;
+  border-color: var(--paper-500);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #9B2D27;
-  box-shadow: 0 0 0 3px rgba(155, 45, 39, 0.08);
+  border-color: var(--burgundy-500);
+  box-shadow: 0 0 0 3px rgba(110, 31, 42, 0.08);
 }
 
-/* Buttons — primary 是暗红印章 */
+/* ============================================================
+ * Buttons — primary is burgundy stamp
+ * ============================================================ */
+
 .btn-seal {
-  background: #9B2D27;
-  color: #FAF7F2;
+  background: var(--burgundy-500);
+  color: var(--paper-100);
   font-weight: 500;
   transition: background-color 0.15s ease;
 }
 .btn-seal:hover {
-  background: #7C231E;
+  background: var(--burgundy-700);
 }
 .btn-seal:disabled {
-  background: #D4C8B5;
-  color: #9D9081;
+  background: var(--paper-500);
+  color: var(--warm-gray);
   cursor: not-allowed;
 }
 
 .btn-ghost {
   background: transparent;
-  color: #3A2E26;
-  border: 1px solid #D4C8B5;
+  color: var(--ink-900);
+  border: 1px solid var(--paper-400);
   font-weight: 500;
   transition: all 0.15s ease;
 }
 .btn-ghost:hover {
-  background: #F4EFE5;
-  border-color: #9D9081;
+  background: var(--paper-300);
+  border-color: var(--warm-gray);
+}
+
+/* ============================================================
+ * KEY Wordmark utility — text placeholder until Brief 01 V2
+ * ============================================================ */
+
+.key-wordmark {
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-feature-settings: "kern";
 }

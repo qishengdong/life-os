@@ -20,10 +20,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 function buildTestEmail(args: { email: string; mode: 'dry-run' | 'smtp' }) {
-  const subject = `Life OS 邮件链路测试 — ${args.mode === 'smtp' ? 'SMTP' : 'dry-run'}`;
+  const subject = `KEY 邮件链路测试 — ${args.mode === 'smtp' ? 'SMTP' : 'dry-run'}`;
   const now = new Date().toLocaleString('zh-CN', { hour12: false });
 
-  const text = `这是 Life OS 的一封测试邮件.
+  const text = `这是 KEY 的一封测试邮件.
 
 如果你收到这封, 说明邮件发送通道已经打通.
 
@@ -33,11 +33,11 @@ function buildTestEmail(args: { email: string; mode: 'dry-run' | 'smtp' }) {
 
 这封信不属于 Welcome / Sunday Review / Outcome Due / Commitment 任一正式信件 — 仅用于配置验证.
 
-— Life OS
+— KEY
 陪你想清楚 · 看清代价 · 长期记得你`;
 
   const html = `<!DOCTYPE html><html><body style="font-family:'Source Han Serif SC',serif;background:#FAF7F2;color:#3A2E26;padding:32px;">
-<h2 style="color:#9B2D27;border-bottom:2px solid #9B2D27;padding-bottom:8px;">Life OS 邮件链路测试</h2>
+<h2 style="color:#9B2D27;border-bottom:2px solid #9B2D27;padding-bottom:8px;">KEY 邮件链路测试</h2>
 <p>这是一封测试邮件. 如果你收到这封, 说明邮件发送通道已经打通.</p>
 <table cellspacing="0" cellpadding="6" style="border-collapse:collapse;margin:16px 0;">
 <tr><td style="color:#7A6A5C;">发送时间</td><td><strong>${now}</strong></td></tr>

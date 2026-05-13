@@ -16,7 +16,7 @@
  *   EMAIL_SMTP_PORT       端口 (465/587)
  *   EMAIL_SMTP_USER       用户名 (通常是邮箱)
  *   EMAIL_SMTP_PASS       密码 / app password
- *   EMAIL_FROM            发件人 (例: "Life OS <hi@lifeos.cn>")
+ *   EMAIL_FROM            发件人 (例: "KEY <hi@lifeos.cn>")
  *   EMAIL_DRY_RUN         '1' 强制 dry-run (即使配了 SMTP)
  */
 
@@ -74,7 +74,7 @@ export interface SendResult {
 export async function sendEmail(args: SendArgs): Promise<SendResult> {
   const db = getDb();
   const mode = getSendMode();
-  const from = process.env.EMAIL_FROM || 'Life OS <noreply@lifeos.local>';
+  const from = process.env.EMAIL_FROM || 'KEY <noreply@lifeos.local>';
 
   // 1. 写入 emails_sent (status='queued')
   const result = db

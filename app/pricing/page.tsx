@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '定价 — Life OS',
+  title: '定价 — KEY',
 };
 
 interface Tier {
@@ -44,7 +44,7 @@ const TIERS: Tier[] = [
     price: '¥99',
     pricePeriod: '/ 月',
     yearly: '年付 ¥999 (省 ¥189)',
-    position: '核心订阅 — Life OS 真正的"长期思考伴侣"',
+    position: '核心订阅 — KEY 真正的"长期思考伴侣"',
     badge: '⭐ 主流选择',
     bullets: [
       { feature: 'Daily Pulse — 不限次数', included: true, emphasis: true },
@@ -88,7 +88,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/" className="hover:text-seal transition-colors">← 回主页</Link>
@@ -107,7 +107,7 @@ export default function PricingPage() {
             为"它越来越懂你"付费,<br />不是为"再问一次"付费.
           </h1>
           <p className="font-serif text-reading text-ink-500 editorial-leading max-w-prose-lg mx-auto">
-            Life OS 越用越懂你, 跨决策保持一致, 12 个月后你的数据是不可迁移的人生资产.
+            KEY 越用越懂你, 跨决策保持一致, 12 个月后你的数据是不可迁移的人生资产.
             按次计费惩罚高频用户, 订阅才符合产品本质.
           </p>
         </header>
@@ -183,7 +183,7 @@ export default function PricingPage() {
               <li><strong>商业教练</strong> ¥3000-15000/小时 — 太贵, 一年几次</li>
             </ul>
             <p>
-              <strong>Life OS Pro</strong> = Notion + Day One + 心理咨询师 1/40 价 + 它只懂你一个人.
+              <strong>KEY Pro</strong> = Notion + Day One + 心理咨询师 1/40 价 + 它只懂你一个人.
             </p>
             <p className="italic text-seal">
               "我的人生备忘录 + 思考伴侣 + 重大决策军师 — 一份外卖钱."
@@ -221,7 +221,7 @@ export default function PricingPage() {
 
         <footer className="text-center pt-8 border-t border-paper-300">
           <p className="font-mono text-xs text-ink-400 mb-2">
-            Life OS · V1 dev · 上线后正式开通支付
+            KEY · V1 dev · 上线后正式开通支付
           </p>
           <p className="font-serif text-sm text-ink-400 italic">
             在人生最难选的时候, 有一个长期记得你的人.

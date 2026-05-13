@@ -127,7 +127,7 @@ export default function AdminInvitesPage() {
       <header className="flex justify-between items-baseline mb-12">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-seal-400 mb-1">
-            LifeOS · Admin
+            KEY · Admin
           </p>
           <h1 className="font-serif text-3xl text-paper-50">Invites</h1>
         </div>

@@ -29,7 +29,7 @@ export interface LongitudinalReport {
   isPassing: boolean;
 }
 
-const LONGITUDINAL_GRADER_PROMPT = `你是 Life OS 跨 turn 行为评委. 输入是同一用户跨 7 天 (7 个连续决策对话) 的完整 transcript.
+const LONGITUDINAL_GRADER_PROMPT = `你是 KEY 跨 turn 行为评委. 输入是同一用户跨 7 天 (7 个连续决策对话) 的完整 transcript.
 
 # 你的任务
 评估 AI 在跨 turn 行为上的质量. 这是 single-turn grader 看不到的维度.

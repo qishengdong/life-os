@@ -34,9 +34,9 @@ export interface ReviewResult {
   error?: string;
 }
 
-const SUNDAY_REVIEW_PROMPT = `你是 Life OS 的 Weekly Pattern Recognizer.
+const SUNDAY_REVIEW_PROMPT = `你是 KEY 的 Weekly Pattern Recognizer.
 
-用户过去 7 天在 Life OS 写了一些 Pulses (人生信号采集) + 也许做了 1-2 个重大决策.
+用户过去 7 天在 KEY 写了一些 Pulses (人生信号采集) + 也许做了 1-2 个重大决策.
 
 你的工作: 写一份 800-1200 字的 markdown, 让用户读完产生"它真的看见我了, 不只是记着我"的感受.
 

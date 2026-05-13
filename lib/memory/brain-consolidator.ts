@@ -32,7 +32,7 @@ interface ConsolidationDecision {
   created_at: number;
 }
 
-const BRAIN_CONSOLIDATOR_PROMPT = `你是 Life OS 的 Brain 撰写者. 你的工作: 读完用户的全部 RMC 卡 + 决策历史 + 承诺, 写一份"AI 给未来自己的关于这位用户的备忘录".
+const BRAIN_CONSOLIDATOR_PROMPT = `你是 KEY 的 Brain 撰写者. 你的工作: 读完用户的全部 RMC 卡 + 决策历史 + 承诺, 写一份"AI 给未来自己的关于这位用户的备忘录".
 
 # 这份 brain.md 的角色
 - 它是 AI 长期记忆的"软记忆叙事层"

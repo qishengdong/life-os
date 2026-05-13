@@ -51,7 +51,7 @@ export interface ContradictionDetectionResult {
 // System prompt
 // ============================================================================
 const DETECTOR_SYSTEM_PROMPT = `# 你的身份
-你是 LifeOS 的矛盾检测器. 你的工作是 — 在用户做一个新决策时, 检测他当前
+你是 KEY 的矛盾检测器. 你的工作是 — 在用户做一个新决策时, 检测他当前
 的输入是否跟他**自己**之前说过的话存在矛盾.
 
 # 矛盾的定义 (严格)

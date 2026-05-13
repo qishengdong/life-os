@@ -28,7 +28,7 @@ function TopNav() {
         href="/"
         className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
       >
-        LifeOS
+        KEY
       </Link>
       <Link
         href="/"
@@ -91,7 +91,7 @@ function ContrastBlock({
       </div>
       <div className="md:border-l border-paper-300 md:pl-10 border-t md:border-t-0 pt-10 md:pt-0">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-          LifeOS 这么做
+          KEY 这么做
         </p>
         <p className="font-serif text-reading text-ink-900 editorial-leading">
           "{aiNativeQuote}"
@@ -272,7 +272,7 @@ export default function MethodologyPage() {
 
         <div className="border-t border-paper-300">
           <div className="max-w-prose-xl mx-auto px-6 py-8 text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400 text-center">
-            LifeOS Editorial Office · Methodology · 决策科学 40 年最佳实践的工程化
+            KEY Editorial Office · Methodology · 决策科学 40 年最佳实践的工程化
           </div>
         </div>
       </footer>
@@ -284,7 +284,7 @@ export default function MethodologyPage() {
 // Metadata
 // ============================================================================
 export const metadata = {
-  title: 'Methodology · LifeOS',
+  title: 'Methodology · KEY',
   description:
-    '我们为 AI 写了一份决策契约. 7 条契约 + 学术血缘 + 实例 — LifeOS 跟通用 AI 的全部不同, 在代码里, 不在市场话术里.',
+    '我们为 AI 写了一份决策契约. 7 条契约 + 学术血缘 + 实例 — KEY 跟通用 AI 的全部不同, 在代码里, 不在市场话术里.',
 };

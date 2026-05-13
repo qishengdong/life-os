@@ -24,7 +24,7 @@ interface ProcessResult {
   safetyTrigger?: string;
 }
 
-const PULSE_PROCESSOR_PROMPT = `你是 Life OS 的 Pulse 处理器. 用户写了今天的一条 Pulse — 这不是日记, 是"人生信号采集".
+const PULSE_PROCESSOR_PROMPT = `你是 KEY 的 Pulse 处理器. 用户写了今天的一条 Pulse — 这不是日记, 是"人生信号采集".
 
 你的工作:
 1. 给 Pulse 打 1-3 个最相关的标签 (从 10 类中选)

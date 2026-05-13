@@ -280,7 +280,7 @@ export function detectFramework(decisionText: string): RouteResult {
 // LLM 分类器兜底 (低 confidence 时调用)
 // ============================================================================
 
-const LLM_CLASSIFIER_PROMPT = `你是 Life OS 决策类型分类器. 你的工作: 读用户描述的决策, 判断**核心议题**属于以下哪类.
+const LLM_CLASSIFIER_PROMPT = `你是 KEY 决策类型分类器. 你的工作: 读用户描述的决策, 判断**核心议题**属于以下哪类.
 
 # 类目 (单选)
 - parent-care: 父母养老 / 代际责任

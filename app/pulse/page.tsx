@@ -173,7 +173,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal transition-colors">LifeOS</Link>
+        <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal transition-colors">KEY</Link>
         <div className="flex gap-4 text-sm text-ink-500">
           <Link href="/methodology" className="hover:text-seal transition-colors">方法论</Link>
           <Link href="/sample-brief" className="hover:text-seal transition-colors">样品</Link>
@@ -233,7 +233,7 @@ export default function Home() {
                 这些决定太重, 不能只靠冲动, 也不能靠几句安慰.
               </p>
               <p>
-                <strong className="text-ink-900">Life OS 不替你做决定, 也不用鸡汤安慰你.</strong>
+                <strong className="text-ink-900">KEY 不替你做决定, 也不用鸡汤安慰你.</strong>
                 它记得你的背景, 陪你一步步拆开真正困住你的问题.
               </p>
               <p className="text-sm text-ink-400 pt-4 border-t border-paper-300 mt-8 font-sans">
@@ -497,7 +497,7 @@ export default function Home() {
         {userUid && (
           <footer className="mt-32 pt-8 border-t border-paper-300 text-xs text-ink-400 font-mono">
             <div className="flex justify-between items-baseline">
-              <span>Life OS · V1 dev</span>
+              <span>KEY · V1 dev</span>
               <span>id: {userUid.slice(0, 8)}…{userUid.slice(-4)}</span>
             </div>
             <p className="mt-3 text-ink-400 font-sans">

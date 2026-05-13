@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '关于 Life OS',
+  title: '关于 KEY',
 };
 
 export default function AboutPage() {
@@ -9,7 +9,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/" className="hover:text-seal transition-colors">← 回主页</Link>
@@ -22,7 +22,7 @@ export default function AboutPage() {
             · Colophon ·
           </p>
           <h1 className="font-serif text-editorial-lg text-ink-900 mb-4 tracking-tighter">
-            关于 Life OS
+            关于 KEY
           </h1>
           <p className="font-serif text-reading text-ink-500 editorial-leading max-w-prose-lg">
             服务说明 / 边界 / 隐私 / 紧急资源
@@ -38,12 +38,12 @@ export default function AboutPage() {
           </h2>
           <div className="prose prose-editorial max-w-none font-serif">
             <p>
-              Life OS 是给中国 30-50 岁高知精英的<strong>日常思考伴侣 + 重大决策系统</strong>.
+              KEY 是给中国 30-50 岁高知精英的<strong>日常思考伴侣 + 重大决策系统</strong>.
               父母养老、孩子出路、婚姻去留、职业转身、要不要迁移——
               这些决定太重, 不能只靠冲动, 也不能靠几句安慰.
             </p>
             <p>
-              <strong>Life OS 不替你做决定, 也不用鸡汤安慰你.</strong>
+              <strong>KEY 不替你做决定, 也不用鸡汤安慰你.</strong>
               它记得你的背景, 陪你一步步拆开真正困住你的问题.
             </p>
             <p>
@@ -151,7 +151,7 @@ export default function AboutPage() {
 
         <footer className="text-center pt-8 border-t border-paper-300">
           <p className="font-mono text-xs text-ink-400">
-            Life OS · V1 dev · 备案号 TBD · 运营主体 TBD
+            KEY · V1 dev · 备案号 TBD · 运营主体 TBD
           </p>
           <p className="font-serif text-sm text-ink-400 italic mt-4">
             陪你想清楚 · 看清代价 · 长期记得你

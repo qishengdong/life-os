@@ -69,7 +69,7 @@ export interface OutcomeAnchor {
 // 完整 Brief
 // ============================================================================
 export interface DecisionBrief {
-  /** 简报号, 格式 LB-YYYYMMDD-NNN */
+  /** 简报号, 格式 KB-YYYYMMDD-NNN */
   briefNumber: string;
 
   /** 决策主题 (短题目, 不超过 30 字) */
@@ -78,7 +78,7 @@ export interface DecisionBrief {
   /** 撰稿日期 (unix epoch 秒) */
   authoredAt: number;
 
-  /** 撰稿署名 — 固定为 "LifeOS Editorial Office" */
+  /** 撰稿署名 — 固定为 "KEY Editorial Office" */
   authoredBy: string;
 
   /** 用户匿名 ID (展示用, 不暴露 user_id) */
@@ -165,7 +165,7 @@ export function generateBriefNumber(date?: Date): string {
     d.getDate().toString().padStart(2, '0');
   // 同日内多份 brief 用秒级时间戳后 3 位区分
   const seq = (d.getTime() % 1000).toString().padStart(3, '0');
-  return `LB-${yyyymmdd}-${seq}`;
+  return `KB-${yyyymmdd}-${seq}`;
 }
 
 // ============================================================================

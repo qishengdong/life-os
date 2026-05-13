@@ -54,7 +54,7 @@ export default async function HomePage() {
           href="/"
           className="font-serif text-xl font-semibold tracking-tightish text-ink-900"
         >
-          LifeOS
+          KEY
         </Link>
         <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
           <Link href="/methodology" className="hover:text-seal-500 transition-colors">
@@ -80,7 +80,7 @@ export default async function HomePage() {
       {/* ============================================ */}
       <header className="max-w-prose-xl mx-auto px-6 pt-24 pb-20 min-h-[80vh] flex flex-col justify-center">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
-          · LifeOS Editorial Office · Issue 001 · 2026 ·
+          · KEY Editorial Office · Issue 001 · 2026 ·
         </p>
 
         <h1 className="font-serif text-[clamp(2.5rem,6vw,5rem)] text-ink-900 tracking-tighter leading-[1.05] mb-12">
@@ -95,7 +95,7 @@ export default async function HomePage() {
             不能只靠 ChatGPT, 也不能只靠几句安慰.
           </p>
           <p className="font-serif text-reading text-ink-700 editorial-leading">
-            LifeOS 是一项 AI-Native 决策顾问服务. 我们以软件的边际成本,
+            KEY 是一项 AI-Native 决策顾问服务. 我们以软件的边际成本,
             交付私人顾问级的人生决策结果 — 装在一份你愿意每天打开的杂志级阅读体验里.
           </p>
           <p className="font-serif text-reading text-ink-500 italic editorial-leading">
@@ -243,7 +243,7 @@ export default async function HomePage() {
               至少 ¥50,000.
             </p>
             <p>
-              LifeOS 一年: <span className="text-ink-900 font-medium">¥1988</span>. 365 天无限决策简报.
+              KEY 一年: <span className="text-ink-900 font-medium">¥1988</span>. 365 天无限决策简报.
               月度复盘. 30 / 90 / 365 天回访. 第一周不合适, 全退.
             </p>
             <p className="text-ink-500 italic">
@@ -277,7 +277,7 @@ export default async function HomePage() {
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
             <p className="font-serif text-base text-ink-900">
-              LifeOS Editorial Office
+              KEY Editorial Office
             </p>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
@@ -305,7 +305,7 @@ export default async function HomePage() {
 // Metadata
 // ============================================================================
 export const metadata = {
-  title: 'LifeOS · AI-Native 决策顾问',
+  title: 'KEY · AI-Native 决策顾问',
   description:
-    '父母养老. 孩子出路. 婚姻去留. 职业转身. 要不要迁移. 这些决定太重, 不能一个人想. LifeOS 以软件的边际成本, 交付私人顾问级的人生决策结果.',
+    '父母养老. 孩子出路. 婚姻去留. 职业转身. 要不要迁移. 这些决定太重, 不能一个人想. KEY 以软件的边际成本, 交付私人顾问级的人生决策结果.',
 };

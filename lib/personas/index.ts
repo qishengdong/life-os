@@ -70,17 +70,17 @@ export function buildPersonaSystemPrompt(args: {
   const parts: string[] = [];
 
   parts.push('=' .repeat(60));
-  parts.push('# Life OS — Persona');
+  parts.push('# KEY — Persona');
   parts.push('=' .repeat(60));
   parts.push(loadPersona());
 
   parts.push('\n' + '=' .repeat(60));
-  parts.push('# Life OS — Voice (反鸡汤宪法)');
+  parts.push('# KEY — Voice (反鸡汤宪法)');
   parts.push('=' .repeat(60));
   parts.push(loadVoice());
 
   parts.push('\n' + '=' .repeat(60));
-  parts.push('# Life OS — Expert (决策科学认知)');
+  parts.push('# KEY — Expert (决策科学认知)');
   parts.push('=' .repeat(60));
   parts.push(loadExpert());
 

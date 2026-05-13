@@ -44,7 +44,7 @@ function TopNav() {
         href="/"
         className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
       >
-        LifeOS
+        KEY
       </Link>
       <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
         <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
@@ -236,7 +236,7 @@ function BriefBlock() {
         <Metric label="平均 tokens" value={s.avgTokens.toLocaleString()} suffix="" />
       </div>
       <p className="mt-8 font-serif text-[14px] text-ink-500 italic editorial-leading">
-        数据范围: 自 LifeOS 决策 brief pipeline (Day 17, 2026-05-12) 上线以来累计.
+        数据范围: 自 KEY 决策 brief pipeline (Day 17, 2026-05-12) 上线以来累计.
         邀请期内测中, 样本量小, 不放大. 数据每次有新 brief 生成时实时刷新.
       </p>
     </div>
@@ -434,7 +434,7 @@ export default function TransparencyPage() {
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
             <p className="font-serif text-base text-ink-900">
-              LifeOS Editorial Office · Transparency
+              KEY Editorial Office · Transparency
             </p>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
@@ -453,7 +453,7 @@ export default function TransparencyPage() {
 }
 
 export const metadata = {
-  title: 'Transparency · LifeOS',
+  title: 'Transparency · KEY',
   description:
     '内部审计数据公开. 12 维评分 + 7 项 Inspector check + Brief 总览 + 我们暂时没法量化的事. Fail visibly, not silently.',
 };

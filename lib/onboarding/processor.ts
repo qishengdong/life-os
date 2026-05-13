@@ -20,7 +20,7 @@ interface ProcessResult {
   durationMs: number;
 }
 
-const BRAIN_BASELINE_PROMPT = `你是 Life OS Brain 撰写者. 输入是用户的 Onboarding 6 阶段答案. 你的工作: 写一份"AI 给未来自己"的关于这位用户的初版备忘录 (brain.md baseline).
+const BRAIN_BASELINE_PROMPT = `你是 KEY Brain 撰写者. 输入是用户的 Onboarding 6 阶段答案. 你的工作: 写一份"AI 给未来自己"的关于这位用户的初版备忘录 (brain.md baseline).
 
 # 写作要求 (跟周期性 consolidation 一致)
 - 第三人称 ("她/他...")

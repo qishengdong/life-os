@@ -19,7 +19,7 @@ function TopNav() {
   return (
     <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
       <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors">
-        LifeOS
+        KEY
       </Link>
       <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
         <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
@@ -83,14 +83,14 @@ export default function InvitePage() {
       {/* HERO */}
       <header className="max-w-prose-lg mx-auto px-6 pt-20 pb-16 border-b border-paper-300">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          · LifeOS Editorial Office · 加入 ·
+          · KEY Editorial Office · 加入 ·
         </p>
         <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-10 leading-[1.1]">
           邀请制内测中.
         </h1>
         <div className="space-y-5">
           <p className="font-serif text-reading text-ink-700 editorial-leading">
-            LifeOS 不公开注册. 不是稀缺性营销 — 真理由是: 我们希望前 100 名会员
+            KEY 不公开注册. 不是稀缺性营销 — 真理由是: 我们希望前 100 名会员
             认真选, 让产品体验的密度跟年付预期匹配.
           </p>
           <p className="font-serif text-reading text-ink-500 italic editorial-leading">
@@ -128,7 +128,7 @@ export default function InvitePage() {
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="LO-XXXX-XXXX"
+              placeholder="KE-XXXX-XXXX"
               spellCheck={false}
               autoComplete="off"
               className="w-full max-w-md px-5 py-4 font-mono text-lg tracking-widest uppercase border border-paper-300 bg-paper-50 focus:border-seal-500 focus:outline-none transition-colors"
@@ -178,7 +178,7 @@ export default function InvitePage() {
             </li>
           </ol>
           <a
-            href="mailto:hello@lifeos.cn?subject=申请加入 LifeOS&body=我最近卡在的决定是:%0A%0A我的大致背景:%0A%0A"
+            href="mailto:hello@lifeos.cn?subject=申请加入 KEY&body=我最近卡在的决定是:%0A%0A我的大致背景:%0A%0A"
             className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
           >
             写邮件申请 →
@@ -257,7 +257,7 @@ export default function InvitePage() {
       <footer className="border-t border-paper-300 bg-paper">
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
-            <p className="font-serif text-base text-ink-900">LifeOS Editorial Office · Invite</p>
+            <p className="font-serif text-base text-ink-900">KEY Editorial Office · Invite</p>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>

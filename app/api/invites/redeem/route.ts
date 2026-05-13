@@ -1,7 +1,7 @@
 /**
  * POST /api/invites/redeem — 用户兑换邀请码
  *
- * Body: { code: "LO-XXXX-XXXX" }
+ * Body: { code: "KE-XXXX-XXXX" or "LO-XXXX-XXXX" (legacy) }
  * Headers: X-User-UID (必须, 已经在 cookie/localStorage 里)
  *
  * 流程:
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     const normalized = normalizeInviteCode(parsed.data.code);
     if (!isValidInviteCodeFormat(normalized)) {
       return NextResponse.json(
-        { error: '邀请码格式不对. 应为 LO-XXXX-XXXX' },
+        { error: '邀请码格式不对. 应为 KE-XXXX-XXXX' },
         { status: 400 }
       );
     }
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
-      message: '邀请码已激活. 欢迎进入 LifeOS.',
+      message: '邀请码已激活. 欢迎进入 KEY.',
       invitedToUser: {
         recipientName: result.invite.recipientName,
         invitedBy: result.invite.invitedBy,

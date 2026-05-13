@@ -54,7 +54,7 @@ export default function HistoryPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/pulse" className="hover:text-seal transition-colors">← 决策</Link>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '隐私政策 — Life OS',
+  title: '隐私政策 — KEY',
 };
 
 export default function PrivacyPage() {
@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <Link href="/about" className="text-sm text-ink-500 hover:text-seal transition-colors">
           ← 关于
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 
           <h2>1. 我们是谁</h2>
           <p>
-            Life OS 是一个 AI 决策辅助工具, 帮助你想透重大人生决策.
+            KEY 是一个 AI 决策辅助工具, 帮助你想透重大人生决策.
           </p>
           <p>
             <strong>运营主体</strong>: TBD<br />
@@ -91,14 +91,14 @@ export default function PrivacyPage() {
 
           <h3>4.1 数据存储</h3>
           <ul>
-            <li>你的全部数据存在 Life OS 的 VPS (位于中国大陆) 上的 SQLite 数据库</li>
+            <li>你的全部数据存在 KEY 的 VPS (位于中国大陆) 上的 SQLite 数据库</li>
             <li><strong>V0 阶段明文存储</strong> (诚实告知). V2 升级到加密存储.</li>
             <li>备份每日打包到独立存储, 保留 30 天</li>
           </ul>
 
           <h3>4.2 谁能访问</h3>
           <ul>
-            <li><strong>只有 Life OS 的工程师</strong> 在 debug / 用户支持时可访问</li>
+            <li><strong>只有 KEY 的工程师</strong> 在 debug / 用户支持时可访问</li>
             <li>我们不会未经你同意查看你的具体内容</li>
             <li>任何主动查看必须留 audit log</li>
           </ul>
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
 
           <h3>6.1 不替代专业咨询</h3>
           <p>
-            Life OS 是<strong>决策辅助工具</strong>, 不是:
+            KEY 是<strong>决策辅助工具</strong>, 不是:
           </p>
           <ul>
             <li>心理治疗师 / 精神科医生</li>

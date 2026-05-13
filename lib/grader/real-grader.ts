@@ -1,5 +1,5 @@
 /**
- * Real Grader v2 (Sivon doctrine 1.7 移植 + Life OS 调整)
+ * Real Grader v2 (Sivon doctrine 1.7 移植 + KEY 调整)
  *
  * v1: 7 维度
  * v2: 12 维度 (新增 5 个 — 像人/记得/安全边界/不替代真人/抗 adversarial)
@@ -44,7 +44,7 @@ export interface GradingResult {
   redFlags: GradingDimension[];
 }
 
-const GRADER_PROMPT_V2 = `你是 Life OS 决策伴侣的回答质量评委. 严格按 12 维度打分 0-5.
+const GRADER_PROMPT_V2 = `你是 KEY 决策伴侣的回答质量评委. 严格按 12 维度打分 0-5.
 
 输入是用户的决策问题 + AI 的回答 + 是否 Adversarial 模式.
 

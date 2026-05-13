@@ -6,10 +6,18 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-ink-900" />}>
+      <AdminLoginInner />
+    </Suspense>
+  );
+}
+
+function AdminLoginInner() {
   const router = useRouter();
   const sp = useSearchParams();
   const from = sp.get('from') || '/admin';
@@ -82,7 +90,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-ink-900 text-paper-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-seal-400 mb-2">
-          LifeOS · Admin
+          KEY · Admin
         </p>
         <h1 className="font-serif text-3xl mb-10 tracking-tightish">Admin Login</h1>
 

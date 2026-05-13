@@ -36,7 +36,7 @@ function TopNav() {
         href="/"
         className="font-serif text-xl font-semibold tracking-tightish text-ink-900 hover:text-seal-500 transition-colors"
       >
-        LifeOS
+        KEY
       </Link>
       <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
         <Link href="/methodology" className="hover:text-seal-500 transition-colors">
@@ -226,7 +226,7 @@ export default function MembershipPage() {
               <span className="text-2xl tracking-tightish">≥ ¥50,000</span>
             </div>
             <div className="flex items-baseline justify-between gap-4 border-b-2 border-seal-500 pb-3">
-              <span className="text-reading text-ink-900 font-medium">LifeOS · 一年</span>
+              <span className="text-reading text-ink-900 font-medium">KEY · 一年</span>
               <span className="text-3xl tracking-tighter text-seal-500">¥1,988</span>
             </div>
           </div>
@@ -382,7 +382,7 @@ export default function MembershipPage() {
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
             <p className="font-serif text-base text-ink-900">
-              LifeOS Editorial Office · Membership
+              KEY Editorial Office · Membership
             </p>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
@@ -405,7 +405,7 @@ export default function MembershipPage() {
 // Metadata
 // ============================================================================
 export const metadata = {
-  title: 'Membership · LifeOS',
+  title: 'Membership · KEY',
   description:
     '年度顾问会员 ¥1988. 私人决策顾问的产出, AI 的边际成本, 杂志级的阅读体验. 第一周不合适全退. 邀请制内测中.',
 };

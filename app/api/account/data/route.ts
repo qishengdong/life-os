@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
       exportedAt: new Date().toISOString(),
       userId,
       totalRows,
-      note: '本文件包含你在 Life OS 上的全部个人数据. 时间戳是 Unix epoch (秒).',
+      note: '本文件包含你在 KEY 上的全部个人数据. 时间戳是 Unix epoch (秒).',
       data: exportData,
     };
 

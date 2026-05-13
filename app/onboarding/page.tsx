@@ -172,7 +172,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-lg mx-auto px-6 pt-8 pb-6">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
       </nav>
 

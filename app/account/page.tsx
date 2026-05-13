@@ -97,7 +97,7 @@ export default function AccountPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <Link href="/pulse" className="text-sm text-ink-500 hover:text-seal transition-colors">← Pulse</Link>
       </nav>
@@ -107,7 +107,7 @@ export default function AccountPage() {
           <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-4">· Account ·</p>
           <h1 className="font-serif text-editorial-lg text-ink-900 mb-3 tracking-tighter">账号 / 邮件</h1>
           <p className="font-serif text-sm text-ink-500 max-w-prose-lg editorial-leading">
-            没邮箱也能用 Life OS, 但留邮箱后 Sunday Review 每周日会自动到你邮箱, Outcome 30 / 90 / 365 天到期会找你回来.
+            没邮箱也能用 KEY, 但留邮箱后 Sunday Review 每周日会自动到你邮箱, Outcome 30 / 90 / 365 天到期会找你回来.
           </p>
         </header>
 
@@ -223,7 +223,7 @@ export default function AccountPage() {
                   onClick={async () => {
                     if (!userUid) return;
                     const confirm1 = window.prompt(
-                      '这会永久删除你在 Life OS 上的全部数据 (Pulse, 决策, Brain, Sunday Review, Commitment, Outcome, 邮件历史).\n\n这个操作不可逆.\n\n如果确定, 请输入: 删除我的全部数据'
+                      '这会永久删除你在 KEY 上的全部数据 (Pulse, 决策, Brain, Sunday Review, Commitment, Outcome, 邮件历史).\n\n这个操作不可逆.\n\n如果确定, 请输入: 删除我的全部数据'
                     );
                     if (confirm1 !== '删除我的全部数据') {
                       alert('已取消.');

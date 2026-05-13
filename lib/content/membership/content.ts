@@ -9,7 +9,7 @@
 // HERO
 // ============================================================================
 export const HERO = {
-  eyebrow: '· LifeOS Editorial Office · Membership ·',
+  eyebrow: '· KEY Editorial Office · Membership ·',
   title: '年度顾问会员 · ¥1988.',
   subtitle: [
     '私人决策顾问的产出, AI 的边际成本, 杂志级的阅读体验.',
@@ -43,7 +43,7 @@ export const ANCHOR = {
   body: [
     '请一位资深决策顾问按小时聊一次重大决定: ¥1000-3000 / 小时.',
     '走一遍完整 12 维分析 + PreMortem + 三条路径 + 365 天跟踪: 至少 ¥50,000.',
-    'LifeOS 一年: ¥1988.',
+    'KEY 一年: ¥1988.',
     '这不是定价噱头. 这是 Sequoia 在《Services as Software》里讲过的事 — AI 让一类原本只能高价定制的服务, 第一次有了软件的边际成本.',
     '我们交付的产出, 跟一位 ¥1000/小时 顾问的产出在同一个层级: 12 维分析 / PreMortem 反向尸检 / Inspector 自审 / 30 / 90 / 365 天回访. 唯一的不同是 — AI 写, 不是人写. 这是我们的护城河, 不是缺陷.',
   ],
@@ -185,7 +185,7 @@ export const JOIN = {
     '一段话介绍: 你最近卡在什么决定上 (3 句话内, 不需要详细)',
     '我们 48 小时内回复. 通过后发邀请码.',
   ],
-  ctaPrimary: { label: '申请加入', href: 'mailto:hello@lifeos.cn?subject=申请加入 LifeOS&body=我最近卡在的决定是:%0A%0A' },
+  ctaPrimary: { label: '申请加入', href: 'mailto:hello@lifeos.cn?subject=申请加入 KEY&body=我最近卡在的决定是:%0A%0A' },
   ctaSecondary: { label: '先读三份样品', href: '/sample-brief' },
   ctaTertiary: { label: '先看方法论', href: '/methodology' },
 };

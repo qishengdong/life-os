@@ -5,7 +5,7 @@
  */
 
 export const HERO = {
-  eyebrow: '· LifeOS Editorial Office · Transparency ·',
+  eyebrow: '· KEY Editorial Office · Transparency ·',
   title: '我们怎么审自己.',
   body: [
     '大多数 AI 产品的"信任 signal"是 testimonial / star rating / 几万订阅用户数. 我们没有这些 — 我们刚开始, 邀请制内测中.',
@@ -64,7 +64,7 @@ export const SECTION_HOW_TO_QUESTION = {
   title: '怎么质疑我们',
   englishTitle: 'How to Question Us',
   body: [
-    '如果你看到一份具体的 LifeOS 输出觉得有问题 — 编了你没说过的事 / 说了一句鸡汤 / 漏掉了你之前提到过的关键事实 / 当前决策跟你历史立场矛盾但 Brief 没 surface — 请告诉我们.',
+    '如果你看到一份具体的 KEY 输出觉得有问题 — 编了你没说过的事 / 说了一句鸡汤 / 漏掉了你之前提到过的关键事实 / 当前决策跟你历史立场矛盾但 Brief 没 surface — 请告诉我们.',
   ],
   steps: [
     '截图或文字, 写到 audit@lifeos.cn (邀请期内用 hello@lifeos.cn)',

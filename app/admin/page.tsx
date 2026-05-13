@@ -85,7 +85,7 @@ export default function AdminPage() {
       <header className="flex justify-between items-baseline mb-12">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-seal-400 mb-1">
-            LifeOS · Admin Dashboard
+            KEY · Admin Dashboard
           </p>
           <h1 className="font-serif text-3xl text-paper-50">Overview</h1>
         </div>
@@ -233,7 +233,7 @@ export default function AdminPage() {
           </section>
 
           <footer className="pt-12 border-t border-ink-700 font-mono text-[10px] uppercase tracking-widest text-paper-300/40">
-            Auto-refresh every 30s  ·  LifeOS V0 internal beta
+            Auto-refresh every 30s  ·  KEY V0 internal beta
           </footer>
         </div>
       )}

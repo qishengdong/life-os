@@ -110,7 +110,7 @@ export default function OutcomesPage() {
     <div className="min-h-screen bg-paper">
       <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tightish text-ink-900">
-          Life OS
+          KEY
         </Link>
         <div className="flex gap-6 text-sm text-ink-500">
           <Link href="/pulse" className="hover:text-seal transition-colors">← Pulse</Link>
@@ -129,7 +129,7 @@ export default function OutcomesPage() {
             我的决策账本
           </h1>
           <p className="font-serif text-reading text-ink-500 max-w-prose-lg editorial-leading">
-            每个重大决策做出后, AI 会在 30 / 90 / 365 天后回来问你"当时担心的事现在怎么样了". 这是 Life OS 真正区别于一次性建议的地方 — 你不只是被分析一次, 是被陪着走过一段路.
+            每个重大决策做出后, AI 会在 30 / 90 / 365 天后回来问你"当时担心的事现在怎么样了". 这是 KEY 真正区别于一次性建议的地方 — 你不只是被分析一次, 是被陪着走过一段路.
           </p>
         </header>
 

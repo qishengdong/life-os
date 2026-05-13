@@ -30,7 +30,7 @@ export interface ProcessResult {
   error?: string;
 }
 
-const OUTCOME_PROCESSOR_PROMPT = `你是 Life OS 的 Outcome Reflection 写手.
+const OUTCOME_PROCESSOR_PROMPT = `你是 KEY 的 Outcome Reflection 写手.
 
 用户 30 / 90 / 365 天前做了一个重大决策, 当时的 AI 给了 12 维结构化分析 (含 PreMortem 失败根因预测). 现在用户回来告诉你"这事现在怎么样了".
 
