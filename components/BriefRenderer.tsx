@@ -24,6 +24,8 @@ interface BriefRendererProps {
   showSeal?: boolean;
   /** 极简模式: 隐藏 footer 等元数据, 适合打印 */
   printMode?: boolean;
+  /** Compact header: 标题已经在外部 hero 里, 这里只渲染 meta 行 */
+  compactHeader?: boolean;
 }
 
 // 中文罗马数字 — 用于章节标记 (出版物传统)
@@ -90,13 +92,16 @@ export default function BriefRenderer({
   brief,
   showSeal = false,
   printMode = false,
+  compactHeader = false,
 }: BriefRendererProps) {
   const s = brief.sections;
+  // ISSUE 编号 — 取末段 NNN, 当作期号 visually
+  const issueNumber = brief.briefNumber.split('-').pop() ?? '';
 
   return (
     <article className="bg-paper text-ink-900 antialiased relative">
-      {/* 右上角印章 — sample brief / 公开 brief 才显示 */}
-      {showSeal && (
+      {/* 右上角印章 — sample brief / 公开 brief 才显示 (compact 模式由外部 hero 接管) */}
+      {showSeal && !compactHeader && (
         <div className="absolute top-0 right-0 z-10 hidden md:block">
           <BriefSeal variant="round" size={80} seed={brief.briefNumber} />
         </div>
@@ -105,14 +110,29 @@ export default function BriefRenderer({
       {/* ============================================ */}
       {/* 页眉: brief 元信息                              */}
       {/* ============================================ */}
-      <header className="mb-16 border-b border-paper-300 pb-8 md:pr-24">
-        <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-2">
-          {brief.briefNumber}  ·  {formatDate(brief.authoredAt)}
+      <header className={`${compactHeader ? 'mb-12 pb-6' : 'mb-16 pb-8 md:pr-24'} border-b border-paper-300`}>
+        {/* ISSUE 编号 — 大字号期号 + 颜色块 (取代之前小字 brief number) */}
+        <div className="flex items-baseline gap-4 mb-4 flex-wrap">
+          <span className="inline-flex items-baseline gap-2 px-2.5 py-0.5 border border-seal-500/40 bg-seal-50/40">
+            <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-seal-500">
+              ISSUE
+            </span>
+            <span className="font-serif text-xl text-seal-500 tracking-tighter leading-none">
+              N°{issueNumber}
+            </span>
+          </span>
+          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400">
+            {brief.briefNumber}  ·  {formatDate(brief.authoredAt)}
+          </span>
         </div>
-        <h1 className="font-serif text-editorial-xl text-ink-900 mt-4 tracking-tighter">
-          {brief.topic}
-        </h1>
-        <div className="mt-6 flex items-baseline gap-3 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
+
+        {!compactHeader && (
+          <h1 className="font-serif text-editorial-xl text-ink-900 mt-4 tracking-tighter">
+            {brief.topic}
+          </h1>
+        )}
+
+        <div className={`${compactHeader ? 'mt-3' : 'mt-6'} flex items-baseline gap-3 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap`}>
           <span>撰稿  ·  {brief.authoredBy}</span>
           <span className="text-ink-400">/</span>
           <span>致  ·  {brief.authoredFor}</span>

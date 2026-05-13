@@ -54,6 +54,28 @@ html, body {
   color: var(--ink-900);
 }
 
+/* ============================================================
+ * Paper grain — 全站微噪点 overlay, 给所有页加"纸感"
+ * SVG feTurbulence 真噪点, 不是位图. 极轻, 不影响 perf.
+ * Opacity 0.04, multiply blend → 几乎看不见但能感觉到.
+ * ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.066  0 0 0 0 0.066  0 0 0 0 0.066  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
+
+/* 主要内容层级提到 grain 上方 */
+body > * {
+  position: relative;
+  z-index: 2;
+}
+
 body {
   /* Default sans for UI, .font-serif for editorial reading */
   font-family: var(--font-inter), var(--font-noto-sans-sc), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;

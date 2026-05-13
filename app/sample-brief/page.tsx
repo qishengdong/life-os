@@ -14,7 +14,7 @@
 
 import { getSampleBriefs } from '@/lib/db';
 import BriefRenderer from '@/components/BriefRenderer';
-import EditorialIllustration from '@/components/EditorialIllustration';
+import BriefSeal from '@/components/BriefSeal';
 import Link from 'next/link';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
@@ -147,11 +147,54 @@ async function SampleBriefContent({
       </section>
 
       {/* ============================================ */}
-      {/* 当前 brief 渲染 (editorial illustration + brief)  */}
+      {/* Hero: 满版 editorial illustration + 标题 + 印章 */}
       {/* ============================================ */}
-      <main className="max-w-prose-xl mx-auto px-6 pb-32 pt-8">
-        <EditorialIllustration framework={selected.framework} width={720} />
-        <BriefRenderer brief={selected.brief} showSeal={true} />
+      <section className="relative w-full bg-ink-900 overflow-hidden">
+        <div className="relative w-full aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] max-h-[72vh]">
+          {/* illustration 撑满 — 黑白 engraving */}
+          <img
+            src={`/illustrations/editorial-${selected.framework}.png`}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          {/* 顶部 burgundy hairline — 像出版物书脊金线 */}
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
+          {/* 下半渐变 — paper bg 轻染, 让标题压得住但不糊掉画面 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-ink-900/10 to-ink-900/75" />
+          {/* 右上印章 */}
+          <div className="absolute top-6 right-6 md:top-10 md:right-10">
+            <BriefSeal variant="round" size={88} seed={selected.brief.briefNumber} />
+          </div>
+          {/* 标题 + framework 标 + 编号 — 压底 */}
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-10 md:pb-16">
+            <div className="max-w-prose-xl mx-auto">
+              <div className="flex items-baseline gap-4 mb-4">
+                <span className="inline-flex items-baseline gap-2 px-2.5 py-0.5 bg-paper-100/95 border border-paper-100">
+                  <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-seal-500">
+                    ISSUE
+                  </span>
+                  <span className="font-serif text-xl text-seal-500 tracking-tighter leading-none">
+                    N°{selected.brief.briefNumber.split('-').pop()}
+                  </span>
+                </span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-paper-200/90">
+                  {FRAMEWORK_LABEL[selected.framework] || selected.framework}
+                </span>
+              </div>
+              <h1 className="font-serif text-editorial-xl text-paper-100 tracking-tighter leading-[1.05] max-w-prose-lg">
+                {selected.brief.topic}
+              </h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* Brief 主体 (compact header, hero 已占了标题 + 印章) */}
+      {/* ============================================ */}
+      <main className="max-w-prose-xl mx-auto px-6 pb-32 pt-16">
+        <BriefRenderer brief={selected.brief} showSeal={true} compactHeader={true} />
       </main>
 
       {/* ============================================ */}

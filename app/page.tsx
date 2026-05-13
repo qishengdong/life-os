@@ -74,49 +74,65 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
-      {/* HERO — 占满首屏                                */}
+      {/* HERO — 占满首屏 (editorial illustration 背景)    */}
       {/* ============================================ */}
-      <header className="max-w-prose-xl mx-auto px-6 pt-24 pb-20 min-h-[80vh] flex flex-col justify-center">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
-          · KEY Editorial Office · Issue 001 · 2026 ·
-        </p>
-
-        <h1 className="font-serif text-[clamp(2.5rem,6vw,5rem)] text-ink-900 tracking-tighter leading-[1.05] mb-12">
-          有些决定,
-          <br />
-          不能一个人想.
-        </h1>
-
-        <div className="max-w-prose-lg space-y-5">
-          <p className="font-serif text-reading text-ink-700 editorial-leading">
-            父母养老. 孩子出路. 婚姻去留. 职业转身. 要不要迁移. 这些决定太重, 不能只靠冲动,
-            不能只靠 ChatGPT, 也不能只靠几句安慰.
-          </p>
-          <p className="font-serif text-reading text-ink-700 editorial-leading">
-            KEY 是一项 AI-Native 决策顾问服务. 我们以软件的边际成本,
-            交付私人顾问级的人生决策结果 — 装在一份你愿意每天打开的杂志级阅读体验里.
-          </p>
-          <p className="font-serif text-reading text-ink-500 italic editorial-leading">
-            不替你做决定. 不哄你. 不假装记得你 — 真的记得你.
-          </p>
+      <header className="relative min-h-[88vh] overflow-hidden">
+        {/* editorial illustration 作底图 — 低 opacity, 让 paper 主导 */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <img
+            src="/illustrations/editorial-parent-care.png"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.16]"
+            style={{ filter: 'sepia(0.15)' }}
+          />
+          {/* paper 渐变, 让中部 + 底部更可读 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-paper-200/40 via-paper-200/85 to-paper-200" />
+          {/* 顶部书脊金线 */}
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
         </div>
 
-        <div className="mt-16 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
-          <Link
-            href="/sample-brief"
-            className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
-          >
-            读三份匿名 sample brief →
-          </Link>
-          <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
-            ·
-          </span>
-          <Link
-            href="/methodology"
-            className="font-serif text-lg text-ink-700 hover:text-seal-500 transition-colors"
-          >
-            先看方法论
-          </Link>
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
+            · KEY Editorial Office · Issue 001 · 2026 ·
+          </p>
+
+          <h1 className="font-serif text-[clamp(2.5rem,6vw,5rem)] text-ink-900 tracking-tighter leading-[1.05] mb-12">
+            有些决定,
+            <br />
+            不能一个人想.
+          </h1>
+
+          <div className="max-w-prose-lg space-y-5">
+            <p className="font-serif text-reading text-ink-700 editorial-leading">
+              父母养老. 孩子出路. 婚姻去留. 职业转身. 要不要迁移. 这些决定太重, 不能只靠冲动,
+              不能只靠 ChatGPT, 也不能只靠几句安慰.
+            </p>
+            <p className="font-serif text-reading text-ink-700 editorial-leading">
+              KEY 是一项 AI-Native 决策顾问服务. 我们以软件的边际成本,
+              交付私人顾问级的人生决策结果 — 装在一份你愿意每天打开的杂志级阅读体验里.
+            </p>
+            <p className="font-serif text-reading text-ink-500 italic editorial-leading">
+              不替你做决定. 不哄你. 不假装记得你 — 真的记得你.
+            </p>
+          </div>
+
+          <div className="mt-16 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
+            <Link
+              href="/sample-brief"
+              className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
+            >
+              读三份匿名 sample brief →
+            </Link>
+            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
+              ·
+            </span>
+            <Link
+              href="/methodology"
+              className="font-serif text-lg text-ink-700 hover:text-seal-500 transition-colors"
+            >
+              先看方法论
+            </Link>
+          </div>
         </div>
       </header>
 
