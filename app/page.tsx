@@ -69,8 +69,8 @@ export default async function HomePage() {
           <Link href="/transparency" className="hover:text-seal-500 transition-colors">
             透明度
           </Link>
-          <Link href="/pulse" className="hover:text-seal-500 transition-colors">
-            进入
+          <Link href="/invite" className="hover:text-seal-500 transition-colors">
+            加入
           </Link>
         </div>
       </nav>
@@ -252,10 +252,10 @@ export default async function HomePage() {
           </div>
           <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
             <Link
-              href="/membership"
+              href="/invite"
               className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              看完整会员制度 →
+              申请加入 →
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·

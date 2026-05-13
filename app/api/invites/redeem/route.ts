@@ -1,0 +1,96 @@
+/**
+ * POST /api/invites/redeem — 用户兑换邀请码
+ *
+ * Body: { code: "LO-XXXX-XXXX" }
+ * Headers: X-User-UID (必须, 已经在 cookie/localStorage 里)
+ *
+ * 流程:
+ *   1. resolve user (从 UID 创建 / 拿现有 user_id)
+ *   2. normalize + 校验码格式
+ *   3. 走 redeemInvite() 事务 — 标 invite 已用 + 标 user access_status='invited'
+ *   4. 返回结果
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { resolveUserId, InvalidUserUidError } from '@/lib/user-identity';
+import {
+  redeemInvite,
+  normalizeInviteCode,
+  isValidInviteCodeFormat,
+  getUserAccessStatus,
+} from '@/lib/invites';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const Schema = z.object({
+  code: z.string().min(8).max(20),
+});
+
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = resolveUserId(req);
+    const body = await req.json();
+    const parsed = Schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: '请输入邀请码' }, { status: 400 });
+    }
+
+    // 已经 invited 了 — 幂等返回成功
+    const currentStatus = getUserAccessStatus(userId);
+    if (currentStatus === 'invited') {
+      return NextResponse.json({
+        ok: true,
+        alreadyInvited: true,
+      });
+    }
+    if (currentStatus === 'suspended') {
+      return NextResponse.json(
+        { error: '账户已暂停, 联系 hello@lifeos.cn' },
+        { status: 403 }
+      );
+    }
+
+    // 清洗 + 格式校验
+    const normalized = normalizeInviteCode(parsed.data.code);
+    if (!isValidInviteCodeFormat(normalized)) {
+      return NextResponse.json(
+        { error: '邀请码格式不对. 应为 LO-XXXX-XXXX' },
+        { status: 400 }
+      );
+    }
+
+    // 兑换
+    const result = redeemInvite({ code: normalized, userId });
+    if (!result.ok) {
+      const reasonMap: Record<string, string> = {
+        not_found: '邀请码不存在',
+        already_redeemed: '这个邀请码已经被用过了',
+        revoked: '这个邀请码已被撤销, 联系 hello@lifeos.cn',
+      };
+      return NextResponse.json(
+        { error: reasonMap[result.reason] || '兑换失败' },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: '邀请码已激活. 欢迎进入 LifeOS.',
+      invitedToUser: {
+        recipientName: result.invite.recipientName,
+        invitedBy: result.invite.invitedBy,
+      },
+    });
+  } catch (e: any) {
+    if (e instanceof InvalidUserUidError) {
+      return NextResponse.json(
+        { error: '缺少用户身份, 请刷新页面' },
+        { status: 400 }
+      );
+    }
+    console.error('[invites/redeem] error:', e);
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}

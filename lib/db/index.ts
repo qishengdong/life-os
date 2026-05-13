@@ -366,6 +366,35 @@ export function getDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_briefs_number ON decision_briefs(brief_number);
   `);
 
+  // ===== Migration v22: invites table (Day 22 — invite-only beta) =====
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS invites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      recipient_name TEXT,
+      recipient_email TEXT,
+      invited_by TEXT DEFAULT 'founder',
+      note TEXT,
+      redeemed_by_user_id INTEGER,
+      redeemed_at INTEGER,
+      revoked_at INTEGER,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (redeemed_by_user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_invites_code ON invites(code);
+    CREATE INDEX IF NOT EXISTS idx_invites_redeemed ON invites(redeemed_by_user_id);
+    CREATE INDEX IF NOT EXISTS idx_invites_status ON invites(redeemed_at, revoked_at);
+  `);
+
+  // Migration: users.access_status (Day 22)
+  const usersColsV22 = _db.pragma('table_info(users)') as Array<{ name: string }>;
+  const hasAccessStatus = usersColsV22.some((c) => c.name === 'access_status');
+  if (!hasAccessStatus) {
+    _db.exec(`ALTER TABLE users ADD COLUMN access_status TEXT DEFAULT 'guest';`);
+    console.log('[DB Migration v22] Added users.access_status');
+  }
+
   return _db;
 }
 
