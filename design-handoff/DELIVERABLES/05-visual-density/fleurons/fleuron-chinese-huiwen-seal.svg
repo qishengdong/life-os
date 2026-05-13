@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 16" fill="none" stroke="#7C2330" stroke-width="0.75" role="img" aria-label="fleuron · Chinese huiwen">
+  <title>Fleuron · Chinese huiwen · 回纹</title>
+  
+  <line x1="6" y1="3.5" x2="58" y2="3.5"></line>
+  
+  <line x1="6" y1="12.5" x2="58" y2="12.5"></line>
+  
+  <rect x="27" y="5.6" width="10" height="4.8"></rect>
+  <rect x="29.4" y="6.8" width="5.2" height="2.4"></rect>
+  
+  <line x1="20" y1="8" x2="24" y2="8"></line>
+  <line x1="40" y1="8" x2="44" y2="8"></line>
+</svg>

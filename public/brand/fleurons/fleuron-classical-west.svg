@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 16" fill="#111111" role="img" aria-label="fleuron · classical west">
+  <title>Fleuron · classical west · curling vine</title>
+  
+  <path d="M 32 5.2 L 34.6 8 L 32 10.8 L 29.4 8 Z"></path>
+  
+  <path d="M 27.2 8 C 23 8, 21 5.6, 17 5.6 C 13.4 5.6, 12.4 7.4, 9.6 7.6 L 9.6 8.4 C 12.4 8.6, 13.4 10.4, 17 10.4 C 21 10.4, 23 8, 27.2 8 Z" opacity="0.92"></path>
+  
+  <path d="M 36.8 8 C 41 8, 43 5.6, 47 5.6 C 50.6 5.6, 51.6 7.4, 54.4 7.6 L 54.4 8.4 C 51.6 8.6, 50.6 10.4, 47 10.4 C 43 10.4, 41 8, 36.8 8 Z" opacity="0.92"></path>
+  
+  <circle cx="6.4" cy="8" r="1.05"></circle>
+  <circle cx="57.6" cy="8" r="1.05"></circle>
+</svg>

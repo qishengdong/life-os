@@ -139,23 +139,41 @@ marginalia/page-break-fleuron.svg
 
 ## 交付目录结构
 
+所有交付物放在 `design-handoff/DELIVERABLES/KEY/DELIVERABLES/05-visual-density/` 下,
+跟 01-key-wordmark / 02-color-palette / 03-typography / 04-internal-poster 平级:
+
 ```
-design-handoff/DELIVERABLES/KEY/v3-visual-density-briefs/
-└── deliverables/
-    ├── fleurons/
-    │   ├── fleuron-classical-west.svg
-    │   ├── fleuron-classical-west-seal.svg
-    │   ├── ... (10 SVG)
-    │   └── README.md  ← 解释每个 variant 何时用
-    ├── seals/
-    │   ├── brief-seal-round.svg     (主)
-    │   ├── brief-seal-square.svg
-    │   ├── brief-seal-octagon.svg
-    │   └── README.md
-    └── marginalia/
-        ├── section-start-line.svg
-        ├── ... (8 SVG)
-        └── README.md
+05-visual-density/
+├── CLAUDE-DESIGN-BRIEF.md     ← 本 brief (read-only, 参考)
+├── LOVART-BRIEF.md            ← Lovart 的 brief (read-only)
+├── fleurons/                  ← 你把 10 个 fleuron SVG 放这里
+│   ├── fleuron-classical-west.svg
+│   ├── fleuron-classical-west-seal.svg
+│   ├── fleuron-chinese-huiwen.svg
+│   ├── fleuron-chinese-huiwen-seal.svg
+│   ├── fleuron-key-derived.svg
+│   ├── fleuron-key-derived-seal.svg
+│   ├── fleuron-simple-diamond.svg
+│   ├── fleuron-simple-diamond-seal.svg
+│   ├── fleuron-double-rule.svg
+│   ├── fleuron-double-rule-seal.svg
+│   └── README.md              ← 写每个 variant 何时用 / 视觉对比表
+├── seals/                     ← brief 印章 SVG (你的产出)
+│   ├── brief-seal-round.svg   (主, 必出)
+│   ├── brief-seal-square.svg
+│   ├── brief-seal-octagon.svg
+│   └── README.md              ← 写每个 variant 的应用场景
+├── marginalia/                ← 8 个 marginalia ornament (你的产出)
+│   ├── section-start-line.svg
+│   ├── section-end-line.svg
+│   ├── quote-bracket-left.svg
+│   ├── quote-bracket-right.svg
+│   ├── paragraph-divider.svg
+│   ├── interrogation-mark.svg
+│   ├── footnote-marker.svg
+│   ├── page-break-fleuron.svg
+│   └── README.md
+└── illustrations/             ← Lovart 的 3 张图放这里 (跟 fleuron/seal 同级, 不归你管)
 ```
 
 ---

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 16" fill="#111111" role="img" aria-label="fleuron · KEY derived">
+  <title>Fleuron · KEY derived · three abstract strokes</title>
+  
+  <rect x="22" y="3.5" width="1.2" height="9"></rect>
+  <path d="M 23.2 8 L 27.2 3.5 L 28 3.5 L 23.7 8.6 Z"></path>
+  <path d="M 23.2 8 L 27.2 12.5 L 28 12.5 L 23.7 7.6 Z"></path>
+  
+  <rect x="31.4" y="3.5" width="1.2" height="9"></rect>
+  <rect x="32.6" y="3.5" width="3.6" height="0.9"></rect>
+  <rect x="32.6" y="7.55" width="3" height="0.9"></rect>
+  <rect x="32.6" y="11.6" width="3.6" height="0.9"></rect>
+  
+  <path d="M 40.4 3.5 L 41 3.5 L 43.4 8 L 42.8 8 Z"></path>
+  <path d="M 46.4 3.5 L 45.8 3.5 L 43.4 8 L 44 8 Z"></path>
+  <rect x="42.8" y="8" width="1.2" height="4.5"></rect>
+</svg>

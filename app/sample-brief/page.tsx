@@ -14,6 +14,7 @@
 
 import { getSampleBriefs } from '@/lib/db';
 import BriefRenderer from '@/components/BriefRenderer';
+import EditorialIllustration from '@/components/EditorialIllustration';
 import Link from 'next/link';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
@@ -146,9 +147,10 @@ async function SampleBriefContent({
       </section>
 
       {/* ============================================ */}
-      {/* 当前 brief 渲染                                  */}
+      {/* 当前 brief 渲染 (editorial illustration + brief)  */}
       {/* ============================================ */}
       <main className="max-w-prose-xl mx-auto px-6 pb-32 pt-8">
+        <EditorialIllustration framework={selected.framework} width={720} />
         <BriefRenderer brief={selected.brief} showSeal={true} />
       </main>
 

@@ -16,6 +16,7 @@
 'use client';
 
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
+import BriefSeal from './BriefSeal';
 
 interface BriefRendererProps {
   brief: DecisionBrief;
@@ -94,10 +95,17 @@ export default function BriefRenderer({
 
   return (
     <article className="bg-paper text-ink-900 antialiased relative">
+      {/* 右上角印章 — sample brief / 公开 brief 才显示 */}
+      {showSeal && (
+        <div className="absolute top-0 right-0 z-10 hidden md:block">
+          <BriefSeal variant="round" size={80} seed={brief.briefNumber} />
+        </div>
+      )}
+
       {/* ============================================ */}
       {/* 页眉: brief 元信息                              */}
       {/* ============================================ */}
-      <header className="mb-16 border-b border-paper-300 pb-8">
+      <header className="mb-16 border-b border-paper-300 pb-8 md:pr-24">
         <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-2">
           {brief.briefNumber}  ·  {formatDate(brief.authoredAt)}
         </div>
@@ -203,15 +211,15 @@ export default function BriefRenderer({
       </section>
 
       {/* ============================================ */}
-      {/* VIII. 核心拷问 — 特殊版式 (有重量感)               */}
+      {/* VIII. 核心拷问 — 特殊版式 (有重量感 + interrogation 标记) */}
       {/* ============================================ */}
       <section>
         <SectionHeader index={7} title="核心拷问" />
-        <div className="space-y-8 my-4">
+        <div className="space-y-8 my-4 md:pl-10">
           {s.crackingQuestions.map((q, i) => (
             <blockquote
               key={i}
-              className="font-serif text-2xl text-ink-900 leading-relaxed italic border-l-4 border-seal-500 pl-6 py-2"
+              className="marginalia-interrogation relative font-serif text-2xl text-ink-900 leading-relaxed italic border-l-4 border-seal-500 pl-6 py-2"
             >
               {q}
             </blockquote>
@@ -293,14 +301,8 @@ export default function BriefRenderer({
       {!printMode && (
         <footer className="mt-24 pt-12 border-t border-paper-300 relative">
           {showSeal && (
-            <div className="absolute right-0 top-12">
-              <div className="w-20 h-20 rounded-full border-2 border-seal-500 flex flex-col items-center justify-center text-seal-500 transform rotate-[-8deg] opacity-90">
-                <div className="font-serif text-[10px] uppercase tracking-[0.2em]">KEY</div>
-                <div className="font-sans text-[9px] mt-0.5">
-                  {brief.briefNumber.split('-').pop()}
-                </div>
-                <div className="font-serif text-[8px] mt-0.5 italic">Editorial</div>
-              </div>
+            <div className="absolute right-0 top-8">
+              <BriefSeal variant="round-cn" size={96} seed={brief.briefNumber} />
             </div>
           )}
           <div className="max-w-xl">

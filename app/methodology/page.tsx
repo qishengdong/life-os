@@ -9,6 +9,7 @@
  */
 
 import Link from 'next/link';
+import { Fragment } from 'react';
 import {
   CONTRACTS,
   METHODOLOGY_OPENING,
@@ -16,6 +17,7 @@ import {
   type Contract,
 } from '@/lib/content/methodology/contracts';
 import KeyWordmark from '@/components/KeyWordmark';
+import { FleuronDivider } from '@/components/Fleuron';
 
 export const runtime = 'nodejs';
 
@@ -130,7 +132,7 @@ function LineageBlock({
 // ============================================================================
 function ContractSection({ contract }: { contract: Contract }) {
   return (
-    <section className="py-20 border-t border-paper-300 first:border-t-0">
+    <section className="py-20">
       <ContractHeader
         numeral={contract.numeral}
         title={contract.title}
@@ -245,8 +247,16 @@ export default function MethodologyPage() {
       {/* 7 条契约                                       */}
       {/* ============================================ */}
       <main className="max-w-prose-xl mx-auto px-6">
-        {CONTRACTS.map((c) => (
-          <ContractSection key={c.numeral} contract={c} />
+        {CONTRACTS.map((c, i) => (
+          <Fragment key={c.numeral}>
+            {i > 0 && (
+              <FleuronDivider
+                variant={i % 2 === 0 ? 'simple-diamond' : 'chinese-huiwen'}
+                seal
+              />
+            )}
+            <ContractSection contract={c} />
+          </Fragment>
         ))}
       </main>
 

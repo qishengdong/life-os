@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · V3 · Visual Density · First Pass</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../_shared/editorial.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="../01-key-wordmark/v2/key-favicon-32.png">
+  <style>
+    /* Fleuron preview grid */
+    .fleuron-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      background: var(--paper-400);
+      border: 0.5px solid var(--paper-400);
+      margin: 24px 0 56px;
+    }
+    .fleuron-row {
+      background: var(--paper-100);
+      display: grid;
+      grid-template-columns: 220px 1fr 1fr 280px;
+      align-items: center;
+      gap: 32px;
+      padding: 36px 32px;
+    }
+    .fleuron-row__label {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .fleuron-row__label .mono {
+      display: block;
+      margin-top: 6px;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: var(--ink-500);
+      font-family: var(--mono);
+    }
+    .fleuron-row__cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60px;
+    }
+    .fleuron-row__cell--dark { background: var(--navy); padding: 16px 24px; }
+    .fleuron-row__cell img { width: 100%; max-width: 320px; height: auto; }
+    .fleuron-row__cell--dark img {
+      filter: invert(1) brightness(1.05);
+    }
+    .fleuron-row__note {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-500);
+    }
+    .col-head {
+      display: grid;
+      grid-template-columns: 220px 1fr 1fr 280px;
+      gap: 32px;
+      padding: 16px 32px 6px;
+      font-family: var(--sans-en);
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .col-head > div { text-align: center; }
+    .col-head > div:first-child { text-align: left; }
+    .col-head > div:last-child  { text-align: left; }
+
+    /* Seal showcase */
+    .seal-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin: 24px 0 48px;
+    }
+    .seal-card {
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      padding: 56px 32px 36px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      min-height: 380px;
+    }
+    .seal-card__cap {
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .seal-card__cap--right {
+      left: auto;
+      right: 24px;
+      color: var(--ink-500);
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+      font-size: 10px;
+      text-transform: none;
+    }
+    .seal-card img { width: 240px; height: 240px; }
+    .seal-card__sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--ink-500);
+      max-width: 28em;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* In-context seal */
+    .seal-context {
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      padding: 48px 40px 48px;
+      position: relative;
+      min-height: 320px;
+      overflow: hidden;
+    }
+    .seal-context::after {
+      content: '';
+      position: absolute;
+      bottom: 12px;
+      right: 18px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-400);
+    }
+    .seal-context__seal {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 80px;
+      height: 80px;
+      opacity: 0.9;
+      transform: rotate(-3deg);
+    }
+    .seal-context__eyebrow {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 12px;
+    }
+    .seal-context h3 {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 26px;
+      line-height: 1.18;
+      letter-spacing: -0.005em;
+      margin: 0 0 18px;
+      max-width: 16em;
+    }
+    .seal-context p {
+      font-family: var(--serif-en);
+      font-size: 15.5px;
+      line-height: 1.7;
+      color: var(--ink-700);
+      max-width: 38em;
+      margin: 0 0 0.8em;
+    }
+
+    /* Marginalia in context (a mock article block) */
+    .marg-context {
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      padding: 56px 48px 48px;
+      margin: 24px 0 56px;
+      position: relative;
+    }
+    .marg-context__cap {
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .marg-context p {
+      font-family: var(--serif-en);
+      font-size: 15.5px;
+      line-height: 1.7;
+      color: var(--ink-700);
+      max-width: 38em;
+    }
+    .marg-context .start-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 28px 0 8px;
+    }
+    .marg-context .start-row img { width: 32px; height: 4px; }
+    .marg-context h4 {
+      font-family: var(--serif-en);
+      font-weight: 500;
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: -0.005em;
+    }
+    .marg-context .pull-quote {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: stretch;
+      margin: 28px 0;
+      max-width: 30em;
+    }
+    .marg-context .pull-quote img { height: 80px; align-self: stretch; }
+    .marg-context .pull-quote blockquote {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 20px;
+      line-height: 1.45;
+      color: var(--ink);
+      margin: 0;
+      padding: 8px 0;
+    }
+    .marg-context .para-divider {
+      display: block;
+      margin: 18px auto;
+      width: 18px;
+      height: 9px;
+    }
+
+    /* Asset list table */
+    .v3-files {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--serif-en);
+      font-size: 14px;
+      margin: 16px 0 56px;
+    }
+    .v3-files th, .v3-files td {
+      text-align: left;
+      padding: 12px 16px 12px 0;
+      border-bottom: 0.5px solid var(--paper-400);
+      vertical-align: top;
+    }
+    .v3-files th {
+      font-family: var(--sans-en);
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      border-bottom-color: var(--burgundy);
+    }
+    .v3-files td.mono { font-family: var(--mono); font-size: 13px; }
+    .v3-files td.pass-badge { width: 90px; }
+    .v3-files .badge {
+      font-family: var(--sans-en);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border: 0.5px solid currentColor;
+      display: inline-block;
+    }
+    .v3-files .badge--first { color: var(--burgundy); }
+    .v3-files .badge--second { color: var(--ink-400); }
+
+    @media (max-width: 768px) {
+      .fleuron-row { grid-template-columns: 1fr; gap: 14px; padding: 24px 18px; }
+      .col-head { display: none; }
+      .seal-showcase { grid-template-columns: 1fr; gap: 16px; }
+      .seal-card { padding: 44px 22px 28px; min-height: auto; }
+      .seal-context { padding: 36px 22px; }
+      .marg-context { padding: 36px 22px 28px; }
+    }
+  </style>
+</head>
+<body>
+  <img src="../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Visual Density · V3 · Complete</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">V3 · Publication-grade density · Both passes shipped</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-V3 · complete · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">Visual <em>density</em></h1>
+
+    <p class="subtitle">
+      Three asset families to lift KEY&rsquo;s pages from "clean publication" to
+      "Economist 1843 / NY Review of Books." Chapter fleurons. Brief seal. Body
+      marginalia. Each one classical, restrained, never decorative for its own
+      sake.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── FLEURONS ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">A &nbsp;·&nbsp; Fleurons</span>Five chapter dividers</h2>
+
+    <p>
+      Five typographic ornaments for section breaks. Each ships in ink black
+      (for body / chapter use) and seal burgundy (for emphasis breaks). All
+      sit in a <span class="mono">64 × 16</span> viewBox; consume them at
+      <span class="mono">~48 × 12 px</span> on the page.
+    </p>
+
+    <div class="col-head">
+      <div>Variant</div>
+      <div>Ink &nbsp;·&nbsp; #111111</div>
+      <div>Seal &nbsp;·&nbsp; #7C2330</div>
+      <div>When to reach for it</div>
+    </div>
+
+    <div class="fleuron-grid">
+
+      <div class="fleuron-row">
+        <div class="fleuron-row__label">I. Classical West<span class="mono">fleuron-classical-west.svg</span></div>
+        <div class="fleuron-row__cell"><img src="../05-visual-density/fleurons/fleuron-classical-west.svg" alt=""></div>
+        <div class="fleuron-row__cell" style="background:var(--paper-300);"><img src="../05-visual-density/fleurons/fleuron-classical-west-seal.svg" alt=""></div>
+        <div class="fleuron-row__note">Brief § openings and KEY Letter section dividers. Western publication tradition — reads as literary.</div>
+      </div>
+
+      <div class="fleuron-row">
+        <div class="fleuron-row__label">II. Chinese huiwen<span class="mono">fleuron-chinese-huiwen.svg</span></div>
+        <div class="fleuron-row__cell"><img src="../05-visual-density/fleurons/fleuron-chinese-huiwen.svg" alt=""></div>
+        <div class="fleuron-row__cell" style="background:var(--paper-300);"><img src="../05-visual-density/fleurons/fleuron-chinese-huiwen-seal.svg" alt=""></div>
+        <div class="fleuron-row__note">Chinese-language pages — methodology CN, KEY Brief CN body. Recursive 回 motif. Reads as classical Chinese print.</div>
+      </div>
+
+      <div class="fleuron-row">
+        <div class="fleuron-row__label">III. KEY derived<span class="mono">fleuron-key-derived.svg</span></div>
+        <div class="fleuron-row__cell"><img src="../05-visual-density/fleurons/fleuron-key-derived.svg" alt=""></div>
+        <div class="fleuron-row__cell" style="background:var(--paper-300);"><img src="../05-visual-density/fleurons/fleuron-key-derived-seal.svg" alt=""></div>
+        <div class="fleuron-row__note">Top-level brand artefacts — cover pages, masthead breaks, end-of-deck. KEY&rsquo;s own signature, abstracted.</div>
+      </div>
+
+      <div class="fleuron-row">
+        <div class="fleuron-row__label">IV. Simple diamond<span class="mono">fleuron-simple-diamond.svg</span></div>
+        <div class="fleuron-row__cell"><img src="../05-visual-density/fleurons/fleuron-simple-diamond.svg" alt=""></div>
+        <div class="fleuron-row__cell" style="background:var(--paper-300);"><img src="../05-visual-density/fleurons/fleuron-simple-diamond-seal.svg" alt=""></div>
+        <div class="fleuron-row__note">The default. Body section breaks. Quiet, classical, doesn&rsquo;t compete with text.</div>
+      </div>
+
+      <div class="fleuron-row">
+        <div class="fleuron-row__label">V. Double rule<span class="mono">fleuron-double-rule.svg</span></div>
+        <div class="fleuron-row__cell"><img src="../05-visual-density/fleurons/fleuron-double-rule.svg" alt=""></div>
+        <div class="fleuron-row__cell" style="background:var(--paper-300);"><img src="../05-visual-density/fleurons/fleuron-double-rule-seal.svg" alt=""></div>
+        <div class="fleuron-row__note">Footers, masthead separators, end-of-document. Newspaper-tradition — &ldquo;this column is closed.&rdquo;</div>
+      </div>
+
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── SEAL ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">B &nbsp;·&nbsp; Brief seals</span>The Editorial Office stamp</h2>
+
+    <p>
+      The single most KEY-specific visual symbol — a red seal stamped onto
+      every Brief, the way an editor stamps a manuscript. This is the
+      visual differentiator between KEY&rsquo;s output and a generic AI
+      response.
+    </p>
+
+    <p>
+      Four seal variants shipped: <strong>round</strong> (primary, Latin),
+      <strong>round CN</strong> (with <span class="cn">中国</span> in the bottom arc),
+      <strong>square</strong> (中国传统印章 · KEY top · 中国 bottom · 4 corner ornaments),
+      and <strong>octagon</strong> (Western wax-seal hommage · KB + 中国).
+    </p>
+
+    <div class="seal-showcase" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="seal-card">
+        <div class="seal-card__cap">I · Round (Latin)</div>
+        <div class="seal-card__cap seal-card__cap--right">primary · default</div>
+        <img src="../05-visual-density/seals/brief-seal-round.svg" alt="KEY Brief Seal Round">
+        <div class="seal-card__sub"><span class="mono">brief-seal-round.svg</span><br>The default. Use everywhere unless a CN-locale page calls for the CN variant.</div>
+      </div>
+
+      <div class="seal-card">
+        <div class="seal-card__cap">II · Round (CN)</div>
+        <div class="seal-card__cap seal-card__cap--right">CN-locale pages</div>
+        <img src="../05-visual-density/seals/brief-seal-round-cn.svg" alt="KEY Brief Seal Round CN">
+        <div class="seal-card__sub"><span class="mono">brief-seal-round-cn.svg</span><br>Bottom arc reads <span class="cn">BRIEF · 中国</span>. Use on CN-locale Brief pages.</div>
+      </div>
+
+      <div class="seal-card">
+        <div class="seal-card__cap">III · Square</div>
+        <div class="seal-card__cap seal-card__cap--right">中国传统印章</div>
+        <img src="../05-visual-density/seals/brief-seal-square.svg" alt="KEY Brief Seal Square">
+        <div class="seal-card__sub"><span class="mono">brief-seal-square.svg</span><br>KEY top row, <span class="cn">中国</span> bottom row, double frame with 4 corner 回 motifs. Use on Founder Edition CN print run.</div>
+      </div>
+
+      <div class="seal-card">
+        <div class="seal-card__cap">IV · Octagon</div>
+        <div class="seal-card__cap seal-card__cap--right">Western wax-seal</div>
+        <img src="../05-visual-density/seals/brief-seal-octagon.svg" alt="KEY Brief Seal Octagon">
+        <div class="seal-card__sub"><span class="mono">brief-seal-octagon.svg</span><br>KB centered + hairline rule + small <span class="cn">中国</span> below. Hommage to 17C European wax seals.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">In context · 80 px on a brief page</h3>
+
+    <div class="seal-showcase" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="seal-context">
+        <div class="seal-context__eyebrow">EN brief · round (Latin)</div>
+        <img class="seal-context__seal" src="../05-visual-density/seals/brief-seal-round.svg" alt="seal">
+        <h3 style="font-size:22px;">The trade-off you can&rsquo;t un-see.</h3>
+        <p style="font-size:14.5px;">You came in asking whether to leave the job. The job is the symptom. The decision underneath is whether to lower the cost of being wrong about your last move.</p>
+      </div>
+
+      <div class="seal-context">
+        <div class="seal-context__eyebrow" style="font-family:var(--sans-cn);">CN 简报 · 方印</div>
+        <img class="seal-context__seal" src="../05-visual-density/seals/brief-seal-square.svg" alt="seal">
+        <h3 class="cn" style="font-size:22px;">第二节 · 你看不到的代价</h3>
+        <p class="cn" style="font-size:14.5px;">你来的时候问的是要不要离职。离职是症状。真正的问题，是你愿不愿意降低上一次判断错的成本。</p>
+      </div>
+    </div>
+
+    <h3 class="sub">Note on CN glyphs</h3>
+
+    <p>
+      The CN characters <span class="cn">中</span> and <span class="cn">国</span>
+      are hand-outlined paths, not from a CJK font. (The font fetch for Source Han
+      Serif SC / Noto Serif SC timed out at the data size we needed.) The
+      hand-drawn outlines read correctly at sizes 16 px and up; at the small
+      arc-text size (≈13 px) <span class="cn">国</span> reads as a framed
+      character with interior 王 structure rather than perfect <span class="cn">玉</span>
+      detail. Acceptable for the first version; can be replaced with proper
+      font-outlined glyphs in V2 once the CJK pipeline is wired up.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── MARGINALIA ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">C &nbsp;·&nbsp; Marginalia</span>Body-page ornaments</h2>
+
+    <p>
+      Eight small ornaments for KEY&rsquo;s long-form pages (Brief body, Sample
+      Brief, /methodology, KEY Letter). Each one earns the page a touch of
+      editorial-craft density without becoming busy. <strong>All 8 shipped.</strong>
+    </p>
+
+    <div class="marg-context">
+      <div class="marg-context__cap">In context · KEY Brief · § II body</div>
+
+      <div class="start-row">
+        <img src="../05-visual-density/marginalia/section-start-line.svg" alt="">
+        <h4>The trade-off you can&rsquo;t un-see.</h4>
+      </div>
+
+      <p>
+        You came in asking whether to leave the job. The job is the symptom.
+        The decision underneath &mdash; and the only one you can act on this
+        quarter &mdash; is whether to lower the cost of being wrong about
+        your last move.
+      </p>
+
+      <div class="pull-quote">
+        <img src="../05-visual-density/marginalia/quote-bracket-left.svg" alt="">
+        <blockquote>
+          You may be mistaking guilt for responsibility.<br>
+          You may be mistaking responsibility for choice.
+        </blockquote>
+        <img src="../05-visual-density/marginalia/quote-bracket-right.svg" alt="">
+      </div>
+
+      <p>
+        That sentence cost the room ten minutes of silence the first time
+        we wrote it on the wall.
+      </p>
+
+      <img class="para-divider" src="../05-visual-density/marginalia/paragraph-divider.svg" alt="">
+
+      <p>
+        We say so plainly because <em>that</em> is the work; the rest is
+        consolation. A good brief earns the reader&rsquo;s second reading.
+      </p>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── FILES ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">D &nbsp;·&nbsp; Files</span>What&rsquo;s shipped</h2>
+
+    <table class="v3-files">
+      <thead>
+        <tr>
+          <th style="width:40%;">File</th>
+          <th class="pass-badge">Pass</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">fleurons/fleuron-classical-west.svg</td><td><span class="badge badge--first">1st</span></td><td>Western S-curve classical · ink</td></tr>
+        <tr><td class="mono">fleurons/fleuron-classical-west-seal.svg</td><td><span class="badge badge--first">1st</span></td><td>Western S-curve classical · burgundy</td></tr>
+        <tr><td class="mono">fleurons/fleuron-chinese-huiwen.svg</td><td><span class="badge badge--first">1st</span></td><td>Chinese 回 motif · ink</td></tr>
+        <tr><td class="mono">fleurons/fleuron-chinese-huiwen-seal.svg</td><td><span class="badge badge--first">1st</span></td><td>Chinese 回 motif · burgundy</td></tr>
+        <tr><td class="mono">fleurons/fleuron-key-derived.svg</td><td><span class="badge badge--first">1st</span></td><td>KEY abstracted three strokes · ink</td></tr>
+        <tr><td class="mono">fleurons/fleuron-key-derived-seal.svg</td><td><span class="badge badge--first">1st</span></td><td>KEY abstracted · burgundy</td></tr>
+        <tr><td class="mono">fleurons/fleuron-simple-diamond.svg</td><td><span class="badge badge--first">1st</span></td><td>Diamond + flanking rules · ink</td></tr>
+        <tr><td class="mono">fleurons/fleuron-simple-diamond-seal.svg</td><td><span class="badge badge--first">1st</span></td><td>Diamond + flanking rules · burgundy</td></tr>
+        <tr><td class="mono">fleurons/fleuron-double-rule.svg</td><td><span class="badge badge--first">1st</span></td><td>Double parallel rules · ink</td></tr>
+        <tr><td class="mono">fleurons/fleuron-double-rule-seal.svg</td><td><span class="badge badge--first">1st</span></td><td>Double parallel rules · burgundy</td></tr>
+        <tr><td class="mono">fleurons/README.md</td><td><span class="badge badge--first">1st</span></td><td>Fleuron usage rules + V1→V2 questions</td></tr>
+
+        <tr><td class="mono">seals/brief-seal-round.svg</td><td><span class="badge badge--first">1st</span></td><td>Primary round seal · all-text outlined · Latin "ANNO MMXXVI"</td></tr>
+        <tr><td class="mono">seals/brief-seal-round-cn.svg</td><td><span class="badge badge--first">2nd</span></td><td>Round seal · CN variant · <span class="cn">BRIEF · 中国</span></td></tr>
+        <tr><td class="mono">seals/brief-seal-square.svg</td><td><span class="badge badge--first">2nd</span></td><td>Square seal · KEY + <span class="cn">中国</span> · 4 corner 回 motifs</td></tr>
+        <tr><td class="mono">seals/brief-seal-octagon.svg</td><td><span class="badge badge--first">2nd</span></td><td>Octagon seal · KB + <span class="cn">中国</span> · Western wax-seal</td></tr>
+        <tr><td class="mono">seals/README.md</td><td><span class="badge badge--first">1st</span></td><td>Seal usage + technical notes + V1→V2 questions</td></tr>
+
+        <tr><td class="mono">marginalia/section-start-line.svg</td><td><span class="badge badge--first">1st</span></td><td>Section opening rule + terminal dot</td></tr>
+        <tr><td class="mono">marginalia/section-end-line.svg</td><td><span class="badge badge--first">2nd</span></td><td>Section closing cross + flanking rules</td></tr>
+        <tr><td class="mono">marginalia/quote-bracket-left.svg</td><td><span class="badge badge--first">1st</span></td><td>Pull-quote left bracket</td></tr>
+        <tr><td class="mono">marginalia/quote-bracket-right.svg</td><td><span class="badge badge--first">1st</span></td><td>Pull-quote right bracket</td></tr>
+        <tr><td class="mono">marginalia/paragraph-divider.svg</td><td><span class="badge badge--first">1st</span></td><td>Three vertical dots between paragraphs</td></tr>
+        <tr><td class="mono">marginalia/interrogation-mark.svg</td><td><span class="badge badge--first">2nd</span></td><td>"Pose-a-question" marker</td></tr>
+        <tr><td class="mono">marginalia/footnote-marker.svg</td><td><span class="badge badge--first">2nd</span></td><td>Classical † footnote anchor</td></tr>
+        <tr><td class="mono">marginalia/page-break-fleuron.svg</td><td><span class="badge badge--first">2nd</span></td><td>Full-width page-break · rule + center fleuron</td></tr>
+        <tr><td class="mono">marginalia/README.md</td><td><span class="badge badge--first">1st</span></td><td>Marginalia usage + V1→V2 questions</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">All passes complete</h3>
+
+    <ol class="roman">
+      <li><strong>10 fleurons</strong> (5 designs × 2 colors) — shipped, outlined paths, ~0.5 KB each.</li>
+      <li><strong>4 brief seals</strong> — round (Latin) + round CN + square + octagon, all text outlined via <span class="mono">opentype.js</span> + hand-drawn <span class="cn">中</span> <span class="cn">国</span> paths.</li>
+      <li><strong>8 marginalia</strong> — full set shipped: section-start/end-line, quote-bracket-L/R, paragraph-divider, interrogation-mark, footnote-marker, page-break-fleuron.</li>
+      <li><strong>3 README.md</strong> — one per asset folder, each with V1→V2 questions.</li>
+    </ol>
+
+    <nav class="crossnav">
+      <a href="../../index.html">← Handoff Index</a>
+      <span class="crossnav__center">V3 · Visual Density · First Pass</span>
+      <a href="../04-internal-poster/v2/index.html">04 · Poster V2 →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · V3 · Complete<br>2026-05-13</div>
+      <div class="colophon__right">10 fleurons · 4 seals · 8 marginalia<br>opentype.js + hand-outlined CN · paths only</div>
+    </footer>
+
+  </main>
+</body>
+</html>

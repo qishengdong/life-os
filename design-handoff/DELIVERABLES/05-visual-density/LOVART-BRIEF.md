@@ -109,6 +109,25 @@ watercolor, glossy, photorealistic, futuristic, anime, comic
 
 ---
 
+## 交付目录
+
+把 3 张图放进:
+
+```
+design-handoff/DELIVERABLES/KEY/DELIVERABLES/05-visual-density/illustrations/
+├── editorial-parent-care.png         (1600×1000, 黑白)
+├── editorial-parent-care.svg         (描线版, 如果可能)
+├── editorial-marriage.png
+├── editorial-marriage.svg
+├── editorial-child-education.png
+├── editorial-child-education.svg
+└── README.md                         ← 写每张图的画面描述 / 用法 / Prompt 留底
+```
+
+跟 fleurons/ seals/ marginalia/ 同级. 文件名必须严格按上面写的, 我代码里 import 路径已经按这个写好.
+
+---
+
 ## 交付时间
 
 24-48h 内. 如果不满意, 我会给 V1→V2 反馈 (具体到画面元素调整), 不接受"风格全推翻".

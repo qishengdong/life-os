@@ -267,96 +267,88 @@ input:focus, textarea:focus, select:focus {
  * 字符回退用 Unicode glyph (✦ ❧ ⊙ † ‡), 后续 swap 为 SVG.
  * ============================================================ */
 
-/* 章节起始细线 + 末端小圆点 (短横线 + 末端小点, 古典) */
+/* 章节起始细线 + 末端小圆点 (用 SVG ornament) */
 .marginalia-section-start {
   display: block;
   width: 32px;
-  height: 1px;
-  background: var(--ink-900);
-  opacity: 0.4;
+  height: 4px;
+  background: url('/brand/marginalia/section-start-line.svg') no-repeat center / contain;
   margin: 0 0 1rem 0;
-  position: relative;
-}
-.marginalia-section-start::after {
-  content: '';
-  position: absolute;
-  right: -3px;
-  top: -2px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ink-900);
 }
 
 /* 章节结束 — 中心十字 + 两侧短横 */
 .marginalia-section-end {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: 32px;
+  height: 4px;
+  background: url('/brand/marginalia/section-end-line.svg') no-repeat center / contain;
   margin: 1.5rem auto;
-  color: var(--ink-400);
-  font-size: 14px;
-  letter-spacing: 0.5em;
-  opacity: 0.5;
 }
-.marginalia-section-end::before { content: '— '; }
-.marginalia-section-end::after { content: ' —'; }
 
-/* 段落分隔 (替代 <hr>) */
+/* 段落分隔 (替代 <hr>) — SVG ornament */
 .marginalia-paragraph-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 2rem 0;
-  color: var(--burgundy-500);
-  font-size: 12px;
-  letter-spacing: 0.4em;
-  opacity: 0.6;
+  display: block;
+  width: 24px;
+  height: 12px;
+  background: url('/brand/marginalia/paragraph-divider.svg') no-repeat center / contain;
+  margin: 2rem auto;
 }
-.marginalia-paragraph-divider::before { content: '✦'; }
 
-/* 拷问标记 — 包"核心拷问" blockquote */
+/* 拷问标记 — 包"核心拷问" blockquote 用. 父元素需 position: relative */
 .marginalia-interrogation::before {
-  content: '⊙';
-  position: absolute;
-  left: -2.2rem;
-  top: 0.4rem;
-  font-size: 14px;
-  color: var(--burgundy-500);
-  opacity: 0.6;
-}
-
-/* Footnote marker */
-.marginalia-footnote {
-  font-size: 0.65em;
-  vertical-align: super;
-  color: var(--burgundy-500);
-  font-family: var(--font-source-serif), serif;
-}
-
-/* 跨页装饰横线 + 中心 fleuron (footer 顶部, 章节间) */
-.marginalia-page-break {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 3rem 0;
-  color: var(--burgundy-500);
-  opacity: 0.5;
-}
-.marginalia-page-break::before,
-.marginalia-page-break::after {
   content: '';
-  flex: 1;
-  border-bottom: 0.5px solid var(--ink-900);
-  opacity: 0.3;
-  max-width: 120px;
+  position: absolute;
+  left: -2.4rem;
+  top: 0.3rem;
+  width: 20px;
+  height: 20px;
+  background: url('/brand/marginalia/interrogation-mark.svg') no-repeat center / contain;
 }
-.marginalia-page-break::before { margin-right: 1.5em; }
-.marginalia-page-break::after { margin-left: 1.5em; }
 
-.marginalia-page-break > .glyph {
-  font-size: 14px;
-  letter-spacing: 0.3em;
+/* Footnote marker — inline glyph, 包文字用 */
+.marginalia-footnote::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 2px;
+  vertical-align: super;
+  background: url('/brand/marginalia/footnote-marker.svg') no-repeat center / contain;
+}
+
+/* 跨页装饰 fleuron — 完整跨阅读宽度的横线 + 中心 fleuron */
+.marginalia-page-break {
+  display: block;
+  width: 200px;
+  height: 16px;
+  background: url('/brand/marginalia/page-break-fleuron.svg') no-repeat center / contain;
+  margin: 3rem auto;
+}
+
+/* 引用边框装饰 (左右各一) — 用在长引用 / 重要 callout */
+.marginalia-quote-left {
+  position: relative;
+}
+.marginalia-quote-left::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem;
+  top: 0;
+  width: 8px;
+  height: 80px;
+  background: url('/brand/marginalia/quote-bracket-left.svg') no-repeat center / contain;
+}
+.marginalia-quote-right {
+  position: relative;
+}
+.marginalia-quote-right::after {
+  content: '';
+  position: absolute;
+  right: -1.5rem;
+  bottom: 0;
+  width: 8px;
+  height: 80px;
+  background: url('/brand/marginalia/quote-bracket-right.svg') no-repeat center / contain;
 }
 
 /* ============================================================
