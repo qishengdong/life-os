@@ -138,16 +138,36 @@ function ContractSection({ contract }: { contract: Contract }) {
         hook={contract.hook}
       />
 
-      {/* 正文 essay */}
+      {/* 正文 essay — 首段首字下沉 */}
       <div className="space-y-6 mb-4">
-        {contract.body.map((p, i) => (
-          <p
-            key={i}
-            className="font-serif text-reading text-ink-700 editorial-leading"
-          >
-            {p}
-          </p>
-        ))}
+        {contract.body.map((p, i) => {
+          if (i === 0 && p.length > 0) {
+            const first = p.charAt(0);
+            const rest = p.slice(1);
+            const isCJK = first.charCodeAt(0) >= 0x2e80;
+            return (
+              <p
+                key={i}
+                className="font-serif text-reading text-ink-700 editorial-leading"
+              >
+                <span
+                  className={`drop-cap-char${isCJK ? ' drop-cap-char--cn' : ''}`}
+                >
+                  {first}
+                </span>
+                {rest}
+              </p>
+            );
+          }
+          return (
+            <p
+              key={i}
+              className="font-serif text-reading text-ink-700 editorial-leading"
+            >
+              {p}
+            </p>
+          );
+        })}
       </div>
 
       {/* 对照 */}

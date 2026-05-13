@@ -222,3 +222,191 @@ input:focus, textarea:focus, select:focus {
   letter-spacing: 0.16em;
   font-feature-settings: "kern";
 }
+
+/* ============================================================
+ * Publication craft · Drop cap (首字下沉)
+ *
+ * 用在: sample brief 第一段 / methodology 每条契约第一段.
+ * 致敬 New Yorker / NY Magazine / Aeon 长文起始.
+ *
+ * 实现方式: 不用 ::first-letter (中文支持不稳),
+ *   用包装 <span class="drop-cap-char">第一字</span> + 剩余.
+ *   见 components/BriefRenderer + methodology page.
+ * ============================================================ */
+
+.drop-cap-char {
+  font-family: var(--font-source-serif), var(--font-noto-serif-sc), 'Songti SC', 'STSong', Georgia, serif;
+  font-weight: 900;
+  font-size: 5em;          /* ~5 行高 */
+  line-height: 0.85;
+  color: var(--ink-900);
+  float: left;
+  margin: 0.05em 0.12em 0 -0.04em;
+  padding: 0;
+  user-select: none;
+  /* 古典印刷感: 微微下沉 + 收紧字距 */
+  letter-spacing: -0.02em;
+}
+
+/* 中文首字偏小 + 对齐微调 (中文字身比拉丁字身高一点) */
+.drop-cap-char--cn {
+  font-size: 4.5em;
+  line-height: 0.95;
+  margin-top: 0.08em;
+}
+
+/* Burgundy variant — 给重要章节用 (例如 sample brief 第 I 节封面摘要) */
+.drop-cap-char--seal {
+  color: var(--burgundy-500);
+}
+
+/* ============================================================
+ * Publication craft · Marginalia (边距批注 skeleton)
+ *
+ * 在 Claude Design 交付 ornament SVG 之前先占位.
+ * 字符回退用 Unicode glyph (✦ ❧ ⊙ † ‡), 后续 swap 为 SVG.
+ * ============================================================ */
+
+/* 章节起始细线 + 末端小圆点 (短横线 + 末端小点, 古典) */
+.marginalia-section-start {
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--ink-900);
+  opacity: 0.4;
+  margin: 0 0 1rem 0;
+  position: relative;
+}
+.marginalia-section-start::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink-900);
+}
+
+/* 章节结束 — 中心十字 + 两侧短横 */
+.marginalia-section-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem auto;
+  color: var(--ink-400);
+  font-size: 14px;
+  letter-spacing: 0.5em;
+  opacity: 0.5;
+}
+.marginalia-section-end::before { content: '— '; }
+.marginalia-section-end::after { content: ' —'; }
+
+/* 段落分隔 (替代 <hr>) */
+.marginalia-paragraph-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  color: var(--burgundy-500);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  opacity: 0.6;
+}
+.marginalia-paragraph-divider::before { content: '✦'; }
+
+/* 拷问标记 — 包"核心拷问" blockquote */
+.marginalia-interrogation::before {
+  content: '⊙';
+  position: absolute;
+  left: -2.2rem;
+  top: 0.4rem;
+  font-size: 14px;
+  color: var(--burgundy-500);
+  opacity: 0.6;
+}
+
+/* Footnote marker */
+.marginalia-footnote {
+  font-size: 0.65em;
+  vertical-align: super;
+  color: var(--burgundy-500);
+  font-family: var(--font-source-serif), serif;
+}
+
+/* 跨页装饰横线 + 中心 fleuron (footer 顶部, 章节间) */
+.marginalia-page-break {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem 0;
+  color: var(--burgundy-500);
+  opacity: 0.5;
+}
+.marginalia-page-break::before,
+.marginalia-page-break::after {
+  content: '';
+  flex: 1;
+  border-bottom: 0.5px solid var(--ink-900);
+  opacity: 0.3;
+  max-width: 120px;
+}
+.marginalia-page-break::before { margin-right: 1.5em; }
+.marginalia-page-break::after { margin-left: 1.5em; }
+
+.marginalia-page-break > .glyph {
+  font-size: 14px;
+  letter-spacing: 0.3em;
+}
+
+/* ============================================================
+ * Publication craft · Sparkline (内部审计 sparkline 样式)
+ * ============================================================ */
+
+.sparkline-svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+.sparkline-line {
+  fill: none;
+  stroke: var(--burgundy-500);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sparkline-area {
+  fill: var(--burgundy-500);
+  fill-opacity: 0.08;
+  stroke: none;
+}
+.sparkline-dot-last {
+  fill: var(--burgundy-500);
+}
+.sparkline-baseline {
+  stroke: var(--ink-400);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 2;
+  opacity: 0.4;
+}
+
+/* Inline mini gauge (维度分数条) */
+.gauge-track {
+  height: 4px;
+  background: var(--paper-400);
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+}
+.gauge-fill {
+  height: 100%;
+  background: var(--burgundy-500);
+  border-radius: 2px;
+}
+.gauge-tick-target {
+  position: absolute;
+  top: -2px;
+  width: 1px;
+  height: 8px;
+  background: var(--ink-700);
+  opacity: 0.5;
+}

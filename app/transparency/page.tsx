@@ -32,8 +32,12 @@ import {
   getGraderOverallStats,
   getCheckStats,
   getBriefStats,
+  getBriefLatencyTrend,
+  getBriefCharCountTrend,
+  getGraderScoreTrend,
 } from '@/lib/grader/aggregations';
 import KeyWordmark from '@/components/KeyWordmark';
+import Sparkline, { Gauge } from '@/components/Sparkline';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -89,6 +93,7 @@ function SectionHeader({
 function GraderBlock() {
   const scores = getDimensionScores();
   const overall = getGraderOverallStats();
+  const scoreTrend = getGraderScoreTrend(20);
 
   return (
     <div>
@@ -99,6 +104,25 @@ function GraderBlock() {
         <Metric label="最佳批次" value={overall.bestRun.toFixed(2)} suffix="/ 5" />
         <Metric label="最弱批次" value={overall.worstRun.toFixed(2)} suffix="/ 5" />
       </div>
+
+      {/* 评分趋势 sparkline (最近 20 批) */}
+      {scoreTrend.length >= 2 && (
+        <div className="mb-12 flex items-baseline gap-4 -mt-6">
+          <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400">
+            最近 {scoreTrend.length} 批 综合均分趋势
+          </span>
+          <Sparkline
+            data={scoreTrend}
+            width={160}
+            height={28}
+            showBaseline
+            ariaLabel={`grader 趋势, ${scoreTrend.length} 个数据点`}
+          />
+          <span className="font-mono text-[11px] text-ink-500">
+            {scoreTrend[0].toFixed(2)} → {scoreTrend[scoreTrend.length - 1].toFixed(2)}
+          </span>
+        </div>
+      )}
 
       {/* 12 维明细 */}
       {scores.length === 0 ? (
@@ -135,6 +159,9 @@ function GraderBlock() {
                     {s.avgScore.toFixed(2)}
                   </span>
                   <span className="font-serif text-sm text-ink-400 ml-1">/5</span>
+                  <div className="mt-2 flex justify-end">
+                    <Gauge value={s.avgScore} max={5} target={4} width={88} />
+                  </div>
                 </div>
               </li>
             );
@@ -222,6 +249,8 @@ function InspectorBlock() {
 // ============================================================================
 function BriefBlock() {
   const s = getBriefStats();
+  const latencyTrend = getBriefLatencyTrend(20);
+  const charTrend = getBriefCharCountTrend(20);
 
   return (
     <div>
@@ -233,6 +262,50 @@ function BriefBlock() {
         <Metric label="Editor 耗时" value={(s.avgEditorMs / 1000).toFixed(1)} suffix="秒" />
         <Metric label="平均 tokens" value={s.avgTokens.toLocaleString()} suffix="" />
       </div>
+
+      {/* 趋势 sparkline — 篇幅 + 撰稿速度 */}
+      <div className="mt-10 grid md:grid-cols-2 gap-10 pb-8 border-b border-paper-300">
+        <div>
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
+            最近 {charTrend.length || '—'} 份 · 篇幅趋势
+          </p>
+          <div className="flex items-baseline gap-4">
+            <Sparkline
+              data={charTrend}
+              width={180}
+              height={32}
+              showBaseline
+              ariaLabel="brief 字数趋势"
+            />
+            <span className="font-mono text-[11px] text-ink-500">
+              {charTrend.length >= 2
+                ? `${charTrend[0]} → ${charTrend[charTrend.length - 1]} 字`
+                : '—'}
+            </span>
+          </div>
+        </div>
+        <div>
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
+            最近 {latencyTrend.length || '—'} 份 · Analyst 耗时
+          </p>
+          <div className="flex items-baseline gap-4">
+            <Sparkline
+              data={latencyTrend}
+              width={180}
+              height={32}
+              showBaseline
+              invertSentiment
+              ariaLabel="brief analyst 耗时趋势"
+            />
+            <span className="font-mono text-[11px] text-ink-500">
+              {latencyTrend.length >= 2
+                ? `${(latencyTrend[0] / 1000).toFixed(1)}s → ${(latencyTrend[latencyTrend.length - 1] / 1000).toFixed(1)}s`
+                : '—'}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <p className="mt-8 font-serif text-[14px] text-ink-500 italic editorial-leading">
         数据范围: 自 KEY 决策 brief pipeline (Day 17, 2026-05-12) 上线以来累计.
         邀请期内测中, 样本量小, 不放大. 数据每次有新 brief 生成时实时刷新.

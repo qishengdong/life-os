@@ -53,7 +53,7 @@ function SectionHeader({ index, title }: { index: number; title: string }) {
 }
 
 // ============================================================================
-// 正文段落 — 阅读体, 第一段可选 drop cap
+// 正文段落 — 阅读体, 第一段可选 drop cap (publication-grade)
 // ============================================================================
 function Paragraph({ text, dropCap = false }: { text: string; dropCap?: boolean }) {
   if (!text) return null;
@@ -61,9 +61,13 @@ function Paragraph({ text, dropCap = false }: { text: string; dropCap?: boolean 
   if (dropCap && text.length > 0) {
     const first = text.charAt(0);
     const rest = text.slice(1);
+    // 简单 CJK 检测: 第一字 charCode 大于 0x2E80 视为中文 (CJK Unified)
+    const isCJK = first.charCodeAt(0) >= 0x2e80;
     return (
       <p className="font-serif text-reading text-ink-700 mb-5 editorial-leading">
-        <span className="float-left text-7xl font-serif text-ink-900 leading-[0.85] mr-3 mt-1 select-none">
+        <span
+          className={`drop-cap-char drop-cap-char--seal${isCJK ? ' drop-cap-char--cn' : ''}`}
+        >
           {first}
         </span>
         {rest}

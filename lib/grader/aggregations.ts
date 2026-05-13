@@ -237,3 +237,73 @@ export function getBriefStats() {
     };
   }
 }
+
+// ============================================================================
+// Sparkline 数据 — 时间序列
+// ============================================================================
+
+/**
+ * 最近 N 份 brief 的 analyst 耗时序列 (ms).
+ * 用于 transparency 页 "撰稿速度趋势" sparkline.
+ */
+export function getBriefLatencyTrend(n: number = 20): number[] {
+  try {
+    const db = getDb();
+    const rows = db
+      .prepare(
+        `SELECT duration_analyst_ms
+         FROM decision_briefs
+         WHERE duration_analyst_ms IS NOT NULL
+         ORDER BY authored_at DESC
+         LIMIT ?`,
+      )
+      .all(n) as Array<{ duration_analyst_ms: number }>;
+    return rows.map((r) => r.duration_analyst_ms).reverse(); // 旧 → 新
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 最近 N 份 brief 的字数序列.
+ * 用于 "篇幅稳定度" sparkline.
+ */
+export function getBriefCharCountTrend(n: number = 20): number[] {
+  try {
+    const db = getDb();
+    const rows = db
+      .prepare(
+        `SELECT total_char_count
+         FROM decision_briefs
+         WHERE total_char_count IS NOT NULL
+         ORDER BY authored_at DESC
+         LIMIT ?`,
+      )
+      .all(n) as Array<{ total_char_count: number }>;
+    return rows.map((r) => r.total_char_count).reverse();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 最近 N 次 grader 总分序列.
+ * 用于 "评分趋势" sparkline.
+ */
+export function getGraderScoreTrend(n: number = 20): number[] {
+  try {
+    const db = getDb();
+    const rows = db
+      .prepare(
+        `SELECT avg_score
+         FROM grader_runs
+         WHERE avg_score IS NOT NULL
+         ORDER BY created_at DESC
+         LIMIT ?`,
+      )
+      .all(n) as Array<{ avg_score: number }>;
+    return rows.map((r) => r.avg_score).reverse();
+  } catch {
+    return [];
+  }
+}
