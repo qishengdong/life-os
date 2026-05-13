@@ -387,6 +387,48 @@ export function getDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_invites_status ON invites(redeemed_at, revoked_at);
   `);
 
+  // ============================================================
+  // Letters (Phase 4a) — 用户跟 KEY 的日常通信
+  // ============================================================
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS letters (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+
+      -- 用户写的来信
+      user_content TEXT NOT NULL,
+      user_char_count INTEGER,
+
+      -- KEY 回的信 (null = pending)
+      reply_content TEXT,
+      reply_char_count INTEGER,
+      reply_authored_at INTEGER,
+
+      -- Metadata
+      letter_number TEXT NOT NULL UNIQUE,        -- LE-YYYYMMDD-NNN
+      status TEXT NOT NULL DEFAULT 'pending',     -- pending / replied / failed
+      failure_reason TEXT,
+
+      -- Pipeline metadata
+      tokens_used INTEGER,
+      model_used TEXT,
+      duration_ms INTEGER,
+
+      -- 4a 留接口给 4b canon retrieval
+      canon_quotes_used TEXT,                     -- JSON array of canon quote IDs
+      brain_facts_used TEXT,                      -- JSON array of brain fact IDs
+      framework_matched TEXT,                     -- 匹配的 framework / sub-framework
+
+      authored_at INTEGER DEFAULT (unixepoch()),
+
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_letters_user ON letters(user_id, authored_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_letters_status ON letters(status);
+    CREATE INDEX IF NOT EXISTS idx_letters_number ON letters(letter_number);
+  `);
+
   // Migration: users.access_status (Day 22)
   const usersColsV22 = _db.pragma('table_info(users)') as Array<{ name: string }>;
   const hasAccessStatus = usersColsV22.some((c) => c.name === 'access_status');
