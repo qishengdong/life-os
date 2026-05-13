@@ -8,43 +8,80 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // ===== Life OS 严肃出版物色系 (2026-05-11 锁定) =====
-        // 灵感: 三联生活周刊 + Lex Magazine + Substack
+        // ===== KEY 视觉系统 (2026-05-13 锁定, 替换 LifeOS v2) =====
+        // Source: KEY Brand Brief v1 第 12 节 + docs/BRAND_BRIEF_V3_KEY.md
+        // 5 core 色 + 派生 scale + 状态色
+
+        // Paper — 主背景, 大面积底色 (从 LifeOS 暖白 #FAF7F2 → KEY paper #F7F3EA, 略冷)
         paper: {
-          DEFAULT: '#FAF7F2',      // 主背景: 暖白
-          50:  '#FDFBF7',          // 最亮
-          100: '#FAF7F2',          // 主背景
-          200: '#F4EFE5',          // 卡片底
-          300: '#E8DFD0',          // 边框
-          400: '#D4C8B5',          // 分割线深
+          DEFAULT: '#F7F3EA',      // KEY core
+          50:  '#FAF8F2',          // 最亮 (卡片层次)
+          100: '#F7F3EA',          // KEY core (背景默认)
+          200: '#EFEAE0',          // 卡片底
+          300: '#E2DCD0',          // 边框
+          400: '#D6CFC2',          // 分割线深
         },
+
+        // Ink — 主文字 (从 LifeOS 深棕 #3A2E26 → KEY ink #111111 真黑, 增加重量感)
         ink: {
-          DEFAULT: '#3A2E26',       // 主文字: 深棕
+          DEFAULT: '#111111',       // KEY core
           50:  '#F0EDE9',
           100: '#D6CFC6',
-          400: '#9D9081',          // 弱文字
-          500: '#6B5D52',          // 副文字
-          700: '#4A3D33',          // 强调
-          900: '#3A2E26',          // 主文字
+          300: '#9F9B95',          // 微弱
+          400: '#7A7570',          // 弱文字
+          500: '#5A554F',          // 副文字
+          700: '#2A2622',          // 强调
+          900: '#111111',          // KEY core (主文字默认)
         },
-        // 暗红 accent (像旧书封面 / 印章)
+
+        // Burgundy — 关键标记 / 印章 (从 LifeOS seal #9B2D27 → KEY burgundy #6E1F2A, 深 30%, 更书本感)
+        burgundy: {
+          DEFAULT: '#6E1F2A',      // KEY core
+          400: '#8A2F3B',          // hover
+          500: '#6E1F2A',          // KEY core
+          600: '#561822',          // active
+          50:  '#F5E8E9',          // tint bg
+        },
+
+        // Warm Gray — 次文字 / 边框 (KEY 新加色, LifeOS 没有专门的中性灰)
+        warmGray: {
+          DEFAULT: '#BDB6AA',      // KEY core
+          50:  '#F0EDE6',
+          100: '#E8E2D7',
+          200: '#D5CEC0',
+          300: '#BDB6AA',          // KEY core
+          400: '#9F9889',
+          500: '#807A6E',
+        },
+
+        // Night Navy — 深色 cover / Admin / Premium 印刷 (KEY 新加, 仅用于深色场景)
+        navy: {
+          DEFAULT: '#141923',      // KEY core
+          400: '#2A3142',
+          500: '#141923',          // KEY core
+          600: '#0A0D14',
+        },
+
+        // ===== Legacy aliases (向后兼容, v3.5 移除) =====
+        // 旧代码用 seal 引用红色, 重定向到 burgundy
         seal: {
-          DEFAULT: '#9B2D27',      // 主 accent
-          400: '#C45A53',          // hover
-          500: '#9B2D27',          // 主 accent
-          600: '#7C231E',          // active
-          50:  '#F5E6E5',          // tint bg
+          DEFAULT: '#6E1F2A',      // 别名 → burgundy
+          400: '#8A2F3B',
+          500: '#6E1F2A',
+          600: '#561822',
+          50:  '#F5E8E9',
         },
-        // 次 accent: 哑光金 (用于稀缺场景, 如 Premium / 高净值)
+        // 次 accent: 哑光金 (保留, V2 Premium 场景可能用)
         gilt: {
           DEFAULT: '#9B7E3A',
           400: '#C9A961',
           500: '#9B7E3A',
         },
-        // 状态色 (克制)
+
+        // ===== 状态色 (跟 v2 一致, 不变) =====
         sage: '#5C8576',           // success / 稳定
         amber: '#B8843C',          // warning
-        ember: '#A8442F',          // danger (跟 seal 拉开)
+        ember: '#A8442F',          // danger (跟 burgundy 拉开)
       },
       fontFamily: {
         // ===== 字体系统 =====
