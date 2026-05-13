@@ -53,3 +53,11 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Design handoff: 大体积 deliverables (bundled HTML / fonts / 解包临时) 不进版本控制
+# 保留 4 个 brief 子目录 + ITERATIONS markdown
+design-handoff/DELIVERABLES/_unpacked/
+design-handoff/DELIVERABLES/**/*.woff2
+design-handoff/DELIVERABLES/**/*.woff
+design-handoff/DELIVERABLES/KEY V1 Handoff.html
+design-handoff/DELIVERABLES/*.zip

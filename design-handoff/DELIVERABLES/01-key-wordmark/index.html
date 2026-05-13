@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>KEY · Brief 01 · Wordmark · V1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../_shared/editorial.css">
+  <style>
+    /* Page-specific styles. Anything that's shared lives in editorial.css. */
+
+    .wm-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .wm-stack__sample {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    /* Specimen — the giant hero wordmark for each direction */
+    .specimen {
+      background: var(--paper-100);
+      padding: 96px 56px 80px;
+      margin: 32px 0 24px;
+      position: relative;
+      border-top: 0.5px solid var(--ink);
+      border-bottom: 0.5px solid var(--ink);
+    }
+    .specimen__cap {
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+    }
+    .specimen__num {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      letter-spacing: 0.04em;
+    }
+    .specimen__wordmark {
+      text-align: center;
+      line-height: 0.92;
+      color: var(--ink);
+    }
+
+    /* Wordmark style classes — drive the actual specimens. */
+
+    /* A — Authority — Source Serif 4 Bold */
+    .wm-A {
+      font-family: var(--serif-en);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      font-feature-settings: "kern";
+    }
+
+    /* B — Quietude — Newsreader Bold */
+    .wm-B {
+      font-family: 'Newsreader', Georgia, serif;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      font-variation-settings: "opsz" 72;
+    }
+    .wm-B__mark {
+      display: inline-block;
+      width: 0.06em;
+      height: 0.06em;
+      background: var(--burgundy);
+      border-radius: 50%;
+      transform: translate(-0.04em, -0.16em);
+    }
+
+    /* C — Engraved — Bodoni Moda Black, with hairlines */
+    .wm-C-frame {
+      display: inline-block;
+      padding: 14px 0 6px;
+      border-top: 0.5px solid var(--ink);
+      border-bottom: 0.5px solid var(--ink);
+      position: relative;
+    }
+    .wm-C {
+      font-family: 'Bodoni Moda', 'Didot', serif;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      font-variation-settings: "opsz" 96;
+      line-height: 1;
+      display: block;
+    }
+    .wm-C-frame__notch {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      line-height: 1;
+      color: var(--burgundy);
+    }
+
+    /* Variants strip: 4 small panels */
+    .variants {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--paper-400);
+      margin: 16px 0 24px;
+      border: 0.5px solid var(--paper-400);
+    }
+    .variant {
+      background: var(--paper-200);
+      padding: 48px 24px 24px;
+      position: relative;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .variant--paper100 { background: var(--paper-100); }
+    .variant--dark { background: var(--navy); color: var(--paper-100); }
+    .variant--dark .variant__label { color: rgba(247,243,234,0.55); }
+    .variant--burgundy { background: var(--burgundy); color: var(--paper-100); }
+    .variant--burgundy .variant__label { color: rgba(247,243,234,0.55); }
+    .variant__label {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .variant__caption {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-400);
+    }
+    .variant--dark .variant__caption,
+    .variant--burgundy .variant__caption { color: rgba(247,243,234,0.5); }
+
+    /* Stress test — small sizes side by side */
+    .stress {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      align-items: end;
+      background: var(--paper-100);
+      padding: 56px 32px 28px;
+      margin: 16px 0 24px;
+      border: 0.5px solid var(--paper-400);
+      position: relative;
+    }
+    .stress::before {
+      content: 'STRESS · 16 → 96 PX';
+      position: absolute;
+      top: 14px;
+      left: 24px;
+      font-family: var(--sans-en);
+      font-size: 9.5px;
+      letter-spacing: 0.32em;
+      color: var(--burgundy);
+    }
+    .stress__cell {
+      text-align: center;
+      color: var(--ink);
+    }
+    .stress__cell .label { display: block; margin-top: 12px; font-size: 9.5px; }
+
+    /* Three-direction headline */
+    .dir-headline {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 80px 0 8px;
+    }
+    .dir-headline__numeral {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 56px;
+      color: var(--burgundy);
+      font-weight: 400;
+      font-feature-settings: "onum";
+      line-height: 1;
+    }
+    .dir-headline__name {
+      font-family: var(--serif-en);
+      font-weight: 400;
+      font-size: 44px;
+      letter-spacing: -0.005em;
+      line-height: 1.05;
+    }
+    .dir-headline__name em { font-style: italic; color: var(--ink-500); }
+
+    /* Rationale grid */
+    .rationale {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      column-gap: 32px;
+      row-gap: 14px;
+      max-width: 880px;
+      margin: 24px 0 32px;
+      font-size: 15px;
+    }
+    .rationale dt {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      padding-top: 4px;
+    }
+    .rationale dd {
+      font-family: var(--serif-en);
+      font-size: 15.5px;
+      line-height: 1.65;
+      color: var(--ink-700);
+      margin: 0;
+      max-width: 56ch;
+    }
+    .rationale dd .mono { font-family: var(--mono); font-size: 13.5px; color: var(--ink); }
+
+    /* Comparison overview at the very top of section II */
+    .compare-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--paper-400);
+      border: 0.5px solid var(--paper-400);
+      margin: 28px 0 48px;
+    }
+    .compare-cell {
+      background: var(--paper-100);
+      padding: 56px 24px 24px;
+      position: relative;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .compare-cell__num {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      color: var(--burgundy);
+      font-size: 18px;
+    }
+    .compare-cell__name {
+      position: absolute;
+      top: 14px;
+      right: 20px;
+      font-family: var(--sans-en);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .compare-cell__caption {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-500);
+      margin-top: 16px;
+      max-width: 22ch;
+    }
+
+    /* Application mockups — small "use in context" cards */
+    .apps {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      margin: 28px 0 48px;
+    }
+    .app {
+      background: var(--paper-100);
+      border: 0.5px solid var(--paper-400);
+      padding: 24px;
+      min-height: 200px;
+    }
+    .app--dark {
+      background: var(--navy);
+      color: var(--paper-100);
+      border-color: var(--navy);
+    }
+    .app__label {
+      font-family: var(--sans-en);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 16px;
+    }
+    .app--dark .app__label { color: var(--paper-300); }
+
+    .app__nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 0.5px solid var(--paper-400);
+    }
+    .app--dark .app__nav { border-color: rgba(247,243,234,0.18); }
+    .app__nav-right {
+      display: flex;
+      gap: 24px;
+      font-family: var(--sans-en);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+    .app--dark .app__nav-right { color: var(--paper-300); }
+
+    .app__og {
+      background: var(--paper-200);
+      aspect-ratio: 1200/630;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .app__og::after {
+      content: '1200 × 630';
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-400);
+    }
+    .app__favicons {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .app__favicons > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .app__favicons .fav {
+      background: var(--paper-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif-en);
+      font-weight: 700;
+      color: var(--ink);
+      border: 0.5px solid var(--paper-400);
+    }
+    .app__favicons .cap {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--ink-400);
+    }
+
+    /* My recommendation pull quote */
+    .recommend {
+      background: var(--ink);
+      color: var(--paper-100);
+      padding: 80px 56px;
+      margin: 80px 0 40px;
+      position: relative;
+    }
+    .recommend__label {
+      font-family: var(--sans-en);
+      font-size: 10.5px;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--paper-300);
+      margin-bottom: 24px;
+    }
+    .recommend__quote {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 32px;
+      line-height: 1.4;
+      max-width: 24em;
+      color: var(--paper-100);
+      text-wrap: pretty;
+      margin: 0 0 24px;
+    }
+    .recommend__pick {
+      font-family: var(--serif-en);
+      font-size: 18px;
+      color: var(--paper-300);
+      font-style: italic;
+    }
+    .recommend__pick strong { color: var(--burgundy); font-style: normal; font-weight: 600; letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+  <img src="../_shared/paper-noise.svg" class="paper-noise" alt="">
+
+  <main class="sheet">
+
+    <header class="masthead">
+      <div class="masthead__left">KEY · Editorial Office</div>
+      <div class="masthead__mid">Design Handoff · V1</div>
+      <div class="masthead__right">2026 · No. 001</div>
+    </header>
+
+    <section class="folio">
+      <div>
+        <div class="folio__eyebrow">Brief 01 · P0 · Week 1</div>
+      </div>
+      <div class="folio__brief-no">KB-DH-01 · v1 · 2026-05-13</div>
+    </section>
+
+    <h1 class="title">KEY <em>Wordmark</em></h1>
+
+    <p class="subtitle">
+      Three differentiated directions for the masthead of a publication that
+      doesn&rsquo;t exist yet — and is not allowed to look like an AI company.
+      Each is a real voice, not a font swap.
+    </p>
+
+    <hr class="rule">
+
+    <h2 class="section"><span class="section-eyebrow">I &nbsp;·&nbsp; Brief</span>Why this matters</h2>
+
+    <p>
+      The wordmark is the load-bearing element of the entire KEY identity.
+      It sits in the top-nav at 18px, in printed correspondence at 60pt, on a
+      favicon at 16px, and on the cover of a brief that a paying member will
+      print and keep. Whatever we choose has to <em>read as a serious imprint</em>
+      at every scale.
+    </p>
+
+    <p>
+      The brief from Claude (technical lead) is unambiguous: <strong>no key
+      icons, no lock motifs, no cyber typography, no gradients, no shadow,
+      no container chrome.</strong> The wordmark is letterforms — three of them,
+      uppercase, generously tracked. The differentiation between directions is
+      the <em>kind of seriousness</em> each one performs.
+    </p>
+
+    <div class="note">
+      <span class="label">House rules — locked</span>
+      <p style="font-size:15px;line-height:1.6;color:var(--ink-700);">
+        Uppercase <span class="mono">KEY</span> only — never <span class="mono">Key</span>,
+        <span class="mono">key</span>, <span class="mono">K.E.Y.</span>, <span class="mono">KeyAI</span>,
+        <span class="mono">KeyOS</span>. Three letters, treated as a single typographic unit.
+        Tracking ≥ <span class="mono">+0.12em</span>, ≤ <span class="mono">+0.24em</span>.
+        Stroke weight medium-to-bold; never thin or display-condensed.
+      </p>
+    </div>
+
+    <h2 class="section"><span class="section-eyebrow">II &nbsp;·&nbsp; The three voices</span>At a glance</h2>
+
+    <p>Read these three side-by-side. The Founder should be able to feel a difference inside one second.</p>
+
+    <div class="compare-row">
+      <div class="compare-cell">
+        <div class="compare-cell__num">I.</div>
+        <div class="compare-cell__name">Direction A</div>
+        <div class="wm-A" style="font-size:64px;">KEY</div>
+        <div class="compare-cell__caption">Authority. The trade quarterly.</div>
+      </div>
+      <div class="compare-cell">
+        <div class="compare-cell__num">II.</div>
+        <div class="compare-cell__name">Direction B</div>
+        <div class="wm-B" style="font-size:64px;">KEY</div>
+        <div class="compare-cell__caption">Quietude. The novella imprint.</div>
+      </div>
+      <div class="compare-cell">
+        <div class="compare-cell__num">III.</div>
+        <div class="compare-cell__name">Direction C</div>
+        <div class="wm-C-frame" style="padding:8px 32px 4px;">
+          <div class="wm-C" style="font-size:48px;">KEY</div>
+        </div>
+        <div class="compare-cell__caption">Engraved. The fine-art catalogue.</div>
+      </div>
+    </div>
+
+    <p>
+      All three are set in fonts with friendly commercial licenses and stable
+      web availability. None is a default. The differences below are not
+      decorative — they prescribe a personality for the entire brand.
+    </p>
+
+    <hr class="rule">
+
+    <!-- ────────── DIRECTION A ────────── -->
+
+    <div class="dir-headline">
+      <div class="dir-headline__numeral">I.</div>
+      <div class="dir-headline__name">Authority <em>— the trade quarterly</em></div>
+    </div>
+
+    <p>
+      <strong>Source Serif 4, Bold (700).</strong> A modern transitional serif drawn at
+      Adobe by Frank Grießhammer; broad x-height, balanced contrast, no
+      eccentricities. It carries weight the way a hardback book carries
+      weight — without announcing itself. This is the voice of a serious
+      trade journal.
+    </p>
+
+    <section class="specimen">
+      <span class="specimen__cap">Direction A · Primary</span>
+      <span class="specimen__num">200px · Source Serif 4 · 700 · +0.16em</span>
+      <div class="specimen__wordmark wm-A" style="font-size:200px;">KEY</div>
+    </section>
+
+    <div class="variants">
+      <div class="variant variant--paper100">
+        <span class="variant__label">Primary · Paper / Ink</span>
+        <div class="wm-A" style="font-size:84px;">KEY</div>
+        <span class="variant__caption">#F7F3EA · #111111</span>
+      </div>
+      <div class="variant variant--paper100">
+        <span class="variant__label">With mark · Burgundy hairline</span>
+        <div style="display:flex;align-items:center;gap:24px;">
+          <div class="wm-A" style="font-size:84px;">KEY</div>
+          <div style="width:48px;height:2.5px;background:var(--burgundy);"></div>
+        </div>
+        <span class="variant__caption">— bar · 48px</span>
+      </div>
+      <div class="variant variant--dark">
+        <span class="variant__label">On dark · Night Navy</span>
+        <div style="display:flex;align-items:center;gap:24px;">
+          <div class="wm-A" style="font-size:84px;color:var(--paper-100);">KEY</div>
+          <div style="width:48px;height:2.5px;background:#8A2F3B;"></div>
+        </div>
+        <span class="variant__caption">#141923 · #F7F3EA</span>
+      </div>
+      <div class="variant variant--burgundy">
+        <span class="variant__label">On burgundy · cover stock</span>
+        <div class="wm-A" style="font-size:84px;color:var(--paper-100);">KEY</div>
+        <span class="variant__caption">#6E1F2A · #F7F3EA</span>
+      </div>
+    </div>
+
+    <dl class="rationale">
+      <dt>Font</dt>
+      <dd>Source Serif 4 — variable. We use <span class="mono">wght 700</span> at large sizes; can drop to <span class="mono">600</span> at body scale for a lighter nav lockup.</dd>
+      <dt>Tracking</dt>
+      <dd><span class="mono">+0.16em</span> — wide enough to read as masthead, tight enough to keep <span class="mono">KEY</span> as a single word and not three letters.</dd>
+      <dt>Stroke</dt>
+      <dd>Medium-bold. The serifs are bracketed, not slab — so it pairs with a sans body without fighting it.</dd>
+      <dt>Y treatment</dt>
+      <dd>Untouched in V1. Source Serif 4&rsquo;s Y has a structurally clean junction; a custom fork can be drawn in V2 if A is selected.</dd>
+      <dt>Key mark</dt>
+      <dd>A single <span class="mono">48px × 2.5px</span> burgundy hairline, set on cap-line, to the right. Reads as a redaction line — the &ldquo;key&rdquo; that has been struck through. Optional.</dd>
+      <dt>Reads as</dt>
+      <dd>The Drift Magazine, Aperture, Cabinet, Pirate Wires headline. Quiet but unmistakably edited.</dd>
+      <dt>Risk</dt>
+      <dd>Source Serif is in wide use on the web for body text — at body size it could read as &ldquo;tasteful default&rdquo; rather than &ldquo;chosen&rdquo;. Mitigated by the wide tracking + bold weight at masthead scale.</dd>
+    </dl>
+
+    <section class="stress">
+      <div class="stress__cell">
+        <div class="wm-A" style="font-size:96px;">KEY</div>
+        <span class="label">96 px · Poster</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-A" style="font-size:48px;">KEY</div>
+        <span class="label">48 px · Brief cover</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-A" style="font-size:24px;">KEY</div>
+        <span class="label">24 px · Top nav</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-A" style="font-size:16px;">KEY</div>
+        <span class="label">16 px · Email sig</span>
+      </div>
+    </section>
+
+    <h3 class="sub">In context · Direction A</h3>
+
+    <div class="apps">
+      <div class="app">
+        <div class="app__label">Top nav · /methodology</div>
+        <div class="app__nav">
+          <div class="wm-A" style="font-size:20px;">KEY</div>
+          <div class="app__nav-right">
+            <span>Method</span><span>Sample</span><span>Membership</span><span>Invite</span>
+          </div>
+        </div>
+        <div style="height:120px;display:flex;align-items:center;justify-content:center;color:var(--ink-300);font-family:var(--mono);font-size:11px;">page body · paper white</div>
+      </div>
+      <div class="app app--dark">
+        <div class="app__label">Brief PDF · cover</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:170px;gap:14px;">
+          <div class="wm-A" style="font-size:64px;color:var(--paper-100);">KEY</div>
+          <div style="width:48px;height:0.5px;background:#8A2F3B;"></div>
+          <div style="font-family:var(--serif-en);font-style:italic;font-size:13px;color:var(--paper-300);">Brief № I &nbsp;·&nbsp; 2026 · 春</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── DIRECTION B ────────── -->
+
+    <div class="dir-headline">
+      <div class="dir-headline__numeral">II.</div>
+      <div class="dir-headline__name">Quietude <em>— the novella imprint</em></div>
+    </div>
+
+    <p>
+      <strong>Newsreader, Bold (700), at optical-size 72.</strong> Newsreader was
+      drawn by Production Type for long-form reading on the web. At display
+      sizes its terminals soften, the contrast eases, the letters feel
+      <em>read</em> rather than <em>set</em>. It is the most humane of the three.
+      The wordmark is paired with a small burgundy disk — a punctuation
+      mark, not an icon.
+    </p>
+
+    <section class="specimen">
+      <span class="specimen__cap">Direction B · Primary</span>
+      <span class="specimen__num">196px · Newsreader · 700 · +0.13em</span>
+      <div class="specimen__wordmark wm-B" style="font-size:196px;">KEY</div>
+    </section>
+
+    <div class="variants">
+      <div class="variant variant--paper100">
+        <span class="variant__label">Primary · Paper / Ink</span>
+        <div class="wm-B" style="font-size:84px;">KEY</div>
+        <span class="variant__caption">#F7F3EA · #111111</span>
+      </div>
+      <div class="variant variant--paper100">
+        <span class="variant__label">With mark · Burgundy disk</span>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="wm-B" style="font-size:84px;">KEY</div>
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--burgundy);margin-bottom:6px;"></div>
+        </div>
+        <span class="variant__caption">disk · 8px</span>
+      </div>
+      <div class="variant variant--dark">
+        <span class="variant__label">On dark · Night Navy</span>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="wm-B" style="font-size:84px;color:var(--paper-100);">KEY</div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#8A2F3B;margin-bottom:6px;"></div>
+        </div>
+        <span class="variant__caption">#141923 · #F7F3EA</span>
+      </div>
+      <div class="variant variant--burgundy">
+        <span class="variant__label">On burgundy · cover stock</span>
+        <div class="wm-B" style="font-size:84px;color:var(--paper-100);">KEY</div>
+        <span class="variant__caption">#6E1F2A · #F7F3EA</span>
+      </div>
+    </div>
+
+    <dl class="rationale">
+      <dt>Font</dt>
+      <dd>Newsreader (Production Type, OFL — free for commercial use). Variable, optical-size aware. We use <span class="mono">opsz 72 · wght 700</span> at display scale.</dd>
+      <dt>Tracking</dt>
+      <dd><span class="mono">+0.13em</span> — tighter than A by design. Newsreader&rsquo;s wider proportions don&rsquo;t need as much breathing room.</dd>
+      <dt>Stroke</dt>
+      <dd>Bold but slightly softer than A — the bracketed serifs taper. Reads as &ldquo;long-form&rdquo; instead of &ldquo;news front page.&rdquo;</dd>
+      <dt>Y treatment</dt>
+      <dd>Untouched. Newsreader&rsquo;s Y already has a slightly tilted junction that suggests a path branching — no further intervention needed.</dd>
+      <dt>Key mark</dt>
+      <dd>A single burgundy disk (8px at 84px cap), placed at lower-right of the lockup. Sits on the baseline like a sentence-ending period — &ldquo;the question stops here.&rdquo;</dd>
+      <dt>Reads as</dt>
+      <dd>Paris Review fiction issue, MUBI Notebook, Penguin Modern Classics back-of-spine. A reader&rsquo;s imprint, not a publication&rsquo;s.</dd>
+      <dt>Risk</dt>
+      <dd>Slightly less &ldquo;authoritative&rdquo; than A. If KEY needs to read as <em>institutional</em> to investors or older media, B is a half-step softer.</dd>
+    </dl>
+
+    <section class="stress">
+      <div class="stress__cell">
+        <div class="wm-B" style="font-size:96px;">KEY</div>
+        <span class="label">96 px · Poster</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-B" style="font-size:48px;">KEY</div>
+        <span class="label">48 px · Brief cover</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-B" style="font-size:24px;">KEY</div>
+        <span class="label">24 px · Top nav</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-B" style="font-size:16px;">KEY</div>
+        <span class="label">16 px · Email sig</span>
+      </div>
+    </section>
+
+    <h3 class="sub">In context · Direction B</h3>
+
+    <div class="apps">
+      <div class="app">
+        <div class="app__label">Top nav · /methodology</div>
+        <div class="app__nav">
+          <div class="wm-B" style="font-size:20px;">KEY</div>
+          <div class="app__nav-right">
+            <span>Method</span><span>Sample</span><span>Membership</span><span>Invite</span>
+          </div>
+        </div>
+        <div style="height:120px;display:flex;align-items:center;justify-content:center;color:var(--ink-300);font-family:var(--mono);font-size:11px;">page body · paper white</div>
+      </div>
+      <div class="app app--dark">
+        <div class="app__label">Brief PDF · cover</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:170px;gap:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="wm-B" style="font-size:64px;color:var(--paper-100);">KEY</div>
+            <div style="width:7px;height:7px;border-radius:50%;background:#8A2F3B;margin-bottom:4px;"></div>
+          </div>
+          <div style="font-family:var(--serif-en);font-style:italic;font-size:13px;color:var(--paper-300);">Brief № I &nbsp;·&nbsp; 2026 · 春</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── DIRECTION C ────────── -->
+
+    <div class="dir-headline">
+      <div class="dir-headline__numeral">III.</div>
+      <div class="dir-headline__name">Engraved <em>— the fine-art catalogue</em></div>
+    </div>
+
+    <p>
+      <strong>Bodoni Moda, Black (900), held between two hairlines.</strong> A
+      high-contrast didone — the most assertive of the three. The wide tracking
+      and the over- and under-rules quote 19th-century engraved masthead
+      conventions (Aperture, FRIEZE, museum exhibition catalogues). The
+      &ldquo;key&rdquo; mark is a single burgundy v-notch cut into the upper
+      rule — a path opening, not a chevron.
+    </p>
+
+    <section class="specimen">
+      <span class="specimen__cap">Direction C · Primary</span>
+      <span class="specimen__num">172px · Bodoni Moda · 900 · +0.22em</span>
+      <div class="specimen__wordmark">
+        <div class="wm-C-frame" style="padding:24px 64px 12px;">
+          <div class="wm-C" style="font-size:172px;">KEY</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="variants">
+      <div class="variant variant--paper100">
+        <span class="variant__label">Primary · Paper / Ink</span>
+        <div class="wm-C-frame" style="padding:12px 32px 4px;">
+          <div class="wm-C" style="font-size:72px;">KEY</div>
+        </div>
+        <span class="variant__caption">#F7F3EA · #111111</span>
+      </div>
+      <div class="variant variant--paper100">
+        <span class="variant__label">With mark · V-notch</span>
+        <div class="wm-C-frame" style="padding:12px 32px 4px;">
+          <span class="wm-C-frame__notch">∧</span>
+          <div class="wm-C" style="font-size:72px;">KEY</div>
+        </div>
+        <span class="variant__caption">notch · 14px</span>
+      </div>
+      <div class="variant variant--dark">
+        <span class="variant__label">On dark · Night Navy</span>
+        <div class="wm-C-frame" style="padding:12px 32px 4px;border-color:rgba(247,243,234,0.6);">
+          <span class="wm-C-frame__notch" style="color:#8A2F3B;">∧</span>
+          <div class="wm-C" style="font-size:72px;color:var(--paper-100);">KEY</div>
+        </div>
+        <span class="variant__caption">#141923 · #F7F3EA</span>
+      </div>
+      <div class="variant variant--burgundy">
+        <span class="variant__label">On burgundy · cover stock</span>
+        <div class="wm-C-frame" style="padding:12px 32px 4px;border-color:rgba(247,243,234,0.6);">
+          <div class="wm-C" style="font-size:72px;color:var(--paper-100);">KEY</div>
+        </div>
+        <span class="variant__caption">#6E1F2A · #F7F3EA</span>
+      </div>
+    </div>
+
+    <dl class="rationale">
+      <dt>Font</dt>
+      <dd>Bodoni Moda (Indestructible Type, OFL — free for commercial use). Variable. We use <span class="mono">opsz 96 · wght 900</span>. Pure didone — vertical stress, hairline-to-stem contrast, ball terminals.</dd>
+      <dt>Tracking</dt>
+      <dd><span class="mono">+0.22em</span> — the widest of the three. Didones need air; tight, they look like luxury cosmetics.</dd>
+      <dt>Stroke</dt>
+      <dd>Black (900) — the highest contrast. Reads as engraving even on screen.</dd>
+      <dt>Y treatment</dt>
+      <dd>Untouched. The hairline rules above and below carry the &ldquo;path&rdquo; metaphor instead.</dd>
+      <dt>Key mark</dt>
+      <dd>A burgundy v-notch (∧) cut into the upper rule, dead-center. Optional — the rules alone are already legible as masthead chrome.</dd>
+      <dt>Reads as</dt>
+      <dd>Aperture exhibition catalogue, FRIEZE masthead, Hermès print campaign. The most &ldquo;luxury&rdquo; voice of the three.</dd>
+      <dt>Risk</dt>
+      <dd>High-contrast didones break at small sizes — under <span class="mono">14px</span> the hairlines disappear. C needs a <em>secondary</em> nav lockup (just the wordmark, no rules) for body usage. We&rsquo;ve drawn one above.</dd>
+    </dl>
+
+    <section class="stress">
+      <div class="stress__cell">
+        <div class="wm-C-frame" style="padding:8px 16px 2px;">
+          <div class="wm-C" style="font-size:84px;">KEY</div>
+        </div>
+        <span class="label">84 px · Poster</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-C-frame" style="padding:6px 12px 2px;">
+          <div class="wm-C" style="font-size:48px;">KEY</div>
+        </div>
+        <span class="label">48 px · Brief cover</span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-C" style="font-size:24px;">KEY</div>
+        <span class="label">24 px · Top nav <em style="color:var(--burgundy);font-style:italic;">(no rules)</em></span>
+      </div>
+      <div class="stress__cell">
+        <div class="wm-C" style="font-size:16px;">KEY</div>
+        <span class="label">16 px · Email sig <em style="color:var(--burgundy);font-style:italic;">(no rules)</em></span>
+      </div>
+    </section>
+
+    <h3 class="sub">In context · Direction C</h3>
+
+    <div class="apps">
+      <div class="app">
+        <div class="app__label">Top nav · /methodology &nbsp;<span style="color:var(--ink-400);text-transform:none;letter-spacing:0;font-family:var(--serif-en);font-style:italic;">— rules dropped at nav scale</span></div>
+        <div class="app__nav">
+          <div class="wm-C" style="font-size:20px;">KEY</div>
+          <div class="app__nav-right">
+            <span>Method</span><span>Sample</span><span>Membership</span><span>Invite</span>
+          </div>
+        </div>
+        <div style="height:120px;display:flex;align-items:center;justify-content:center;color:var(--ink-300);font-family:var(--mono);font-size:11px;">page body · paper white</div>
+      </div>
+      <div class="app app--dark">
+        <div class="app__label">Brief PDF · cover</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:170px;gap:14px;">
+          <div class="wm-C-frame" style="padding:14px 48px 4px;border-color:rgba(247,243,234,0.5);">
+            <div class="wm-C" style="font-size:48px;color:var(--paper-100);">KEY</div>
+          </div>
+          <div style="font-family:var(--serif-en);font-style:italic;font-size:13px;color:var(--paper-300);">Brief № I &nbsp;·&nbsp; 2026 · 春</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- ────────── COMPARISON TABLE ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">III &nbsp;·&nbsp; Side-by-side</span>Decision matrix</h2>
+
+    <table class="spec">
+      <thead>
+        <tr>
+          <th style="width:22%;">Attribute</th>
+          <th style="width:26%;">A · Authority</th>
+          <th style="width:26%;">B · Quietude</th>
+          <th style="width:26%;">C · Engraved</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><em>Voice</em></td>
+          <td>Trade quarterly, the editor&rsquo;s desk.</td>
+          <td>Novella imprint, the reader&rsquo;s lap.</td>
+          <td>Fine-art catalogue, the vitrine.</td>
+        </tr>
+        <tr>
+          <td><em>Font</em></td>
+          <td class="mono">Source Serif 4 · 700</td>
+          <td class="mono">Newsreader · 700 · opsz 72</td>
+          <td class="mono">Bodoni Moda · 900 · opsz 96</td>
+        </tr>
+        <tr>
+          <td><em>Tracking</em></td>
+          <td class="mono">+0.16em</td>
+          <td class="mono">+0.13em</td>
+          <td class="mono">+0.22em</td>
+        </tr>
+        <tr>
+          <td><em>Mark</em></td>
+          <td>Burgundy hairline bar to right.</td>
+          <td>Burgundy disk at lower-right.</td>
+          <td>V-notch into upper rule.</td>
+        </tr>
+        <tr>
+          <td><em>License</em></td>
+          <td>SIL OFL · free commercial</td>
+          <td>SIL OFL · free commercial</td>
+          <td>SIL OFL · free commercial</td>
+        </tr>
+        <tr>
+          <td><em>Smallest legible</em></td>
+          <td class="mono">14 px</td>
+          <td class="mono">14 px</td>
+          <td class="mono">18 px <em>(rules dropped &lt; 24px)</em></td>
+        </tr>
+        <tr>
+          <td><em>Best for</em></td>
+          <td>The whole brand. Default lockup.</td>
+          <td>Long-form pages, KEY Letter.</td>
+          <td>Limited print, founder edition cover.</td>
+        </tr>
+        <tr>
+          <td><em>Worst for</em></td>
+          <td>None significant.</td>
+          <td>Investor deck cover (slightly soft).</td>
+          <td>Small UI. Needs a secondary lockup.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="rule">
+
+    <!-- ────────── RECOMMENDATION ────────── -->
+
+    <section class="recommend">
+      <div class="recommend__label">My recommendation</div>
+      <p class="recommend__quote">
+        Pick <em>A · Authority</em> as the working master.<br>
+        Hold <em>C · Engraved</em> in reserve for the Founder Edition cover
+        and the first public poster — where the rules earn their keep.
+      </p>
+      <div class="recommend__pick">
+        <strong>PICK · A</strong>&nbsp; &nbsp;Source Serif 4, 700, +0.16em — burgundy hairline mark.
+      </div>
+    </section>
+
+    <p>
+      <strong>Why A and not B?</strong>&nbsp; B is beautiful but it&rsquo;s the
+      gentler voice. The Founder is selling decision counsel for parents,
+      children, marriages, careers, migration. The reader needs to feel
+      a publication that can hold weight — A holds it. B will be perfect
+      for KEY Letter (Brief 15) when we get there.
+    </p>
+
+    <p>
+      <strong>Why not C as default?</strong>&nbsp; C is the most beautiful at
+      poster scale and falls apart everywhere else. Reserve it for the
+      <em>cover</em>, not the brand.
+    </p>
+
+    <h3 class="sub">Known trade-offs</h3>
+
+    <ol class="roman">
+      <li>None of the three has a custom-drawn Y fork in V1. If <em>A</em> is
+        confirmed, V2 will deliver one custom Y with a <span class="mono">6–8%</span>
+        fork in the left arm — drawn as outline, not as filter.</li>
+      <li>SVG files in this V1 reference webfonts via <span class="mono">@import</span>
+        — they render correctly in browsers but are not yet outline-converted
+        for press. V2 will deliver outlines and an embedded subset.</li>
+      <li>Favicon / OG image / apple-touch-icon assets are deferred to V2,
+        once a direction is chosen. There&rsquo;s no point producing nine
+        favicons for three directions.</li>
+    </ol>
+
+    <h3 class="sub">V1 → V2 — what I expect back</h3>
+
+    <ol class="roman">
+      <li>Direction selection — A, B, or C.</li>
+      <li>Tracking confirmation — keep, tighten, or widen by <span class="mono">±0.02em</span>.</li>
+      <li>Mark verdict — keep, drop, or redesign.</li>
+      <li>Y fork — go custom, or leave the letterform untouched.</li>
+      <li>Anything we missed.</li>
+    </ol>
+
+    <hr class="rule">
+
+    <!-- ────────── FILE LIST ────────── -->
+
+    <h2 class="section"><span class="section-eyebrow">IV &nbsp;·&nbsp; Files</span>What&rsquo;s in this folder</h2>
+
+    <table class="spec">
+      <thead>
+        <tr><th style="width:55%;">File</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">key-wordmark-A-primary.svg</td><td>A · Authority · wordmark on paper.</td></tr>
+        <tr><td class="mono">key-wordmark-A-with-mark.svg</td><td>A · with burgundy hairline mark.</td></tr>
+        <tr><td class="mono">key-wordmark-A-on-dark.svg</td><td>A · on Night Navy.</td></tr>
+        <tr><td class="mono">key-wordmark-A-monochrome.svg</td><td>A · transparent · Ink only.</td></tr>
+        <tr><td class="mono">key-wordmark-B-primary.svg</td><td>B · Quietude · wordmark on paper.</td></tr>
+        <tr><td class="mono">key-wordmark-B-with-mark.svg</td><td>B · with burgundy disk.</td></tr>
+        <tr><td class="mono">key-wordmark-B-on-dark.svg</td><td>B · on Night Navy.</td></tr>
+        <tr><td class="mono">key-wordmark-B-monochrome.svg</td><td>B · transparent · Ink only.</td></tr>
+        <tr><td class="mono">key-wordmark-C-primary.svg</td><td>C · Engraved · wordmark with rules.</td></tr>
+        <tr><td class="mono">key-wordmark-C-with-mark.svg</td><td>C · with v-notch.</td></tr>
+        <tr><td class="mono">key-wordmark-C-on-dark.svg</td><td>C · on Night Navy.</td></tr>
+        <tr><td class="mono">key-wordmark-C-monochrome.svg</td><td>C · transparent · Ink only.</td></tr>
+        <tr><td class="mono">README.md</td><td>This page&rsquo;s rationale, in plain markdown.</td></tr>
+        <tr><td class="mono">index.html</td><td>This page.</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Favicon, apple-touch-icon, and OG image are <strong>deferred to V2</strong>
+      and will be produced from whichever direction is selected — see trade-off
+      #3 above.
+    </p>
+
+    <nav class="crossnav">
+      <a href="../../index.html">← V1 Handoff Index</a>
+      <span class="crossnav__center">Brief 01 · Wordmark · V1</span>
+      <a href="../02-color-palette/index.html">02 · Color Palette →</a>
+    </nav>
+
+    <footer class="colophon">
+      <div>KEY · Design Handoff · Brief 01 · V1<br>2026-05-13</div>
+      <div class="colophon__right">Source Serif 4 · Newsreader · Bodoni Moda<br>Inter · Noto Serif SC · JetBrains Mono</div>
+    </footer>
+
+  </main>
+</body>
+</html>

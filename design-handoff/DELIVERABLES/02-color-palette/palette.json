@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$comment": "KEY · Color Palette · V1 · 2026-05-13. Core 5 are locked per KEY Brand Brief v1 §12. Derived scales and semantic tokens may be adjusted in V2.",
+
+  "meta": {
+    "brand": "KEY",
+    "version": "1.0.0-v1",
+    "date": "2026-05-13",
+    "locked": ["core.ink", "core.paper", "core.warmGray", "core.burgundy", "core.navy"]
+  },
+
+  "core": {
+    "ink":       "#111111",
+    "paper":     "#F7F3EA",
+    "warmGray":  "#BDB6AA",
+    "burgundy":  "#6E1F2A",
+    "navy":      "#141923"
+  },
+
+  "scale": {
+    "ink": {
+      "900": "#111111",
+      "700": "#2A2622",
+      "500": "#5A554F",
+      "400": "#7A7570",
+      "300": "#9F9B95",
+      "200": "#C2BFB8"
+    },
+    "paper": {
+      "100": "#FBF8F1",
+      "200": "#F7F3EA",
+      "300": "#EFEAE0",
+      "400": "#E2DCD0",
+      "500": "#D6CFC2"
+    },
+    "burgundy": {
+      "700":     "#561822",
+      "500":     "#6E1F2A",
+      "400":     "#8A2F3B",
+      "300":     "#B05863",
+      "tintBg":  "#F5E8E9"
+    },
+    "navy": {
+      "900": "#0C1018",
+      "700": "#141923",
+      "500": "#1F2632",
+      "300": "#3A4250"
+    }
+  },
+
+  "semantic": {
+    "textPrimary":         "#111111",
+    "textSecondary":       "#5A554F",
+    "textTertiary":        "#7A7570",
+    "textOnDark":          "#F7F3EA",
+    "textOnDarkSecondary": "#BDB6AA",
+
+    "background":          "#F7F3EA",
+    "backgroundElevated":  "#FBF8F1",
+    "backgroundSunken":    "#EFEAE0",
+    "darkSurface":         "#141923",
+    "darkSurfaceElevated": "#1F2632",
+
+    "border":              "#E2DCD0",
+    "borderEmphasis":      "#BDB6AA",
+    "borderInk":           "#111111",
+    "borderBurgundy":      "#6E1F2A",
+
+    "accent":              "#6E1F2A",
+    "accentHover":         "#561822",
+    "accentTint":          "#F5E8E9",
+
+    "stamp":               "#6E1F2A",
+    "ruleHairline":        "#BDB6AA",
+    "ruleAccent":          "#6E1F2A"
+  },
+
+  "$comment_status": "Status colors are not in this V1. KEY brand explicitly avoids dashboard semantics; status will be reintroduced in V2 only if a user-facing flow demands it (see README).",
+
+  "wcag": {
+    "ink-on-paper":            { "fg": "#111111", "bg": "#F7F3EA", "ratio": 15.4, "rating": "AAA" },
+    "ink700-on-paper":         { "fg": "#2A2622", "bg": "#F7F3EA", "ratio": 12.8, "rating": "AAA" },
+    "ink500-on-paper":         { "fg": "#5A554F", "bg": "#F7F3EA", "ratio": 6.9,  "rating": "AA"  },
+    "ink400-on-paper":         { "fg": "#7A7570", "bg": "#F7F3EA", "ratio": 4.7,  "rating": "AA · large only" },
+    "warmGray-on-paper":       { "fg": "#BDB6AA", "bg": "#F7F3EA", "ratio": 1.9,  "rating": "FAIL · decorative only" },
+    "burgundy-on-paper":       { "fg": "#6E1F2A", "bg": "#F7F3EA", "ratio": 8.4,  "rating": "AAA" },
+    "paper-on-navy":           { "fg": "#F7F3EA", "bg": "#141923", "ratio": 14.8, "rating": "AAA" },
+    "warmGray-on-navy":        { "fg": "#BDB6AA", "bg": "#141923", "ratio": 9.6,  "rating": "AAA" },
+    "burgundy-on-navy":        { "fg": "#6E1F2A", "bg": "#141923", "ratio": 1.8,  "rating": "FAIL · only for stamps / non-text" },
+    "burgundy400-on-navy":     { "fg": "#8A2F3B", "bg": "#141923", "ratio": 2.9,  "rating": "FAIL · large display only" },
+    "paper-on-burgundy":       { "fg": "#F7F3EA", "bg": "#6E1F2A", "ratio": 8.4,  "rating": "AAA" }
+  }
+}
