@@ -36,36 +36,41 @@ const FIVE_DOMAINS = [
   { ch: '迁移决策', en: 'Whether to Move', note: '城市 · 国家 · 阶层 · 时间窗口' },
 ];
 
-// Hero quotes — A+B+C 三句, 按日期轮换 (每天换一句, 像 daily publication)
-// 默认调性: 女性高知, 但不排他 (人类内心都成立)
-const HERO_QUOTES = [
+// 4 个 lead — Hero 下面平铺, 是入口 (不是品牌). 调性: Breaking Bad 痛感, 不鸡汤不暖.
+// 每条 3 段: setup → 空行 → "—— 真相" (italic, 略灰)
+const HERO_LEADS = [
   {
-    text: '凌晨三点, 你想起十年前的那个选择.',
-    eyebrow: '中年 · 自我',
-    illust: '/illustrations/editorial-marriage.png',
-    issue: '003',
+    label: '自我',
+    setup: [
+      '你这一生没做过特别错的决定.',
+      '但所有 "对" 的决定加起来, 也没让你活得像自己.',
+    ],
+    truth: '因为你可能根本就不知道 "自己" 是谁.',
   },
   {
-    text: '我能给孩子最好的一切, 但他还是不快乐. 这件事我没法跟人说.',
-    eyebrow: '母职 · 子女',
-    illust: '/illustrations/editorial-child-education.png',
-    issue: '004',
+    label: '子女',
+    setup: [
+      '你给了她最好的学校, 最好的资源, 最好的妈妈.',
+      '她从来没问过你, 你过得好不好.',
+    ],
+    truth: '而你, 或许只是把她当成了, 自己放弃自己的最佳借口.',
   },
   {
-    text: '我活成了我父母的样子. 这件事我从来没说过.',
-    eyebrow: '原生家庭 · 代际',
-    illust: '/illustrations/editorial-parent-care.png',
-    issue: '005',
+    label: '父母',
+    setup: [
+      '你 50 岁了, 还是不敢挂你妈的电话.',
+    ],
+    truth: '在你成长的世界里, "不孝" 两个字, 比任何错都更死.',
+  },
+  {
+    label: '转身',
+    setup: [
+      '你当管理者干了十年. 你知道该自己做点什么.',
+    ],
+    truth:
+      '但你更清楚, 出了这个游戏, 你可能一无是处. 再耀眼的管理位置, 也只是别人游戏里的一个执行者.',
   },
 ];
-
-function pickHeroByDate(): typeof HERO_QUOTES[0] {
-  const d = new Date();
-  const dayOfYear = Math.floor(
-    (d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86400000,
-  );
-  return HERO_QUOTES[dayOfYear % HERO_QUOTES.length];
-}
 
 export default async function HomePage() {
   // 拉一份 sample brief 作为首页 pull-quote (优先用 parent-care)
@@ -75,9 +80,6 @@ export default async function HomePage() {
   const teaserBrief: DecisionBrief | null = teaserRow
     ? JSON.parse(teaserRow.brief_json)
     : null;
-
-  // 今日 hero quote — A/B/C 按日期轮换
-  const hero = pickHeroByDate();
 
   return (
     <div className="min-h-screen bg-paper text-ink-900">
@@ -111,72 +113,120 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
-      {/* HERO — 杂志封面式 · A+B+C 三句按日期轮换         */}
+      {/* HERO V3 — 品牌定位为主, 痛点为入口 (BB 调性)    */}
       {/* ============================================ */}
-      <header className="relative min-h-[88vh] overflow-hidden">
-        {/* 今日 editorial illustration 作底图 */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <img
-            src={hero.illust}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.18]"
-            style={{ filter: 'sepia(0.15)' }}
-          />
-          {/* paper 渐变, 让中部 + 底部更可读 */}
-          <div className="absolute inset-0 bg-gradient-to-b from-paper-200/30 via-paper-200/80 to-paper-200" />
-          {/* 顶部书脊金线 */}
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
+      <header className="relative overflow-hidden">
+        {/* 顶部书脊金线 */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500 z-10" />
+
+        {/* Layer 1 · Brand Statement */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-24 pb-12">
+          <div className="mb-8">
+            <KeyWordmark variant="display" height={56} />
+          </div>
+
+          <h1 className="font-serif text-[clamp(2.2rem,5vw,4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-3">
+            Find the key before you decide.
+          </h1>
+          <p className="font-serif text-[clamp(1.6rem,3.5vw,2.6rem)] text-ink-900 tracking-tighter leading-[1.1] mb-10">
+            决定之前, 找到关键.
+          </p>
+
+          {/* sub-tagline · 服务定位, 不是刊物 */}
+          <p className="font-serif italic text-[clamp(1rem,1.6vw,1.25rem)] text-ink-700 editorial-leading max-w-prose-lg">
+            KEY 是 AI 原生的私人决策顾问服务 — 始于陪伴, 但给你结果交付.
+          </p>
         </div>
 
-        <div className="relative max-w-prose-xl mx-auto px-6 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
-          {/* 期号 + 主题 — 像杂志封面顶部 */}
-          <div className="mb-10 flex items-baseline gap-4 flex-wrap">
-            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
-              · KEY Editorial Office · Issue {hero.issue} · 2026 ·
-            </span>
-            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400">
-              · 本期: {hero.eyebrow} ·
-            </span>
-          </div>
-
-          {/* 今日 hero quote — 大字号封面引语 */}
-          <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.5rem)] text-ink-900 tracking-tighter leading-[1.1] mb-12 max-w-prose-xl">
-            {hero.text}
-          </h1>
-
-          {/* 编辑部的位置 — 比之前少, 因为 hero 已经够锐 */}
-          <div className="max-w-prose-lg space-y-5">
+        {/* Layer 2 · Brand Explainer */}
+        <div className="relative max-w-prose-lg mx-auto px-6 pb-16">
+          <div className="space-y-5">
             <p className="font-serif text-reading text-ink-700 editorial-leading">
-              那些跟谁都说不出口的话, 写给 KEY 编辑部. 我们 3-10 分钟回信,
-              一次一封, 真有引用, 真记得你. 不哄, 不诊断, 不"加油".
+              重大决定面前, 你缺的不是信息, 更不是那些周围人带着各种利益与立场的建议.
+              <br />
+              而是 <span className="text-seal-500">那个没人愿意指出的关键变量</span>.
             </p>
-            <p className="font-serif text-reading text-ink-500 italic editorial-leading">
-              重大决策时, 同一个编辑部为你撰一份私人简报.
+            <p className="font-serif text-reading text-ink-700 editorial-leading">
+              KEY 把你的真实背景, 关键变量, 你回避的隐藏代价, 通过独创的顶级决策体系与
+              AI 引擎, 为你打造一份私人决策简报.
+            </p>
+            <p className="font-serif text-reading text-ink-700 editorial-leading">
+              不哄, 不预设立场, 不诊断, 不替你决定.
+            </p>
+            <p className="font-serif text-reading italic text-ink-500 editorial-leading">
+              30 / 90 / 365 天后, 我们回来复盘 — 你的决定, 是真的让你走到了想去的地方.
             </p>
           </div>
 
-          <div className="mt-16 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
+          {/* CTAs */}
+          <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
             <Link
               href="/letters/new"
-              className="font-serif text-lg bg-seal-500 hover:bg-seal-700 text-paper-100 px-6 py-2 transition-colors"
+              className="font-serif text-lg bg-seal-500 hover:bg-seal-700 text-paper-100 px-6 py-3 transition-colors tracking-wide"
             >
-              写一封新的信 →
+              写下我最近最难的决定 →
             </Link>
             <Link
               href="/sample-brief"
-              className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
+              className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              读 sample brief
+              读一份 sample brief
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
             </span>
             <Link
               href="/methodology"
-              className="font-serif text-lg text-ink-700 hover:text-seal-500 transition-colors"
+              className="font-serif text-base text-ink-700 hover:text-seal-500 transition-colors"
             >
               先看方法论
             </Link>
+          </div>
+        </div>
+
+        {/* 分隔 · fleuron */}
+        <div className="relative max-w-prose-xl mx-auto px-6 my-8 flex items-center justify-center">
+          <span className="flex-1 h-px bg-ink-900/10" />
+          <span className="px-6 font-serif text-seal-500/60 text-xl select-none">✦</span>
+          <span className="flex-1 h-px bg-ink-900/10" />
+        </div>
+
+        {/* Layer 3 · 4 个 lead — 入口, 不是品牌 */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pb-12">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-10 text-center">
+            · 如果下面任何一条, 你认出了自己 ·
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+            {HERO_LEADS.map((lead) => (
+              <article key={lead.label} className="group">
+                <p className="font-sans text-[10px] uppercase tracking-[0.35em] text-seal-500 mb-4">
+                  · {lead.label} ·
+                </p>
+                <div className="font-serif text-reading text-ink-900 editorial-leading mb-4">
+                  {lead.setup.map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+                <p className="font-serif italic text-[15px] text-ink-700/90 editorial-leading pl-4 border-l-2 border-seal-500/40">
+                  —— {lead.truth}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Better Call KEY · Hero 收尾 punch */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-12 pb-20 text-center">
+          <div className="inline-block">
+            <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-ink-900 mb-1 tracking-tightish">
+              Got a key call?
+            </p>
+            <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-seal-500 mb-4 tracking-tightish">
+              Better call KEY.
+            </p>
+            <p className="font-sans text-[11px] uppercase tracking-[0.35em] text-ink-500">
+              重大抉择面前 · 来找 KEY
+            </p>
           </div>
         </div>
       </header>

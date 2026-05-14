@@ -123,16 +123,23 @@ export function gradeCanon(reply: string): GradeDimension {
 
 export function gradeQuestion(reply: string): GradeDimension {
   const questionCount = (reply.match(/[?？]/g) || []).length;
-  if (questionCount === 0) {
-    return { score: 0.3, pass: false, note: '0 个提问 — 应有 1 个克制提问' };
+  // 也检查设问句 (没 ? 但是 "你有没有想过 / 你能不能 / 你是否")
+  const hasRhetorical =
+    /你有没有想过|你能不能|你是否|你想想看|你回想一下|也许你/.test(reply);
+
+  if (questionCount === 0 && !hasRhetorical) {
+    return { score: 0.5, pass: false, note: '0 个提问且无设问 — 应有 1-2 个克制探询' };
+  }
+  if (questionCount === 0 && hasRhetorical) {
+    return { score: 0.85, pass: true, note: '设问替代直接提问, 高级文笔 ✓' };
   }
   if (questionCount === 1) {
     return { score: 1, pass: true, note: '1 个提问 ✓' };
   }
   if (questionCount === 2) {
-    return { score: 0.6, pass: false, note: `${questionCount} 个提问 — 偏多但可接受` };
+    return { score: 0.9, pass: true, note: '2 个提问 — 在容许范围 ✓' };
   }
-  return { score: 0.3, pass: false, note: `${questionCount} 个提问堆叠 (绝对禁止)` };
+  return { score: 0.2, pass: false, note: `${questionCount} 个提问堆叠 (绝对禁止 3+)` };
 }
 
 export function gradeForm(reply: string): GradeDimension {
