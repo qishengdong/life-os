@@ -192,6 +192,49 @@ export const LETTER_CANON_SEED: Record<string, CanonQuote[]> = {
   ],
 
   // ============================================================
+  // family-of-origin · 原生家庭 / 代际传递 / 童年印记
+  // 用户特别指出的核心 framework — 中国高净值用户决策痛苦的最大来源之一
+  // ============================================================
+  'family-of-origin': [
+    {
+      quote: '父母在不知不觉中, 把自己的一生压在孩子身上 — 不是用爱, 是用没有过完的人生.',
+      author: '武志红',
+      source: '《为何家会伤人》',
+      themes: ['代际传递', '未完成的人生', '投射'],
+    },
+    {
+      quote: '我们不是从父母那里继承一种命运. 我们继承的, 是父母没解决的那个问题.',
+      author: '荣格',
+      source: '《荣格自传》',
+      themes: ['代际', '未解决的', '继承'],
+    },
+    {
+      quote: '问题家庭的孩子, 长大后最大的难题不是离开家, 而是认出来 — 自己已经把这个家装进了自己的身体.',
+      author: '萨提亚',
+      source: '《家庭如何塑造人》',
+      themes: ['内化', '看见', '离不开'],
+    },
+    {
+      quote: '一个人是否成熟, 看他能不能把"我父母"和"我自己"区分成两个独立的人.',
+      author: 'Murray Bowen',
+      source: '家庭系统理论 · 自我分化',
+      themes: ['边界', '分化', '成熟'],
+    },
+    {
+      quote: '我们这一代, 父亲是缺席的, 母亲是焦虑的. 我们都长成了缺一角的人, 然后又互相找另一个缺角的人.',
+      author: '河合隼雄',
+      source: '《父性的复权》',
+      themes: ['父亲缺席', '母亲焦虑', '代际'],
+    },
+    {
+      quote: '我们一辈子的功课, 是把父母还给父母, 把自己还给自己.',
+      author: '张德芬',
+      source: '《遇见未知的自己》',
+      themes: ['还原', '边界', '自我'],
+    },
+  ],
+
+  // ============================================================
   // self · 自我 / 存在感 / 焦虑 / 孤独 / 意义
   // ============================================================
   'self': [
@@ -230,6 +273,212 @@ export const LETTER_CANON_SEED: Record<string, CanonQuote[]> = {
       author: '帕斯卡',
       source: '《思想录》',
       themes: ['内在', '安顿', '逃避'],
+    },
+  ],
+
+  // ============================================================
+  // psychology — 心理学专题专池
+  // 当检测到强 psychological theme 时, 优先从这里选引文.
+  // 这是 KEY 心理模块作为核心能力的引文支撑 (E2)
+  // 30 条 · 6 大流派 × 5 条
+  // ============================================================
+  'psychology': [
+    // ── 依恋 / 关系 (Bowlby / Ainsworth / Perel) ──
+    {
+      quote: '所有的亲密关系, 本质上都是在处理两种焦虑 — 怕被靠太近, 和怕被丢下.',
+      author: 'John Bowlby',
+      source: '依恋理论著作 (改述)',
+      themes: ['依恋', '亲密', '焦虑'],
+    },
+    {
+      quote: '在长期的亲密关系里, 我们要同时是两个人 — 一个稳稳呆在港湾里, 一个还能扬帆远去.',
+      author: 'Esther Perel',
+      source: 'Mating in Captivity',
+      themes: ['亲密', '安全 vs 欲望', '长期关系'],
+    },
+    {
+      quote: '一个人怎么爱你, 跟他爱不爱你没关系. 他怎么爱你, 是他小时候被爱的方式.',
+      author: 'Mary Ainsworth',
+      source: '陌生情境实验研究 (改述)',
+      themes: ['依恋模式', '重复', '童年源头'],
+    },
+    {
+      quote: '我们要的不是不痛, 是有人坐在我们身边, 不试图修好我们.',
+      author: 'Brene Brown',
+      source: 'Daring Greatly',
+      themes: ['共情', '不修', '陪伴'],
+    },
+    {
+      quote: '一段关系真正结束, 不是在分手那一天, 是在你不再为这段关系感到困惑的那一天.',
+      author: 'Lori Gottlieb',
+      source: 'Maybe You Should Talk to Someone',
+      themes: ['结束', '困惑', '放下'],
+    },
+
+    // ── 自我分化 / 边界 (Bowen / 武志红) ──
+    {
+      quote: '一个人活得不分化, 不是因为爱父母太深, 是因为还没学会跟父母悲伤地告别.',
+      author: 'Murray Bowen',
+      source: '家庭系统理论 · 自我分化',
+      themes: ['分化', '告别', '父母'],
+    },
+    {
+      quote: '中国式家庭最大的悲剧是, 我们把孝顺当成了爱, 把听话当成了懂事.',
+      author: '武志红',
+      source: '《巨婴国》',
+      themes: ['孝顺', '听话', '中国家庭'],
+    },
+    {
+      quote: '边界不是冷漠. 边界是 — 你的事我清楚我有看法但我不替你做.',
+      author: 'Henry Cloud',
+      source: 'Boundaries',
+      themes: ['边界', '不替', '尊重'],
+    },
+    {
+      quote: '人不是在解决问题中成长, 是在面对问题中成长.',
+      author: 'M. Scott Peck',
+      source: 'The Road Less Traveled',
+      themes: ['成长', '面对', '不解决'],
+    },
+    {
+      quote: '直到一个孩子能在心里跟父母说 "我跟你不一样", 他才真正开始成为人.',
+      author: 'Carl Jung',
+      source: '荣格《心理类型》(改述)',
+      themes: ['分化', '不一样', '成人'],
+    },
+
+    // ── 创伤 / 身体记忆 (Levine / van der Kolk) ──
+    {
+      quote: '创伤不是发生在你身上的事, 创伤是发生在你身上的事 — 在没人陪你的时候.',
+      author: 'Peter Levine',
+      source: 'Waking the Tiger',
+      themes: ['创伤', '孤立', '陪伴'],
+    },
+    {
+      quote: '身体在记忆头脑早已忘记的事.',
+      author: 'Bessel van der Kolk',
+      source: 'The Body Keeps the Score',
+      themes: ['身体记忆', '冰封', '潜意识'],
+    },
+    {
+      quote: '一个人冰封自己感受很多年, 总有一天会发现 — 那些被冰住的, 包括了快乐.',
+      author: 'Peter Levine',
+      source: 'In an Unspoken Voice',
+      themes: ['冰封', '感受', '失去快乐'],
+    },
+
+    // ── 羞耻 / 脆弱 (Brene Brown) ──
+    {
+      quote: '内疚是 "我做错了". 羞耻是 "我整个人不好". 内疚让我们成长, 羞耻让我们躲起来.',
+      author: 'Brene Brown',
+      source: 'I Thought It Was Just Me',
+      themes: ['羞耻', '内疚', '差别'],
+    },
+    {
+      quote: '脆弱不是弱, 是 — 你不知道会不会被接住, 还是说了.',
+      author: 'Brene Brown',
+      source: 'Daring Greatly',
+      themes: ['脆弱', '风险', '说'],
+    },
+    {
+      quote: '羞耻只能在三件事里活下来: 沉默, 秘密, 评判. 它害怕的是 — 被说出来.',
+      author: 'Brene Brown',
+      source: 'The Gifts of Imperfection',
+      themes: ['羞耻', '说出来', '解药'],
+    },
+
+    // ── 存在 / 意义 (Yalom / Hollis / Frankl) ──
+    {
+      quote: '人对死亡的恐惧, 跟他活得多 "真" 成反比. 越活得自己, 越不怕走.',
+      author: 'Irvin Yalom',
+      source: 'Staring at the Sun',
+      themes: ['死亡', '真', '存在'],
+    },
+    {
+      quote: '中年不是危机, 是邀请. 邀请你审视, 那个 25 岁的你为你定的人生, 是不是还想继续过.',
+      author: 'James Hollis',
+      source: 'The Middle Passage',
+      themes: ['中年', '审视', '邀请'],
+    },
+    {
+      quote: '不是问 "生活的意义是什么", 是问 "今天, 生活在问我什么".',
+      author: 'Viktor Frankl',
+      source: 'Man\'s Search for Meaning',
+      themes: ['意义', '反问', '当下'],
+    },
+    {
+      quote: '我们之所以孤独, 不是因为没人陪, 是因为我们没办法跟自己最深的部分坐在一起.',
+      author: 'Irvin Yalom',
+      source: 'Existential Psychotherapy',
+      themes: ['孤独', '自我', '深处'],
+    },
+    {
+      quote: '人最深的痛, 不是经历了什么, 是没有人见证.',
+      author: 'James Hollis',
+      source: 'Finding Meaning in the Second Half of Life',
+      themes: ['见证', '痛', '无人在场'],
+    },
+
+    // ── 内在批评者 / 完美主义 ──
+    {
+      quote: '你头脑里那个评判你的声音, 不是你的声音. 是你早年某个人的声音, 你内化了它.',
+      author: 'Susan David',
+      source: 'Emotional Agility',
+      themes: ['内在声音', '内化', '不是你'],
+    },
+    {
+      quote: '完美主义不是 "想做到最好". 完美主义是 — "如果我做得不够好, 我就不配被爱".',
+      author: 'Brene Brown',
+      source: 'The Gifts of Imperfection',
+      themes: ['完美主义', '被爱', '配得感'],
+    },
+
+    // ── 中国本土 (武志红 / 许燕 / 张德芬) ──
+    {
+      quote: '中国人最痛的不是没爱, 是爱里带着控制, 控制里裹着委屈, 委屈外面再包一层 "我都是为你好".',
+      author: '武志红',
+      source: '《为何爱会伤人》',
+      themes: ['控制', '委屈', '中国式爱'],
+    },
+    {
+      quote: '我们怕父母失望, 怕了一辈子. 但是没有几个人停下来问 — 他们的失望, 真的跟我有关吗.',
+      author: '武志红',
+      source: '《巨婴国》',
+      themes: ['父母失望', '内化', '中国家庭'],
+    },
+    {
+      quote: '人这一生有三次成长: 一次是知道自己不是世界中心, 一次是知道有些事努力也没用, 一次是知道这两件事之后还选择努力.',
+      author: '许燕',
+      source: '北师大心理学讲座 (改述, 流传版本)',
+      themes: ['成长', '接受', '选择'],
+    },
+
+    // ── Rogers 非评判 + 真诚一致 ──
+    {
+      quote: '一个奇怪的悖论 — 当我接受自己现在的样子, 我就能开始改变.',
+      author: 'Carl Rogers',
+      source: 'On Becoming a Person',
+      themes: ['接受', '改变', '悖论'],
+    },
+    {
+      quote: '我无法 "帮" 任何人. 我只能 "在那里" — 让他们在我的目光里看见自己.',
+      author: 'Carl Rogers',
+      source: 'A Way of Being',
+      themes: ['不帮', '在', '见证'],
+    },
+
+    // ── 投射 / 阴影 (Jung) ──
+    {
+      quote: '我们最讨厌别人的那个特质, 通常是我们自己身上最不想承认的部分.',
+      author: 'Carl Jung',
+      source: 'The Archetypes and the Collective Unconscious',
+      themes: ['投射', '阴影', '讨厌'],
+    },
+    {
+      quote: '不去面对自己阴影的人, 会把它投射到别人身上 — 然后一辈子跟那个 "别人" 战斗.',
+      author: 'Carl Jung',
+      source: 'Aion',
+      themes: ['阴影', '投射', '战斗'],
     },
   ],
 
@@ -283,15 +532,44 @@ export const LETTER_CANON_SEED: Record<string, CanonQuote[]> = {
 /**
  * 极轻量 framework 检测 — 关键词匹配.
  * 4a V1 用; 4b 接 LLM classifier 升级.
+ *
+ * 顺序很重要: 越具体的 framework 越前 (因为 first-match wins).
+ * family-of-origin 比 parent-care 更具体 (前者是"我跟我爸的关系模式",
+ * 后者是"我要不要送我妈去养老院" — 不同议题).
  */
 export function detectFramework(text: string): string {
-  const lower = text.toLowerCase();
   const checks: Array<[string, string[]]> = [
-    ['parent-care', ['父母', '爸', '妈', '老人', '养老', '阿尔茨海默', '痴呆', '老家', '回家看']],
-    ['marriage', ['老婆', '老公', '丈夫', '妻子', '结婚', '离婚', '伴侣', '感情', '婚姻', '吵架', '出轨']],
-    ['child-education', ['孩子', '儿子', '女儿', '上学', '小学', '中学', '高考', '考试', '补习', '学校', '老师']],
-    ['work-meaning', ['工作', '老板', '同事', '辞职', '裸辞', '升职', '公司', '项目', '团队', '加班', '职场', '中年']],
-    ['self', ['我自己', '孤独', '焦虑', '抑郁', '没意义', '存在感', '迷茫', '中年', '自我']],
+    // family-of-origin 先于 parent-care — 前者是关系模式, 后者是养老照顾
+    [
+      'family-of-origin',
+      [
+        '原生家庭', '从小', '小时候', '童年', '我爸从来', '我妈从来',
+        '我爸常说', '我妈常说', '重男轻女', '不被爱', '不被看到',
+        '我从来没', '不允许我', '父母离婚', '继母', '继父',
+        '酗酒', '家暴', '冷暴力', '跟父母断', '不联系父母',
+        '过年回家', '我家里', '我们家',
+      ],
+    ],
+    [
+      'parent-care',
+      ['父母养老', '爸生病', '妈生病', '老人', '养老', '阿尔茨海默', '痴呆', '老家', '回家看', '送养老院'],
+    ],
+    [
+      'marriage',
+      ['老婆', '老公', '丈夫', '妻子', '结婚', '离婚', '伴侣', '感情', '婚姻', '吵架', '出轨', '冷战'],
+    ],
+    [
+      'child-education',
+      ['孩子', '儿子', '女儿', '上学', '小学', '中学', '高考', '考试', '补习', '学校', '老师', '叛逆'],
+    ],
+    [
+      'work-meaning',
+      ['工作', '老板', '同事', '辞职', '裸辞', '升职', '公司', '项目', '团队', '加班', '职场', '中年', 'deal'],
+    ],
+    [
+      'self',
+      ['我自己', '孤独', '焦虑', '抑郁', '没意义', '存在感', '迷茫', '自我', '我是谁', '我到底'],
+    ],
   ];
 
   for (const [framework, keywords] of checks) {
@@ -303,28 +581,55 @@ export function detectFramework(text: string): string {
 }
 
 /**
- * 从 canon seed 选 1-2 句, 给 letter pipeline 当 system context 用.
- * Phase 4a V1: 随机选 (但 seed 用 user content hash 保持稳定).
+ * 从 canon seed 选 N 句, 给 letter pipeline 当 system context 用.
+ *
+ * 心理模块策略 (E2 升级):
+ *   - 总是从 framework pool 选 1 条 (主题贴合)
+ *   - 如果 hasPsychTheme=true, 额外从 psychology pool 选 1 条 (心理深度)
+ *   - 这样 KEY 编辑回信时同时有"主题引文 + 心理学引文"两个候选, 让 LLM 择优.
+ *
+ * Phase 4a V1: 稳定 hash 选择 (retry 时一致).
+ * Phase 4b: embedding-based retrieval.
  */
 export function selectCanonForLetter(
   userContent: string,
   framework: string,
   count = 2,
+  options: { hasPsychTheme?: boolean } = {},
 ): CanonQuote[] {
-  const pool = LETTER_CANON_SEED[framework] || LETTER_CANON_SEED['general'];
+  const frameworkPool = LETTER_CANON_SEED[framework] || LETTER_CANON_SEED['general'];
+  const psychPool = LETTER_CANON_SEED['psychology'];
 
   // 稳定 hash → 同一封信每次选同样的引文 (便于 retry 时回应一致)
   let hash = 0;
   for (let i = 0; i < userContent.length; i++) {
     hash = (hash * 31 + userContent.charCodeAt(i)) | 0;
   }
-  const startIdx = Math.abs(hash) % pool.length;
 
   const result: CanonQuote[] = [];
-  for (let i = 0; i < Math.min(count, pool.length); i++) {
-    result.push(pool[(startIdx + i) % pool.length]);
+
+  // 1 条主题引文 (framework pool)
+  const frameworkIdx = Math.abs(hash) % frameworkPool.length;
+  result.push(frameworkPool[frameworkIdx]);
+
+  // 如果检测到心理 theme, 加 1 条心理学引文
+  if (options.hasPsychTheme && psychPool && psychPool.length > 0) {
+    const psychIdx = Math.abs(hash * 7) % psychPool.length;
+    result.push(psychPool[psychIdx]);
   }
-  return result;
+
+  // 如果还不够 count, 从 framework pool 继续选
+  while (result.length < count) {
+    const nextIdx = (frameworkIdx + result.length) % frameworkPool.length;
+    const q = frameworkPool[nextIdx];
+    if (!result.some((r) => r.quote === q.quote)) {
+      result.push(q);
+    } else {
+      break;
+    }
+  }
+
+  return result.slice(0, count);
 }
 
 /**

@@ -246,6 +246,89 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* ============================================================
+ * Letters · 复古信笺质感 (Phase 4a-2)
+ *
+ * 用户反馈: "让用户在写信时看到自己的字字体更有复古感, 让他认真思考"
+ * 这是 KEY 的反差感设计 — AI 时代用复古信件让用户慢下来 + 跟自己说真话
+ * ============================================================ */
+
+/* 写信信纸 — 横向轻线 (像传统稿纸) */
+.letter-paper {
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.95em - 1px),
+    rgba(110, 31, 42, 0.06) calc(1.95em - 1px),
+    rgba(110, 31, 42, 0.06) 1.95em
+  );
+  background-size: 100% 1.95em;
+  background-repeat: repeat-y;
+  background-position: 0 0.4em;
+}
+
+/* 复古信笺字体: 字号 + 行距 + 字距 加大 */
+.letter-prose {
+  font-family: var(--font-source-serif), var(--font-noto-serif-sc), 'Songti SC', 'STSong', 'STKaiti', serif;
+  font-size: 20px;
+  line-height: 1.95;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  font-feature-settings: "kern", "liga", "calt", "vert";
+  color: var(--ink-900);
+}
+
+/* 写信 textarea 套上复古信笺质感 */
+.letter-prose textarea,
+textarea.letter-prose {
+  font-family: var(--font-source-serif), var(--font-noto-serif-sc), 'Songti SC', 'STSong', 'STKaiti', serif;
+  font-size: 20px;
+  line-height: 1.95;
+  letter-spacing: 0.025em;
+  color: var(--ink-900);
+  /* Custom cursor — 钢笔笔尖 (via cursor: text + slow blink already) */
+  caret-color: var(--burgundy-500);
+}
+
+/* "緘" 字红章 — 寄出按钮 */
+.btn-jian {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  background: var(--burgundy-500);
+  color: var(--paper-100);
+  padding: 0.65em 1.5em;
+  font-family: var(--font-source-serif), 'Songti SC', 'STSong', serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  border: 2px solid var(--burgundy-500);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-jian::before {
+  content: '緘';
+  display: inline-block;
+  font-size: 1.2em;
+  border: 1.5px solid var(--paper-100);
+  padding: 0.05em 0.15em;
+  margin-right: 0.3em;
+  transform: rotate(-3deg);
+  letter-spacing: 0;
+  line-height: 1;
+}
+.btn-jian:hover {
+  background: var(--burgundy-700);
+  border-color: var(--burgundy-700);
+}
+.btn-jian:disabled {
+  background: var(--paper-400);
+  border-color: var(--paper-400);
+  color: var(--warm-gray);
+  cursor: not-allowed;
+}
+
+/* ============================================================
  * Publication craft · Drop cap (首字下沉)
  *
  * 用在: sample brief 第一段 / methodology 每条契约第一段.

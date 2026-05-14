@@ -60,12 +60,38 @@ const FRAMEWORK_LABEL: Record<string, string> = {
 };
 
 // ============================================================================
-// 单封信卡片
+// 单封信卡片 (含 onboarding letter 特化)
 // ============================================================================
 function LetterCard({ letter }: { letter: LetterRecord }) {
+  const isOnboarding = letter.frameworkMatched === 'onboarding';
   const isReplied = letter.status === 'replied';
   const isPending = letter.status === 'pending';
   const isFailed = letter.status === 'failed';
+
+  // KEY 开场信 — 特殊版式
+  if (isOnboarding) {
+    return (
+      <Link
+        href={`/letters/${letter.id}`}
+        className="block group border-l-[3px] border-l-seal-500 border-y border-r border-paper-300 bg-paper-100/60 px-6 py-7 hover:bg-paper-100 transition-colors mb-6"
+      >
+        <div className="flex items-baseline justify-between mb-3 gap-4 flex-wrap">
+          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
+            · KEY 编辑部 · 致每一位新读者 ·
+          </span>
+          <span className="font-mono text-[10px] text-ink-400 uppercase tracking-wider">
+            {letter.letterNumber}
+          </span>
+        </div>
+        <p className="font-serif italic text-reading text-ink-700 editorial-leading">
+          {truncate(letter.replyContent || '', 110)}
+        </p>
+        <p className="mt-3 font-sans text-[10px] uppercase tracking-[0.2em] text-seal-500">
+          ↪ 打开 · 回这封信
+        </p>
+      </Link>
+    );
+  }
 
   return (
     <Link

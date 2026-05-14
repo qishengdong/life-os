@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
+import { LETTER_STARTERS, BLANK_STARTER_ID } from '@/lib/letters/starters';
 
 function formatTodayHeader(): string {
   const d = new Date();
@@ -31,22 +32,39 @@ function countCharsCN(text: string): number {
 
 export default function NewLetterPage() {
   const router = useRouter();
+  const [starterSelected, setStarterSelected] = useState(false);  // 是否已过"选起点"这一步
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // 自动 focus + 自动扩展高度
+  // 选了 starter 之后, 把光标移到末尾 + focus
   useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
+    if (!starterSelected) return;
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.focus();
+    const end = ta.value.length;
+    ta.setSelectionRange(end, end);
+  }, [starterSelected]);
 
+  // 自动扩展高度
   useEffect(() => {
     const ta = textareaRef.current;
     if (!ta) return;
     ta.style.height = 'auto';
     ta.style.height = `${Math.max(400, ta.scrollHeight)}px`;
-  }, [content]);
+  }, [content, starterSelected]);
+
+  function pickStarter(starterId: string) {
+    if (starterId === BLANK_STARTER_ID) {
+      setContent('');
+    } else {
+      const starter = LETTER_STARTERS.find((s) => s.id === starterId);
+      if (starter) setContent(starter.text);
+    }
+    setStarterSelected(true);
+  }
 
   const charCount = countCharsCN(content);
   const canSubmit = charCount >= 20 && !submitting;
@@ -94,25 +112,79 @@ export default function NewLetterPage() {
       </nav>
 
       <main className="max-w-prose-xl mx-auto px-6 pt-16 pb-32">
-        {/* 信抬头 */}
-        <div className="mb-10 animate-fade-in-soft">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
-            {formatTodayHeader()}
-          </p>
-          <p className="font-serif text-base text-ink-700">致 KEY 编辑部,</p>
-        </div>
+        {/* Step 1 · 选起点 (批改模板, 还没进信纸) */}
+        {!starterSelected && (
+          <section className="animate-fade-in-soft">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+              · 选一个起点, 在它上面改 ·
+            </p>
+            <h1 className="font-serif text-editorial text-ink-900 tracking-tighter leading-tight mb-4">
+              你不必从空白开始.
+            </h1>
+            <p className="font-serif italic text-reading text-ink-500 editorial-leading max-w-prose-lg mb-12">
+              中文里最舒服的一个动作是 "改". 挑一句, 删它一半, 加你想说的. 不挑也行 — 进空白信纸.
+            </p>
 
-        <form onSubmit={handleSubmit}>
-          {/* 信纸 textarea — 不像 textarea */}
-          <div className="relative animate-fade-in-soft">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-12">
+              {LETTER_STARTERS.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => pickStarter(s.id)}
+                  className="text-left border border-paper-300 hover:border-seal-500 hover:bg-paper-100 transition-colors p-5 group"
+                >
+                  <p className="font-serif text-base text-ink-900 leading-snug mb-2 group-hover:text-seal-700 transition-colors">
+                    {s.text.replace(/\s+$/, '')} <span className="text-ink-400">...</span>
+                  </p>
+                  {s.hint && (
+                    <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400">
+                      {s.hint}
+                    </p>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => pickStarter(BLANK_STARTER_ID)}
+              className="font-serif italic text-base text-ink-500 border-b border-paper-400 hover:border-seal-500 hover:text-seal-500 pb-0.5 transition-colors"
+            >
+              或者, 我自己写 →
+            </button>
+          </section>
+        )}
+
+        {/* Step 2 · 信抬头 + 信纸 (选完起点) */}
+        {starterSelected && (
+          <>
+            <div className="mb-10 animate-fade-in-soft flex justify-between items-baseline flex-wrap gap-4">
+              <div>
+                <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+                  {formatTodayHeader()}
+                </p>
+                <p className="font-serif text-base text-ink-700">致 KEY 编辑部,</p>
+              </div>
+              <button
+                onClick={() => {
+                  setStarterSelected(false);
+                  setContent('');
+                }}
+                type="button"
+                className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hover:text-seal-500 transition-colors"
+              >
+                ← 换一个起点
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+          {/* 信纸 textarea — 复古信笺: 横向轻线 + 复古字体 + 钢笔光标 */}
+          <div className="relative animate-fade-in-soft letter-paper py-3 px-1">
             <textarea
               ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full bg-transparent border-0 outline-none resize-none font-serif text-reading text-ink-900 editorial-leading p-0 placeholder:text-ink-300"
+              className="letter-prose w-full bg-transparent border-0 outline-none resize-none p-0 placeholder:text-ink-300"
               style={{
                 minHeight: '400px',
-                lineHeight: '1.75',
               }}
               disabled={submitting}
               maxLength={8000}
@@ -137,19 +209,10 @@ export default function NewLetterPage() {
             </div>
           )}
 
-          {/* 寄出按钮 — burgundy stamp 风 */}
-          <div className="mt-16 flex items-baseline gap-6">
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className={`font-serif text-base px-8 py-3 border-2 transition-colors ${
-                canSubmit
-                  ? 'border-seal-500 bg-seal-500 text-paper-100 hover:bg-seal-700 hover:border-seal-700 cursor-pointer'
-                  : 'border-paper-400 bg-paper-200 text-ink-400 cursor-not-allowed'
-              }`}
-              style={{ letterSpacing: '0.1em' }}
-            >
-              {submitting ? '寄出中 ...' : '寄出 →'}
+          {/* 寄出按钮 — "緘" 字红章风 */}
+          <div className="mt-16 flex items-center gap-6 flex-wrap">
+            <button type="submit" disabled={!canSubmit} className="btn-jian">
+              {submitting ? '寄出中 ...' : '寄出'}
             </button>
             {!submitting && (
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
@@ -158,21 +221,7 @@ export default function NewLetterPage() {
             )}
           </div>
         </form>
-
-        {/* 写作提示 — 极克制, 仅在内容空时显示 */}
-        {content.length === 0 && (
-          <div className="mt-20 max-w-prose-lg animate-fade-in-soft">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-4">
-              · 给你的几个起点 · (不必照写)
-            </p>
-            <ul className="space-y-2 font-serif italic text-[14px] text-ink-500 editorial-leading">
-              <li>"今天我心里在想..."</li>
-              <li>"有件事我跟谁都没说..."</li>
-              <li>"我最近反复想到..."</li>
-              <li>"上次写过的那件事, 后来..."</li>
-              <li>或者, 不带任何起点, 直接写.</li>
-            </ul>
-          </div>
+          </>
         )}
       </main>
     </div>

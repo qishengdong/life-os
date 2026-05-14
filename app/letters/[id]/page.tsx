@@ -52,13 +52,13 @@ function formatDateHeader(unixSeconds: number): string {
 // ============================================================================
 function IncomingLetterCard({ letter }: { letter: LetterRecord }) {
   return (
-    <article className="relative p-8 md:p-12 bg-paper-100 border border-paper-300">
+    <article className="relative p-8 md:p-12 bg-paper-100 border border-paper-300 letter-paper">
       <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-1">
         {formatDateHeader(letter.authoredAt)}
       </p>
       <p className="font-serif text-base text-ink-700 mb-8">致 KEY 编辑部,</p>
 
-      <div className="font-serif text-reading text-ink-900 editorial-leading whitespace-pre-line">
+      <div className="letter-prose whitespace-pre-line">
         {letter.userContent}
       </div>
 
@@ -154,13 +154,13 @@ function ReplyCard({ letter }: { letter: LetterRecord }) {
   const isCJK = firstChar.charCodeAt(0) >= 0x2e80;
 
   return (
-    <article className="relative p-8 md:p-12 bg-paper-100 border-t-[3px] border-t-seal-500 border-x border-b border-paper-300">
+    <article className="relative p-8 md:p-12 bg-paper-100 border-t-[3px] border-t-seal-500 border-x border-b border-paper-300 letter-paper">
       <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
         KEY EDITORIAL OFFICE · 回信
       </p>
 
-      {/* 第一段 (含称呼) with drop cap */}
-      <p className="font-serif text-reading text-ink-900 editorial-leading mb-6">
+      {/* 第一段 (含称呼) with drop cap, 复古字体 */}
+      <p className="letter-prose mb-6">
         <span
           className={`drop-cap-char drop-cap-char--seal${isCJK ? ' drop-cap-char--cn' : ''}`}
         >
@@ -177,17 +177,14 @@ function ReplyCard({ letter }: { letter: LetterRecord }) {
           return (
             <blockquote
               key={i}
-              className="my-8 pl-6 border-l-2 border-seal-500/40 font-serif text-[17px] text-ink-700 italic editorial-leading whitespace-pre-line"
+              className="my-8 pl-6 border-l-2 border-seal-500/40 font-serif text-[19px] text-ink-700 italic leading-[1.95] tracking-wide whitespace-pre-line"
             >
               {p}
             </blockquote>
           );
         }
         return (
-          <p
-            key={i}
-            className="font-serif text-reading text-ink-900 editorial-leading mb-6 whitespace-pre-line"
-          >
+          <p key={i} className="letter-prose mb-6 whitespace-pre-line">
             {p}
           </p>
         );
@@ -349,42 +346,69 @@ export default function LetterDetailPage() {
               </span>
             </div>
 
-            {/* 我的信 */}
-            <section>
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-4 text-center">
-                我的信
-              </p>
-              <IncomingLetterCard letter={letter} />
-            </section>
+            {/* Onboarding letter (KEY 开场信) — 跳过"我的信" 卡片, 直接显示 KEY 开场信 */}
+            {letter.frameworkMatched === 'onboarding' && letter.replyContent && (
+              <>
+                <section>
+                  <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4 text-center">
+                    KEY 编辑部 · 致每一位新读者
+                  </p>
+                  <ReplyCard letter={letter} />
+                </section>
+                <div className="text-center pt-8 border-t border-paper-300 space-y-4">
+                  <p className="font-serif italic text-[15px] text-ink-500">
+                    现在, 轮到你写第一封.
+                  </p>
+                  <Link
+                    href="/letters/new"
+                    className="inline-block bg-seal-500 hover:bg-seal-700 text-paper-100 font-serif text-base px-8 py-3 transition-colors"
+                  >
+                    回这封信 →
+                  </Link>
+                </div>
+              </>
+            )}
 
-            {/* Fleuron divider — 中间停顿 */}
-            <div className="flex items-center justify-center py-4">
-              <Fleuron variant="classical-west" seal width={64} />
-            </div>
+            {/* 正常的 letter — 我的信 + 回信 */}
+            {letter.frameworkMatched !== 'onboarding' && (
+              <>
+                <section>
+                  <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-4 text-center">
+                    我的信
+                  </p>
+                  <IncomingLetterCard letter={letter} />
+                </section>
 
-            {/* 回信 (按状态分支) */}
-            <section>
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4 text-center">
-                KEY 编辑部 · 回信
-              </p>
-              {letter.status === 'pending' && <PendingPlaceholder />}
-              {letter.status === 'failed' && (
-                <FailedPlaceholder letter={letter} onRetry={handleRetry} retrying={retrying} />
-              )}
-              {letter.status === 'replied' && letter.replyContent && (
-                <ReplyCard letter={letter} />
-              )}
-            </section>
+                {/* Fleuron divider — 中间停顿 */}
+                <div className="flex items-center justify-center py-4">
+                  <Fleuron variant="classical-west" seal width={64} />
+                </div>
 
-            {/* 写下一封 */}
-            <div className="text-center pt-8 border-t border-paper-300">
-              <Link
-                href="/letters/new"
-                className="inline-block font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
-              >
-                写下一封 →
-              </Link>
-            </div>
+                {/* 回信 (按状态分支) */}
+                <section>
+                  <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4 text-center">
+                    KEY 编辑部 · 回信
+                  </p>
+                  {letter.status === 'pending' && <PendingPlaceholder />}
+                  {letter.status === 'failed' && (
+                    <FailedPlaceholder letter={letter} onRetry={handleRetry} retrying={retrying} />
+                  )}
+                  {letter.status === 'replied' && letter.replyContent && (
+                    <ReplyCard letter={letter} />
+                  )}
+                </section>
+
+                {/* 写下一封 */}
+                <div className="text-center pt-8 border-t border-paper-300">
+                  <Link
+                    href="/letters/new"
+                    className="inline-block font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
+                  >
+                    写下一封 →
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         )}
       </main>

@@ -16,6 +16,7 @@ import {
   markLetterFailed,
 } from '@/lib/letters/store';
 import { generateReply } from '@/lib/letters/pipeline';
+import { createOnboardingLetterIfFirstVisit } from '@/lib/letters/onboarding';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,9 @@ export async function GET(req: NextRequest) {
     const { userId } = resolveUserId(req);
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '100', 10);
+
+    // 首次到访 → 自动生成 KEY 开场信 (B · KEY 先开口)
+    createOnboardingLetterIfFirstVisit(userId);
 
     const letters = listLettersByUser(userId, Math.min(limit, 200));
     const counts = countLettersByUser(userId);
