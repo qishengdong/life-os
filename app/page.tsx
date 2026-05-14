@@ -36,6 +36,37 @@ const FIVE_DOMAINS = [
   { ch: '迁移决策', en: 'Whether to Move', note: '城市 · 国家 · 阶层 · 时间窗口' },
 ];
 
+// Hero quotes — A+B+C 三句, 按日期轮换 (每天换一句, 像 daily publication)
+// 默认调性: 女性高知, 但不排他 (人类内心都成立)
+const HERO_QUOTES = [
+  {
+    text: '凌晨三点, 你想起十年前的那个选择.',
+    eyebrow: '中年 · 自我',
+    illust: '/illustrations/editorial-marriage.png',
+    issue: '003',
+  },
+  {
+    text: '我能给孩子最好的一切, 但他还是不快乐. 这件事我没法跟人说.',
+    eyebrow: '母职 · 子女',
+    illust: '/illustrations/editorial-child-education.png',
+    issue: '004',
+  },
+  {
+    text: '我活成了我父母的样子. 这件事我从来没说过.',
+    eyebrow: '原生家庭 · 代际',
+    illust: '/illustrations/editorial-parent-care.png',
+    issue: '005',
+  },
+];
+
+function pickHeroByDate(): typeof HERO_QUOTES[0] {
+  const d = new Date();
+  const dayOfYear = Math.floor(
+    (d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86400000,
+  );
+  return HERO_QUOTES[dayOfYear % HERO_QUOTES.length];
+}
+
 export default async function HomePage() {
   // 拉一份 sample brief 作为首页 pull-quote (优先用 parent-care)
   const sampleRows = getSampleBriefs();
@@ -44,6 +75,9 @@ export default async function HomePage() {
   const teaserBrief: DecisionBrief | null = teaserRow
     ? JSON.parse(teaserRow.brief_json)
     : null;
+
+  // 今日 hero quote — A/B/C 按日期轮换
+  const hero = pickHeroByDate();
 
   return (
     <div className="min-h-screen bg-paper text-ink-900">
@@ -77,48 +111,47 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
-      {/* HERO — 占满首屏 (editorial illustration 背景)    */}
+      {/* HERO — 杂志封面式 · A+B+C 三句按日期轮换         */}
       {/* ============================================ */}
       <header className="relative min-h-[88vh] overflow-hidden">
-        {/* editorial illustration 作底图 — 低 opacity, 让 paper 主导 */}
+        {/* 今日 editorial illustration 作底图 */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <img
-            src="/illustrations/editorial-parent-care.png"
+            src={hero.illust}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.16]"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.18]"
             style={{ filter: 'sepia(0.15)' }}
           />
           {/* paper 渐变, 让中部 + 底部更可读 */}
-          <div className="absolute inset-0 bg-gradient-to-b from-paper-200/40 via-paper-200/85 to-paper-200" />
+          <div className="absolute inset-0 bg-gradient-to-b from-paper-200/30 via-paper-200/80 to-paper-200" />
           {/* 顶部书脊金线 */}
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
         </div>
 
         <div className="relative max-w-prose-xl mx-auto px-6 pt-24 pb-20 min-h-[88vh] flex flex-col justify-center">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
-            · KEY Editorial Office · Issue 001 · 2026 ·
-          </p>
+          {/* 期号 + 主题 — 像杂志封面顶部 */}
+          <div className="mb-10 flex items-baseline gap-4 flex-wrap">
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
+              · KEY Editorial Office · Issue {hero.issue} · 2026 ·
+            </span>
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400">
+              · 本期: {hero.eyebrow} ·
+            </span>
+          </div>
 
-          <h1 className="font-serif text-[clamp(2.5rem,6vw,5rem)] text-ink-900 tracking-tighter leading-[1.05] mb-12">
-            那些跟谁都
-            <br />
-            说不出口的,
-            <br />
-            写给 KEY.
+          {/* 今日 hero quote — 大字号封面引语 */}
+          <h1 className="font-serif text-[clamp(2.2rem,5.5vw,4.5rem)] text-ink-900 tracking-tighter leading-[1.1] mb-12 max-w-prose-xl">
+            {hero.text}
           </h1>
 
+          {/* 编辑部的位置 — 比之前少, 因为 hero 已经够锐 */}
           <div className="max-w-prose-lg space-y-5">
             <p className="font-serif text-reading text-ink-700 editorial-leading">
-              每天心里那一小段没说出口的话. 父母变老的预兆. 婚姻里那个不能说的瞬间.
-              职业疲倦. "我做这一切到底为了什么".
-              这些跟伴侣说不清, 跟同事不能说, 跟朋友说了改变关系的话 — 写给 KEY.
-            </p>
-            <p className="font-serif text-reading text-ink-700 editorial-leading">
-              我们不是 chatbot. 我们是一个有距离感的编辑部. 我们 3-10 分钟回信, 一次一封,
-              真有引用, 真记得你. 重大决策时, 同一个编辑部为你撰一份私人简报.
+              那些跟谁都说不出口的话, 写给 KEY 编辑部. 我们 3-10 分钟回信,
+              一次一封, 真有引用, 真记得你. 不哄, 不诊断, 不"加油".
             </p>
             <p className="font-serif text-reading text-ink-500 italic editorial-leading">
-              不评价对错. 不"加油". 不哄你. 不假装记得你 — 真的记得你.
+              重大决策时, 同一个编辑部为你撰一份私人简报.
             </p>
           </div>
 
