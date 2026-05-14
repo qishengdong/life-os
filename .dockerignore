@@ -1,0 +1,24 @@
+# 不进 Docker build context — 加速 build + 缩小 image
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+data
+*.log
+.DS_Store
+
+# Design + docs (build 不需要)
+design-handoff
+docs
+
+# Tests / CI
+coverage
+.vscode
+.idea
+.cursor
+.claude
+
+# OS
+Thumbs.db

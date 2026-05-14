@@ -36,6 +36,8 @@ yarn-error.log*
 *.db-journal
 *.db-wal
 *.db-shm
+# 但保留 seed DB (含 sample briefs, Vercel 部署需要)
+!scripts/seed-data/*.db
 
 # typescript
 *.tsbuildinfo
@@ -63,3 +65,4 @@ design-handoff/DELIVERABLES/KEY V1 Handoff.html
 design-handoff/DELIVERABLES/KEY/KEY V1 Handoff.html
 design-handoff/DELIVERABLES/*.zip
 design-handoff/*.zip
+.vercel

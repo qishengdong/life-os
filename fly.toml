@@ -1,0 +1,49 @@
+# fly.toml · KEY · Hong Kong region
+# 部署: fly deploy
+# 域名: keypoint.life
+
+app = "key-editorial"   # Fly 上的唯一 app 名 (会变成 key-editorial.fly.dev), 可改
+primary_region = "hkg"  # 香港机房 (中国大陆访问 50-100ms)
+
+[build]
+  dockerfile = "Dockerfile"
+
+# ===== Runtime env (非敏感) =====
+[env]
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
+  PORT = "3000"
+  HOSTNAME = "0.0.0.0"
+  DATABASE_PATH = "/app/data/life-os.db"
+  NEXT_PUBLIC_APP_NAME = "KEY"
+  APP_BASE_URL = "https://keypoint.life"
+  LIFEOS_USE_4FILE_PROMPT = "true"
+
+# ===== HTTP service =====
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"        # 闲置时停机省钱
+  auto_start_machines = true         # 来流量自动起
+  min_machines_running = 0           # 闲置可全停 (用户访问时 1-3s 唤醒)
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "30s"
+    method = "GET"
+    path = "/"
+
+# ===== VM 规格 =====
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"                     # 1GB RAM, $5-7/月
+  cpu_kind = "shared"
+  cpus = 1
+
+# ===== 持久 disk (SQLite 数据库) =====
+[mounts]
+  source = "key_data"                # volume 名
+  destination = "/app/data"          # 挂到容器内 /app/data
+  initial_size = "1gb"

@@ -3,17 +3,50 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 
-const dataDir = path.join(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+/**
+ * DB path 解析顺序:
+ *   1. process.env.DATABASE_PATH (production / Vercel 必填, e.g. /tmp/life-os.db)
+ *   2. ./data/life-os.db (本地 dev 默认)
+ *
+ * Vercel filesystem 是 read-only 除了 /tmp, 必须设 DATABASE_PATH=/tmp/life-os.db
+ * 同时 mkdirSync 必须放到 getDb() lazy 调用里, 不能在 module load 阶段做.
+ */
+function resolveDbPath(): string {
+  if (process.env.DATABASE_PATH) return process.env.DATABASE_PATH;
+  return path.join(process.cwd(), 'data', 'life-os.db');
 }
-
-const dbPath = process.env.DATABASE_PATH || path.join(dataDir, 'life-os.db');
 
 let _db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (_db) return _db;
+
+  const dbPath = resolveDbPath();
+  const dbDir = path.dirname(dbPath);
+
+  // Lazy mkdir — 只在第一次 getDb 时创建目录
+  try {
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+  } catch (e) {
+    // Vercel 不可写目录会到这, 但 /tmp 应该 always 可写. 抛出真错误便于排查
+    throw new Error(`Cannot create DB dir ${dbDir}: ${(e as Error).message}`);
+  }
+
+  // Vercel /tmp cold start: 如果目标 DB 不存在, 从 seed 文件复制 (含 sample briefs)
+  // 本地 dev: seed 文件不影响 (data/life-os.db 已存在的情况下不会覆盖)
+  if (!fs.existsSync(dbPath)) {
+    const seedPath = path.join(process.cwd(), 'scripts', 'seed-data', 'life-os-seed.db');
+    if (fs.existsSync(seedPath)) {
+      try {
+        fs.copyFileSync(seedPath, dbPath);
+        console.log(`[DB] Seeded from ${seedPath} → ${dbPath}`);
+      } catch (e) {
+        console.warn(`[DB] Seed copy failed: ${(e as Error).message}, starting empty`);
+      }
+    }
+  }
 
   _db = new Database(dbPath);
   _db.pragma('journal_mode = WAL');
