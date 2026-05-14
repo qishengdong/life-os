@@ -88,8 +88,8 @@ export default function NewLetterPage() {
         setSubmitting(false);
         return;
       }
-      // 立刻跳详情页, status=pending
-      router.push(`/letters/${data.letter.id}?status=pending`);
+      // 此时 POST 已经同步等到 LLM 回信完成 (status=replied), 直接跳详情
+      router.push(`/letters/${data.letter.id}`);
     } catch (e: any) {
       setError(e?.message || '网络错误');
       setSubmitting(false);
@@ -153,8 +153,27 @@ export default function NewLetterPage() {
           </section>
         )}
 
-        {/* Step 2 · 信抬头 + 信纸 (选完起点) */}
-        {starterSelected && (
+        {/* 提交中 · 信件正在送达 (全屏覆盖, 替代 form) */}
+        {starterSelected && submitting && (
+          <section className="text-center py-24 animate-fade-in-soft">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
+              · 信件正在送达 ·
+            </p>
+            <p className="font-serif italic text-2xl text-ink-900 mb-4">
+              KEY 编辑部正在阅读你的来信
+            </p>
+            <p className="font-serif text-[15px] text-ink-500 editorial-leading max-w-prose-lg mx-auto mb-12">
+              通常 5-30 秒. 编辑会带着你过去说过的话, 读你这一封.
+              这是 KEY 设计的等候 — 不是 chat, 是一次真正的通信.
+            </p>
+            <div className="inline-flex items-center gap-3">
+              <span className="ink-cursor" />
+            </div>
+          </section>
+        )}
+
+        {/* Step 2 · 信抬头 + 信纸 (选完起点 & 没在提交) */}
+        {starterSelected && !submitting && (
           <>
             <div className="mb-10 animate-fade-in-soft flex justify-between items-baseline flex-wrap gap-4">
               <div>
@@ -212,7 +231,7 @@ export default function NewLetterPage() {
           {/* 寄出按钮 — "緘" 字红章风 */}
           <div className="mt-16 flex items-center gap-6 flex-wrap">
             <button type="submit" disabled={!canSubmit} className="btn-jian">
-              {submitting ? '寄出中 ...' : '寄出'}
+              {submitting ? '正在送达 ...' : '寄出'}
             </button>
             {!submitting && (
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">

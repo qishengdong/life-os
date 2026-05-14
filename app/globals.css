@@ -273,7 +273,8 @@ input:focus, textarea:focus, select:focus {
   line-height: 1.95;
   letter-spacing: 0.025em;
   font-weight: 400;
-  font-feature-settings: "kern", "liga", "calt", "vert";
+  /* 注: 不能加 "vert" — 它会把中文 ， 旋转 90° 渲染成引号样 (横向书写时是 bug) */
+  font-feature-settings: "kern", "liga", "calt", "halt";
   color: var(--ink-900);
 }
 

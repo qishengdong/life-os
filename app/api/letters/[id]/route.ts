@@ -17,6 +17,8 @@ import { generateReply } from '@/lib/letters/pipeline';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// retry 也走同步 LLM, 跟 POST /api/letters 一致
+export const maxDuration = 60;
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -73,42 +75,40 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
       );
     }
 
-    // 重置 + fire-and-forget retry
-    const reset = resetLetterToPending({ letterId, userId });
+    // 重置 + 同步重跑 LLM (Vercel serverless 不能 fire-and-forget)
+    let reset = resetLetterToPending({ letterId, userId });
     if (!reset) {
       return NextResponse.json({ error: 'retry 失败 (无法重置状态)' }, { status: 500 });
     }
 
-    void (async () => {
-      try {
-        const result = await generateReply({
-          userId,
-          userContent: letter.userContent,
-          letterNumber: letter.letterNumber,
+    try {
+      const result = await generateReply({
+        userId,
+        userContent: letter.userContent,
+        letterNumber: letter.letterNumber,
+      });
+      if (result.success && result.reply) {
+        reset = updateLetterReply({
+          letterId,
+          replyContent: result.reply,
+          tokensUsed: result.tokensUsed,
+          modelUsed: result.modelUsed,
+          durationMs: result.durationMs,
+          canonQuotesUsed: result.canonQuotesUsed,
+          brainFactsUsed: result.brainFactsUsed,
+          frameworkMatched: result.framework,
         });
-        if (result.success && result.reply) {
-          updateLetterReply({
-            letterId,
-            replyContent: result.reply,
-            tokensUsed: result.tokensUsed,
-            modelUsed: result.modelUsed,
-            durationMs: result.durationMs,
-            canonQuotesUsed: result.canonQuotesUsed,
-            brainFactsUsed: result.brainFactsUsed,
-            frameworkMatched: result.framework,
-          });
-        } else {
-          markLetterFailed({
-            letterId,
-            reason: result.error || 'retry 仍失败',
-            durationMs: result.durationMs,
-          });
-        }
-      } catch (e: any) {
-        console.error('[letters retry] background failed:', e);
-        markLetterFailed({ letterId, reason: e?.message || '后台异常' });
+      } else {
+        reset = markLetterFailed({
+          letterId,
+          reason: result.error || 'retry 仍失败',
+          durationMs: result.durationMs,
+        });
       }
-    })();
+    } catch (e: any) {
+      console.error('[letters retry] pipeline failed:', e);
+      reset = markLetterFailed({ letterId, reason: e?.message || '后台异常' });
+    }
 
     return NextResponse.json({ success: true, letter: reset });
   } catch (e: any) {

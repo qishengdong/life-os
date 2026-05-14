@@ -20,6 +20,9 @@ import { createOnboardingLetterIfFirstVisit } from '@/lib/letters/onboarding';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// Vercel serverless 函数最长执行 60s (Hobby 上限).
+// LLM 同步等回信通常 5-15s, 留余地给慢的请求 + 网络抖动.
+export const maxDuration = 60;
 
 // ============================================================================
 // GET — 信件流
@@ -73,46 +76,45 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 立刻创建 pending letter, 不等 LLM
-    const letter = createLetter({ userId, userContent: parsed.data.content });
+    // 创建 pending letter
+    let letter = createLetter({ userId, userContent: parsed.data.content });
 
-    // Fire-and-forget LLM 回信 — 不阻塞 response
-    // 用户可以 polling /api/letters/[id] 看状态
-    void (async () => {
-      try {
-        const result = await generateReply({
-          userId,
-          userContent: parsed.data.content,
-          letterNumber: letter.letterNumber,
-          displayName: parsed.data.displayName,
-        });
+    // 同步等 LLM 回信完成 (Vercel serverless 必须如此 — 不能 fire-and-forget,
+    // 函数返回后后台 task 会被 kill).
+    // 总耗时 5-30 秒, 受 maxDuration=60 保护.
+    try {
+      const result = await generateReply({
+        userId,
+        userContent: parsed.data.content,
+        letterNumber: letter.letterNumber,
+        displayName: parsed.data.displayName,
+      });
 
-        if (result.success && result.reply) {
-          updateLetterReply({
-            letterId: letter.id,
-            replyContent: result.reply,
-            tokensUsed: result.tokensUsed,
-            modelUsed: result.modelUsed,
-            durationMs: result.durationMs,
-            canonQuotesUsed: result.canonQuotesUsed,
-            brainFactsUsed: result.brainFactsUsed,
-            frameworkMatched: result.framework,
-          });
-        } else {
-          markLetterFailed({
-            letterId: letter.id,
-            reason: result.error || '生成失败 (未知原因)',
-            durationMs: result.durationMs,
-          });
-        }
-      } catch (e: any) {
-        console.error('[letters POST] background reply failed:', e);
-        markLetterFailed({
+      if (result.success && result.reply) {
+        letter = updateLetterReply({
           letterId: letter.id,
-          reason: e?.message || '后台异常',
+          replyContent: result.reply,
+          tokensUsed: result.tokensUsed,
+          modelUsed: result.modelUsed,
+          durationMs: result.durationMs,
+          canonQuotesUsed: result.canonQuotesUsed,
+          brainFactsUsed: result.brainFactsUsed,
+          frameworkMatched: result.framework,
+        });
+      } else {
+        letter = markLetterFailed({
+          letterId: letter.id,
+          reason: result.error || '生成失败 (未知原因)',
+          durationMs: result.durationMs,
         });
       }
-    })();
+    } catch (e: any) {
+      console.error('[letters POST] reply pipeline failed:', e);
+      letter = markLetterFailed({
+        letterId: letter.id,
+        reason: e?.message || '后台异常',
+      });
+    }
 
     return NextResponse.json(
       {
