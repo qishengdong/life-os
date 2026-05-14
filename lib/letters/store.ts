@@ -94,13 +94,13 @@ function mapRow(row: any): LetterRecord {
 
 export function createLetter(args: { userId: number; userContent: string }): LetterRecord {
   const db = getDb();
-  const letterNumber = generateLetterNumber();
   const userCharCount = countCharsCN(args.userContent);
 
-  // 处理重号 (极小概率): retry 一次, 加 1ms 偏移
+  // 处理重号: 每次 retry 重新生成 letter_number (用稍微偏移的 Date)
   let attempts = 0;
   let row: any = null;
-  while (attempts < 3) {
+  let letterNumber = generateLetterNumber();
+  while (attempts < 5) {
     try {
       const result = db
         .prepare(
@@ -111,10 +111,12 @@ export function createLetter(args: { userId: number; userContent: string }): Let
       row = db.prepare(`SELECT * FROM letters WHERE id = ?`).get(result.lastInsertRowid) as any;
       break;
     } catch (e: any) {
-      if (e.code === 'SQLITE_CONSTRAINT_UNIQUE' && attempts < 2) {
+      if (e.code === 'SQLITE_CONSTRAINT_UNIQUE' && attempts < 4) {
         attempts++;
-        // 重生成: 加 1ms 让 seq 不同
-        // (实践中近 0 概率, 但 belt + suspenders)
+        // 关键: 实际重新生成 letterNumber, 不能复用同一个
+        // 加 attempts ms 偏移确保不同
+        const offsetDate = new Date(Date.now() + attempts);
+        letterNumber = generateLetterNumber(offsetDate);
         continue;
       }
       throw e;
