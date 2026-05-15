@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
 function AdminLoginInner() {
   const router = useRouter();
   const sp = useSearchParams();
-  const from = sp.get('from') || '/admin';
+  const from = sp.get('from') || '/admin/cms';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
