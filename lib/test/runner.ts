@@ -49,6 +49,19 @@ export interface RunSummary {
     layerAFails?: string[];
     layerCFocusAvg?: number;
   }>;
+  /** 完整结果 · 含 AI output · 供 admin UI 立刻看 (绕过 Vercel /tmp 实例隔离) */
+  results?: Array<{
+    scenarioId: string;
+    personaId: string;
+    trapType: string;
+    stage: string;
+    layerAPass: boolean;
+    layerAFails: Array<{ reason: string; matched?: string; detail?: string }>;
+    layerCPass?: boolean;
+    layerCFocusAvg?: number;
+    layerCComment?: string;
+    aiOutput: string;
+  }>;
 }
 
 // ============================================================================
@@ -88,6 +101,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
   let passedC = 0;
   let tokensUsed = 0;
   const failures: RunSummary['failures'] = [];
+  const inlineResults: NonNullable<RunSummary['results']> = [];
 
   // 3. 跑每个 scenario
   for (const scenario of scenarios) {
@@ -129,7 +143,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
       }
     }
 
-    // 4. 写 test_results
+    // 4. 写 test_results (DB · 同 instance 才看得到)
     db.prepare(
       `INSERT INTO test_results (
         run_id, scenario_id, persona_id, trap_type, stage,
@@ -152,6 +166,20 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
       cResult ? JSON.stringify(cResult.scoresByDimension) : null,
       cResult?.comment || null,
     );
+
+    // 5. 也存 inline · response 直接带, 绕过 Vercel /tmp 实例隔离
+    inlineResults.push({
+      scenarioId: scenario.id,
+      personaId: scenario.personaId || 'unknown',
+      trapType: scenario.trap,
+      stage: scenario.stage,
+      layerAPass: a.pass,
+      layerAFails: a.fails,
+      layerCPass: cResult ? cResult.pass : undefined,
+      layerCFocusAvg: cResult?.focusAvg,
+      layerCComment: cResult?.comment,
+      aiOutput: aiOutput.slice(0, 4000),
+    });
   }
 
   // 5. 更新 run 总结
@@ -168,6 +196,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
     tokensUsed,
     durationMs,
     failures,
+    results: inlineResults,
   };
 }
 
