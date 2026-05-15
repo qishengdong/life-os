@@ -10,16 +10,14 @@
 
 import Link from 'next/link';
 import { Fragment } from 'react';
-import {
-  CONTRACTS,
-  METHODOLOGY_OPENING,
-  METHODOLOGY_CLOSING,
-  type Contract,
-} from '@/lib/content/methodology/contracts';
+import { loadMethodologyContent, type MethodologyContract } from '@/lib/content/methodology';
 import KeyWordmark from '@/components/KeyWordmark';
 import { FleuronDivider } from '@/components/Fleuron';
 
 export const runtime = 'nodejs';
+
+// 兼容 alias — page 用 Contract 这个名字
+type Contract = MethodologyContract;
 
 // ============================================================================
 // 顶部导航 — 极简
@@ -195,6 +193,8 @@ function ContractSection({ contract }: { contract: Contract }) {
 // 主页面
 // ============================================================================
 export default function MethodologyPage() {
+  const { opening: METHODOLOGY_OPENING, contracts: CONTRACTS, closing: METHODOLOGY_CLOSING } =
+    loadMethodologyContent();
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
