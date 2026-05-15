@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       sampleSize: body.sampleSize,
       filterTraps: body.filterTraps,
       filterStages: body.filterStages,
+      filterScenarioIds: body.filterScenarioIds,
     });
     return NextResponse.json({ success: true, summary });
   } catch (e: any) {
