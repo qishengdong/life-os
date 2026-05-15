@@ -86,74 +86,28 @@ export default async function HomePage() {
       />
 
       {/* ============================================ */}
-      {/* HERO V4 — Magazine-cover 分屏: 左文 + 右图        */}
+      {/* B4 · HERO V5 — text-only, 大开本封面感           */}
+      {/* mini-stories 提前 / fleuron 后 / 大图后置 / 卷首语 后 */}
       {/* ============================================ */}
       <header className="relative overflow-hidden">
         {/* 顶部书脊金线 */}
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500 z-10" />
 
-        {/* === 主区: 左文 + 右图 (桌面分屏 / 手机叠加) === */}
-        <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16">
-          <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-10 md:gap-14 items-center">
-            {/* LEFT: 标题 + sub-tag + CTAs · eyebrow 已上移到 PageMasthead */}
-            <div className="order-2 md:order-1">
-              <h1 className="font-serif text-[clamp(2rem,4.5vw,3.6rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
-                {hero.brandStatementEn}
-              </h1>
-              <p className="font-serif text-[clamp(1.5rem,3.4vw,2.4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-8">
-                {hero.brandStatementCn}
-              </p>
+        {/* === Hero · 居中文字, 无右图 === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16 max-w-prose-lg">
+          <h1 className="font-serif text-[clamp(2.4rem,5.5vw,4.4rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
+            {hero.brandStatementEn}
+          </h1>
+          <p className="font-serif text-[clamp(1.8rem,4.2vw,2.8rem)] text-ink-900 tracking-tighter leading-[1.05] mb-10">
+            {hero.brandStatementCn}
+          </p>
 
-              <p className="font-serif italic text-[clamp(0.95rem,1.4vw,1.15rem)] text-ink-700 editorial-leading mb-10 whitespace-pre-line">
-                {hero.subTag}
-              </p>
+          <p className="font-serif italic text-[clamp(1.05rem,1.6vw,1.3rem)] text-ink-700 editorial-leading mb-10 whitespace-pre-line">
+            {hero.subTag}
+          </p>
 
-              {/* CTAs · skip ghost if label empty */}
-              <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
-                <Link
-                  href={hero.ctas.primary.href}
-                  className="font-serif text-base bg-seal-500 hover:bg-seal-700 text-paper-100 px-5 py-2.5 transition-colors tracking-wide"
-                >
-                  {hero.ctas.primary.label}
-                </Link>
-                <Link
-                  href={hero.ctas.secondary.href}
-                  className="font-serif text-[15px] text-ink-900 border-b-2 border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
-                >
-                  {hero.ctas.secondary.label}
-                </Link>
-                {hero.ctas.ghost.label && (
-                  <Link
-                    href={hero.ctas.ghost.href}
-                    className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
-                  >
-                    {hero.ctas.ghost.label}
-                  </Link>
-                )}
-              </div>
-            </div>
-
-            {/* RIGHT: hero image · ISSUE 编号已上移到 PageMasthead (B2) */}
-            <div className="order-1 md:order-2">
-              <div className="relative aspect-[4/5] bg-ink-900 overflow-hidden shadow-lg">
-                <Image
-                  src="/illustrations/hero-home.png"
-                  alt={hero.brandStatementEn}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  priority
-                  className="object-cover"
-                />
-                {/* 顶部 burgundy hairline — 封面书脊金线 */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* === 卷首语 explainer (满版下方) === */}
-        <div className="relative max-w-prose-lg mx-auto px-6 pb-16">
-          <div className="space-y-5">
+          {/* explainer 接在 deck 后 (3 段) */}
+          <div className="space-y-4 mb-12 max-w-prose-md">
             {hero.explainer.map((para, i) => {
               const isItalic = para.trim().startsWith('<i>') && para.trim().endsWith('</i>');
               const stripped = para.replace(/^<i>|<\/i>$/g, '');
@@ -169,17 +123,34 @@ export default async function HomePage() {
               );
             })}
           </div>
+
+          {/* CTAs · skip ghost if label empty */}
+          <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
+            <Link
+              href={hero.ctas.primary.href}
+              className="font-serif text-base bg-seal-500 hover:bg-seal-700 text-paper-100 px-5 py-2.5 transition-colors tracking-wide"
+            >
+              {hero.ctas.primary.label}
+            </Link>
+            <Link
+              href={hero.ctas.secondary.href}
+              className="font-serif text-[15px] text-ink-900 border-b-2 border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+            >
+              {hero.ctas.secondary.label}
+            </Link>
+            {hero.ctas.ghost.label && (
+              <Link
+                href={hero.ctas.ghost.href}
+                className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
+              >
+                {hero.ctas.ghost.label}
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* 分隔 · fleuron */}
-        <div className="relative max-w-prose-xl mx-auto px-6 my-8 flex items-center justify-center">
-          <span className="flex-1 h-px bg-ink-900/10" />
-          <span className="px-6 font-serif text-seal-500/60 text-xl select-none">✦</span>
-          <span className="flex-1 h-px bg-ink-900/10" />
-        </div>
-
-        {/* Layer 3 · 4 个 lead — 入口, 不是品牌 */}
-        <div className="relative max-w-prose-xl mx-auto px-6 pb-12">
+        {/* === 4 mini-stories (B4 · 移到 hero 紧后, 不再藏在下面) === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pb-16 border-t border-paper-300 pt-16">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-10 text-center">
             · {hero.leadsIntro} ·
           </p>
@@ -212,8 +183,8 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Hero 收尾 · 三秒停顿 tagline */}
-        <div className="relative max-w-prose-xl mx-auto px-6 pt-12 pb-20 text-center">
+        {/* === tagline · 三秒停顿 (接在 mini-stories 后, 桥接到大图) === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-12 pb-16 text-center">
           <div className="inline-block max-w-prose-md">
             <p className="font-serif italic text-[clamp(1.3rem,2.4vw,1.6rem)] text-ink-900 mb-1 leading-snug tracking-tightish">
               {hero.betterCallKey.en1}
@@ -226,7 +197,32 @@ export default async function HomePage() {
             </p>
           </div>
         </div>
+
+        {/* === Fleuron 分隔 (B4 · 移到 tagline 后) === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 my-4 flex items-center justify-center">
+          <span className="flex-1 h-px bg-ink-900/10" />
+          <span className="px-6 font-serif text-seal-500/60 text-xl select-none">✦</span>
+          <span className="flex-1 h-px bg-ink-900/10" />
+        </div>
       </header>
+
+      {/* ============================================ */}
+      {/* B4 · Hero 大图 (满版, 移到 mini-stories 后)     */}
+      {/* ============================================ */}
+      <section className="relative w-full bg-ink-900 overflow-hidden border-b border-paper-300">
+        <div className="relative w-full aspect-[16/9] md:aspect-[16/8] max-h-[78vh]">
+          <Image
+            src="/illustrations/hero-home.png"
+            alt={hero.brandStatementEn}
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
+          />
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-seal-500" />
+        </div>
+      </section>
 
       {/* ============================================ */}
       {/* WHAT IS THIS — 卷首语                          */}

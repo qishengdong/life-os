@@ -13,6 +13,7 @@ import { Fragment } from 'react';
 import { loadMethodologyContent, type MethodologyContract } from '@/lib/content/methodology';
 import KeyWordmark from '@/components/KeyWordmark';
 import PageMasthead from '@/components/PageMasthead';
+import MethodologyStickyToc from '@/components/MethodologyStickyToc';
 import { FleuronDivider } from '@/components/Fleuron';
 
 export const runtime = 'nodejs';
@@ -216,6 +217,22 @@ export default function MethodologyPage() {
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
       <PageMasthead eyebrow="METHODOLOGY" volume="立法版 · 第一号" right="MMXXVI" />
+
+      {/* B6 · sticky TOC · 仅 lg+ 显示 */}
+      <MethodologyStickyToc
+        anchors={CONTRACTS.map((c) => ({
+          id: c.numeral === 'IV' ? 'vi-six-domains' : ({
+            I: 'i-anti-chicken-soup',
+            II: 'ii-twelve-dimensions',
+            III: 'iii-premortem',
+            V: 'v-persistent-memory',
+            VI: 'vi-outcome-ledger',
+            VII: 'vii-six-check-inspector',
+          } as Record<string, string>)[c.numeral] || c.numeral.toLowerCase(),
+          numeral: c.numeral,
+          title: c.title,
+        }))}
+      />
 
       {/* ============================================ */}
       {/* HERO                                          */}
