@@ -15,8 +15,9 @@ import {
   getDb,
   saveIntakeStep,
   markOnboardingComplete,
+  getIntakeAnswers,
 } from '@/lib/db';
-import type { OnboardingResponse } from './schema';
+import type { OnboardingResponse, StageId } from './schema';
 
 interface ProcessResult {
   userId: number;
@@ -275,4 +276,39 @@ function parseExtractorOutput(content: string): Array<{
   } catch {
     return [];
   }
+}
+
+// ============================================================================
+// JOB-003 · 从 intake_answers 重新生成 brain seed (调试 / 修复路径)
+// 用于场景:
+//   - 用户的 brain seed 丢了 (Vercel /tmp 冷启动)
+//   - prompt 更新后想重新蒸馏
+//   - admin debug
+// ============================================================================
+
+/** 给定 userId, 从 DB 读 intake_answers, 转 OnboardingResponse[], 重跑 processor. */
+export async function regenerateBrainSeedForUser(
+  userId: number,
+): Promise<ProcessResult & { responsesFound: number }> {
+  const db = getDb();
+  const userRow = db.prepare(`SELECT user_uid FROM users WHERE id = ?`).get(userId) as
+    | { user_uid: string }
+    | undefined;
+  if (!userRow) throw new Error(`user ${userId} not found`);
+
+  const intake = getIntakeAnswers(userId); // { 'identity': {...}, 'values': {...}, ... }
+  const responses: OnboardingResponse[] = Object.entries(intake).map(([stage, answers]) => ({
+    stage: stage as StageId,
+    answers: (answers as Record<string, unknown>) || {},
+    completedAt: Math.floor(Date.now() / 1000),
+  }));
+
+  if (responses.length === 0) {
+    throw new Error(`user ${userId} has no saved intake_answers — cannot regenerate seed`);
+  }
+
+  // 注: regenerate 不重新覆盖 core_state 已有 (避免重复硬锚点),
+  //     但会 RMC 抽 + brain.md baseline 双 LLM 跑 — 这两个本就支持 upsert.
+  const result = await processOnboarding(userRow.user_uid, responses);
+  return { ...result, responsesFound: responses.length };
 }
