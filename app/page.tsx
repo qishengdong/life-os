@@ -18,7 +18,6 @@ import Image from 'next/image';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
-import PageMasthead from '@/components/PageMasthead';
 import { loadHomeContent } from '@/lib/content/home';
 
 export const runtime = 'nodejs';
@@ -52,7 +51,7 @@ export default async function HomePage() {
       {/* ============================================ */}
       <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-center">
         <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
+          <KeyWordmark variant="display" height={66} />
         </Link>
         <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
           <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">
@@ -77,13 +76,35 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
-      {/* PAGE MASTHEAD (B1)                            */}
+      {/* K · E · Y · acronym expansion (取代 PageMasthead) */}
       {/* ============================================ */}
-      <PageMasthead
-        eyebrow="KEY EDITORIAL OFFICE"
-        volume="ISSUE No. 005"
-        right="MMXXVI · 春"
-      />
+      <section
+        aria-label="What KEY stands for"
+        className="max-w-prose-xl mx-auto px-6 pt-2 pb-10 border-b border-ink-900/15"
+      >
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-8 text-center">
+          · KEY STANDS FOR ·
+        </p>
+        <div className="grid grid-cols-3 gap-3 md:gap-12 text-center">
+          {[
+            { letter: 'K', en: 'Know what matters.', cn: '看见真正关键的变量' },
+            { letter: 'E', en: 'Expose the cost.',   cn: '揭开你回避的代价' },
+            { letter: 'Y', en: 'You decide.',        cn: '决定永远是你的' },
+          ].map((item) => (
+            <div key={item.letter} className="flex flex-col items-center">
+              <p className="font-serif text-[clamp(3rem,7vw,5rem)] text-seal-500 tracking-tighter leading-none mb-3">
+                {item.letter}
+              </p>
+              <p className="font-sans text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-ink-900 leading-snug mb-1.5">
+                {item.en}
+              </p>
+              <p className="font-serif italic text-[12px] md:text-[13px] text-ink-500 leading-snug">
+                {item.cn}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ============================================ */}
       {/* B4 · HERO V5 — text-only, 大开本封面感           */}
