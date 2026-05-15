@@ -79,20 +79,22 @@ function ContrastBlock({
   aiNativeQuote,
 }: Contract['contrast']) {
   return (
-    <div className="my-12 grid md:grid-cols-2 gap-10 border-t border-paper-300 pt-10">
-      <div>
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-3">
-          一般 AI 通常会这么说
+    <div className="my-12 grid md:grid-cols-2 gap-0 border-t border-paper-300 pt-10">
+      {/* B5 · 左列: A typical AI · italic ink-500 */}
+      <div className="md:pr-10">
+        <p className="font-sans text-[10px] uppercase tracking-[0.28em] text-ink-400 mb-3">
+          A typical AI · 一般 AI
         </p>
         <p className="font-serif italic text-reading text-ink-500 editorial-leading">
           "{aiAssistedQuote}"
         </p>
       </div>
-      <div className="md:border-l border-paper-300 md:pl-10 border-t md:border-t-0 pt-10 md:pt-0">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-          KEY 这么做
+      {/* B5 · 右列: KEY · roman ink-700 · hairline 分隔 (0.5px warm-gray) */}
+      <div className="md:border-l md:border-paper-300/70 md:pl-10 border-t md:border-t-0 pt-10 md:pt-0 mt-10 md:mt-0">
+        <p className="font-sans text-[10px] uppercase tracking-[0.28em] text-seal-500 mb-3">
+          KEY
         </p>
-        <p className="font-serif text-reading text-ink-900 editorial-leading">
+        <p className="font-serif text-reading text-ink-700 editorial-leading">
           "{aiNativeQuote}"
         </p>
       </div>

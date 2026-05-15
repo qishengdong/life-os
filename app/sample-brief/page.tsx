@@ -42,13 +42,45 @@ async function SampleBriefContent({
   const copy = loadSampleBriefContent();
   const FRAMEWORK_LABEL = copy.frameworkLabels;
 
-  const briefs: Array<{ id: number; framework: string; topic: string; brief: DecisionBrief }> =
-    rows.map((r) => ({
+  /** 估算 brief 字数 (cn): 走 sections 树形结构, 累加所有 string. */
+  function countBriefChars(brief: DecisionBrief): number {
+    let total = 0;
+    const collect = (val: any): void => {
+      if (typeof val === 'string') total += val.length;
+      else if (Array.isArray(val)) val.forEach(collect);
+      else if (val && typeof val === 'object') Object.values(val).forEach(collect);
+    };
+    if (brief?.sections) collect(brief.sections);
+    return total;
+  }
+  /** 中文阅读速度 ~300 字 / 分钟. */
+  function readingMinutes(chars: number): number {
+    return Math.max(1, Math.round(chars / 300));
+  }
+  /** framework key → 英文 caps · "parent-care" → "PARENT CARE". */
+  function frameworkEnCaps(framework: string): string {
+    return framework.replace(/-/g, ' ').toUpperCase();
+  }
+
+  const briefs: Array<{
+    id: number;
+    framework: string;
+    topic: string;
+    brief: DecisionBrief;
+    chars: number;
+    minutes: number;
+  }> = rows.map((r, idx) => {
+    const brief = JSON.parse(r.brief_json) as DecisionBrief;
+    const chars = countBriefChars(brief);
+    return {
       id: r.id,
       framework: r.framework,
       topic: r.topic,
-      brief: JSON.parse(r.brief_json),
-    }));
+      brief,
+      chars,
+      minutes: readingMinutes(chars),
+    };
+  });
 
   // 默认显示第一个 (parent-care), 或按 query 参数
   const selectedId = sp.id ? parseInt(sp.id, 10) : briefs[0]?.id;
@@ -108,36 +140,66 @@ async function SampleBriefContent({
       {/* Brief 切换器                                     */}
       {/* ============================================ */}
       <section className="max-w-prose-xl mx-auto px-6 mt-12">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-500 mb-4">
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-500 mb-6">
           {copy.selector.eyebrow}
         </p>
-        <div className="flex flex-col md:flex-row gap-3 mb-12">
-          {briefs.map((b) => {
+
+        {/* B3 · 杂志 TOC 5 列 (desktop) / stack (mobile) */}
+        <ol className="border-t border-paper-300 mb-12">
+          {briefs.map((b, i) => {
             const isActive = b.id === selected.id;
+            const roman = ['I', 'II', 'III', 'IV', 'V'][i] || String(i + 1);
             return (
-              <Link
-                key={b.id}
-                href={`/sample-brief?id=${b.id}`}
-                className={`flex-1 border ${
-                  isActive
-                    ? 'border-seal-500 bg-seal-50/30'
-                    : 'border-paper-300 hover:border-ink-400'
-                } px-5 py-4 transition-colors group`}
-              >
-                <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500 mb-2">
-                  {FRAMEWORK_LABEL[b.framework] || b.framework}
-                </p>
-                <p
-                  className={`font-serif text-base ${
-                    isActive ? 'text-ink-900' : 'text-ink-700 group-hover:text-ink-900'
-                  } leading-snug`}
+              <li key={b.id} className="border-b border-paper-300">
+                <Link
+                  href={`/sample-brief?id=${b.id}`}
+                  className="group block py-5 md:py-6 md:grid md:grid-cols-[40px_140px_1fr_120px_70px] md:gap-6 md:items-baseline transition-colors"
                 >
-                  {b.topic}
-                </p>
-              </Link>
+                  {/* col 1 · 罗马 */}
+                  <span className="hidden md:inline-block font-serif italic text-seal-500 text-lg leading-none">
+                    {roman}
+                  </span>
+
+                  {/* col 2 · domain en caps */}
+                  <span className="block md:inline font-sans text-[10px] uppercase tracking-[0.28em] text-seal-500 mb-1 md:mb-0">
+                    {frameworkEnCaps(b.framework)}
+                  </span>
+
+                  {/* col 3 · 标题 (+ now reading indicator) */}
+                  <span
+                    className={`block md:inline font-serif text-[18px] leading-snug ${
+                      isActive ? 'text-ink-900' : 'text-ink-700 group-hover:text-ink-900'
+                    } transition-colors`}
+                  >
+                    {isActive && (
+                      <span className="inline-flex items-baseline gap-1.5 mr-2 align-baseline">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-seal-500" />
+                        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500">
+                          now reading
+                        </span>
+                      </span>
+                    )}
+                    {b.topic}
+                  </span>
+
+                  {/* col 4 · 字数 + 阅读时间 */}
+                  <span className="block md:inline font-mono text-[11px] text-ink-500 mt-1 md:mt-0">
+                    {b.chars.toLocaleString()} 字 · {b.minutes} 分钟
+                  </span>
+
+                  {/* col 5 · 读 → */}
+                  <span
+                    className={`hidden md:inline-block text-right font-serif italic text-[14px] transition-colors ${
+                      isActive ? 'text-ink-400' : 'text-seal-500 group-hover:text-seal-700'
+                    }`}
+                  >
+                    {isActive ? '在读' : '读 →'}
+                  </span>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ol>
       </section>
 
       {/* ============================================ */}

@@ -219,19 +219,50 @@ export default function MembershipPage() {
             englishTitle={ANCHOR.englishTitle}
           />
 
-          {/* 三行报价的视觉重锤 */}
-          <div className="my-12 space-y-3 font-serif text-ink-900">
-            <div className="flex items-baseline justify-between gap-4 border-b border-paper-300 pb-3">
-              <span className="text-reading text-ink-700">资深决策顾问按小时</span>
-              <span className="text-2xl tracking-tightish">¥1,000-3,000 / 小时</span>
+          {/* B8 · 三 anchor 卡, 宽度可视化 (100% / 6% / 4%) */}
+          <div className="my-12 space-y-4">
+            {/* Card 1 · ¥50K full-width */}
+            <div className="bg-paper-200/80 h-20 md:h-24 px-5 md:px-8 flex items-center justify-between gap-6">
+              <span className="font-sans text-[10px] md:text-[11px] uppercase tracking-[0.28em] text-ink-700 leading-snug">
+                RESIDENT CONSULTANT · 12-DIM + 365D
+              </span>
+              <span className="font-serif text-xl md:text-2xl text-ink-900 tracking-tightish shrink-0">
+                ≥ ¥50,000
+              </span>
             </div>
-            <div className="flex items-baseline justify-between gap-4 border-b border-paper-300 pb-3">
-              <span className="text-reading text-ink-700">完整 12 维分析 + 365 天跟踪</span>
-              <span className="text-2xl tracking-tightish">≥ ¥50,000</span>
+            {/* Card 2 · ¥3K 6% width (mobile full) */}
+            <div className="flex items-stretch gap-5">
+              <div className="bg-paper-200/80 h-20 md:h-24 w-full md:w-[6%] md:min-w-[60px] px-4 md:px-3 flex items-center md:justify-center">
+                <span className="md:hidden font-sans text-[10px] uppercase tracking-[0.28em] text-ink-700">
+                  RESIDENT CONSULTANT · 1 HR
+                </span>
+              </div>
+              <div className="hidden md:flex flex-col justify-center">
+                <span className="font-sans text-[10px] uppercase tracking-[0.28em] text-ink-700 mb-1">
+                  RESIDENT CONSULTANT · 1 HR
+                </span>
+                <span className="font-serif text-xl text-ink-700">¥1,000–3,000</span>
+              </div>
+              <div className="md:hidden flex flex-col justify-center ml-auto">
+                <span className="font-serif text-base text-ink-700">¥1,000–3,000</span>
+              </div>
             </div>
-            <div className="flex items-baseline justify-between gap-4 border-b-2 border-seal-500 pb-3">
-              <span className="text-reading text-ink-900 font-medium">KEY · 一年</span>
-              <span className="text-3xl tracking-tighter text-seal-500">¥1,988</span>
+            {/* Card 3 · KEY ¥1,988 4% width BURGUNDY */}
+            <div className="flex items-stretch gap-5">
+              <div className="bg-seal-500 h-20 md:h-24 w-full md:w-[4%] md:min-w-[44px] px-4 md:px-2 flex items-center md:justify-center">
+                <span className="md:hidden font-sans text-[10px] uppercase tracking-[0.28em] text-paper-100">
+                  KEY · ANNUAL
+                </span>
+              </div>
+              <div className="hidden md:flex flex-col justify-center">
+                <span className="font-sans text-[10px] uppercase tracking-[0.28em] text-seal-500 mb-1">
+                  KEY · ANNUAL
+                </span>
+                <span className="font-serif text-2xl text-seal-500 tracking-tighter">¥1,988</span>
+              </div>
+              <div className="md:hidden flex flex-col justify-center ml-auto">
+                <span className="font-serif text-base text-seal-500">¥1,988</span>
+              </div>
             </div>
           </div>
 
