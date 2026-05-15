@@ -256,6 +256,9 @@ async function runScenarioStage(scenario: TrapScenario, persona: PersonaV3): Pro
 async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
   // 注入 synthetic memory · 绕过 fetchUserMemory DB 查找 (user_id=-1 不存在)
   const injectedMemory = personaToUserMemoryContext(persona);
+  // 跳过 Editor pass · test mode (Analyst 草稿就够 Layer A 测; Editor 改写 +30s 不划算)
+  // 注意: T8 (editor_rewrite_depth) trap 需特殊处理, 之后单独跑全 pipeline
+  const skipEditor = scenario.trap !== 'T8_editor_shallow';
   const result = await generateBrief({
     userId: -1, // synthetic
     birthDate: persona.birthDate,
@@ -263,6 +266,7 @@ async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Pro
     decision: scenario.userInput,
     displayName: persona.name,
     injectedMemory,
+    skipEditor,
   });
   if (result.safetyShortCircuit) {
     return `(safety short-circuit: ${result.safetyShortCircuit.response})`;
