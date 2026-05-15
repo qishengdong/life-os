@@ -83,38 +83,14 @@ export default function InvitePage() {
       <TopNav />
       <PageMasthead eyebrow="JOIN" volume="邀请制 · 内测" right="MMXXVI · 春" />
 
-      {/* HERO */}
-      <header className="max-w-prose-lg mx-auto px-6 pt-20 pb-16 border-b border-paper-300">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          · KEY Editorial Office · 加入 ·
-        </p>
-        <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-10 leading-[1.1]">
+      {/* HERO · forked 2-column (B12) */}
+      <header className="max-w-prose-xl mx-auto px-6 pt-16 pb-10">
+        <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-10 leading-[1.1] max-w-prose-lg">
           邀请制内测中.
         </h1>
-        <div className="space-y-5">
-          <p className="font-serif text-reading text-ink-700 editorial-leading">
-            KEY 不公开注册. 不是稀缺性营销 — 真理由是: 我们希望前 100 名会员
-            认真选, 让产品体验的密度跟年付预期匹配.
-          </p>
-          <p className="font-serif text-reading text-ink-500 italic editorial-leading">
-            如果你已经收到一份邀请, 输入下面的码. 没有, 看 II 怎么申请.
-          </p>
-        </div>
-      </header>
-
-      {/* I. 已有邀请码 */}
-      <section className="max-w-prose-lg mx-auto px-6 py-20 border-b border-paper-300">
-        <div className="mb-10">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-            I. 已有邀请码
-          </p>
-          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight">
-            输入邀请码激活账户.
-          </h2>
-        </div>
 
         {success ? (
-          <div className="border border-sage/40 bg-sage/5 p-8">
+          <div className="border border-sage/40 bg-sage/5 p-8 max-w-prose-md">
             <p className="font-serif text-lg text-ink-900 mb-2">✓ 邀请码已激活</p>
             {success.recipientName && (
               <p className="font-serif text-reading text-ink-700 mb-1">
@@ -126,100 +102,78 @@ export default function InvitePage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={submit} className="space-y-4">
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="KE-XXXX-XXXX"
-              spellCheck={false}
-              autoComplete="off"
-              className="w-full max-w-md px-5 py-4 font-mono text-lg tracking-widest uppercase border border-paper-300 bg-paper-50 focus:border-seal-500 focus:outline-none transition-colors"
-            />
-            <div>
-              <button
-                type="submit"
-                disabled={submitting || !code.trim()}
-                className="px-8 py-3 font-serif text-base text-paper bg-ink-900 hover:bg-seal-500 disabled:bg-ink-400 disabled:cursor-not-allowed transition-colors"
-              >
-                {submitting ? '验证中...' : '激活'}
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-0 items-stretch">
+            {/* 左卡 · 已有邀请码 */}
+            <div className="md:pr-10">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
+                已有邀请码
+              </p>
+              <h2 className="font-serif text-2xl text-ink-900 tracking-tightish leading-tight mb-6">
+                输入邀请码激活.
+              </h2>
+              <form onSubmit={submit} className="space-y-4">
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="KE-XXXX-XXXX"
+                  spellCheck={false}
+                  autoComplete="off"
+                  className="w-full px-5 py-3.5 font-mono text-base tracking-widest uppercase border border-paper-300 bg-paper-50 focus:border-seal-500 focus:outline-none transition-colors"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting || !code.trim()}
+                  className="px-8 py-3 font-serif text-base text-paper bg-ink-900 hover:bg-seal-500 disabled:bg-ink-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {submitting ? '验证中...' : '激活 →'}
+                </button>
+                {error && (
+                  <p className="font-serif text-sm text-ember italic mt-3">{error}</p>
+                )}
+              </form>
             </div>
-            {error && (
-              <p className="font-serif text-sm text-ember italic mt-3">{error}</p>
-            )}
-          </form>
+
+            {/* 中间 · hairline burgundy 与 "或" */}
+            <div className="hidden md:flex flex-col items-center justify-center px-2">
+              <div className="flex-1 w-px bg-seal-500/40" />
+              <span className="my-3 font-serif italic text-seal-500 text-sm">或</span>
+              <div className="flex-1 w-px bg-seal-500/40" />
+            </div>
+            <div className="md:hidden flex items-center justify-center my-2">
+              <div className="flex-1 h-px bg-seal-500/40" />
+              <span className="mx-3 font-serif italic text-seal-500 text-sm">或</span>
+              <div className="flex-1 h-px bg-seal-500/40" />
+            </div>
+
+            {/* 右卡 · 还没邀请码 */}
+            <div className="md:pl-10">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
+                还没邀请码
+              </p>
+              <h2 className="font-serif text-2xl text-ink-900 tracking-tightish leading-tight mb-6">
+                申请加入.
+              </h2>
+              <p className="font-serif text-[15px] text-ink-700 editorial-leading mb-6">
+                发邮件到 <strong className="text-ink-900">hello@lifeos.cn</strong>, 一段话告诉我们: 你卡在什么决定上 / 大致背景. 48 小时内回复.
+              </p>
+              <a
+                href="mailto:hello@lifeos.cn?subject=申请加入 KEY&body=我最近卡在的决定是:%0A%0A我的大致背景:%0A%0A"
+                className="inline-block px-8 py-3 font-serif text-base border-2 border-seal-500 text-seal-500 hover:bg-seal-500 hover:text-paper transition-colors"
+              >
+                发邮件申请 →
+              </a>
+            </div>
+          </div>
         )}
-      </section>
+      </header>
 
-      {/* II. 还没邀请码 */}
-      <section className="bg-paper-50 border-b border-paper-300">
+      {/* II. 我们邀请的是这些人 (B13 · 移到 philosophy 前) */}
+      <section className="bg-paper-50 border-y border-paper-300">
         <div className="max-w-prose-lg mx-auto px-6 py-20">
           <div className="mb-10">
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-              II. 还没邀请码
-            </p>
-            <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight">
-              申请加入.
-            </h2>
-          </div>
-          <div className="space-y-5 font-serif text-reading text-ink-700 editorial-leading mb-10">
-            <p>发邮件到 <strong className="text-ink-900">hello@lifeos.cn</strong>, 一段话告诉我们:</p>
-          </div>
-          <ol className="space-y-2 pl-6 border-l-2 border-seal-500/40 mb-10">
-            <li className="font-serif text-[15px] text-ink-700 editorial-leading flex gap-3">
-              <span className="font-serif italic text-seal-500 text-sm w-5 shrink-0">01</span>
-              <span>你最近卡在什么决定上 (3 句话内, 不需要详细)</span>
-            </li>
-            <li className="font-serif text-[15px] text-ink-700 editorial-leading flex gap-3">
-              <span className="font-serif italic text-seal-500 text-sm w-5 shrink-0">02</span>
-              <span>你的大致背景 (年龄段 / 行业 / 城市, 不需要简历)</span>
-            </li>
-            <li className="font-serif text-[15px] text-ink-700 editorial-leading flex gap-3">
-              <span className="font-serif italic text-seal-500 text-sm w-5 shrink-0">03</span>
-              <span>怎么收到邀请码 — 我们 48 小时内回复</span>
-            </li>
-          </ol>
-          <a
-            href="mailto:hello@lifeos.cn?subject=申请加入 KEY&body=我最近卡在的决定是:%0A%0A我的大致背景:%0A%0A"
-            className="font-serif text-lg text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
-          >
-            写邮件申请 →
-          </a>
-        </div>
-      </section>
-
-      {/* III. 为什么邀请制 */}
-      <section className="max-w-prose-lg mx-auto px-6 py-20 border-b border-paper-300">
-        <div className="mb-10">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-            III. 为什么邀请制
-          </p>
-          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight">
-            不是稀缺性营销.
-          </h2>
-        </div>
-        <div className="space-y-5 font-serif text-reading text-ink-700 editorial-leading">
-          <p>
-            永久免费版的用户心智跟年付会员不同. 一个想"试试 ChatGPT 的另一个 wrap", 另一个想"找一份长期记得他的决策伙伴".
-            这两批人对同一个产品的预期完全不同. 我们设计体验时只能优先一边.
-          </p>
-          <p>
-            邀请制是我们对体验密度的承诺 — 前 100 名认真选, 让每一份简报的质量都对得起 ¥1988 的年费.
-            等内测期跑通 (~3-6 个月), 我们会开放申请通道, 但仍然保持人工审核.
-          </p>
-          <p className="text-ink-500 italic">
-            如果你认同这条路径, 邮件来. 如果不认同 — 也好, 你不是我们的人.
-          </p>
-        </div>
-      </section>
-
-      {/* IV. 当前邀请的人 (匿名化) */}
-      <section className="bg-paper-50">
-        <div className="max-w-prose-lg mx-auto px-6 py-20">
-          <div className="mb-10">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-              IV. 当前已邀请
+              II. 当前已邀请
             </p>
             <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight">
               我们邀请的是这些人.
@@ -252,6 +206,31 @@ export default function InvitePage() {
           </ul>
           <p className="mt-10 font-serif italic text-sm text-ink-500">
             * 内测期 (~3-6 个月) 滚动邀请, 总量限 100. 名单非公开, 隐私优先.
+          </p>
+        </div>
+      </section>
+
+      {/* III. 为什么邀请制 (B13 · 移到 invitee list 后) */}
+      <section className="max-w-prose-lg mx-auto px-6 py-20 border-b border-paper-300">
+        <div className="mb-10">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
+            III. 为什么邀请制
+          </p>
+          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight">
+            不是稀缺性营销.
+          </h2>
+        </div>
+        <div className="space-y-5 font-serif text-reading text-ink-700 editorial-leading">
+          <p>
+            永久免费版的用户心智跟年付会员不同. 一个想"试试 ChatGPT 的另一个 wrap", 另一个想"找一份长期记得他的决策伙伴".
+            这两批人对同一个产品的预期完全不同. 我们设计体验时只能优先一边.
+          </p>
+          <p>
+            邀请制是我们对体验密度的承诺 — 前 100 名认真选, 让每一份简报的质量都对得起 ¥1988 的年费.
+            等内测期跑通 (~3-6 个月), 我们会开放申请通道, 但仍然保持人工审核.
+          </p>
+          <p className="text-ink-500 italic">
+            如果你认同这条路径, 邮件来. 如果不认同 — 也好, 你不是我们的人.
           </p>
         </div>
       </section>

@@ -240,56 +240,7 @@ export default function MembershipPage() {
       </section>
 
       {/* ============================================ */}
-      {/* III. 三档会员                                 */}
-      {/* ============================================ */}
-      <section className="max-w-prose-xl mx-auto px-6 py-24 border-b border-paper-300">
-        <SectionHeader
-          numeral="III"
-          title="三档会员"
-          englishTitle="Three Tiers"
-        />
-        <div>
-          {TIERS.map((t) => (
-            <TierBlock key={t.numeral} tier={t} />
-          ))}
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/* IV. 第一周不合适全退                          */}
-      {/* ============================================ */}
-      <section className="bg-paper-50 border-b border-paper-300">
-        <div className="max-w-prose-xl mx-auto px-6 py-24">
-          <SectionHeader
-            numeral={REFUND.numeral}
-            title={REFUND.title}
-            englishTitle={REFUND.englishTitle}
-          />
-          <Essay paragraphs={REFUND.body} />
-
-          <div className="mt-10 pl-6 border-l-2 border-seal-500/40">
-            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500 mb-3">
-              流程
-            </p>
-            <ol className="space-y-2">
-              {REFUND.process.map((step, i) => (
-                <li
-                  key={i}
-                  className="font-serif text-[15px] text-ink-700 editorial-leading flex gap-3"
-                >
-                  <span className="font-serif italic text-seal-500 text-sm w-5 shrink-0">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/* V. 我们不做什么                               */}
+      {/* III. 我们不做什么 (B7 · 移到 tiers 前)         */}
       {/* ============================================ */}
       <section className="max-w-prose-xl mx-auto px-6 py-24 border-b border-paper-300">
         <SectionHeader
@@ -321,6 +272,55 @@ export default function MembershipPage() {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* ============================================ */}
+      {/* IV. 三档会员 (B7 · 原 III, 现 IV)              */}
+      {/* ============================================ */}
+      <section className="bg-paper-50 border-b border-paper-300">
+        <div className="max-w-prose-xl mx-auto px-6 py-24">
+          <SectionHeader
+            numeral="IV"
+            title="三档会员"
+            englishTitle="Three Tiers"
+          />
+          <div>
+            {TIERS.map((t) => (
+              <TierBlock key={t.numeral} tier={t} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* V. 第一周不合适全退 (B7 · 原 IV, 现 V)         */}
+      {/* ============================================ */}
+      <section className="max-w-prose-xl mx-auto px-6 py-24 border-b border-paper-300">
+        <SectionHeader
+          numeral={REFUND.numeral}
+          title={REFUND.title}
+          englishTitle={REFUND.englishTitle}
+        />
+        <Essay paragraphs={REFUND.body} />
+
+        <div className="mt-10 pl-6 border-l-2 border-seal-500/40">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500 mb-3">
+            流程
+          </p>
+          <ol className="space-y-2">
+            {REFUND.process.map((step, i) => (
+              <li
+                key={i}
+                className="font-serif text-[15px] text-ink-700 editorial-leading flex gap-3"
+              >
+                <span className="font-serif italic text-seal-500 text-sm w-5 shrink-0">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* ============================================ */}

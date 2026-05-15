@@ -81,7 +81,7 @@
     }
   ],
   "refund": {
-    "numeral": "IV",
+    "numeral": "V",
     "title": "第一周不合适, 全退",
     "englishTitle": "Refund",
     "body": [
@@ -95,7 +95,7 @@
     ]
   },
   "weDoNot": {
-    "numeral": "V",
+    "numeral": "III",
     "title": "我们不做什么",
     "englishTitle": "What We Don't Do",
     "intro": "主动声明边界. 这不是免责声明, 是定位声明. 30-50 高知最反感\"什么都说能做\"的产品, 我们越明确不做什么, 你越知道我们做什么这件事是认真的.",
