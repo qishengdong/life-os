@@ -46,6 +46,8 @@ export interface BriefGenerationInput {
   skipEditor?: boolean;
   /** 匿名 ID 显示用 (sample brief 公开页用) */
   displayName?: string;
+  /** AI Native Test v3 · 注入 synthetic memory · 不查 DB (避免 user_id=-1 fail) */
+  injectedMemory?: import('@/lib/memory/types').UserMemoryContext;
 }
 
 export interface BriefGenerationResult {
@@ -92,11 +94,11 @@ export async function generateBrief(
     };
   }
 
-  // 1. 路由 + 拉记忆
+  // 1. 路由 + 拉记忆 (test mode 用 injectedMemory)
   const route = input.forceFramework
     ? { framework: input.forceFramework as any, confidence: 1.0 }
     : await routeDecision(input.decision);
-  const memory = fetchUserMemory(input.userId);
+  const memory = input.injectedMemory ?? fetchUserMemory(input.userId);
   const memBlocks = renderMemoryForPrompt(memory);
   const memoryContext = [memBlocks.hardAnchorsBlock, memBlocks.contextBlock]
     .filter(Boolean)

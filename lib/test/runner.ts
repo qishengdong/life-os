@@ -23,6 +23,7 @@ import { SCENARIOS_V3 } from './scenarios-v3';
 import { getPersonaById, type PersonaV3 } from './personas-v3';
 import { generateBrief } from '@/lib/decision/brief-pipeline';
 import { renderBriefMarkdown } from '@/lib/decision/brief-schema';
+import { personaToUserMemoryContext } from './persona-to-memory';
 
 export interface RunOptions {
   mode: 'layer_a_only' | 'layer_ac' | 'layer_abc'; // layer_b 暂不实现
@@ -40,8 +41,12 @@ export interface RunOptions {
 export interface RunSummary {
   runId: number;
   totalCases: number;
+  /** 真跑且 Layer A 通过 · 不含 skipped */
   passedA: number;
+  /** 真跑且 Layer C 通过 · 不含 skipped */
   passedC: number;
+  /** Stub stage 跳过的数量 (onboarding/pulse/letter/outcome 等未实现) */
+  skipped: number;
   tokensUsed: number;
   durationMs: number;
   failures: Array<{
@@ -55,9 +60,9 @@ export interface RunSummary {
     personaId: string;
     trapType: string;
     stage: string;
-    layerAPass: boolean;
+    /** 'skipped' = stub 未跑 · 'pass' / 'fail' = 真跑结果 */
+    status: 'pass' | 'fail' | 'skipped';
     layerAFails: Array<{ reason: string; matched?: string; detail?: string }>;
-    layerCPass?: boolean;
     layerCFocusAvg?: number;
     layerCComment?: string;
     aiOutput: string;
@@ -99,6 +104,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
 
   let passedA = 0;
   let passedC = 0;
+  let skipped = 0;
   let tokensUsed = 0;
   const failures: RunSummary['failures'] = [];
   const inlineResults: NonNullable<RunSummary['results']> = [];
@@ -115,8 +121,35 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
     try {
       aiOutput = await runScenarioStage(scenario, persona);
     } catch (e: any) {
-      // 跑失败 → 当 Layer A fail 记
       aiOutput = `(scenario run failed: ${e.message})`;
+    }
+
+    // Stub stage 检 → 标 skipped, 不走 Layer A/C
+    const isStub = aiOutput.startsWith(STAGE_STUB_MARKER);
+    if (isStub) {
+      skipped++;
+      inlineResults.push({
+        scenarioId: scenario.id,
+        personaId: scenario.personaId || 'unknown',
+        trapType: scenario.trap,
+        stage: scenario.stage,
+        status: 'skipped',
+        layerAFails: [],
+        aiOutput: aiOutput.slice(0, 200),
+      });
+      // 仍写 DB 以 audit (Layer A pass=0, fails=[{reason:'stage_stub'}])
+      db.prepare(
+        `INSERT INTO test_results (
+          run_id, scenario_id, persona_id, trap_type, stage,
+          ai_output, layer_a_pass, layer_a_fails
+        ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`,
+      ).run(
+        runId, scenario.id, scenario.personaId || 'unknown',
+        scenario.trap, scenario.stage,
+        aiOutput.slice(0, 1000),
+        JSON.stringify([{ reason: 'stage_stub_skipped' }]),
+      );
+      continue;
     }
 
     // Layer A 必跑
@@ -135,7 +168,6 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
       if (cResult.pass) passedC++;
       tokensUsed += cResult.tokensUsed;
       if (!cResult.pass && a.pass) {
-        // 只在 Layer A pass + Layer C fail 时入 failures (避免双 alert)
         failures.push({
           scenarioId: scenario.id,
           layerCFocusAvg: cResult.focusAvg,
@@ -173,9 +205,8 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
       personaId: scenario.personaId || 'unknown',
       trapType: scenario.trap,
       stage: scenario.stage,
-      layerAPass: a.pass,
+      status: a.pass && (!cResult || cResult.pass) ? 'pass' : 'fail',
       layerAFails: a.fails,
-      layerCPass: cResult ? cResult.pass : undefined,
       layerCFocusAvg: cResult?.focusAvg,
       layerCComment: cResult?.comment,
       aiOutput: aiOutput.slice(0, 4000),
@@ -193,6 +224,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
     totalCases: scenarios.length,
     passedA,
     passedC,
+    skipped,
     tokensUsed,
     durationMs,
     failures,
@@ -222,12 +254,15 @@ async function runScenarioStage(scenario: TrapScenario, persona: PersonaV3): Pro
 }
 
 async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  // 注入 synthetic memory · 绕过 fetchUserMemory DB 查找 (user_id=-1 不存在)
+  const injectedMemory = personaToUserMemoryContext(persona);
   const result = await generateBrief({
-    userId: -1, // synthetic — 不写 DB (跑 test 不污染真用户数据)
+    userId: -1, // synthetic
     birthDate: persona.birthDate,
     gender: persona.gender === 'F' ? 'female' : 'male',
     decision: scenario.userInput,
     displayName: persona.name,
+    injectedMemory,
   });
   if (result.safetyShortCircuit) {
     return `(safety short-circuit: ${result.safetyShortCircuit.response})`;
@@ -238,22 +273,24 @@ async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Pro
   return renderBriefMarkdown(result.brief);
 }
 
+/** Stub stage marker. Runner detects 并 mark scenario as "skipped" 而非 false pass. */
+export const STAGE_STUB_MARKER = '__STUB_SKIP__';
+
 async function runOnboardingStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  // V1: skip real onboarding (会污染 DB · 创建 user 等)
-  // 之后 JOB-027.1 可加 in-memory mode
-  return '(onboarding stage: in-memory run not implemented yet — use API e2e test)';
+  // V3.1 待 ship: synthetic in-memory onboarding (不污染 DB)
+  return `${STAGE_STUB_MARKER}: onboarding stage not yet implemented in test harness`;
 }
 
 async function runPulseStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return '(pulse stage: in-memory run not implemented yet)';
+  return `${STAGE_STUB_MARKER}: pulse stage not yet implemented`;
 }
 
 async function runLetterStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return '(letter stage: in-memory run not implemented yet)';
+  return `${STAGE_STUB_MARKER}: letter stage not yet implemented`;
 }
 
 async function runOutcomeStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return '(outcome stage: in-memory run not implemented yet)';
+  return `${STAGE_STUB_MARKER}: outcome stage not yet implemented`;
 }
 
 // ============================================================================
