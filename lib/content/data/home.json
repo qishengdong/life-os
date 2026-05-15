@@ -1,0 +1,84 @@
+{
+  "$schema": "../schemas/home.schema.json",
+  "version": 1,
+  "hero": {
+    "brandStatementEn": "Find the key before you decide.",
+    "brandStatementCn": "决定之前, 找到关键.",
+    "subTag": "KEY 是 AI 原生的私人决策顾问服务 — 始于陪伴, 但给你结果交付.",
+    "explainer": [
+      "重大决定面前, 你缺的不是信息, 更不是那些周围人带着各种利益与立场的建议.",
+      "而是 <em>那个没人愿意指出的关键变量</em>.",
+      "KEY 把你的真实背景, 关键变量, 你回避的隐藏代价, 通过独创的顶级决策体系与 AI 引擎, 为你打造一份私人决策简报.",
+      "不哄, 不预设立场, 不诊断, 不替你决定.",
+      "<i>30 / 90 / 365 天后, 我们回来复盘 — 你的决定, 是真的让你走到了想去的地方.</i>"
+    ],
+    "ctas": {
+      "primary": { "label": "写下我最近最难的决定 →", "href": "/letters/new" },
+      "secondary": { "label": "读一份 sample brief", "href": "/sample-brief" },
+      "ghost": { "label": "先看方法论", "href": "/methodology" }
+    },
+    "leadsIntro": "如果下面任何一条, 你认出了自己",
+    "leads": [
+      {
+        "label": "自我",
+        "setup": [
+          "你这一生没做过特别错的决定.",
+          "但所有 \"对\" 的决定加起来, 也没让你活得像自己."
+        ],
+        "truth": "因为你可能根本就不知道 \"自己\" 是谁."
+      },
+      {
+        "label": "子女",
+        "setup": [
+          "你给了她最好的学校, 最好的资源, 最好的妈妈.",
+          "她从来没问过你, 你过得好不好."
+        ],
+        "truth": "而你, 或许只是把她当成了, 自己放弃自己的最佳借口."
+      },
+      {
+        "label": "父母",
+        "setup": [
+          "你 50 岁了, 还是不敢挂你妈的电话."
+        ],
+        "truth": "在你成长的世界里, \"不孝\" 两个字, 比任何错都更死."
+      },
+      {
+        "label": "转身",
+        "setup": [
+          "你当管理者干了十年. 你知道该自己做点什么."
+        ],
+        "truth": "但你更清楚, 出了这个游戏, 你可能一无是处. 再耀眼的管理位置, 也只是别人游戏里的一个执行者."
+      }
+    ],
+    "betterCallKey": {
+      "en1": "Got a key call?",
+      "en2": "Better call KEY.",
+      "cnSubtitle": "重大抉择面前 · 来找 KEY"
+    }
+  },
+  "fiveDomains": {
+    "title": "KEY 为五类决策而做.",
+    "items": [
+      { "ch": "父母养老", "en": "Aging Parents", "note": "代际责任 · 兄弟姐妹分担 · 失能加速 · 走丢事件" },
+      { "ch": "子女出路", "en": "A Child's Path", "note": "升学路径 · 体制内外 · 鸡娃边界 · 配偶分歧" },
+      { "ch": "婚姻去留", "en": "A Marriage", "note": "修复 · 分居 · 离婚 · 沉默累积" },
+      { "ch": "职业转身", "en": "A Career Turn", "note": "跳槽 · 创业 · 降薪 · 早退休" },
+      { "ch": "迁移决策", "en": "Whether to Move", "note": "城市 · 国家 · 阶层 · 时间窗口" }
+    ]
+  },
+  "footer": {
+    "tagline": "KEY Editorial Office",
+    "subtagline": "陪你想清楚 · 看清代价 · 长期记得你",
+    "aigcDisclaimer": "AIGC 备案中 · 本服务输出由 AI 生成, 不构成医疗 / 法律 / 财务建议",
+    "navLinks": [
+      { "label": "通信集", "href": "/letters", "emphasis": true },
+      { "label": "方法论", "href": "/methodology" },
+      { "label": "样品", "href": "/sample-brief" },
+      { "label": "会员", "href": "/membership" },
+      { "label": "透明度", "href": "/transparency" },
+      { "label": "进入", "href": "/pulse" },
+      { "label": "服务条款", "href": "/terms" },
+      { "label": "隐私", "href": "/privacy" }
+    ]
+  }
+}

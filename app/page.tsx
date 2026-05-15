@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
+import { loadHomeContent } from '@/lib/content/home';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -27,52 +28,13 @@ const FRAMEWORK_LABEL: Record<string, string> = {
   'child-education': '子女教育',
 };
 
-// 五类决策 (首页"为谁而做"小节)
-const FIVE_DOMAINS = [
-  { ch: '父母养老', en: 'Aging Parents', note: '代际责任 · 兄弟姐妹分担 · 失能加速 · 走丢事件' },
-  { ch: '子女出路', en: "A Child's Path", note: '升学路径 · 体制内外 · 鸡娃边界 · 配偶分歧' },
-  { ch: '婚姻去留', en: 'A Marriage', note: '修复 · 分居 · 离婚 · 沉默累积' },
-  { ch: '职业转身', en: 'A Career Turn', note: '跳槽 · 创业 · 降薪 · 早退休' },
-  { ch: '迁移决策', en: 'Whether to Move', note: '城市 · 国家 · 阶层 · 时间窗口' },
-];
-
-// 4 个 lead — Hero 下面平铺, 是入口 (不是品牌). 调性: Breaking Bad 痛感, 不鸡汤不暖.
-// 每条 3 段: setup → 空行 → "—— 真相" (italic, 略灰)
-const HERO_LEADS = [
-  {
-    label: '自我',
-    setup: [
-      '你这一生没做过特别错的决定.',
-      '但所有 "对" 的决定加起来, 也没让你活得像自己.',
-    ],
-    truth: '因为你可能根本就不知道 "自己" 是谁.',
-  },
-  {
-    label: '子女',
-    setup: [
-      '你给了她最好的学校, 最好的资源, 最好的妈妈.',
-      '她从来没问过你, 你过得好不好.',
-    ],
-    truth: '而你, 或许只是把她当成了, 自己放弃自己的最佳借口.',
-  },
-  {
-    label: '父母',
-    setup: [
-      '你 50 岁了, 还是不敢挂你妈的电话.',
-    ],
-    truth: '在你成长的世界里, "不孝" 两个字, 比任何错都更死.',
-  },
-  {
-    label: '转身',
-    setup: [
-      '你当管理者干了十年. 你知道该自己做点什么.',
-    ],
-    truth:
-      '但你更清楚, 出了这个游戏, 你可能一无是处. 再耀眼的管理位置, 也只是别人游戏里的一个执行者.',
-  },
-];
-
 export default async function HomePage() {
+  // CMS 可编辑内容 (lib/content/data/home.json)
+  const content = loadHomeContent();
+  const { hero, fiveDomains, footer } = content;
+  const HERO_LEADS = hero.leads;
+  const FIVE_DOMAINS = fiveDomains.items;
+
   // 拉一份 sample brief 作为首页 pull-quote (优先用 parent-care)
   const sampleRows = getSampleBriefs();
   const teaserRow =
@@ -126,60 +88,59 @@ export default async function HomePage() {
           </div>
 
           <h1 className="font-serif text-[clamp(2.2rem,5vw,4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-3">
-            Find the key before you decide.
+            {hero.brandStatementEn}
           </h1>
           <p className="font-serif text-[clamp(1.6rem,3.5vw,2.6rem)] text-ink-900 tracking-tighter leading-[1.1] mb-10">
-            决定之前, 找到关键.
+            {hero.brandStatementCn}
           </p>
 
           {/* sub-tagline · 服务定位, 不是刊物 */}
           <p className="font-serif italic text-[clamp(1rem,1.6vw,1.25rem)] text-ink-700 editorial-leading max-w-prose-lg">
-            KEY 是 AI 原生的私人决策顾问服务 — 始于陪伴, 但给你结果交付.
+            {hero.subTag}
           </p>
         </div>
 
         {/* Layer 2 · Brand Explainer */}
         <div className="relative max-w-prose-lg mx-auto px-6 pb-16">
           <div className="space-y-5">
-            <p className="font-serif text-reading text-ink-700 editorial-leading">
-              重大决定面前, 你缺的不是信息, 更不是那些周围人带着各种利益与立场的建议.
-              <br />
-              而是 <span className="text-seal-500">那个没人愿意指出的关键变量</span>.
-            </p>
-            <p className="font-serif text-reading text-ink-700 editorial-leading">
-              KEY 把你的真实背景, 关键变量, 你回避的隐藏代价, 通过独创的顶级决策体系与
-              AI 引擎, 为你打造一份私人决策简报.
-            </p>
-            <p className="font-serif text-reading text-ink-700 editorial-leading">
-              不哄, 不预设立场, 不诊断, 不替你决定.
-            </p>
-            <p className="font-serif text-reading italic text-ink-500 editorial-leading">
-              30 / 90 / 365 天后, 我们回来复盘 — 你的决定, 是真的让你走到了想去的地方.
-            </p>
+            {hero.explainer.map((para, i) => {
+              const isItalic = para.trim().startsWith('<i>') && para.trim().endsWith('</i>');
+              const stripped = para.replace(/^<i>|<\/i>$/g, '');
+              const cls = isItalic
+                ? 'font-serif text-reading italic text-ink-500 editorial-leading'
+                : 'font-serif text-reading text-ink-700 editorial-leading';
+              return (
+                <p
+                  key={i}
+                  className={cls}
+                  dangerouslySetInnerHTML={{ __html: stripped }}
+                />
+              );
+            })}
           </div>
 
           {/* CTAs */}
           <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
             <Link
-              href="/letters/new"
+              href={hero.ctas.primary.href}
               className="font-serif text-lg bg-seal-500 hover:bg-seal-700 text-paper-100 px-6 py-3 transition-colors tracking-wide"
             >
-              写下我最近最难的决定 →
+              {hero.ctas.primary.label}
             </Link>
             <Link
-              href="/sample-brief"
+              href={hero.ctas.secondary.href}
               className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              读一份 sample brief
+              {hero.ctas.secondary.label}
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
             </span>
             <Link
-              href="/methodology"
+              href={hero.ctas.ghost.href}
               className="font-serif text-base text-ink-700 hover:text-seal-500 transition-colors"
             >
-              先看方法论
+              {hero.ctas.ghost.label}
             </Link>
           </div>
         </div>
@@ -194,7 +155,7 @@ export default async function HomePage() {
         {/* Layer 3 · 4 个 lead — 入口, 不是品牌 */}
         <div className="relative max-w-prose-xl mx-auto px-6 pb-12">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-10 text-center">
-            · 如果下面任何一条, 你认出了自己 ·
+            · {hero.leadsIntro} ·
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
             {HERO_LEADS.map((lead) => (
@@ -219,13 +180,13 @@ export default async function HomePage() {
         <div className="relative max-w-prose-xl mx-auto px-6 pt-12 pb-20 text-center">
           <div className="inline-block">
             <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-ink-900 mb-1 tracking-tightish">
-              Got a key call?
+              {hero.betterCallKey.en1}
             </p>
             <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-seal-500 mb-4 tracking-tightish">
-              Better call KEY.
+              {hero.betterCallKey.en2}
             </p>
             <p className="font-sans text-[11px] uppercase tracking-[0.35em] text-ink-500">
-              重大抉择面前 · 来找 KEY
+              {hero.betterCallKey.cnSubtitle}
             </p>
           </div>
         </div>
