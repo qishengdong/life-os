@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import HomeEditor from './_editors/HomeEditor';
 import MethodologyEditor from './_editors/MethodologyEditor';
 import SampleBriefEditor from './_editors/SampleBriefEditor';
+import MembershipEditor from './_editors/MembershipEditor';
 
 // ============================================================================
 // Page registry — 加新页就在这里加一行
@@ -44,8 +45,8 @@ const TABS: CmsTab[] = [
     key: 'membership',
     label: '会员',
     hint: '/membership',
-    component: () => <ComingSoon page="会员" />,
-    status: 'coming',
+    component: MembershipEditor,
+    status: 'ready',
   },
   {
     key: 'pricing',

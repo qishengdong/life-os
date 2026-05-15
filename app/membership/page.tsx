@@ -13,19 +13,13 @@
  */
 
 import Link from 'next/link';
-import {
-  HERO,
-  WHY_YEAR,
-  ANCHOR,
-  TIERS,
-  REFUND,
-  WE_DO_NOT,
-  JOIN,
-  type Tier,
-} from '@/lib/content/membership/content';
+import { loadMembershipContent, type MembershipTier } from '@/lib/content/membership';
 import KeyWordmark from '@/components/KeyWordmark';
 
 export const runtime = 'nodejs';
+
+// 兼容旧的 Tier 别名
+type Tier = MembershipTier;
 
 // ============================================================================
 // 顶部导航
@@ -164,6 +158,16 @@ function TierBlock({ tier }: { tier: Tier }) {
 // 主页面
 // ============================================================================
 export default function MembershipPage() {
+  const {
+    hero: HERO,
+    whyYear: WHY_YEAR,
+    anchor: ANCHOR,
+    tiers: TIERS,
+    refund: REFUND,
+    weDoNot: WE_DO_NOT,
+    join: JOIN,
+  } = loadMembershipContent();
+
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
