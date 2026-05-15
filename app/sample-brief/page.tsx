@@ -251,6 +251,15 @@ async function SampleBriefContent({
       {/* ============================================ */}
       <main className="max-w-prose-xl mx-auto px-6 pb-32 pt-16">
         <BriefRenderer brief={selected.brief} showSeal={true} compactHeader={true} />
+
+        {/* C6 · End-of-brief transitional line (immediately above membership CTA) */}
+        <div className="mt-16 max-w-[26em] mx-auto text-center">
+          <p className="font-serif italic text-[17px] text-ink-500 leading-snug">
+            读完这份简报的人, 平均坐在屏幕前 {selected.minutes + 3} 分钟.
+            <br />
+            我们也是花了那么久写它的.
+          </p>
+        </div>
       </main>
 
       {/* ============================================ */}

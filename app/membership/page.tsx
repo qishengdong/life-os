@@ -247,7 +247,7 @@ export default function MembershipPage() {
                 <span className="font-serif text-base text-ink-700">¥1,000–3,000</span>
               </div>
             </div>
-            {/* Card 3 · KEY ¥1,988 4% width BURGUNDY */}
+            {/* Card 3 · KEY ¥1988 4% width BURGUNDY */}
             <div className="flex items-stretch gap-5">
               <div className="bg-seal-500 h-20 md:h-24 w-full md:w-[4%] md:min-w-[44px] px-4 md:px-2 flex items-center md:justify-center">
                 <span className="md:hidden font-sans text-[10px] uppercase tracking-[0.28em] text-paper-100">
@@ -258,10 +258,10 @@ export default function MembershipPage() {
                 <span className="font-sans text-[10px] uppercase tracking-[0.28em] text-seal-500 mb-1">
                   KEY · ANNUAL
                 </span>
-                <span className="font-serif text-2xl text-seal-500 tracking-tighter">¥1,988</span>
+                <span className="font-serif text-2xl text-seal-500 tracking-tighter">¥1988</span>
               </div>
               <div className="md:hidden flex flex-col justify-center ml-auto">
-                <span className="font-serif text-base text-seal-500">¥1,988</span>
+                <span className="font-serif text-base text-seal-500">¥1988</span>
               </div>
             </div>
           </div>

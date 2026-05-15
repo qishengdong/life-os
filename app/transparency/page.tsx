@@ -277,16 +277,32 @@ function BriefBlock() {
   const charTrend = getBriefCharCountTrend(20);
   const showTrends = s.total >= TRANSPARENCY_TREND_MIN_N;
 
+  /** C3 · label · value row, 不再用 bordered tile box */
+  const rows: { label: string; value: string }[] = [
+    { label: '累计生成', value: `${s.total} 份` },
+    { label: '平均字数', value: `${s.avgChars} 字` },
+    { label: 'Editor pass 通过率', value: `${s.editorPassRate}%` },
+    { label: 'Analyst 耗时', value: `${(s.avgAnalystMs / 1000).toFixed(1)} 秒` },
+    { label: 'Editor 耗时', value: `${(s.avgEditorMs / 1000).toFixed(1)} 秒` },
+    { label: '平均 tokens', value: s.avgTokens.toLocaleString() },
+  ];
+
   return (
     <div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 py-8 border-y border-paper-300">
-        <Metric label="累计生成" value={String(s.total)} suffix="份" />
-        <Metric label="平均字数" value={String(s.avgChars)} suffix="字" />
-        <Metric label="Editor pass 通过率" value={String(s.editorPassRate)} suffix="%" />
-        <Metric label="Analyst 耗时" value={(s.avgAnalystMs / 1000).toFixed(1)} suffix="秒" />
-        <Metric label="Editor 耗时" value={(s.avgEditorMs / 1000).toFixed(1)} suffix="秒" />
-        <Metric label="平均 tokens" value={s.avgTokens.toLocaleString()} suffix="" />
-      </div>
+      {/* C3 · 简单 label · value 行, hairline 对齐, 摆掉 bordered metric tiles */}
+      <dl className="py-2 border-t border-paper-300">
+        {rows.map((r) => (
+          <div
+            key={r.label}
+            className="grid grid-cols-[1fr_auto] gap-6 py-3 border-b border-paper-300/70"
+          >
+            <dt className="font-sans text-[11px] uppercase tracking-[0.25em] text-ink-500">
+              {r.label}
+            </dt>
+            <dd className="font-serif text-lg text-ink-900 tracking-tightish">{r.value}</dd>
+          </div>
+        ))}
+      </dl>
 
       {/* B11 · N >= 10 才显示 sparkline; 否则显示最近 3 个 flat list */}
       {showTrends ? (
