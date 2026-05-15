@@ -115,6 +115,12 @@ export default function AdminPage() {
           >
             Invites →
           </Link>
+          <Link
+            href="/admin/qa"
+            className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+          >
+            QA →
+          </Link>
           <button
             onClick={logout}
             className="font-mono text-xs uppercase tracking-widest text-paper-300/60 hover:text-ember transition-colors"

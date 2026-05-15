@@ -17,6 +17,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendOutcomeDueNotification } from '@/lib/email/sender';
 import { getDb } from '@/lib/db';
+import { runTestBattery } from '@/lib/test/runner';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -83,10 +84,30 @@ async function runOutcomesDailyWork() {
     await new Promise((r) => setTimeout(r, 300));
   }
 
+  // JOB-028 · 同 cron 周期 chain AI Native daily fleet (Layer A only, 全 40, 毫秒级)
+  // Layer C 抽样太烧 token, 不进 daily cron (admin /admin/qa 手动跑)
+  let qaResult: any = null;
+  try {
+    qaResult = await runTestBattery({
+      mode: 'layer_a_only',
+      label: 'daily-fleet',
+    });
+  } catch (e: any) {
+    console.error('[cron/outcomes-daily] QA fleet failed:', e.message);
+  }
+
   return NextResponse.json({
     success: true,
     candidates: dueOutcomes.length,
     results,
+    qaFleet: qaResult
+      ? {
+          runId: qaResult.runId,
+          total: qaResult.totalCases,
+          passedA: qaResult.passedA,
+          failures: qaResult.failures.length,
+        }
+      : null,
   });
 }
 

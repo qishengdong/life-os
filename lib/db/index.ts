@@ -545,6 +545,46 @@ export function getDb(): Database.Database {
       ON brain_insights(user_id, pattern_type);
   `);
 
+  // ============================================================
+  // JOB-027 · AI Native Test v3 · 跑结果存储
+  // ============================================================
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS test_runs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      label TEXT,                              -- 'pre-launch' / 'daily-fleet' / 'manual'
+      mode TEXT CHECK(mode IN ('layer_a_only','layer_ac','layer_abc')) NOT NULL,
+      total_cases INTEGER NOT NULL,
+      passed_a INTEGER DEFAULT 0,
+      passed_c INTEGER DEFAULT 0,
+      passed_b INTEGER DEFAULT 0,
+      tokens_used INTEGER DEFAULT 0,
+      duration_ms INTEGER,
+      created_at INTEGER DEFAULT (unixepoch())
+    );
+
+    CREATE TABLE IF NOT EXISTS test_results (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      run_id INTEGER NOT NULL,
+      scenario_id TEXT NOT NULL,           -- e.g. "F01-T1-decision"
+      persona_id TEXT NOT NULL,
+      trap_type TEXT NOT NULL,
+      stage TEXT NOT NULL,
+      ai_output TEXT,                       -- 完整 AI 输出 (供 dashboard 看)
+      layer_a_pass INTEGER NOT NULL,        -- 0/1
+      layer_a_fails TEXT,                   -- JSON array
+      layer_c_pass INTEGER,                 -- 0/1 · NULL = 没跑
+      layer_c_focus_avg REAL,
+      layer_c_overall_avg REAL,
+      layer_c_scores TEXT,                  -- JSON
+      layer_c_comment TEXT,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (run_id) REFERENCES test_runs(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_test_results_run ON test_results(run_id);
+    CREATE INDEX IF NOT EXISTS idx_test_results_scenario ON test_results(scenario_id);
+  `);
+
   // 每次 weekly run 的 audit
   _db.exec(`
     CREATE TABLE IF NOT EXISTS brain_insight_runs (

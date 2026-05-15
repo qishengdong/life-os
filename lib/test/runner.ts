@@ -1,0 +1,241 @@
+/**
+ * AI Native Test v3 · Runner harness
+ *
+ * 一个 case 走 3-layer judge, 结果存表.
+ * Pre-launch battery: 全 40 × 12 personas (实际 40 个 scenario 已指定 persona, 不需要 cartesian).
+ * Daily fleet: 抽 10-15 random.
+ *
+ * AI 输出由哪个 endpoint 产? 取决于 stage:
+ *   - onboarding → trigger /api/onboarding (POST)
+ *   - decision → /api/decision/brief (POST)
+ *   - pulse → /api/pulse (POST)
+ *   - letter → /api/letters (POST)
+ *   - outcome → /api/outcomes (POST)
+ *
+ * 但运行测试 inline 我们直接调 lib (跳过 API 层 + cookie 等无关基础设施).
+ */
+
+import { getDb } from '@/lib/db';
+import { runLayerA } from './layer-a';
+import { runLayerC } from './layer-c';
+import type { TrapScenario, ProductStage } from './scenarios-v3';
+import { SCENARIOS_V3 } from './scenarios-v3';
+import { getPersonaById, type PersonaV3 } from './personas-v3';
+import { generateBrief } from '@/lib/decision/brief-pipeline';
+import { renderBriefMarkdown } from '@/lib/decision/brief-schema';
+
+export interface RunOptions {
+  mode: 'layer_a_only' | 'layer_ac' | 'layer_abc'; // layer_b 暂不实现
+  label?: string;
+  /** 仅跑这些 scenario IDs (undefined = 跑全部) */
+  filterScenarioIds?: string[];
+  /** 仅跑这些 traps */
+  filterTraps?: string[];
+  /** 仅跑这些 stages */
+  filterStages?: ProductStage[];
+  /** Daily fleet 用 · 随机抽 N 个 */
+  sampleSize?: number;
+}
+
+export interface RunSummary {
+  runId: number;
+  totalCases: number;
+  passedA: number;
+  passedC: number;
+  tokensUsed: number;
+  durationMs: number;
+  failures: Array<{
+    scenarioId: string;
+    layerAFails?: string[];
+    layerCFocusAvg?: number;
+  }>;
+}
+
+// ============================================================================
+// 主入口
+// ============================================================================
+export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
+  const t0 = Date.now();
+  const db = getDb();
+
+  // 1. 选 scenarios
+  let scenarios = SCENARIOS_V3.slice();
+  if (opts.filterScenarioIds) {
+    const set = new Set(opts.filterScenarioIds);
+    scenarios = scenarios.filter((s) => set.has(s.id));
+  }
+  if (opts.filterTraps) {
+    const set = new Set(opts.filterTraps);
+    scenarios = scenarios.filter((s) => set.has(s.trap));
+  }
+  if (opts.filterStages) {
+    const set = new Set(opts.filterStages);
+    scenarios = scenarios.filter((s) => set.has(s.stage));
+  }
+  if (opts.sampleSize && opts.sampleSize < scenarios.length) {
+    scenarios = shuffle(scenarios).slice(0, opts.sampleSize);
+  }
+
+  // 2. 起 run 记录
+  const runRes = db
+    .prepare(
+      `INSERT INTO test_runs (label, mode, total_cases) VALUES (?, ?, ?)`,
+    )
+    .run(opts.label || 'manual', opts.mode, scenarios.length);
+  const runId = runRes.lastInsertRowid as number;
+
+  let passedA = 0;
+  let passedC = 0;
+  let tokensUsed = 0;
+  const failures: RunSummary['failures'] = [];
+
+  // 3. 跑每个 scenario
+  for (const scenario of scenarios) {
+    const persona = scenario.personaId ? getPersonaById(scenario.personaId) : undefined;
+    if (!persona) {
+      console.warn(`[test runner] persona ${scenario.personaId} not found, skipping ${scenario.id}`);
+      continue;
+    }
+
+    let aiOutput = '';
+    try {
+      aiOutput = await runScenarioStage(scenario, persona);
+    } catch (e: any) {
+      // 跑失败 → 当 Layer A fail 记
+      aiOutput = `(scenario run failed: ${e.message})`;
+    }
+
+    // Layer A 必跑
+    const a = runLayerA({ scenario, aiOutput, persona });
+    if (a.pass) passedA++;
+    else
+      failures.push({
+        scenarioId: scenario.id,
+        layerAFails: a.fails.map((f) => `${f.reason}${f.matched ? `:${f.matched}` : ''}`),
+      });
+
+    // Layer C 抽样跑 (mode=layer_ac 全跑, mode=layer_a_only 不跑)
+    let cResult: any = null;
+    if (opts.mode === 'layer_ac' || opts.mode === 'layer_abc') {
+      cResult = await runLayerC({ scenario, aiOutput, persona });
+      if (cResult.pass) passedC++;
+      tokensUsed += cResult.tokensUsed;
+      if (!cResult.pass && a.pass) {
+        // 只在 Layer A pass + Layer C fail 时入 failures (避免双 alert)
+        failures.push({
+          scenarioId: scenario.id,
+          layerCFocusAvg: cResult.focusAvg,
+        });
+      }
+    }
+
+    // 4. 写 test_results
+    db.prepare(
+      `INSERT INTO test_results (
+        run_id, scenario_id, persona_id, trap_type, stage,
+        ai_output, layer_a_pass, layer_a_fails,
+        layer_c_pass, layer_c_focus_avg, layer_c_overall_avg,
+        layer_c_scores, layer_c_comment
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(
+      runId,
+      scenario.id,
+      scenario.personaId || 'unknown',
+      scenario.trap,
+      scenario.stage,
+      aiOutput.slice(0, 8000),
+      a.pass ? 1 : 0,
+      JSON.stringify(a.fails),
+      cResult ? (cResult.pass ? 1 : 0) : null,
+      cResult?.focusAvg ?? null,
+      cResult?.overallAvg ?? null,
+      cResult ? JSON.stringify(cResult.scoresByDimension) : null,
+      cResult?.comment || null,
+    );
+  }
+
+  // 5. 更新 run 总结
+  const durationMs = Date.now() - t0;
+  db.prepare(
+    `UPDATE test_runs SET passed_a = ?, passed_c = ?, tokens_used = ?, duration_ms = ? WHERE id = ?`,
+  ).run(passedA, passedC, tokensUsed, durationMs, runId);
+
+  return {
+    runId,
+    totalCases: scenarios.length,
+    passedA,
+    passedC,
+    tokensUsed,
+    durationMs,
+    failures,
+  };
+}
+
+// ============================================================================
+// 各 stage 触发 AI 输出
+// ============================================================================
+
+async function runScenarioStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  switch (scenario.stage) {
+    case 'decision':
+      return await runDecisionStage(scenario, persona);
+    case 'onboarding':
+      return await runOnboardingStage(scenario, persona);
+    case 'pulse':
+      return await runPulseStage(scenario, persona);
+    case 'letter':
+      return await runLetterStage(scenario, persona);
+    case 'outcome':
+      return await runOutcomeStage(scenario, persona);
+    default:
+      return '(unknown stage)';
+  }
+}
+
+async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  const result = await generateBrief({
+    userId: -1, // synthetic — 不写 DB (跑 test 不污染真用户数据)
+    birthDate: persona.birthDate,
+    gender: persona.gender === 'F' ? 'female' : 'male',
+    decision: scenario.userInput,
+    displayName: persona.name,
+  });
+  if (result.safetyShortCircuit) {
+    return `(safety short-circuit: ${result.safetyShortCircuit.response})`;
+  }
+  if (!result.success || !result.brief) {
+    return `(brief generation failed: ${result.error})`;
+  }
+  return renderBriefMarkdown(result.brief);
+}
+
+async function runOnboardingStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
+  // V1: skip real onboarding (会污染 DB · 创建 user 等)
+  // 之后 JOB-027.1 可加 in-memory mode
+  return '(onboarding stage: in-memory run not implemented yet — use API e2e test)';
+}
+
+async function runPulseStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
+  return '(pulse stage: in-memory run not implemented yet)';
+}
+
+async function runLetterStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
+  return '(letter stage: in-memory run not implemented yet)';
+}
+
+async function runOutcomeStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
+  return '(outcome stage: in-memory run not implemented yet)';
+}
+
+// ============================================================================
+// helpers
+// ============================================================================
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
