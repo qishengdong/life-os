@@ -22,6 +22,8 @@ import { renderBriefMarkdown } from '@/lib/decision/brief-schema';
 import { writeC16Audit } from '@/lib/decision/contradiction-detector';
 import { saveBrief, saveDecision, updateUserProfile } from '@/lib/db';
 import { scheduleOutcomes } from '@/lib/outcomes/store';
+import { runInspector } from '@/lib/inspector';
+import { fetchUserMemory } from '@/lib/memory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -134,6 +136,24 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // JOB-007 · Inspector C1-C15 shadow mode 跑 publication-grade 输出
+    // V0 mode='shadow' — 永远只入 audit, 不 block, 不 retry
+    let inspectorHits: number | undefined;
+    try {
+      const userMemory = fetchUserMemory(userId);
+      const inspectorReport = runInspector({
+        userId,
+        decisionId,
+        userQuestion: input.decision,
+        aiResponse: renderedMarkdown,
+        userMemory,
+        framework: brief.meta.framework,
+      });
+      inspectorHits = inspectorReport.hits.length;
+    } catch (e) {
+      console.error('[decision/brief] runInspector failed:', e);
+    }
+
     return NextResponse.json({
       success: true,
       briefRowId,
@@ -148,6 +168,7 @@ export async function POST(req: NextRequest) {
         totalCharCount: brief.meta.totalCharCount,
         framework: brief.meta.framework,
         contradictionsFound: (result.contradictions?.length || 0),
+        inspectorHits: inspectorHits ?? 0,
       },
     });
   } catch (e: any) {
