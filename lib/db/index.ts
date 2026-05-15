@@ -470,6 +470,31 @@ export function getDb(): Database.Database {
     console.log('[DB Migration v22] Added users.access_status');
   }
 
+  // ============================================================
+  // JOB-001 · Onboarding intake answers + onboarding completion flag
+  // ============================================================
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS intake_answers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      step TEXT NOT NULL,                 -- 'identity' / 'life-stage' / 'values' / 'pressing-decisions' / 'expectations'
+      answers TEXT NOT NULL,              -- JSON object · 各步定义见 lib/intake/types.ts
+      version INTEGER DEFAULT 1,           -- 同一步多次填可以递增 (V0 单版本)
+      completed_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      UNIQUE(user_id, step)                -- 每用户每步一份, REPLACE 覆盖
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_intake_user ON intake_answers(user_id);
+  `);
+
+  // users.onboarding_completed_at — 5 步全做完时 set, 用于路由 gate
+  const usersColsJob001 = _db.pragma('table_info(users)') as Array<{ name: string }>;
+  if (!usersColsJob001.some((c) => c.name === 'onboarding_completed_at')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN onboarding_completed_at INTEGER;`);
+    console.log('[DB Migration JOB-001] Added users.onboarding_completed_at');
+  }
+
   return _db;
 }
 
@@ -687,4 +712,73 @@ export function getUserDecisions(userId: number, limit = 100) {
        LIMIT ?`
     )
     .all(userId, limit);
+}
+
+// ============================================================================
+// JOB-001 · Intake answers persistence
+// ============================================================================
+
+export interface IntakeRow {
+  id: number;
+  user_id: number;
+  step: string;
+  answers: string; // JSON
+  version: number;
+  completed_at: number;
+}
+
+/** 保存某一步答案 (覆盖式 — 同 user+step 已有就 REPLACE). */
+export function saveIntakeStep(args: {
+  userId: number;
+  step: string;
+  answers: unknown; // any JSON-serializable
+}): void {
+  const db = getDb();
+  db.prepare(
+    `INSERT INTO intake_answers (user_id, step, answers)
+       VALUES (?, ?, ?)
+       ON CONFLICT(user_id, step) DO UPDATE SET
+         answers = excluded.answers,
+         version = intake_answers.version + 1,
+         completed_at = unixepoch()`,
+  ).run(args.userId, args.step, JSON.stringify(args.answers));
+}
+
+/** 取一个用户的全部 intake 答案, 按 step 名 map. */
+export function getIntakeAnswers(userId: number): Record<string, unknown> {
+  const db = getDb();
+  const rows = db
+    .prepare(`SELECT step, answers FROM intake_answers WHERE user_id = ?`)
+    .all(userId) as Array<{ step: string; answers: string }>;
+  const out: Record<string, unknown> = {};
+  for (const r of rows) {
+    try {
+      out[r.step] = JSON.parse(r.answers);
+    } catch {
+      out[r.step] = null;
+    }
+  }
+  return out;
+}
+
+/** 检查 5 步是否全做完 (用于路由 gate). */
+export function isOnboardingComplete(userId: number): boolean {
+  const db = getDb();
+  const user = db
+    .prepare(`SELECT onboarding_completed_at FROM users WHERE id = ?`)
+    .get(userId) as { onboarding_completed_at: number | null } | undefined;
+  return !!user?.onboarding_completed_at;
+}
+
+/** 标记 onboarding 完成 (5 步都填完之后). */
+export function markOnboardingComplete(userId: number): void {
+  const db = getDb();
+  db.prepare(`UPDATE users SET onboarding_completed_at = unixepoch() WHERE id = ?`).run(userId);
+}
+
+/** 重置 onboarding (用户想重新填). 删 intake_answers 全部 + 清 completed_at. */
+export function resetOnboarding(userId: number): void {
+  const db = getDb();
+  db.prepare(`DELETE FROM intake_answers WHERE user_id = ?`).run(userId);
+  db.prepare(`UPDATE users SET onboarding_completed_at = NULL WHERE id = ?`).run(userId);
 }
