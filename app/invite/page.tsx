@@ -230,7 +230,7 @@ export default function InvitePage() {
             等内测期跑通 (~3-6 个月), 我们会开放申请通道, 但仍然保持人工审核.
           </p>
           <p className="text-ink-500 italic">
-            如果你认同这条路径, 邮件来. 如果不认同 — 也好, 你不是我们的人.
+            如果你认同这条路径, 邮件来. 如果你只是想试一个新的 AI 工具, KEY 可能不适合你.
           </p>
         </div>
       </section>
