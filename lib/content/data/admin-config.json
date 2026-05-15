@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "_meta": {
+    "sessionSecret": "2824e0aa47ad481ef2ac73b740414cb322754a78305a77df28368ca1352c4a5e",
+    "setupCompleted": true,
+    "setupAt": 1778817214
+  },
+  "users": [
+    {
+      "id": "user_340da80bbe06",
+      "username": "xiao",
+      "displayName": "小石",
+      "passwordHash": "scrypt$N=16384,r=8,p=1$xbp0UOR/DdIjsnN2VBQUug==$oRke32CIaDjHKHxSDRCAfBlLwE5co3IZIh4E7GE3pzk=",
+      "role": "owner",
+      "email": "xiao@cms.keypoint.life",
+      "createdAt": 1778817214,
+      "lastLoginAt": null,
+      "active": true
+    }
+  ],
+  "invites": []
+}
