@@ -93,59 +93,79 @@ export default async function HomePage() {
         {/* 顶部书脊金线 */}
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500 z-10" />
 
-        {/* === Hero · 居中文字, 无右图 === */}
-        <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16 max-w-prose-lg">
-          <h1 className="font-serif text-[clamp(2.4rem,5.5vw,4.4rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
-            {hero.brandStatementEn}
-          </h1>
-          <p className="font-serif text-[clamp(1.8rem,4.2vw,2.8rem)] text-ink-900 tracking-tighter leading-[1.05] mb-10">
-            {hero.brandStatementCn}
-          </p>
+        {/* === Hero · 左文 + 右图 (5/15 用户反馈: hero 必须有图) === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-10 md:gap-14 items-start">
+            {/* LEFT · 文字 */}
+            <div className="order-2 md:order-1">
+              <h1 className="font-serif text-[clamp(2rem,4.5vw,3.6rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
+                {hero.brandStatementEn}
+              </h1>
+              <p className="font-serif text-[clamp(1.5rem,3.4vw,2.4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-8">
+                {hero.brandStatementCn}
+              </p>
 
-          <p className="font-serif italic text-[clamp(1.05rem,1.6vw,1.3rem)] text-ink-700 editorial-leading mb-10 whitespace-pre-line">
-            {hero.subTag}
-          </p>
+              <p className="font-serif italic text-[clamp(0.95rem,1.4vw,1.15rem)] text-ink-700 editorial-leading mb-8 whitespace-pre-line">
+                {hero.subTag}
+              </p>
 
-          {/* explainer 接在 deck 后 (3 段) */}
-          <div className="space-y-4 mb-12 max-w-prose-md">
-            {hero.explainer.map((para, i) => {
-              const isItalic = para.trim().startsWith('<i>') && para.trim().endsWith('</i>');
-              const stripped = para.replace(/^<i>|<\/i>$/g, '');
-              const cls = isItalic
-                ? 'font-serif text-reading italic text-ink-500 editorial-leading'
-                : 'font-serif text-reading text-ink-700 editorial-leading';
-              return (
-                <p
-                  key={i}
-                  className={cls}
-                  dangerouslySetInnerHTML={{ __html: stripped }}
+              {/* explainer 接在 deck 后 (3 段) */}
+              <div className="space-y-4 mb-10">
+                {hero.explainer.map((para, i) => {
+                  const isItalic = para.trim().startsWith('<i>') && para.trim().endsWith('</i>');
+                  const stripped = para.replace(/^<i>|<\/i>$/g, '');
+                  const cls = isItalic
+                    ? 'font-serif text-[15px] italic text-ink-500 editorial-leading'
+                    : 'font-serif text-[15px] text-ink-700 editorial-leading';
+                  return (
+                    <p
+                      key={i}
+                      className={cls}
+                      dangerouslySetInnerHTML={{ __html: stripped }}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* CTAs · skip ghost if label empty */}
+              <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
+                <Link
+                  href={hero.ctas.primary.href}
+                  className="font-serif text-base bg-seal-500 hover:bg-seal-700 text-paper-100 px-5 py-2.5 transition-colors tracking-wide"
+                >
+                  {hero.ctas.primary.label}
+                </Link>
+                <Link
+                  href={hero.ctas.secondary.href}
+                  className="font-serif text-[15px] text-ink-900 border-b-2 border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+                >
+                  {hero.ctas.secondary.label}
+                </Link>
+                {hero.ctas.ghost.label && (
+                  <Link
+                    href={hero.ctas.ghost.href}
+                    className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
+                  >
+                    {hero.ctas.ghost.label}
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT · hero 图 */}
+            <div className="order-1 md:order-2 md:sticky md:top-8">
+              <div className="relative aspect-[4/5] bg-ink-900 overflow-hidden shadow-lg">
+                <Image
+                  src="/illustrations/hero-home.png"
+                  alt={hero.brandStatementEn}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  priority
+                  className="object-cover"
                 />
-              );
-            })}
-          </div>
-
-          {/* CTAs · skip ghost if label empty */}
-          <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
-            <Link
-              href={hero.ctas.primary.href}
-              className="font-serif text-base bg-seal-500 hover:bg-seal-700 text-paper-100 px-5 py-2.5 transition-colors tracking-wide"
-            >
-              {hero.ctas.primary.label}
-            </Link>
-            <Link
-              href={hero.ctas.secondary.href}
-              className="font-serif text-[15px] text-ink-900 border-b-2 border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
-            >
-              {hero.ctas.secondary.label}
-            </Link>
-            {hero.ctas.ghost.label && (
-              <Link
-                href={hero.ctas.ghost.href}
-                className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
-              >
-                {hero.ctas.ghost.label}
-              </Link>
-            )}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -206,23 +226,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* ============================================ */}
-      {/* B4 · Hero 大图 (满版, 移到 mini-stories 后)     */}
-      {/* ============================================ */}
-      <section className="relative w-full bg-ink-900 overflow-hidden border-b border-paper-300">
-        <div className="relative w-full aspect-[16/9] md:aspect-[16/8] max-h-[78vh]">
-          <Image
-            src="/illustrations/hero-home.png"
-            alt={hero.brandStatementEn}
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover"
-          />
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500" />
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-seal-500" />
-        </div>
-      </section>
+      {/* B4 满版大图删除 · 图已回 hero 区, 中间不再重复 */}
 
       {/* ============================================ */}
       {/* WHAT IS THIS — 卷首语                          */}
@@ -305,25 +309,48 @@ export default async function HomePage() {
             这份服务为你而做.
           </h2>
 
-          <ol className="space-y-10">
-            {FIVE_DOMAINS.map((d, i) => (
-              <li key={d.ch} className="flex items-baseline gap-6 border-b border-paper-300 pb-8 last:border-b-0">
-                <span className="font-serif italic text-seal-500 text-2xl tracking-widest select-none w-12">
-                  {['I', 'II', 'III', 'IV', 'V'][i]}.
-                </span>
-                <div className="flex-1">
-                  <h3 className="font-serif text-2xl text-ink-900 tracking-tightish mb-1">
-                    {d.ch}
-                  </h3>
-                  <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
-                    {d.en}
-                  </p>
-                  <p className="font-serif text-[15px] text-ink-500 editorial-leading">
-                    {d.note}
-                  </p>
-                </div>
-              </li>
-            ))}
+          <ol className="space-y-12">
+            {FIVE_DOMAINS.map((d, i) => {
+              const coreImg = [
+                '/illustrations/core-01-parent-care.png',
+                '/illustrations/core-02-child-path.png',
+                '/illustrations/core-03-marriage.png',
+                '/illustrations/core-04-career-turn.png',
+                '/illustrations/core-05-migration.png',
+              ][i];
+              return (
+                <li
+                  key={d.ch}
+                  className="grid grid-cols-1 md:grid-cols-[80px_1fr_1.1fr] gap-6 md:gap-10 items-center border-b border-paper-300 pb-10 last:border-b-0"
+                >
+                  <span className="font-serif italic text-seal-500 text-3xl tracking-widest select-none md:text-right">
+                    {['I', 'II', 'III', 'IV', 'V'][i]}.
+                  </span>
+                  <div className="flex-1 order-3 md:order-2">
+                    <h3 className="font-serif text-2xl text-ink-900 tracking-tightish mb-1">
+                      {d.ch}
+                    </h3>
+                    <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
+                      {d.en}
+                    </p>
+                    <p className="font-serif text-[15px] text-ink-500 editorial-leading">
+                      {d.note}
+                    </p>
+                  </div>
+                  {coreImg && (
+                    <div className="order-2 md:order-3 relative aspect-[16/10] bg-ink-900/5 overflow-hidden">
+                      <Image
+                        src={coreImg}
+                        alt={`${d.ch} · ${d.en}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 32vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ol>
         </div>
       </section>
