@@ -15,6 +15,7 @@ import MembershipEditor from './_editors/MembershipEditor';
 import TransparencyEditor from './_editors/TransparencyEditor';
 import PricingEditor from './_editors/PricingEditor';
 import AboutEditor from './_editors/AboutEditor';
+import { TermsEditor, PrivacyEditor } from './_editors/LegalEditor';
 
 // ============================================================================
 // Page registry — 加新页就在这里加一行
@@ -76,15 +77,15 @@ const TABS: CmsTab[] = [
     key: 'terms',
     label: '服务条款',
     hint: '/terms',
-    component: () => <ComingSoon page="服务条款" />,
-    status: 'coming',
+    component: TermsEditor,
+    status: 'ready',
   },
   {
     key: 'privacy',
     label: '隐私',
     hint: '/privacy',
-    component: () => <ComingSoon page="隐私" />,
-    status: 'coming',
+    component: PrivacyEditor,
+    status: 'ready',
   },
 ];
 
