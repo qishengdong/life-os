@@ -9,6 +9,7 @@ import type {
   HomeLead,
   HomeFiveDomain,
   HomeFooterNavLink,
+  HomeWhatYouGetItem,
 } from '@/lib/content/home';
 import {
   SectionCard,
@@ -86,6 +87,32 @@ export default function HomeEditor() {
     value: HomeContent['footer'][K],
   ) {
     cms.setContent((c) => (c ? { ...c, footer: { ...c.footer, [key]: value } } : c));
+  }
+
+  function updateEditorial<K extends keyof HomeContent['editorial']>(
+    key: K,
+    value: HomeContent['editorial'][K],
+  ) {
+    cms.setContent((c) => (c ? { ...c, editorial: { ...c.editorial, [key]: value } } : c));
+  }
+
+  function updateWhatYouGet<K extends keyof HomeContent['whatYouGet']>(
+    key: K,
+    value: HomeContent['whatYouGet'][K],
+  ) {
+    cms.setContent((c) =>
+      c ? { ...c, whatYouGet: { ...c.whatYouGet, [key]: value } } : c,
+    );
+  }
+
+  function updateWhatYouGetItem(idx: number, patch: Partial<HomeWhatYouGetItem>) {
+    cms.setContent((c) => {
+      if (!c) return c;
+      const items = c.whatYouGet.items.map((it, i) =>
+        i === idx ? { ...it, ...patch } : it,
+      );
+      return { ...c, whatYouGet: { ...c.whatYouGet, items } };
+    });
   }
 
   return (
@@ -262,7 +289,115 @@ export default function HomeEditor() {
         </Field>
       </SectionCard>
 
-      <SectionCard title="⑥ 五类决策" hint="父母 / 子女 / 婚姻 / 职业 / 迁移">
+      <SectionCard
+        title="⑥ 服务总声明"
+        hint="首页第二屏 · '重大决定，不是找答案，是看清代价' 这块"
+      >
+        <Field label="眉头 (uppercase 小字)">
+          <TextInput
+            value={content.editorial.eyebrow}
+            onChange={(v) => updateEditorial('eyebrow', v)}
+          />
+        </Field>
+        <Field label="主标题 (大字)">
+          <TextArea
+            value={content.editorial.title}
+            onChange={(v) => updateEditorial('title', v)}
+            rows={2}
+          />
+        </Field>
+        <Field
+          label="正文 (每行一段, 空行忽略)"
+          hint="例: KEY 不替你决定。 / 它帮你找到真正的问题..."
+        >
+          <LinesEditor
+            value={content.editorial.paragraphs}
+            onChange={(v) => updateEditorial('paragraphs', v)}
+            rows={5}
+          />
+        </Field>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Field label="CTA 文字">
+            <TextInput
+              value={content.editorial.ctaLabel}
+              onChange={(v) => updateEditorial('ctaLabel', v)}
+              placeholder="读完整方法论 →"
+            />
+          </Field>
+          <Field label="CTA 链接">
+            <TextInput
+              value={content.editorial.ctaHref}
+              onChange={(v) => updateEditorial('ctaHref', v)}
+              placeholder="/methodology"
+            />
+          </Field>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="⑦ 你会拿到什么 (9 件事)"
+        hint="一份 KEY Brief 拆成的 9 个 section · 跟 brief schema 对齐"
+      >
+        <Field label="眉头 (uppercase 小字)">
+          <TextInput
+            value={content.whatYouGet.eyebrow}
+            onChange={(v) => updateWhatYouGet('eyebrow', v)}
+          />
+        </Field>
+        <Field label="主标题">
+          <TextInput
+            value={content.whatYouGet.title}
+            onChange={(v) => updateWhatYouGet('title', v)}
+          />
+        </Field>
+        <div className="border-t border-stone-200 pt-4">
+          <label className="block text-sm font-medium text-stone-700 mb-3">
+            9 件事 ({content.whatYouGet.items.length} 项 · 建议保持 9 个)
+          </label>
+          {content.whatYouGet.items.map((item, i) => (
+            <div
+              key={i}
+              className="grid grid-cols-[60px_1fr] gap-3 items-center mb-2"
+            >
+              <TextInput
+                value={item.num}
+                onChange={(v) => updateWhatYouGetItem(i, { num: v })}
+                placeholder="I"
+              />
+              <TextInput
+                value={item.title}
+                onChange={(v) => updateWhatYouGetItem(i, { title: v })}
+                placeholder="你表面在问什么"
+              />
+            </div>
+          ))}
+        </div>
+        <Field label="附注 (列表下方的小字)">
+          <TextInput
+            value={content.whatYouGet.afterNote}
+            onChange={(v) => updateWhatYouGet('afterNote', v)}
+            placeholder="+ 30 / 90 / 365 天后, 我们一起回来复盘."
+          />
+        </Field>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Field label="CTA 文字">
+            <TextInput
+              value={content.whatYouGet.ctaLabel}
+              onChange={(v) => updateWhatYouGet('ctaLabel', v)}
+              placeholder="读完整样品简报 →"
+            />
+          </Field>
+          <Field label="CTA 链接">
+            <TextInput
+              value={content.whatYouGet.ctaHref}
+              onChange={(v) => updateWhatYouGet('ctaHref', v)}
+              placeholder="/sample-brief"
+            />
+          </Field>
+        </div>
+      </SectionCard>
+
+      <SectionCard title="⑧ 五类决策" hint="父母 / 子女 / 婚姻 / 职业 / 迁移">
         <Field label="板块标题">
           <TextInput
             value={content.fiveDomains.title}
@@ -297,7 +432,7 @@ export default function HomeEditor() {
         ))}
       </SectionCard>
 
-      <SectionCard title="⑦ 落款 + 导航" hint="首页底部">
+      <SectionCard title="⑨ 落款 + 导航" hint="首页底部">
         <Field label="主签名">
           <TextInput
             value={content.footer.tagline}

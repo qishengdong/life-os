@@ -67,6 +67,34 @@
       "cnSubtitle": "If any of the above gave you pause — that is the work."
     }
   },
+  "editorial": {
+    "eyebrow": "· 这就是 KEY ·",
+    "title": "重大决定，不是找答案，是看清代价。",
+    "paragraphs": [
+      "KEY 不替你决定。",
+      "它帮你找到真正的问题、看清每条路的代价，并把这一切写成一份可以反复阅读的私人决策简报。"
+    ],
+    "ctaLabel": "读完整方法论 →",
+    "ctaHref": "/methodology"
+  },
+  "whatYouGet": {
+    "eyebrow": "· 一份 KEY Brief 长这样 ·",
+    "title": "把一个决定拆成九件事.",
+    "items": [
+      { "num": "I",   "title": "你表面在问什么" },
+      { "num": "II",  "title": "真正卡住你的关键点" },
+      { "num": "III", "title": "这件事的具体背景" },
+      { "num": "IV",  "title": "谁会受益，谁会受损" },
+      { "num": "V",   "title": "哪些风险不可逆" },
+      { "num": "VI",  "title": "三条可能路径 · 各自 5 年后图景" },
+      { "num": "VII", "title": "一次反向尸检 (PreMortem)" },
+      { "num": "VIII","title": "你还没有回答的那个硬问题" },
+      { "num": "IX",  "title": "24 小时内可做的最小行动" }
+    ],
+    "afterNote": "+ 30 / 90 / 365 天后, 我们一起回来复盘.",
+    "ctaLabel": "读完整样品简报 →",
+    "ctaHref": "/sample-brief"
+  },
   "fiveDomains": {
     "title": "KEY 为五类决策而做.",
     "items": [

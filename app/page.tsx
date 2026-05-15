@@ -32,7 +32,7 @@ const FRAMEWORK_LABEL: Record<string, string> = {
 export default async function HomePage() {
   // CMS 可编辑内容 (lib/content/data/home.json)
   const content = loadHomeContent();
-  const { hero, fiveDomains, footer } = content;
+  const { hero, editorial, whatYouGet, fiveDomains, footer } = content;
   const HERO_LEADS = hero.leads;
   const FIVE_DOMAINS = fiveDomains.items;
 
@@ -250,38 +250,78 @@ export default async function HomePage() {
       {/* B4 满版大图删除 · 图已回 hero 区, 中间不再重复 */}
 
       {/* ============================================ */}
-      {/* WHAT IS THIS — 卷首语                          */}
+      {/* EDITORIAL — 服务总声明 (CMS 可编辑)              */}
       {/* ============================================ */}
       <section className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-lg mx-auto px-6 py-24">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
-            · 卷首语 ·
+            {editorial.eyebrow}
           </p>
           <h2 className="font-serif text-editorial text-ink-900 mb-10 tracking-tightish leading-tight">
-            我们为 AI 写了一份决策契约.
+            {editorial.title}
           </h2>
           <div className="space-y-5 font-serif text-reading text-ink-700 editorial-leading">
-            <p>
-              市面上大多数所谓 "AI 决策工具", 不过是给 ChatGPT 套一层 UI. 它们卖的是 "AI 的便利".
-              我们卖的是另一件事 — 我们卖的是 "AI 不能跳过的步骤".
-            </p>
-            <p>
-              在重大人生决策面前, 你不需要再多一个夸你的 AI. 你需要一个被严格约束 / 长期记得你 /
-              不替你做决定, 但保证你不跳过你一个人时会跳过的关键问题的伙伴.
-            </p>
-            <p>
-              7 条决策契约. 12 维结构化分析. PreMortem 反向尸检. 30 / 90 / 365 天回访. 长期记忆.
-              在代码里, 不在市场话术里.
-            </p>
+            {editorial.paragraphs.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
           </div>
-          <div className="mt-10">
-            <Link
-              href="/methodology"
-              className="font-serif text-base text-ink-900 border-b border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
-            >
-              读完整方法论 →
-            </Link>
-          </div>
+          {editorial.ctaLabel && (
+            <div className="mt-10">
+              <Link
+                href={editorial.ctaHref}
+                className="font-serif text-base text-ink-900 border-b border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+              >
+                {editorial.ctaLabel}
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* WHAT YOU GET — 9 件事 (CMS 可编辑)              */}
+      {/* ============================================ */}
+      <section className="border-t border-paper-300">
+        <div className="max-w-prose-xl mx-auto px-6 py-24">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-8">
+            {whatYouGet.eyebrow}
+          </p>
+          <h2 className="font-serif text-editorial text-ink-900 mb-12 tracking-tightish leading-tight">
+            {whatYouGet.title}
+          </h2>
+
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+            {whatYouGet.items.map((item) => (
+              <li
+                key={item.num}
+                className="flex gap-5 items-baseline border-b border-paper-300 pb-5"
+              >
+                <span className="font-serif italic text-seal-500 text-xl tracking-widest select-none shrink-0 w-10 text-right">
+                  {item.num}.
+                </span>
+                <span className="font-serif text-[17px] text-ink-900 editorial-leading">
+                  {item.title}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          {whatYouGet.afterNote && (
+            <p className="font-serif italic text-[15px] text-ink-500 editorial-leading mt-10">
+              {whatYouGet.afterNote}
+            </p>
+          )}
+
+          {whatYouGet.ctaLabel && (
+            <div className="mt-10">
+              <Link
+                href={whatYouGet.ctaHref}
+                className="font-serif text-base text-ink-900 border-b border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+              >
+                {whatYouGet.ctaLabel}
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

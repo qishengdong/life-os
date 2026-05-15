@@ -76,9 +76,35 @@ export interface HomeFooter {
   navLinks: HomeFooterNavLink[];
 }
 
+/** 服务总声明 (替代原硬编码"卷首语" · KEY 是什么的服务级表达). */
+export interface HomeEditorial {
+  eyebrow: string;            // "· 这就是 KEY ·"
+  title: string;              // "重大决定，不是找答案，是看清代价。"
+  paragraphs: string[];       // 服务承诺 (短句, 不哄不诊断)
+  ctaLabel: string;           // "读完整方法论 →"
+  ctaHref: string;            // "/methodology"
+}
+
+export interface HomeWhatYouGetItem {
+  num: string;                // "I" / "II" 罗马 (跟方法论同款排版)
+  title: string;              // "你表面在问什么"
+}
+
+/** "What You Get" · 用户提交后会拿到什么 (KEY Brief 9 件事). */
+export interface HomeWhatYouGet {
+  eyebrow: string;            // "· 一份 KEY Brief 长这样 ·"
+  title: string;              // "把一个决定拆成九件事."
+  items: HomeWhatYouGetItem[]; // 9 个 (跟 brief schema 对齐)
+  afterNote: string;          // "+ 30 / 90 / 365 天后, 我们一起回来复盘."
+  ctaLabel: string;           // "读完整样品简报 →"
+  ctaHref: string;            // "/sample-brief"
+}
+
 export interface HomeContent {
   version: number;
   hero: HomeHero;
+  editorial: HomeEditorial;
+  whatYouGet: HomeWhatYouGet;
   fiveDomains: HomeFiveDomains;
   footer: HomeFooter;
 }
@@ -139,6 +165,22 @@ export function validateHomeContent(c: any): asserts c is HomeContent {
       throw new Error(`leads[${i}].setup must be non-empty array`);
     }
     if (!lead.truth || typeof lead.truth !== 'string') throw new Error(`leads[${i}].truth invalid`);
+  }
+  // editorial · 服务总声明
+  if (!c.editorial || typeof c.editorial !== 'object') throw new Error('missing editorial');
+  if (!c.editorial.title) throw new Error('editorial.title required');
+  if (!Array.isArray(c.editorial.paragraphs) || c.editorial.paragraphs.length === 0) {
+    throw new Error('editorial.paragraphs must be non-empty array');
+  }
+  // whatYouGet · 9 件事
+  if (!c.whatYouGet || typeof c.whatYouGet !== 'object') throw new Error('missing whatYouGet');
+  if (!c.whatYouGet.title) throw new Error('whatYouGet.title required');
+  if (!Array.isArray(c.whatYouGet.items) || c.whatYouGet.items.length === 0) {
+    throw new Error('whatYouGet.items must be non-empty array');
+  }
+  for (const [i, item] of c.whatYouGet.items.entries()) {
+    if (!item.num || typeof item.num !== 'string') throw new Error(`whatYouGet.items[${i}].num invalid`);
+    if (!item.title || typeof item.title !== 'string') throw new Error(`whatYouGet.items[${i}].title invalid`);
   }
 }
 
