@@ -14,6 +14,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
@@ -75,32 +76,84 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
-      {/* HERO V3 — 品牌定位为主, 痛点为入口 (BB 调性)    */}
+      {/* HERO V4 — Magazine-cover 分屏: 左文 + 右图        */}
       {/* ============================================ */}
       <header className="relative overflow-hidden">
         {/* 顶部书脊金线 */}
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-seal-500 z-10" />
 
-        {/* Layer 1 · Brand Statement */}
-        <div className="relative max-w-prose-xl mx-auto px-6 pt-24 pb-12">
-          <div className="mb-8">
-            <KeyWordmark variant="display" height={56} />
+        {/* === 主区: 左文 + 右图 (桌面分屏 / 手机叠加) === */}
+        <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-10 md:gap-14 items-center">
+            {/* LEFT: 标题 + sub-tag + CTAs */}
+            <div className="order-2 md:order-1">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+                · KEY Editorial Office ·
+              </p>
+
+              <h1 className="font-serif text-[clamp(2rem,4.5vw,3.6rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
+                {hero.brandStatementEn}
+              </h1>
+              <p className="font-serif text-[clamp(1.5rem,3.4vw,2.4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-8">
+                {hero.brandStatementCn}
+              </p>
+
+              <p className="font-serif italic text-[clamp(0.95rem,1.4vw,1.15rem)] text-ink-700 editorial-leading mb-10">
+                {hero.subTag}
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
+                <Link
+                  href={hero.ctas.primary.href}
+                  className="font-serif text-base bg-seal-500 hover:bg-seal-700 text-paper-100 px-5 py-2.5 transition-colors tracking-wide"
+                >
+                  {hero.ctas.primary.label}
+                </Link>
+                <Link
+                  href={hero.ctas.secondary.href}
+                  className="font-serif text-[15px] text-ink-900 border-b-2 border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+                >
+                  {hero.ctas.secondary.label}
+                </Link>
+                <Link
+                  href={hero.ctas.ghost.href}
+                  className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
+                >
+                  {hero.ctas.ghost.label}
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT: hero image */}
+            <div className="order-1 md:order-2">
+              <div className="relative aspect-[4/5] bg-ink-900 overflow-hidden shadow-lg">
+                {/* TODO 用户在生 hero-key.png (engraving 风 铁钥匙). 到位后替换 src. */}
+                <Image
+                  src="/illustrations/editorial-marriage.png"
+                  alt={hero.brandStatementEn}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  priority
+                  className="object-cover"
+                />
+                {/* 顶部 burgundy hairline — 封面书脊金线 */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+                {/* 右上 ISSUE 编号 */}
+                <div className="absolute top-4 right-4 inline-flex items-baseline gap-2 px-2.5 py-0.5 bg-paper-100/95 border border-paper-100">
+                  <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-seal-500">
+                    ISSUE
+                  </span>
+                  <span className="font-serif text-base text-seal-500 tracking-tighter leading-none">
+                    N°005
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <h1 className="font-serif text-[clamp(2.2rem,5vw,4rem)] text-ink-900 tracking-tighter leading-[1.05] mb-3">
-            {hero.brandStatementEn}
-          </h1>
-          <p className="font-serif text-[clamp(1.6rem,3.5vw,2.6rem)] text-ink-900 tracking-tighter leading-[1.1] mb-10">
-            {hero.brandStatementCn}
-          </p>
-
-          {/* sub-tagline · 服务定位, 不是刊物 */}
-          <p className="font-serif italic text-[clamp(1rem,1.6vw,1.25rem)] text-ink-700 editorial-leading max-w-prose-lg">
-            {hero.subTag}
-          </p>
         </div>
 
-        {/* Layer 2 · Brand Explainer */}
+        {/* === 卷首语 explainer (满版下方) === */}
         <div className="relative max-w-prose-lg mx-auto px-6 pb-16">
           <div className="space-y-5">
             {hero.explainer.map((para, i) => {
@@ -117,31 +170,6 @@ export default async function HomePage() {
                 />
               );
             })}
-          </div>
-
-          {/* CTAs */}
-          <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-baseline">
-            <Link
-              href={hero.ctas.primary.href}
-              className="font-serif text-lg bg-seal-500 hover:bg-seal-700 text-paper-100 px-6 py-3 transition-colors tracking-wide"
-            >
-              {hero.ctas.primary.label}
-            </Link>
-            <Link
-              href={hero.ctas.secondary.href}
-              className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
-            >
-              {hero.ctas.secondary.label}
-            </Link>
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
-              ·
-            </span>
-            <Link
-              href={hero.ctas.ghost.href}
-              className="font-serif text-base text-ink-700 hover:text-seal-500 transition-colors"
-            >
-              {hero.ctas.ghost.label}
-            </Link>
           </div>
         </div>
 
