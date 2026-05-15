@@ -18,19 +18,10 @@ import BriefSeal from '@/components/BriefSeal';
 import Link from 'next/link';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
+import { loadSampleBriefContent } from '@/lib/content/sample-brief';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const FRAMEWORK_LABEL: Record<string, string> = {
-  'parent-care': '父母养老',
-  marriage: '婚姻',
-  'child-education': '子女教育',
-  'career-transition': '职业转身',
-  migration: '迁移',
-  'crisis-restart': '危机重启',
-  general: '通用决策',
-};
 
 export default function SampleBriefPage({
   searchParams,
@@ -47,6 +38,8 @@ async function SampleBriefContent({
 }) {
   const sp = await searchParams;
   const rows = getSampleBriefs();
+  const copy = loadSampleBriefContent();
+  const FRAMEWORK_LABEL = copy.frameworkLabels;
 
   const briefs: Array<{ id: number; framework: string; topic: string; brief: DecisionBrief }> =
     rows.map((r) => ({
@@ -90,23 +83,21 @@ async function SampleBriefContent({
       {/* ============================================ */}
       <header className="max-w-prose-lg mx-auto px-6 pt-16 pb-16 border-b border-paper-300">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          · KEY Editorial Office · Sample Briefs ·
+          {copy.header.eyebrow}
         </p>
         <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-8">
-          我们交付的东西, 长这样.
+          {copy.header.title}
         </h1>
         <div className="font-serif text-reading text-ink-700 editorial-leading max-w-prose-lg space-y-4">
-          <p>
-            下面是 KEY 为三位匿名读者撰写的私人决策简报. 内容经本人同意公开,
-            姓名 / 城市 / 关键身份信息已做隐去处理.
-          </p>
-          <p>
-            这不是 chatbot 的回答, 不是 markdown 流, 也不是 AI 工具的常规输出. 这是一份**经过两轮撰稿**
-            (分析师 + 资深编辑) 产出的 2000-3500 字结构化简报, 像被写出来的, 不是被生成出来的.
-          </p>
-          <p className="text-ink-500 italic">
-            读完任一份, 你就会知道为什么我们坚持以年订阅, 而不是以工具论分钟收费.
-          </p>
+          {copy.header.body.map((p, i) => {
+            const isLast = i === copy.header.body.length - 1;
+            const italic = isLast && copy.header.lastParagraphItalic;
+            return (
+              <p key={i} className={italic ? 'text-ink-500 italic' : undefined}>
+                {p}
+              </p>
+            );
+          })}
         </div>
       </header>
 
@@ -115,7 +106,7 @@ async function SampleBriefContent({
       {/* ============================================ */}
       <section className="max-w-prose-xl mx-auto px-6 mt-12">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-500 mb-4">
-          · 三份简报 · 三类决策 ·
+          {copy.selector.eyebrow}
         </p>
         <div className="flex flex-col md:flex-row gap-3 mb-12">
           {briefs.map((b) => {
@@ -203,30 +194,29 @@ async function SampleBriefContent({
       <footer className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-lg mx-auto px-6 py-20 text-center">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-            · 进入 KEY 编辑部 ·
+            {copy.footer.eyebrow}
           </p>
-          <h2 className="font-serif text-editorial text-ink-900 mb-6 tracking-tightish">
-            你的下一个重大决定, <br />
-            也可以被这样认真对待.
+          <h2 className="font-serif text-editorial text-ink-900 mb-6 tracking-tightish whitespace-pre-line">
+            {copy.footer.title}
           </h2>
           <p className="font-serif text-reading text-ink-500 editorial-leading mb-10 max-w-prose-lg mx-auto">
-            年度会员 ¥1988. 创始会员 (限 100 名) ¥4988/3 年. 第一周不合适, 全退.
+            {copy.footer.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/membership"
+              href={copy.footer.ctaPrimary.href}
               className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
             >
-              看完整会员制度 →
+              {copy.footer.ctaPrimary.label}
             </Link>
             <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
               ·
             </span>
             <Link
-              href="/methodology"
+              href={copy.footer.ctaSecondary.href}
               className="font-serif text-base text-ink-700 hover:text-seal-500 transition-colors"
             >
-              先看方法论
+              {copy.footer.ctaSecondary.label}
             </Link>
           </div>
         </div>
@@ -235,7 +225,7 @@ async function SampleBriefContent({
           <div className="max-w-prose-xl mx-auto px-6 py-8 flex flex-col items-center gap-3 text-center">
             <KeyWordmark variant="mark-only" height={18} ariaLabel="KEY mark" />
             <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400">
-              KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物
+              {copy.footer.smallText}
             </p>
           </div>
         </div>

@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "header": {
+    "eyebrow": "· KEY Editorial Office · Sample Briefs ·",
+    "title": "我们交付的东西, 长这样.",
+    "body": [
+      "下面是 KEY 为三位匿名读者撰写的私人决策简报. 内容经本人同意公开, 姓名 / 城市 / 关键身份信息已做隐去处理.",
+      "这不是 chatbot 的回答, 不是 markdown 流, 也不是 AI 工具的常规输出. 这是一份经过两轮撰稿 (分析师 + 资深编辑) 产出的 2000-3500 字结构化简报, 像被写出来的, 不是被生成出来的.",
+      "读完任一份, 你就会知道为什么我们坚持以年订阅, 而不是以工具论分钟收费."
+    ],
+    "lastParagraphItalic": true
+  },
+  "selector": {
+    "eyebrow": "· 三份简报 · 三类决策 ·"
+  },
+  "footer": {
+    "eyebrow": "· 进入 KEY 编辑部 ·",
+    "title": "你的下一个重大决定,\n也可以被这样认真对待.",
+    "subtitle": "年度会员 ¥1988. 创始会员 (限 100 名) ¥4988/3 年. 第一周不合适, 全退.",
+    "ctaPrimary": { "label": "看完整会员制度 →", "href": "/membership" },
+    "ctaSecondary": { "label": "先看方法论", "href": "/methodology" },
+    "smallText": "KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物"
+  },
+  "frameworkLabels": {
+    "parent-care": "父母养老",
+    "marriage": "婚姻",
+    "child-education": "子女教育",
+    "career-transition": "职业转身",
+    "migration": "迁移",
+    "crisis-restart": "危机重启",
+    "general": "通用决策"
+  }
+}

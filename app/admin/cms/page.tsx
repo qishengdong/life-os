@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react';
 import HomeEditor from './_editors/HomeEditor';
 import MethodologyEditor from './_editors/MethodologyEditor';
+import SampleBriefEditor from './_editors/SampleBriefEditor';
 
 // ============================================================================
 // Page registry — 加新页就在这里加一行
@@ -36,8 +37,8 @@ const TABS: CmsTab[] = [
     key: 'sample-brief',
     label: '样品',
     hint: '/sample-brief',
-    component: () => <ComingSoon page="样品 brief" />,
-    status: 'coming',
+    component: SampleBriefEditor,
+    status: 'ready',
   },
   {
     key: 'membership',
