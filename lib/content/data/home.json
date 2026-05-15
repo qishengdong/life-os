@@ -11,7 +11,7 @@
       "<i>30 / 90 / 365 天后, 我们回来复盘 — 你的决定, 是真的让你走到了想去的地方.</i>"
     ],
     "ctas": {
-      "primary": { "label": "写下我最近最难的决定 →", "href": "/letters/new" },
+      "primary": { "label": "写下我最近最难的决定 →", "href": "/decisions/new" },
       "secondary": { "label": "读一份 sample brief", "href": "/sample-brief" },
       "ghost": { "label": "", "href": "" }
     },
