@@ -235,6 +235,123 @@ export function addOpenLoop(args: {
 }
 
 // ============================================================================
+// JOB-012 · 用户主导的 brain 修改 / 删除 (本人 only · 强 owner check)
+// ============================================================================
+
+/** 检查某条 core_state 是否属于该用户. */
+function ownsCoreState(userId: number, id: number): boolean {
+  const db = getDb();
+  const r = db
+    .prepare(`SELECT user_id FROM user_core_state WHERE id = ?`)
+    .get(id) as { user_id: number } | undefined;
+  return !!r && r.user_id === userId;
+}
+function ownsCard(userId: number, id: number): boolean {
+  const db = getDb();
+  const r = db
+    .prepare(`SELECT user_id FROM relationship_memory_cards WHERE id = ?`)
+    .get(id) as { user_id: number } | undefined;
+  return !!r && r.user_id === userId;
+}
+function ownsOpenLoop(userId: number, id: number): boolean {
+  const db = getDb();
+  const r = db
+    .prepare(`SELECT user_id FROM relationship_open_loops WHERE id = ?`)
+    .get(id) as { user_id: number } | undefined;
+  return !!r && r.user_id === userId;
+}
+
+export function updateCoreState(args: {
+  userId: number;
+  id: number;
+  factText?: string;
+  status?: 'active' | 'deprecated' | 'user_overrode';
+}): { ok: true } | { ok: false; error: string } {
+  if (!ownsCoreState(args.userId, args.id)) return { ok: false, error: 'not owner' };
+  const db = getDb();
+  const fields: string[] = ['updated_at = unixepoch()'];
+  const vals: any[] = [];
+  if (args.factText !== undefined) {
+    fields.push('fact_text = ?');
+    vals.push(args.factText);
+  }
+  if (args.status !== undefined) {
+    fields.push('status = ?');
+    vals.push(args.status);
+  }
+  if (vals.length === 0) return { ok: true };
+  vals.push(args.id);
+  db.prepare(`UPDATE user_core_state SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
+  return { ok: true };
+}
+
+export function deleteCoreState(args: { userId: number; id: number }): boolean {
+  if (!ownsCoreState(args.userId, args.id)) return false;
+  const db = getDb();
+  // 软删除 — 标 deprecated 而非 真删, 保留审计
+  db.prepare(
+    `UPDATE user_core_state SET status = 'deprecated', updated_at = unixepoch() WHERE id = ?`,
+  ).run(args.id);
+  return true;
+}
+
+export function updateMemoryCard(args: {
+  userId: number;
+  id: number;
+  title?: string;
+  content?: string;
+  confidence?: number;
+}): { ok: true } | { ok: false; error: string } {
+  if (!ownsCard(args.userId, args.id)) return { ok: false, error: 'not owner' };
+  const db = getDb();
+  const fields: string[] = ['last_verified_at = unixepoch()'];
+  const vals: any[] = [];
+  if (args.title !== undefined) {
+    fields.push('title = ?');
+    vals.push(args.title);
+  }
+  if (args.content !== undefined) {
+    fields.push('content = ?');
+    vals.push(args.content);
+  }
+  if (args.confidence !== undefined) {
+    fields.push('confidence = ?');
+    vals.push(args.confidence);
+  }
+  vals.push(args.id);
+  db.prepare(`UPDATE relationship_memory_cards SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
+  return { ok: true };
+}
+
+export function deleteMemoryCard(args: { userId: number; id: number }): boolean {
+  if (!ownsCard(args.userId, args.id)) return false;
+  const db = getDb();
+  db.prepare(`DELETE FROM relationship_memory_cards WHERE id = ?`).run(args.id);
+  return true;
+}
+
+export function resolveOpenLoop(args: {
+  userId: number;
+  id: number;
+  status: 'resolved' | 'cancelled';
+}): boolean {
+  if (!ownsOpenLoop(args.userId, args.id)) return false;
+  const db = getDb();
+  db.prepare(
+    `UPDATE relationship_open_loops SET status = ?, resolved_at = unixepoch() WHERE id = ?`,
+  ).run(args.status, args.id);
+  return true;
+}
+
+/** 用户确认 (verify) 某条卡 — 没改内容, 只更新 last_verified_at. */
+export function reverifyCard(args: { userId: number; id: number }): boolean {
+  if (!ownsCard(args.userId, args.id)) return false;
+  const db = getDb();
+  db.prepare(`UPDATE relationship_memory_cards SET last_verified_at = unixepoch() WHERE id = ?`).run(args.id);
+  return true;
+}
+
+// ============================================================================
 // Prompt 注入助手: 把 memory 转成 system prompt 文本
 // ============================================================================
 

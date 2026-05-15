@@ -1,136 +1,544 @@
+/**
+ * /brain — 用户可见的私人 brain 档案
+ *
+ * JOB-011 + JOB-012 · "KEY 记得你说过什么", 让用户看见 + 编辑 + 删除
+ *
+ * 显示:
+ *   Layer 3 · 卷首 brain.md narrative
+ *   Layer 0 · 硬锚点 (core_state)
+ *   Layer 1 · 5 类 RMC (factual / boundary / relational / episodic / psych_signal)
+ *   Layer 2 · 待跟进 open_loops
+ *
+ * 操作:
+ *   - 编辑文本
+ *   - 软删硬锚点 (deprecate)
+ *   - 硬删 RMC 卡
+ *   - 确认 (reverify · 更新 last_verified_at)
+ *   - 标 open_loop resolved / cancelled
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
+import type { UserMemoryContext, MemoryCard, CoreState, OpenLoop } from '@/lib/memory/types';
 
-interface BrainData {
-  brainContent: string | null;
-  stats: {
-    totalCards: number;
-    totalDecisions: number;
-    accountAgeDays: number;
-  };
+const CARD_TYPE_LABEL: Record<string, string> = {
+  factual: '事实',
+  boundary: '边界 · 不能接受',
+  relational: '关系',
+  episodic: '重要事件',
+  psych_signal: '心理信号',
+};
+
+const CARD_TYPE_HINT: Record<string, string> = {
+  factual: '具体软事实 · 职业 / 城市 / 当前状态',
+  boundary: '你说过的硬边界 — 越界 KEY 不会请求你忽略',
+  relational: '跟父母 / 伴侣 / 孩子 / 同事 / 老板 的关系状态',
+  episodic: '你提过的重要时刻',
+  psych_signal: '反复出现的心理 pattern (不是诊断)',
+};
+
+function fmtRelativeDate(unix: number): string {
+  const diff = Date.now() / 1000 - unix;
+  if (diff < 60) return '刚刚';
+  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`;
+  if (diff < 86400 * 30) return `${Math.floor(diff / 86400)} 天前`;
+  const d = new Date(unix * 1000);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
 
 export default function BrainPage() {
   const [userUid, setUserUid] = useState<string | null>(null);
-  const [data, setData] = useState<BrainData | null>(null);
+  const [memory, setMemory] = useState<UserMemoryContext | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const uid = getOrCreateClientUid();
     setUserUid(uid);
-    fetch('/api/history', { headers: { [UID_HEADER]: uid } })
-      .then((r) => r.json())
-      .then((d) => {
-        setData({
-          brainContent: d.memory?.brainContent || null,
-          stats: d.memory?.stats || { totalCards: 0, totalDecisions: 0, accountAgeDays: 0 },
-        });
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    load(uid);
   }, []);
 
+  async function load(uid: string) {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/brain', { headers: { [UID_HEADER]: uid } });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || '加载失败');
+      } else {
+        setMemory(data.memory as UserMemoryContext);
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function refresh() {
+    if (userUid) await load(userUid);
+  }
+
   return (
-    <div className="min-h-screen bg-paper">
-      <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
+    <div className="min-h-screen bg-paper text-ink-900">
+      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-center">
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="nav" height={22} />
         </Link>
-        <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/pulse" className="hover:text-seal transition-colors">
-            ← 决策
+        <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
+          <Link href="/decisions/new" className="hover:text-seal-500 transition-colors">
+            写决定 →
           </Link>
-          <Link href="/history" className="hover:text-seal transition-colors">
-            历史
+          <Link href="/" className="hover:text-seal-500 transition-colors">
+            ← Home
           </Link>
         </div>
       </nav>
 
-      <main className="max-w-prose-xl mx-auto px-6 pb-20">
-        {/* Header */}
-        <header className="pt-16 pb-12 animate-fade-in-soft">
-          <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
-            · Memorandum ·
+      <main className="max-w-prose-xl mx-auto px-6 pb-24">
+        <header className="pt-12 pb-10 border-b border-paper-300">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+            · KEY · 关于你的私人档案 ·
           </p>
-          <h1 className="font-serif text-editorial-xl text-ink-900 mb-6 tracking-tighter">
-            我的 Life Brain
+          <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-4 leading-tight">
+            你的 Brain
           </h1>
-          <p className="font-serif text-reading text-ink-500 max-w-prose-lg editorial-leading">
-            这是 AI 写给"未来的自己"的、关于你的备忘录.
-            它整合了你跟我聊过的所有 Pulse、重大决策、抽出来的事实、看到的人生模式. 每过一段时间自动更新.
+          <p className="font-serif italic text-reading text-ink-700 editorial-leading max-w-prose-lg">
+            你说过的, KEY 都记得. 这是你的私人档案 — 不准就改, 不该有就删. 删了也不会忘 (有审计).
           </p>
-          <p className="font-serif text-lg text-ink-900 mt-6 italic border-l-4 border-seal pl-4">
-            在人生最难选的时候, 有一个长期记得你的人.
-          </p>
+          {memory && (
+            <p className="font-mono text-[11px] text-ink-500 mt-6">
+              第 {memory.stats.accountAgeDays} 天 · {memory.stats.totalCards} 张记忆卡 · {memory.stats.totalDecisions} 份决策
+            </p>
+          )}
         </header>
 
-        {/* Stats strip */}
-        {data && (
-          <div className="border-t border-b border-paper-300 py-4 my-8 flex justify-between text-xs font-mono text-ink-500">
-            <span>{data.stats.totalDecisions} 次决策</span>
-            <span>·</span>
-            <span>{data.stats.totalCards} 张 memory 卡</span>
-            <span>·</span>
-            <span>账号 {data.stats.accountAgeDays} 天</span>
-          </div>
-        )}
-
-        {/* Brain content */}
         {loading && (
-          <p className="text-ink-400 text-center py-12 font-serif">加载中...</p>
+          <p className="font-serif italic text-ink-400 text-center py-20">加载 brain ...</p>
         )}
 
-        {!loading && data && !data.brainContent && (
-          <div className="text-center py-16 animate-fade-in-soft">
-            <p className="font-serif text-reading text-ink-500 max-w-prose-lg mx-auto editorial-leading">
-              你的 Life Brain 还没生成.
-              AI 需要先认识你 — 至少 5 次重大决策对话, 或先完成{' '}
-              <Link href="/onboarding" className="text-seal underline hover:text-seal-600">
-                30 分钟深度建档
-              </Link>
-              , 它就会写出关于你的第一版备忘录.
-            </p>
-            <p className="mt-6 font-sans text-sm text-ink-400">
-              当前: <strong className="text-ink-700 font-mono">{data.stats.totalDecisions}</strong> 次决策 · 距首次蒸馏还需{' '}
-              <strong className="text-ink-700 font-mono">{Math.max(0, 5 - data.stats.totalDecisions)}</strong> 次
-            </p>
-            <div className="mt-10 flex gap-3 justify-center">
-              <Link href="/onboarding" className="btn-seal px-6 py-3 rounded-sm">
-                深度建档 →
-              </Link>
-              <Link href="/pulse" className="btn-ghost px-6 py-3 rounded-sm">
-                先聊一个决策
-              </Link>
-            </div>
+        {error && !loading && (
+          <div className="my-12 p-6 border-l-2 border-ember bg-paper-100">
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ember mb-2">错误</p>
+            <p className="font-serif text-sm text-ink-700">{error}</p>
           </div>
         )}
 
-        {!loading && data && data.brainContent && (
-          <article className="prose prose-editorial max-w-none font-serif animate-fade-in-soft whitespace-pre-wrap mt-8">
-            {data.brainContent}
-          </article>
-        )}
+        {memory && !loading && (
+          <div className="pt-12 space-y-16">
+            {memory.brainContent && (
+              <SectionWrapper
+                eyebrow="· 卷首 · BRAIN NARRATIVE ·"
+                title="AI 是怎么理解你的"
+                hint="LLM 综合你的全部记忆写的概述. 跟 onboarding 一起生成, 之后 weekly consolidation 更新."
+              >
+                <div className="font-serif text-reading text-ink-700 editorial-leading whitespace-pre-line border-l-2 border-seal-500/40 pl-6">
+                  {memory.brainContent}
+                </div>
+              </SectionWrapper>
+            )}
 
-        {/* Footer note */}
-        {!loading && data && data.brainContent && (
-          <footer className="mt-20 pt-8 border-t border-paper-300">
-            <p className="font-sans text-xs text-ink-400 mb-2 uppercase tracking-wider">
-              · About this brain ·
-            </p>
-            <p className="font-serif text-sm text-ink-500 editorial-leading">
-              这份备忘录由 AI 自动写, 基于你过去的对话. 它会持续更新.
-              你下次跟我聊新决定时, 我会读完这份再开口 — 这是我"记得你"的方式.
-            </p>
-            <p className="font-serif text-sm text-ink-400 mt-3 editorial-leading">
-              如果你觉得某句话误解了你, 告诉我 — V1.5 后你可以直接编辑.
-            </p>
-          </footer>
+            <SectionWrapper
+              eyebrow="· LAYER 0 · 硬锚点 ·"
+              title={`硬锚点 (${memory.coreState.length})`}
+              hint="永远成立的事实 — KEY 每次跟你聊任何事都会优先记得这些."
+            >
+              {memory.coreState.length === 0 ? (
+                <EmptyState text="暂无硬锚点. 跟 KEY 聊更多, 它会自动抽取." />
+              ) : (
+                <div className="space-y-3">
+                  {memory.coreState.map((c) => (
+                    <CoreStateRow key={c.id} item={c} userUid={userUid} onChange={refresh} />
+                  ))}
+                </div>
+              )}
+            </SectionWrapper>
+
+            {(['factual', 'boundary', 'relational', 'episodic', 'psych_signal'] as const).map(
+              (type) => {
+                const cards =
+                  type === 'factual' ? memory.factual
+                  : type === 'boundary' ? memory.boundary
+                  : type === 'relational' ? memory.relational
+                  : type === 'episodic' ? memory.episodic
+                  : memory.psychSignal;
+                return (
+                  <SectionWrapper
+                    key={type}
+                    eyebrow={`· LAYER 1 · ${CARD_TYPE_LABEL[type].toUpperCase()} ·`}
+                    title={`${CARD_TYPE_LABEL[type]} (${cards.length})`}
+                    hint={CARD_TYPE_HINT[type]}
+                  >
+                    {cards.length === 0 ? (
+                      <EmptyState text="暂无内容." />
+                    ) : (
+                      <div className="space-y-4">
+                        {cards.map((c) => (
+                          <CardRow key={c.id} card={c} userUid={userUid} onChange={refresh} />
+                        ))}
+                      </div>
+                    )}
+                  </SectionWrapper>
+                );
+              },
+            )}
+
+            <SectionWrapper
+              eyebrow="· LAYER 2 · 待跟进 ·"
+              title={`待跟进 (${memory.openLoops.length})`}
+              hint="跟你之前对话中产生的待办: 跟进 / 回访 / 复盘. 处理完点'已完成'."
+            >
+              {memory.openLoops.length === 0 ? (
+                <EmptyState text="暂无待跟进项." />
+              ) : (
+                <div className="space-y-3">
+                  {memory.openLoops.map((l) => (
+                    <OpenLoopRow key={l.id} loop={l} userUid={userUid} onChange={refresh} />
+                  ))}
+                </div>
+              )}
+            </SectionWrapper>
+
+            <footer className="pt-12 border-t border-paper-300 text-center">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-4">
+                · 隐私 ·
+              </p>
+              <p className="font-serif italic text-[14px] text-ink-500 max-w-prose-md mx-auto leading-relaxed">
+                所有 brain 数据只属于你. 删除是软删 (硬锚点) 或硬删 (卡 / 待跟进), 不进任何训练数据.
+                <br />
+                改了之后, 下次跟 KEY 聊或写决定, 它会按新版本记得.
+              </p>
+            </footer>
+          </div>
         )}
       </main>
+    </div>
+  );
+}
+
+// ============================================================================
+// UI primitives
+// ============================================================================
+
+function SectionWrapper({
+  eyebrow,
+  title,
+  hint,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
+        {eyebrow}
+      </p>
+      <h2 className="font-serif text-2xl text-ink-900 tracking-tightish mb-2">{title}</h2>
+      {hint && <p className="font-serif italic text-[13px] text-ink-500 mb-6">{hint}</p>}
+      {children}
+    </section>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return <p className="font-serif italic text-[14px] text-ink-400 py-4">{text}</p>;
+}
+
+function CoreStateRow({
+  item,
+  userUid,
+  onChange,
+}: {
+  item: CoreState;
+  userUid: string | null;
+  onChange: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(item.factText);
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!userUid) return;
+    setSaving(true);
+    await fetch(`/api/brain/core-state/${item.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+      body: JSON.stringify({ factText: text }),
+    });
+    setSaving(false);
+    setEditing(false);
+    onChange();
+  }
+
+  async function softDelete() {
+    if (!userUid) return;
+    if (!confirm('这条硬锚点会被标记为 deprecated. 确定?')) return;
+    await fetch(`/api/brain/core-state/${item.id}`, {
+      method: 'DELETE',
+      headers: { [UID_HEADER]: userUid },
+    });
+    onChange();
+  }
+
+  return (
+    <div className="border border-paper-300 bg-paper-50 px-5 py-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="font-sans text-[9px] uppercase tracking-[0.25em] text-seal-500 mb-1.5">
+            {item.kind}
+          </p>
+          {editing ? (
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 bg-paper border border-paper-300 focus:border-seal-500 focus:outline-none font-serif text-reading text-ink-900 resize-y"
+            />
+          ) : (
+            <p className="font-serif text-reading text-ink-900 leading-snug">{item.factText}</p>
+          )}
+          <p className="font-mono text-[10px] text-ink-400 mt-2">
+            {item.source === 'user_self' ? '本人确认' : item.source === 'admin' ? 'admin 录入' : 'AI 抽取'} · 创建 {fmtRelativeDate(item.createdAt)}
+          </p>
+        </div>
+        <div className="flex flex-col gap-1 shrink-0">
+          {!editing && (
+            <>
+              <button
+                onClick={() => setEditing(true)}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-500 hover:text-seal-500 transition-colors"
+              >
+                改
+              </button>
+              <button
+                onClick={softDelete}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-400 hover:text-ember"
+              >
+                删
+              </button>
+            </>
+          )}
+          {editing && (
+            <>
+              <button
+                onClick={save}
+                disabled={saving}
+                className="font-mono text-[10px] uppercase tracking-widest text-seal-500 hover:text-seal-700 disabled:opacity-40"
+              >
+                {saving ? '...' : '保存'}
+              </button>
+              <button
+                onClick={() => {
+                  setText(item.factText);
+                  setEditing(false);
+                }}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-400 hover:text-ink-700"
+              >
+                取消
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CardRow({
+  card,
+  userUid,
+  onChange,
+}: {
+  card: MemoryCard;
+  userUid: string | null;
+  onChange: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState(card.title);
+  const [content, setContent] = useState(card.content);
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!userUid) return;
+    setSaving(true);
+    await fetch(`/api/brain/card/${card.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+      body: JSON.stringify({ title, content }),
+    });
+    setSaving(false);
+    setEditing(false);
+    onChange();
+  }
+
+  async function reverify() {
+    if (!userUid) return;
+    await fetch(`/api/brain/card/${card.id}`, {
+      method: 'POST',
+      headers: { [UID_HEADER]: userUid },
+    });
+    onChange();
+  }
+
+  async function hardDelete() {
+    if (!userUid) return;
+    if (!confirm('这条 RMC 卡会被永久删除. 确定?')) return;
+    await fetch(`/api/brain/card/${card.id}`, {
+      method: 'DELETE',
+      headers: { [UID_HEADER]: userUid },
+    });
+    onChange();
+  }
+
+  return (
+    <article className="border border-paper-300 bg-paper-50 px-5 py-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          {editing ? (
+            <>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3 py-1.5 mb-2 bg-paper border border-paper-300 focus:border-seal-500 focus:outline-none font-serif text-lg text-ink-900"
+              />
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 bg-paper border border-paper-300 focus:border-seal-500 focus:outline-none font-serif text-reading text-ink-700 resize-y"
+              />
+            </>
+          ) : (
+            <>
+              <h3 className="font-serif text-base text-ink-900 mb-1.5 leading-snug">{card.title}</h3>
+              <p className="font-serif text-[14px] text-ink-700 leading-relaxed">{card.content}</p>
+            </>
+          )}
+          <div className="flex items-center gap-3 mt-3 font-mono text-[10px] text-ink-400 flex-wrap">
+            <span>置信 {(card.confidence * 100).toFixed(0)}%</span>
+            <span>·</span>
+            <span>{card.source === 'onboarding' ? '建档时' : card.source.replace(/_/g, ' ')}</span>
+            <span>·</span>
+            <span>verified {fmtRelativeDate(card.lastVerifiedAt)}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1 shrink-0">
+          {!editing && (
+            <>
+              <button
+                onClick={() => setEditing(true)}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-500 hover:text-seal-500"
+              >
+                改
+              </button>
+              <button
+                onClick={reverify}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-500 hover:text-sage"
+                title="确认这条对"
+              >
+                ✓ 对
+              </button>
+              <button
+                onClick={hardDelete}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-400 hover:text-ember"
+              >
+                删
+              </button>
+            </>
+          )}
+          {editing && (
+            <>
+              <button
+                onClick={save}
+                disabled={saving}
+                className="font-mono text-[10px] uppercase tracking-widest text-seal-500 hover:text-seal-700 disabled:opacity-40"
+              >
+                {saving ? '...' : '保存'}
+              </button>
+              <button
+                onClick={() => {
+                  setTitle(card.title);
+                  setContent(card.content);
+                  setEditing(false);
+                }}
+                className="font-mono text-[10px] uppercase tracking-widest text-ink-400 hover:text-ink-700"
+              >
+                取消
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function OpenLoopRow({
+  loop,
+  userUid,
+  onChange,
+}: {
+  loop: OpenLoop;
+  userUid: string | null;
+  onChange: () => void;
+}) {
+  const [working, setWorking] = useState(false);
+
+  async function resolve(status: 'resolved' | 'cancelled') {
+    if (!userUid) return;
+    setWorking(true);
+    await fetch(`/api/brain/open-loop/${loop.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+      body: JSON.stringify({ status }),
+    });
+    setWorking(false);
+    onChange();
+  }
+
+  const overdue = !!loop.dueAt && loop.dueAt < Date.now() / 1000;
+  return (
+    <div className={`border ${overdue ? 'border-amber/60' : 'border-paper-300'} bg-paper-50 px-5 py-4`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="font-sans text-[9px] uppercase tracking-[0.25em] text-seal-500 mb-1.5">
+            {loop.kind || 'follow_up'} {overdue && '· 已过期'}
+          </p>
+          <h3 className="font-serif text-base text-ink-900 mb-1 leading-snug">{loop.title}</h3>
+          {loop.description && (
+            <p className="font-serif text-[13px] text-ink-500 leading-relaxed">{loop.description}</p>
+          )}
+          {loop.dueAt && (
+            <p className="font-mono text-[10px] text-ink-400 mt-2">
+              due {fmtRelativeDate(loop.dueAt)}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 shrink-0">
+          <button
+            onClick={() => resolve('resolved')}
+            disabled={working}
+            className="font-mono text-[10px] uppercase tracking-widest text-sage hover:text-sage/80 disabled:opacity-40"
+          >
+            ✓ 完成
+          </button>
+          <button
+            onClick={() => resolve('cancelled')}
+            disabled={working}
+            className="font-mono text-[10px] uppercase tracking-widest text-ink-400 hover:text-ember disabled:opacity-40"
+          >
+            ✕ 取消
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
