@@ -16,15 +16,7 @@
  */
 
 import Link from 'next/link';
-import {
-  HERO,
-  SECTION_GRADER,
-  SECTION_INSPECTOR,
-  SECTION_BRIEF,
-  SECTION_NOT_MEASURED,
-  SECTION_HOW_TO_QUESTION,
-  SECTION_FAIL_VISIBLY,
-} from '@/lib/content/transparency/copy';
+import { loadTransparencyContent } from '@/lib/content/transparency';
 import {
   getDimensionScores,
   getDimensionLabel,
@@ -345,6 +337,15 @@ function Metric({
 // 主页面
 // ============================================================================
 export default function TransparencyPage() {
+  const {
+    hero: HERO,
+    sectionGrader: SECTION_GRADER,
+    sectionInspector: SECTION_INSPECTOR,
+    sectionBrief: SECTION_BRIEF,
+    sectionNotMeasured: SECTION_NOT_MEASURED,
+    sectionHowToQuestion: SECTION_HOW_TO_QUESTION,
+    sectionFailVisibly: SECTION_FAIL_VISIBLY,
+  } = loadTransparencyContent();
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />

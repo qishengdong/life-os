@@ -12,6 +12,9 @@ import HomeEditor from './_editors/HomeEditor';
 import MethodologyEditor from './_editors/MethodologyEditor';
 import SampleBriefEditor from './_editors/SampleBriefEditor';
 import MembershipEditor from './_editors/MembershipEditor';
+import TransparencyEditor from './_editors/TransparencyEditor';
+import PricingEditor from './_editors/PricingEditor';
+import AboutEditor from './_editors/AboutEditor';
 
 // ============================================================================
 // Page registry — 加新页就在这里加一行
@@ -52,22 +55,22 @@ const TABS: CmsTab[] = [
     key: 'pricing',
     label: '价格',
     hint: '/pricing',
-    component: () => <ComingSoon page="价格" />,
-    status: 'coming',
+    component: PricingEditor,
+    status: 'ready',
   },
   {
     key: 'transparency',
     label: '透明度',
     hint: '/transparency',
-    component: () => <ComingSoon page="透明度" />,
-    status: 'coming',
+    component: TransparencyEditor,
+    status: 'ready',
   },
   {
     key: 'about',
     label: '关于',
     hint: '/about',
-    component: () => <ComingSoon page="关于" />,
-    status: 'coming',
+    component: AboutEditor,
+    status: 'ready',
   },
   {
     key: 'terms',

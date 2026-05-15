@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "hero": {
+    "eyebrow": "· Subscription ·",
+    "kicker": "重大决定, 别一个人硬扛。",
+    "title": "为\"它越来越懂你\"付费,\n不是为\"再问一次\"付费.",
+    "body": "KEY 越用越懂你, 跨决策保持一致, 12 个月后你的数据是不可迁移的人生资产. 按次计费惩罚高频用户, 订阅才符合产品本质."
+  },
+  "tiers": [
+    {
+      "name": "Free",
+      "price": "¥0",
+      "pricePeriod": "",
+      "yearly": "永久免费",
+      "position": "体验层 — 让你养成\"每天接住一个信号\"的习惯",
+      "bullets": [
+        { "feature": "Daily Pulse — 每天 3 分钟", "included": true, "emphasis": true },
+        { "feature": "5 类轮换问题 + 10 类自动标签", "included": true },
+        { "feature": "7-14 天 memory 保留", "included": true },
+        { "feature": "Sunday Review — 极简版", "included": true },
+        { "feature": "每月 1 次简版决策拆解 (6 维)", "included": true },
+        { "feature": "完整 Life Brain", "included": false },
+        { "feature": "Outcome Tracking", "included": false },
+        { "feature": "open_loops 回调", "included": false },
+        { "feature": "30 天主题陪伴", "included": false }
+      ],
+      "cta": "免费开始",
+      "ctaStyle": "ghost",
+      "href": "/onboarding"
+    },
+    {
+      "name": "Pro",
+      "price": "¥99",
+      "pricePeriod": "/ 月",
+      "yearly": "年付 ¥999 (省 ¥189)",
+      "position": "核心订阅 — KEY 真正的\"长期思考伴侣\"",
+      "badge": "⭐ 主流选择",
+      "bullets": [
+        { "feature": "Daily Pulse — 不限次数", "included": true, "emphasis": true },
+        { "feature": "永久 memory", "included": true },
+        { "feature": "完整 Life Brain (周期蒸馏 + 用户可见)", "included": true, "emphasis": true },
+        { "feature": "Sunday Review — 完整 800-1200 字", "included": true, "emphasis": true },
+        { "feature": "不限次数 12 维决策深潜", "included": true, "emphasis": true },
+        { "feature": "Outcome Tracking (30/90/365 day 回访)", "included": true, "emphasis": true },
+        { "feature": "open_loops 主动 callback", "included": true },
+        { "feature": "月度《重大决策地图》", "included": true },
+        { "feature": "30 天主题陪伴", "included": false },
+        { "feature": "AI Board 多角色推演", "included": false }
+      ],
+      "cta": "订阅 Pro",
+      "ctaStyle": "seal",
+      "href": "/onboarding?intent=pro"
+    },
+    {
+      "name": "Premium",
+      "price": "¥299",
+      "pricePeriod": "/ 月",
+      "yearly": "年付 ¥2999 (省 ¥589)",
+      "position": "深度陪伴层 — 给真高净值 / 真复杂决策时刻的人",
+      "bullets": [
+        { "feature": "Pro 全部功能", "included": true, "emphasis": true },
+        { "feature": "30 天主题陪伴 (Premium 核心)", "included": true, "emphasis": true },
+        { "feature": "月度 Long-form Strategy Review (3000+ 字)", "included": true, "emphasis": true },
+        { "feature": "AI Board 多角色推演 (理性 / 感性 / 风险 / 长期)", "included": true, "emphasis": true },
+        { "feature": "重要决策 90 天复盘", "included": true },
+        { "feature": "优先响应 (P0 等级)", "included": true },
+        { "feature": "早期闭门内容 + 案例库", "included": true }
+      ],
+      "cta": "订阅 Premium",
+      "ctaStyle": "ghost",
+      "href": "/onboarding?intent=premium"
+    }
+  ],
+  "whyThisPrice": {
+    "title": "为什么这个价格?",
+    "intro": "¥99/月 ≈ 一顿日料.\n对照同类:",
+    "comparisons": [
+      { "name": "Notion Pro", "price": "¥80/月", "note": "是工具, 不懂你" },
+      { "name": "Day One Premium", "price": "¥30/月", "note": "是日记本, 不回应" },
+      { "name": "ChatGPT Plus", "price": "$20/月", "note": "不持久, 不个性化" },
+      { "name": "真人心理咨询", "price": "¥800-3000/次, 月均 ¥4000+", "note": "太慢, 一周一次" },
+      { "name": "商业教练", "price": "¥3000-15000/小时", "note": "太贵, 一年几次" }
+    ],
+    "summary": "KEY Pro = Notion + Day One + 心理咨询师 1/40 价 + 它只懂你一个人.",
+    "tagline": "\"我的人生备忘录 + 思考伴侣 + 重大决策军师 — 一份外卖钱.\""
+  },
+  "faq": {
+    "title": "常见问题",
+    "items": [
+      { "q": "退款政策?", "a": "7 天内未使用可全额退款. 已使用部分按比例退." },
+      { "q": "可以从 Free 升级到 Pro 吗?", "a": "任何时候可升级. 你的 memory / brain / 决策历史全部保留. 升级后 7-14 天的 memory 限制立即解除." },
+      { "q": "支付方式?", "a": "国内: 微信支付 + 支付宝. 海外: Stripe (信用卡 / Apple Pay)." },
+      { "q": "取消订阅?", "a": "在 /account 一键取消. 当前周期结束前仍可使用. 你的数据永久保留 (不删) 直到你主动要求删除." },
+      { "q": "公司 / 团队 / 家庭账号?", "a": "V1 仅个人订阅. 家庭 / 团队方案在 V2 路线图." }
+    ]
+  },
+  "footer": {
+    "smallText": "KEY · V1 dev · 上线后正式开通支付",
+    "italic": "在人生最难选的时候, 有一个长期记得你的人."
+  }
+}
