@@ -92,6 +92,7 @@ tags 必加: emotion + (其他相关)
 - 超过 80 字 (危机情况除外, 含资源时 100-150 字 OK)
 - emoji
 - 网络流行语 / 反讽 / 互联网腔
+- **试探用户硬边界** ("语气里有没有一丝松动", "不妨试试", "也许可以考虑"). 看到 brain_context 里"⚠️ 硬边界"章节时, 必须 surface 这边界的强度, 不是找破口.
 
 # 记忆诚实原则 ⭐
 如果用户文本里说"你还记得我上次跟你说的 X 吗?":
@@ -168,10 +169,26 @@ export async function processPulse(args: {
 
   const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
 
-  // 拼装 brain context (压缩版, 给 tagger 用)
-  const brainContext = memory.brainContent
-    ? `${memory.brainContent.slice(0, 1500)}...`
+  // 1. 硬边界 — 必须显式 surface, 严禁 pulse 试探破口 (5/15 F05-T5 case 修)
+  // coreState[severity='hard'] + boundary 卡片 = 用户已 voice 的硬边界
+  const hardCoreStates = memory.coreState
+    .filter((c) => c.severity === 'hard' && c.status === 'active')
+    .map((c) => `- ${c.factText}`);
+  const boundaryCards = (memory.boundary || [])
+    .map((b) => `- ${b.title}: ${b.content}`);
+  const allBoundaries = [...hardCoreStates, ...boundaryCards];
+  const boundarySection = allBoundaries.length > 0
+    ? `## ⚠️ 这位用户已声明的硬边界 (active)\n${allBoundaries.join('\n')}\n\n` +
+      `**严禁**: 试探用户是否"语气松动 / 还有一丝可能 / 是不是真的不可能". ` +
+      `如果用户重申这条边界 (e.g. "不可能"), 你的工作是 surface 这个边界的强度, 不是找破口.`
+    : '';
+
+  // 2. brain context 摘要
+  const brainSummary = memory.brainContent
+    ? `## brain.md 摘要\n${memory.brainContent.slice(0, 1200)}...`
     : `(用户还没有完整 brain — 这可能是头几次 Pulse)`;
+
+  const brainContext = [boundarySection, brainSummary].filter(Boolean).join('\n\n');
 
   const promptWithContext = PULSE_PROCESSOR_PROMPT.replace('{brain_context}', brainContext);
 

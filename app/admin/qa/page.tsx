@@ -68,12 +68,17 @@ export default function QaPage() {
 
   async function runOne(scenario: Scenario, modeArg: 'layer_a_only' | 'layer_ac'): Promise<ResultRow> {
     const start = Date.now();
+    // decision stage + layer_ac → 2-pass · 单次会 timeout (~42s gen + 15s judge > 60s Vercel)
+    // 先 layer_a_only 拿 aiOutput, 再单独 hit /api/admin/qa/layer-c 复用 cached output.
+    const need2Pass = scenario.stage === 'decision' && modeArg === 'layer_ac';
+    const pass1Mode = need2Pass ? 'layer_a_only' : modeArg;
+
     try {
       const res = await fetch('/api/admin/qa/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mode: modeArg,
+          mode: pass1Mode,
           label: 'orchestrator',
           filterScenarioIds: [scenario.id],
         }),
@@ -102,7 +107,8 @@ export default function QaPage() {
           durationMs: Date.now() - start,
         };
       }
-      return {
+
+      const row: ResultRow = {
         scenarioId: r.scenarioId,
         personaId: r.personaId,
         trapType: r.trapType,
@@ -114,6 +120,32 @@ export default function QaPage() {
         aiOutput: r.aiOutput,
         durationMs: Date.now() - start,
       };
+
+      // Pass 2 · decision stage 单独 hit Layer C
+      if (need2Pass && row.aiOutput && row.aiOutput.length > 500 && r.status !== 'skipped') {
+        try {
+          const cRes = await fetch('/api/admin/qa/layer-c', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scenarioId: scenario.id, aiOutput: row.aiOutput }),
+          });
+          if (cRes.ok) {
+            const cData = await cRes.json();
+            if (cData.success) {
+              row.layerCFocusAvg = cData.focusAvg;
+              row.layerCComment = cData.comment;
+              // 真 pass = Layer A pass 且 Layer C pass
+              const layerAPass = r.status === 'pass';
+              row.status = layerAPass && cData.pass ? 'pass' : 'fail';
+            }
+          }
+        } catch {
+          // Layer C 失败不阻 row · 保留 Layer A 结果
+        }
+        row.durationMs = Date.now() - start;
+      }
+
+      return row;
     } catch (e: any) {
       return {
         scenarioId: scenario.id,
@@ -201,9 +233,10 @@ export default function QaPage() {
           <p className="text-sm text-stone-500 mb-5 leading-relaxed">
             Vercel Hobby 60s 上限 → 客户端 orchestrator 每次跑 1 个 case.
             <br />
-            Decision stage ~42s/case, 全 40 约 <strong>15 分钟</strong>. 中间可点 "停止".
+            Decision ~42s + (Layer C +15s, 2-pass), pulse/letter/outcome 直接跑.
+            全 40 在 layer_ac 模式约 <strong>20 分钟</strong>. 中间可点 "停止".
             <br />
-            其它 stage (onboarding/pulse/letter/outcome) 当前是 stub, 立即 skipped.
+            onboarding 5 个为 stub (brain seed 已替代下游效果), 立即 skipped.
           </p>
           <div className="flex flex-wrap gap-3 items-center mb-4">
             <label className="text-sm text-stone-700">

@@ -408,11 +408,29 @@ export function renderMemoryForPrompt(memory: UserMemoryContext): {
   }
 
   if (memory.psychSignal.length > 0) {
-    contextParts.push('## 心理信号 (用于敏感度调整,不要主动提)');
-    for (const p of memory.psychSignal) {
-      contextParts.push(`- ${p.title}: ${p.content}`);
+    // 分两类: 反复 pattern 类 (跨决策 signal · 必须 surface) vs 普通心理信号 (不主动提)
+    const patternRegex = /(死循环|反复|又问|老问题|第\s*\d+\s*次|总是问|一直在问|来回|切换)/;
+    const patternSignals = memory.psychSignal.filter((p) =>
+      patternRegex.test(`${p.title} ${p.content}`),
+    );
+    const otherSignals = memory.psychSignal.filter((p) => !patternRegex.test(`${p.title} ${p.content}`));
+
+    if (patternSignals.length > 0) {
+      // hardAnchorsBlock 里也加一份 · 强制 Analyst 看见
+      parts.push('【⚠️ 反复出现的跨决策 pattern · 必须在 currentTension 或 preMortem 中 surface】');
+      for (const p of patternSignals) {
+        parts.push(`- ${p.title}: ${p.content}`);
+      }
+      parts.push('');
     }
-    contextParts.push('');
+
+    if (otherSignals.length > 0) {
+      contextParts.push('## 心理信号 (用于敏感度调整,不要主动提)');
+      for (const p of otherSignals) {
+        contextParts.push(`- ${p.title}: ${p.content}`);
+      }
+      contextParts.push('');
+    }
   }
 
   if (memory.openLoops.length > 0) {
