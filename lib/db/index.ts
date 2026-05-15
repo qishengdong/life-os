@@ -495,6 +495,77 @@ export function getDb(): Database.Database {
     console.log('[DB Migration JOB-001] Added users.onboarding_completed_at');
   }
 
+  // ============================================================
+  // JOB-018 · brain_insights · AI 在用户身上看见的 pattern
+  // 借鉴 Sivon "Linda 看见自己 v0 spec" — grounded 硬约束.
+  // ============================================================
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS brain_insights (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+
+      -- pattern 类型 (6 类)
+      pattern_type TEXT NOT NULL CHECK(pattern_type IN (
+        'topic_frequency',     -- 反复出现的主题 (例: 6 次提到母亲)
+        'temporal',            -- 时间规律 (例: 凌晨多焦虑, 周日晚多重大决策)
+        'avoidance',           -- 回避模式 (例: 一聊职业转身就转话题)
+        'role_strain',         -- 角色张力 (例: 母亲/女儿/职业人三重身份冲突)
+        'growth_marker',       -- 成长信号 (例: 从"我必须" → "我可以选择")
+        'relation_defensive'   -- 关系防御 (例: 提到 X 时永远先自责)
+      )),
+
+      -- 显示文本 (生成时 LLM 写, 后续用户可改)
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,         -- AI 描述这个 pattern · 200-400 字
+
+      -- Grounded 证据 (Inspector C30 硬约束: 至少 3 条 evidence)
+      evidence_pulse_ids TEXT,           -- JSON array of daily_pulses.id
+      evidence_decision_ids TEXT,        -- JSON array of decisions.id
+      evidence_outcome_ids TEXT,         -- JSON array of decision_outcomes.id
+      evidence_rmc_ids TEXT,             -- JSON array of relationship_memory_cards.id
+      evidence_count INTEGER NOT NULL DEFAULT 0,  -- 总证据数 (拒收 <3 的 insight)
+
+      -- 状态 + 用户操作
+      status TEXT NOT NULL DEFAULT 'unreviewed'
+        CHECK(status IN ('unreviewed','confirmed','corrected','archived','rejected')),
+      user_correction TEXT,              -- 用户纠正版本 (correction 时)
+      confidence REAL DEFAULT 0.7 CHECK(confidence >= 0 AND confidence <= 1),
+
+      -- Pipeline metadata
+      detected_at INTEGER DEFAULT (unixepoch()),
+      reviewed_at INTEGER,
+      detection_run_id INTEGER,          -- 哪次 weekly run 产出的
+
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_insights_user_status
+      ON brain_insights(user_id, status, detected_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_insights_type
+      ON brain_insights(user_id, pattern_type);
+  `);
+
+  // 每次 weekly run 的 audit
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS brain_insight_runs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      week_start INTEGER NOT NULL,
+      insights_generated INTEGER DEFAULT 0,
+      insights_passed_c30 INTEGER DEFAULT 0,   -- 通过 evidence_count >= 3 守护
+      pulses_seen INTEGER DEFAULT 0,
+      decisions_seen INTEGER DEFAULT 0,
+      tokens_used INTEGER,
+      duration_ms INTEGER,
+      error TEXT,
+      created_at INTEGER DEFAULT (unixepoch()),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      UNIQUE(user_id, week_start)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_insight_runs_user ON brain_insight_runs(user_id, created_at DESC);
+  `);
+
   return _db;
 }
 
