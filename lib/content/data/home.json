@@ -4,10 +4,8 @@
   "hero": {
     "brandStatementEn": "Find the key before you decide.",
     "brandStatementCn": "决定之前, 找到关键.",
-    "subTag": "KEY 是 AI 原生的私人决策顾问服务 — 始于陪伴, 但给你结果交付.",
+    "subTag": "重大决定面前, 你缺的不是信息. 也不是周围人带着立场的建议.\n而是那个没人愿意指出的关键变量.",
     "explainer": [
-      "重大决定面前, 你缺的不是信息, 更不是那些周围人带着各种利益与立场的建议.",
-      "而是 <em>那个没人愿意指出的关键变量</em>.",
       "KEY 把你的真实背景, 关键变量, 你回避的隐藏代价, 通过独创的顶级决策体系与 AI 引擎, 为你打造一份私人决策简报.",
       "不哄, 不预设立场, 不诊断, 不替你决定.",
       "<i>30 / 90 / 365 天后, 我们回来复盘 — 你的决定, 是真的让你走到了想去的地方.</i>"
@@ -15,7 +13,7 @@
     "ctas": {
       "primary": { "label": "写下我最近最难的决定 →", "href": "/letters/new" },
       "secondary": { "label": "读一份 sample brief", "href": "/sample-brief" },
-      "ghost": { "label": "先看方法论", "href": "/methodology" }
+      "ghost": { "label": "", "href": "" }
     },
     "leadsIntro": "如果下面任何一条, 你认出了自己",
     "leads": [
@@ -25,7 +23,8 @@
           "你这一生没做过特别错的决定.",
           "但所有 \"对\" 的决定加起来, 也没让你活得像自己."
         ],
-        "truth": "因为你可能根本就不知道 \"自己\" 是谁."
+        "truth": "因为你可能根本就不知道 \"自己\" 是谁.",
+        "href": "/sample-brief"
       },
       {
         "label": "子女",
@@ -33,27 +32,30 @@
           "你给了她最好的学校, 最好的资源, 最好的妈妈.",
           "她从来没问过你, 你过得好不好."
         ],
-        "truth": "而你, 或许只是把她当成了, 自己放弃自己的最佳借口."
+        "truth": "而你, 或许只是把她当成了, 自己放弃自己的最佳借口.",
+        "href": "/sample-brief?id=14"
       },
       {
         "label": "父母",
         "setup": [
           "你 50 岁了, 还是不敢挂你妈的电话."
         ],
-        "truth": "在你成长的世界里, \"不孝\" 两个字, 比任何错都更死."
+        "truth": "在你成长的世界里, \"不孝\" 两个字, 比任何错都更死.",
+        "href": "/sample-brief?id=15"
       },
       {
         "label": "转身",
         "setup": [
           "你当管理者干了十年. 你知道该自己做点什么."
         ],
-        "truth": "但你更清楚, 出了这个游戏, 你可能一无是处. 再耀眼的管理位置, 也只是别人游戏里的一个执行者."
+        "truth": "但你更清楚, 出了这个游戏, 你可能一无是处. 再耀眼的管理位置, 也只是别人游戏里的一个执行者.",
+        "href": "/methodology#vi-six-domains"
       }
     ],
     "betterCallKey": {
-      "en1": "Got a key call?",
-      "en2": "Better call KEY.",
-      "cnSubtitle": "重大抉择面前 · 来找 KEY"
+      "en1": "如果上面任何一条让你停顿了三秒 —",
+      "en2": "这就是 KEY 做的事.",
+      "cnSubtitle": "If any of the above gave you pause — that is the work."
     }
   },
   "fiveDomains": {
@@ -69,7 +71,7 @@
   "footer": {
     "tagline": "KEY Editorial Office",
     "subtagline": "陪你想清楚 · 看清代价 · 长期记得你",
-    "aigcDisclaimer": "AIGC 备案中 · 本服务输出由 AI 生成, 不构成医疗 / 法律 / 财务建议",
+    "aigcDisclaimer": "本刊由 AI 撰稿, 编辑部审核.\n简报供作决策参考, 不代替医疗 / 法律 / 财务专业意见.\nAIGC 备案 · 进行中.",
     "navLinks": [
       { "label": "通信集", "href": "/letters", "emphasis": true },
       { "label": "方法论", "href": "/methodology" },

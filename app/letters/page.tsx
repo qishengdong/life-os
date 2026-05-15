@@ -223,7 +223,19 @@ export default function LettersPage() {
       {/* List */}
       <main className="max-w-prose-xl mx-auto px-6 pb-24">
         {loading && (
-          <p className="font-serif italic text-ink-400 text-center py-16">加载通信集...</p>
+          /* A6 · skeleton rows (no spinner) */
+          <div className="my-12 space-y-4 max-w-prose-lg mx-auto">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="border border-paper-300 rounded-sm p-6 bg-paper-50 animate-pulse"
+              >
+                <div className="h-3 w-24 bg-paper-300 rounded mb-3" />
+                <div className="h-4 w-3/4 bg-paper-300 rounded mb-2" />
+                <div className="h-3 w-1/2 bg-paper-300 rounded" />
+              </div>
+            ))}
+          </div>
         )}
 
         {error && (
@@ -236,13 +248,21 @@ export default function LettersPage() {
         )}
 
         {isEmpty && (
-          <div className="my-16 text-center max-w-prose-lg mx-auto">
-            <p className="font-serif text-reading text-ink-700 editorial-leading mb-4">
-              你还没有写过信.
+          /* A6 · editorial empty state */
+          <div className="my-20 text-center max-w-[26em] mx-auto">
+            <p className="font-serif italic text-[19px] text-ink-900 leading-snug mb-5">
+              你还没寄出第一封.
             </p>
-            <p className="font-serif italic text-[15px] text-ink-500 editorial-leading">
-              一封信 50-3000 字都可以. 不必想好再写. 写出来的过程, 本身就是看见自己.
+            <p className="font-serif italic text-[19px] text-ink-700 leading-snug mb-10">
+              大多数人写的第一封, 也是他们三个月内回头读最多的一封.
             </p>
+            <img
+              src="/brand/fleurons/fleuron-simple-diamond-seal.svg"
+              alt=""
+              width={48}
+              height={48}
+              className="mx-auto opacity-70"
+            />
           </div>
         )}
 

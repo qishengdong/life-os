@@ -98,11 +98,11 @@ export default async function HomePage() {
                 {hero.brandStatementCn}
               </p>
 
-              <p className="font-serif italic text-[clamp(0.95rem,1.4vw,1.15rem)] text-ink-700 editorial-leading mb-10">
+              <p className="font-serif italic text-[clamp(0.95rem,1.4vw,1.15rem)] text-ink-700 editorial-leading mb-10 whitespace-pre-line">
                 {hero.subTag}
               </p>
 
-              {/* CTAs */}
+              {/* CTAs · skip ghost if label empty */}
               <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-baseline flex-wrap">
                 <Link
                   href={hero.ctas.primary.href}
@@ -116,12 +116,14 @@ export default async function HomePage() {
                 >
                   {hero.ctas.secondary.label}
                 </Link>
-                <Link
-                  href={hero.ctas.ghost.href}
-                  className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
-                >
-                  {hero.ctas.ghost.label}
-                </Link>
+                {hero.ctas.ghost.label && (
+                  <Link
+                    href={hero.ctas.ghost.href}
+                    className="font-serif text-[15px] text-ink-700 hover:text-seal-500 transition-colors"
+                  >
+                    {hero.ctas.ghost.label}
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -130,7 +132,7 @@ export default async function HomePage() {
               <div className="relative aspect-[4/5] bg-ink-900 overflow-hidden shadow-lg">
                 {/* TODO 用户在生 hero-key.png (engraving 风 铁钥匙). 到位后替换 src. */}
                 <Image
-                  src="/illustrations/editorial-marriage.png"
+                  src="/illustrations/hero-home.png"
                   alt={hero.brandStatementEn}
                   fill
                   sizes="(max-width: 768px) 100vw, 40vw"
@@ -199,21 +201,31 @@ export default async function HomePage() {
                 <p className="font-serif italic text-[15px] text-ink-700/90 editorial-leading pl-4 border-l-2 border-seal-500/40">
                   —— {lead.truth}
                 </p>
+                {lead.href && (
+                  <div className="mt-5 pt-3 border-t border-seal-500/30">
+                    <Link
+                      href={lead.href}
+                      className="font-serif italic text-[13px] text-seal-500 hover:text-seal-700 transition-colors"
+                    >
+                      读 →
+                    </Link>
+                  </div>
+                )}
               </article>
             ))}
           </div>
         </div>
 
-        {/* Better Call KEY · Hero 收尾 punch */}
+        {/* Hero 收尾 · 三秒停顿 tagline */}
         <div className="relative max-w-prose-xl mx-auto px-6 pt-12 pb-20 text-center">
-          <div className="inline-block">
-            <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-ink-900 mb-1 tracking-tightish">
+          <div className="inline-block max-w-prose-md">
+            <p className="font-serif italic text-[clamp(1.3rem,2.4vw,1.6rem)] text-ink-900 mb-1 leading-snug tracking-tightish">
               {hero.betterCallKey.en1}
             </p>
-            <p className="font-serif italic text-[clamp(1.4rem,2.6vw,2rem)] text-seal-500 mb-4 tracking-tightish">
+            <p className="font-serif italic text-[clamp(1.3rem,2.4vw,1.6rem)] text-ink-900 mb-4 leading-snug tracking-tightish">
               {hero.betterCallKey.en2}
             </p>
-            <p className="font-sans text-[11px] uppercase tracking-[0.35em] text-ink-500">
+            <p className="font-serif italic text-[clamp(0.95rem,1.2vw,1.15rem)] text-ink-500 leading-relaxed">
               {hero.betterCallKey.cnSubtitle}
             </p>
           </div>
@@ -369,33 +381,47 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* FOOTER                                         */}
+      {/* FOOTER · editorial colophon                    */}
       {/* ============================================ */}
       <footer className="border-t border-paper-300 bg-paper-50">
-        <div className="max-w-prose-xl mx-auto px-6 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
-            <div className="flex items-center gap-3">
-              <KeyWordmark variant="mark-only" height={20} ariaLabel="KEY mark" />
-              <p className="font-serif text-base text-ink-900">
-                KEY Editorial Office
-              </p>
-            </div>
-            <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400 flex-wrap">
-              <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">通信集</Link>
-              <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
-              <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>
-              <Link href="/membership" className="hover:text-seal-500 transition-colors">会员</Link>
-              <Link href="/transparency" className="hover:text-seal-500 transition-colors">透明度</Link>
-              <Link href="/pulse" className="hover:text-seal-500 transition-colors">进入</Link>
-              <Link href="/terms" className="hover:text-seal-500 transition-colors">服务条款</Link>
-              <Link href="/privacy" className="hover:text-seal-500 transition-colors">隐私</Link>
-            </div>
+        <div className="max-w-prose-xl mx-auto px-6 py-14 text-center">
+          {/* 居中 fleuron · A8 */}
+          <div className="flex justify-center mb-8">
+            <img
+              src="/brand/fleurons/fleuron-key-derived-seal.svg"
+              alt=""
+              width={64}
+              height={64}
+              className="opacity-80"
+            />
           </div>
-          <p className="mt-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
-            陪你想清楚 · 看清代价 · 长期记得你
+
+          <p className="font-serif text-base text-ink-900 mb-4">
+            {footer.tagline}
           </p>
-          <p className="mt-2 text-[10px] font-sans text-ink-400">
-            AIGC 备案中 · 本服务输出由 AI 生成, 不构成医疗 / 法律 / 财务建议
+
+          <div className="flex gap-x-5 gap-y-2 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400 flex-wrap justify-center mb-8">
+            {footer.navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={
+                  link.emphasis
+                    ? 'text-seal-500 hover:text-seal-700 transition-colors'
+                    : 'hover:text-seal-500 transition-colors'
+                }
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <p className="text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400 mb-6">
+            {footer.subtagline}
+          </p>
+
+          <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed whitespace-pre-line max-w-prose-md mx-auto">
+            {footer.aigcDisclaimer}
           </p>
         </div>
       </footer>

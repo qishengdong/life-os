@@ -129,8 +129,22 @@ function LineageBlock({
 // 单条契约的完整渲染
 // ============================================================================
 function ContractSection({ contract }: { contract: Contract }) {
+  // 罗马数字 → anchor id (e.g. IV → iv-six-domains for the 六个领域专项 section)
+  const numeralToSlug: Record<string, string> = {
+    I: 'i-anti-chicken-soup',
+    II: 'ii-twelve-dimensions',
+    III: 'iii-premortem',
+    IV: 'iv-six-domains',
+    V: 'v-persistent-memory',
+    VI: 'vi-outcome-ledger',
+    VII: 'vii-six-check-inspector',
+  };
+  // 兼容: spec A5 链接的 "/methodology#vi-six-domains" — 老 anchor 名沿用.
+  const slug = numeralToSlug[contract.numeral] || '';
+  const id = contract.numeral === 'IV' ? 'vi-six-domains' : slug;
+
   return (
-    <section className="py-20">
+    <section className="py-20" id={id}>
       <ContractHeader
         numeral={contract.numeral}
         title={contract.title}

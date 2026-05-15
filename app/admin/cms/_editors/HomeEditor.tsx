@@ -215,6 +215,18 @@ export default function HomeEditor() {
                   />
                 </Field>
               </div>
+              <div className="mt-3">
+                <Field
+                  label='"读 →" 链接目标 (可空)'
+                  hint='例: /sample-brief?id=15 (父母) · /methodology#vi-six-domains (转身)'
+                >
+                  <TextInput
+                    value={lead.href || ''}
+                    onChange={(v) => updateLead(i, { href: v || undefined })}
+                    placeholder="留空 = 不显示链接"
+                  />
+                </Field>
+              </div>
             </div>
           ))}
         </div>

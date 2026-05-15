@@ -28,6 +28,7 @@ export interface HomeLead {
   label: string;       // "自我" / "子女" / "父母" / "转身"
   setup: string[];     // 1-3 段文字 (setup)
   truth: string;       // —— 真相 (italic)
+  href?: string;       // 可选: "读 →" 链接目标 (e.g. /sample-brief?id=15)
 }
 
 export interface HomeBetterCallKey {
