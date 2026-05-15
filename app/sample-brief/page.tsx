@@ -116,23 +116,36 @@ async function SampleBriefContent({
       {/* ============================================ */}
       {/* 编辑部说明                                       */}
       {/* ============================================ */}
-      <header className="max-w-prose-lg mx-auto px-6 pt-16 pb-16 border-b border-paper-300">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          {copy.header.eyebrow}
-        </p>
-        <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-8">
-          {copy.header.title}
-        </h1>
-        <div className="font-serif text-reading text-ink-700 editorial-leading max-w-prose-lg space-y-4">
-          {copy.header.body.map((p, i) => {
-            const isLast = i === copy.header.body.length - 1;
-            const italic = isLast && copy.header.lastParagraphItalic;
-            return (
-              <p key={i} className={italic ? 'text-ink-500 italic' : undefined}>
-                {p}
-              </p>
-            );
-          })}
+      <header className="max-w-prose-xl mx-auto px-6 pt-16 pb-16 border-b border-paper-300">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_0.85fr] gap-10 md:gap-14 items-center">
+          <div className="order-2 md:order-1">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+              {copy.header.eyebrow}
+            </p>
+            <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-8">
+              {copy.header.title}
+            </h1>
+            <div className="font-serif text-reading text-ink-700 editorial-leading space-y-4">
+              {copy.header.body.map((p, i) => {
+                const isLast = i === copy.header.body.length - 1;
+                const italic = isLast && copy.header.lastParagraphItalic;
+                return (
+                  <p key={i} className={italic ? 'text-ink-500 italic' : undefined}>
+                    {p}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+          {/* channel-works · 作家工作台 + 手稿 · "经过两轮撰稿" 的视觉 */}
+          <div className="order-1 md:order-2 relative aspect-[4/5] bg-ink-900/5 overflow-hidden">
+            <img
+              src="/illustrations/channel-works.png"
+              alt="作家工作台 · 手稿与墨水瓶"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+          </div>
         </div>
       </header>
 

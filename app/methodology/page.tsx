@@ -237,22 +237,35 @@ export default function MethodologyPage() {
       {/* ============================================ */}
       {/* HERO                                          */}
       {/* ============================================ */}
-      <header className="max-w-prose-lg mx-auto px-6 pt-20 pb-20 border-b border-paper-300">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          {METHODOLOGY_OPENING.eyebrow}
-        </p>
-        <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-10 leading-[1.1]">
-          {METHODOLOGY_OPENING.title}
-        </h1>
-        <div className="space-y-5 max-w-prose-lg">
-          {METHODOLOGY_OPENING.body.map((p, i) => (
-            <p
-              key={i}
-              className="font-serif text-reading text-ink-700 editorial-leading"
-            >
-              {p}
+      <header className="max-w-prose-xl mx-auto px-6 pt-20 pb-20 border-b border-paper-300">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_0.8fr] gap-10 md:gap-14 items-center">
+          <div className="order-2 md:order-1">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+              {METHODOLOGY_OPENING.eyebrow}
             </p>
-          ))}
+            <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-10 leading-[1.1]">
+              {METHODOLOGY_OPENING.title}
+            </h1>
+            <div className="space-y-5">
+              {METHODOLOGY_OPENING.body.map((p, i) => (
+                <p
+                  key={i}
+                  className="font-serif text-reading text-ink-700 editorial-leading"
+                >
+                  {p}
+                </p>
+              ))}
+            </div>
+          </div>
+          {/* channel-stroll · 林间小路 + 苔藓里程碑 · 走完 7 条契约的隐喻 */}
+          <div className="order-1 md:order-2 relative aspect-[4/5] bg-ink-900/5 overflow-hidden">
+            <img
+              src="/illustrations/channel-stroll.png"
+              alt="林间小路 · 一步一步走过 7 条契约"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+          </div>
         </div>
       </header>
 

@@ -192,32 +192,44 @@ export default function LettersPage() {
 
       <PageMasthead eyebrow="LETTERS · 通信集" volume="MMXXVI" />
 
-      {/* Header */}
+      {/* Header · 左文 + 右图 (channel-publication: 精装刊物 + 眼镜书签) */}
       <header className="max-w-prose-xl mx-auto px-6 pt-16 pb-12 animate-fade-in-soft">
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-          · KEY EDITORIAL OFFICE · LETTERS ·
-        </p>
-        <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter leading-[1.05] mb-6">
-          我们的通信集
-        </h1>
-        <p className="font-serif italic text-reading text-ink-700 editorial-leading max-w-prose-lg">
-          那些跟谁都说不出口的, 写给 KEY. 我们 3-10 分钟回信. 永远不评价, 不"加油", 不哄你 —
-          但真的读你写的字, 真的记得你说过什么.
-        </p>
+        <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-10 md:gap-14 items-center">
+          <div className="order-2 md:order-1">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+              · KEY EDITORIAL OFFICE · LETTERS ·
+            </p>
+            <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter leading-[1.05] mb-6">
+              我们的通信集
+            </h1>
+            <p className="font-serif italic text-reading text-ink-700 editorial-leading">
+              那些跟谁都说不出口的, 写给 KEY. 我们 3-10 分钟回信. 永远不评价, 不"加油", 不哄你 —
+              但真的读你写的字, 真的记得你说过什么.
+            </p>
 
-        <div className="mt-12 flex items-baseline gap-6 flex-wrap">
-          <Link
-            href="/letters/new"
-            className="inline-block bg-seal-500 hover:bg-seal-700 text-paper-100 font-serif text-base px-8 py-3 transition-colors"
-          >
-            写一封新的信 →
-          </Link>
-          {data && data.counts.total > 0 && (
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400">
-              累计 {data.counts.total} 封 · {data.counts.replied} 已回 · {data.counts.pending} 在读
-              {data.counts.failed > 0 && ` · ${data.counts.failed} 未送达`}
-            </span>
-          )}
+            <div className="mt-10 flex items-baseline gap-6 flex-wrap">
+              <Link
+                href="/letters/new"
+                className="inline-block bg-seal-500 hover:bg-seal-700 text-paper-100 font-serif text-base px-8 py-3 transition-colors"
+              >
+                写一封新的信 →
+              </Link>
+              {data && data.counts.total > 0 && (
+                <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400">
+                  累计 {data.counts.total} 封 · {data.counts.replied} 已回 · {data.counts.pending} 在读
+                  {data.counts.failed > 0 && ` · ${data.counts.failed} 未送达`}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="order-1 md:order-2 relative aspect-[4/5] bg-ink-900/5 overflow-hidden shadow-sm">
+            <img
+              src="/illustrations/channel-publication.png"
+              alt="一摞精装刊物"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+          </div>
         </div>
       </header>
 

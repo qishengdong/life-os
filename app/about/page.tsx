@@ -21,15 +21,27 @@ export default function AboutPage() {
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
         <header className="pt-12 pb-12 animate-fade-in-soft">
-          <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
-            {c.hero.eyebrow}
-          </p>
-          <h1 className="font-serif text-editorial-lg text-ink-900 mb-4 tracking-tighter">
-            {c.hero.title}
-          </h1>
-          <p className="font-serif text-reading text-ink-500 editorial-leading max-w-prose-lg">
-            {c.hero.subtitle}
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_0.85fr] gap-10 md:gap-12 items-center">
+            <div className="order-2 md:order-1">
+              <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-6">
+                {c.hero.eyebrow}
+              </p>
+              <h1 className="font-serif text-editorial-lg text-ink-900 mb-4 tracking-tighter">
+                {c.hero.title}
+              </h1>
+              <p className="font-serif text-reading text-ink-500 editorial-leading">
+                {c.hero.subtitle}
+              </p>
+            </div>
+            <div className="order-1 md:order-2 relative aspect-[4/5] bg-ink-900/5 overflow-hidden">
+              <img
+                src="/illustrations/channel-about.png"
+                alt="半开的古典木门"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
+            </div>
+          </div>
         </header>
 
         <section className="mb-16 animate-fade-in-soft">

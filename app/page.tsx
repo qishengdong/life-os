@@ -270,9 +270,19 @@ export default async function HomePage() {
       {teaserBrief && (
         <section className="border-t border-paper-300">
           <div className="max-w-prose-xl mx-auto px-6 py-24">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-10">
-              · 摘自一份真实简报 ·
-            </p>
+            <div className="flex items-center gap-4 mb-10">
+              {/* icon-envelope · 装饰 */}
+              <img
+                src="/illustrations/icon-envelope.png"
+                alt=""
+                width={48}
+                height={48}
+                className="opacity-70"
+              />
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
+                · 摘自一份真实简报 ·
+              </p>
+            </div>
 
             <blockquote className="max-w-prose-lg">
               <p className="font-serif text-[clamp(1.5rem,3vw,2.25rem)] text-ink-900 leading-snug tracking-tightish italic mb-10">
@@ -404,14 +414,21 @@ export default async function HomePage() {
       {/* ============================================ */}
       <footer className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-xl mx-auto px-6 py-14 text-center">
-          {/* 居中 fleuron · A8 */}
-          <div className="flex justify-center mb-8">
+          {/* 居中 fleuron + icon-quill (右侧装饰) · A8 + icon */}
+          <div className="flex justify-center items-center gap-5 mb-8">
             <img
               src="/brand/fleurons/fleuron-key-derived-seal.svg"
               alt=""
-              width={64}
-              height={64}
+              width={56}
+              height={56}
               className="opacity-80"
+            />
+            <img
+              src="/illustrations/icon-quill.png"
+              alt=""
+              width={40}
+              height={40}
+              className="opacity-60"
             />
           </div>
 
