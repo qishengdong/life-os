@@ -16,6 +16,7 @@
 
 import { modelRouter } from '@/lib/model-router';
 import { fetchUserMemory, renderMemoryForPrompt } from '@/lib/memory';
+import type { UserMemoryContext } from '@/lib/memory/types';
 import {
   detectFramework,
   selectCanonForLetter,
@@ -222,6 +223,8 @@ export interface GenerateReplyArgs {
   displayName?: string;
   /** 是否跳过 LLM 直接返回 fallback (debug / cost saving) */
   useFallback?: boolean;
+  /** Test harness · 跳过 DB · 注入 synthetic memory */
+  injectedMemory?: UserMemoryContext;
 }
 
 export interface GenerateReplyResult {
@@ -263,7 +266,7 @@ export async function generateReply(args: GenerateReplyArgs): Promise<GenerateRe
   let brainContextBlock = '';
   let brainFactsUsed: string[] = [];
   try {
-    const memory = fetchUserMemory(args.userId);
+    const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
     const rendered = renderMemoryForPrompt(memory);
     brainContextBlock = (rendered.hardAnchorsBlock || '') + '\n\n' + (rendered.contextBlock || '');
     brainContextBlock = brainContextBlock.trim();

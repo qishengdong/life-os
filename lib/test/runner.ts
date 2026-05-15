@@ -24,6 +24,10 @@ import { getPersonaById, type PersonaV3 } from './personas-v3';
 import { generateBrief } from '@/lib/decision/brief-pipeline';
 import { renderBriefMarkdown } from '@/lib/decision/brief-schema';
 import { personaToUserMemoryContext } from './persona-to-memory';
+import { processPulse } from '@/lib/pulse/tagger';
+import { generateReply } from '@/lib/letters/pipeline';
+import { processOutcomeResponse } from '@/lib/outcomes/processor';
+import { PULSE_QUESTIONS } from '@/lib/pulse/schema';
 
 export interface RunOptions {
   mode: 'layer_a_only' | 'layer_ac' | 'layer_abc'; // layer_b 暂不实现
@@ -281,20 +285,69 @@ async function runDecisionStage(scenario: TrapScenario, persona: PersonaV3): Pro
 export const STAGE_STUB_MARKER = '__STUB_SKIP__';
 
 async function runOnboardingStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  // V3.1 待 ship: synthetic in-memory onboarding (不污染 DB)
-  return `${STAGE_STUB_MARKER}: onboarding stage not yet implemented in test harness`;
+  // Onboarding 写 user_brain · 测试 mode DB-coupled, 跳过.
+  // 真 onboarding 已被 brain seed 模拟 (persona.brainSeed / baselineBrainSummary 注入到所有其他 stage).
+  return `${STAGE_STUB_MARKER}: onboarding stage DB-coupled · brain seed simulates it`;
 }
 
-async function runPulseStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return `${STAGE_STUB_MARKER}: pulse stage not yet implemented`;
+async function runPulseStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  const injectedMemory = personaToUserMemoryContext(persona);
+  // 默认 question 0 · scenario.userInput 才是真 signal
+  const questionId = PULSE_QUESTIONS[0]?.id;
+  if (!questionId) return `(no pulse question seed)`;
+  const result = await processPulse({
+    userId: -1,
+    questionId,
+    content: scenario.userInput,
+    injectedMemory,
+    skipRmcWrite: true,
+  });
+  return result.aiResponse;
 }
 
-async function runLetterStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return `${STAGE_STUB_MARKER}: letter stage not yet implemented`;
+async function runLetterStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  const injectedMemory = personaToUserMemoryContext(persona);
+  const result = await generateReply({
+    userId: -1,
+    userContent: scenario.userInput,
+    letterNumber: 'TEST-LETTER',
+    displayName: persona.name,
+    injectedMemory,
+  });
+  if (!result.success || !result.reply) {
+    return `(letter generation failed: ${result.error})`;
+  }
+  return result.reply;
 }
 
-async function runOutcomeStage(_scenario: TrapScenario, _persona: PersonaV3): Promise<string> {
-  return `${STAGE_STUB_MARKER}: outcome stage not yet implemented`;
+async function runOutcomeStage(scenario: TrapScenario, persona: PersonaV3): Promise<string> {
+  const injectedMemory = personaToUserMemoryContext(persona);
+  // 从 scenario.userInput 抽 checkpoint 天数 (e.g. "90 天后" → 90, 默认 30)
+  const m = scenario.userInput.match(/(\d{2,3})\s*天/);
+  const checkpointDays = m ? parseInt(m[1], 10) : 30;
+  // Synthetic decision row · 基于 persona hidden tensions + brain seed 拟造"当时 AI 分析"
+  const ageSec = checkpointDays * 86400;
+  const injectedDecision = {
+    question: persona.hiddenTensions[0] || '当时的关键决策',
+    ai_response:
+      `[当时的 PreMortem]\n` +
+      persona.brainSeed.map((s) => `- ${s.content}`).join('\n').slice(0, 2000),
+    framework: '生涯-身份风险',
+    created_at: Math.floor(Date.now() / 1000) - ageSec,
+  };
+  const result = await processOutcomeResponse({
+    outcomeId: -1,
+    userId: -1,
+    decisionId: -1,
+    checkpointDays,
+    userResponse: scenario.userInput,
+    injectedMemory,
+    injectedDecision,
+  });
+  if (!result.success) {
+    return `(outcome reflection failed: ${result.error})`;
+  }
+  return result.aiReflection;
 }
 
 // ============================================================================

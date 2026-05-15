@@ -11,6 +11,7 @@
 
 import { modelRouter } from '@/lib/model-router';
 import { fetchUserMemory } from '@/lib/memory';
+import type { UserMemoryContext } from '@/lib/memory/types';
 import { getDb } from '@/lib/db';
 import type { OutcomeJudgment } from './store';
 
@@ -20,6 +21,14 @@ interface ProcessInput {
   decisionId: number;
   checkpointDays: number;
   userResponse: string;
+  /** Test harness · 跳过 DB · 注入 synthetic memory + synthetic decision row. */
+  injectedMemory?: UserMemoryContext;
+  injectedDecision?: {
+    question: string;
+    ai_response: string;
+    framework?: string;
+    created_at: number; // unix seconds
+  };
 }
 
 export interface ProcessResult {
@@ -84,19 +93,24 @@ JSON:
 
 export async function processOutcomeResponse(args: ProcessInput): Promise<ProcessResult> {
   const startTime = Date.now();
-  const db = getDb();
 
   try {
-    // 拉这次 decision 的原始内容
-    const decision = db
-      .prepare(`SELECT question, ai_response, framework, created_at FROM decisions WHERE id = ?`)
-      .get(args.decisionId) as any;
-
-    if (!decision) {
-      throw new Error(`Decision ${args.decisionId} not found`);
+    // 拉这次 decision 的原始内容 · test 模式可以注入
+    let decision: { question: string; ai_response: string; framework?: string; created_at: number };
+    if (args.injectedDecision) {
+      decision = args.injectedDecision;
+    } else {
+      const db = getDb();
+      const row = db
+        .prepare(`SELECT question, ai_response, framework, created_at FROM decisions WHERE id = ?`)
+        .get(args.decisionId) as any;
+      if (!row) {
+        throw new Error(`Decision ${args.decisionId} not found`);
+      }
+      decision = row;
     }
 
-    const memory = fetchUserMemory(args.userId);
+    const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
     const brainSnippet = memory.brainContent ? memory.brainContent.slice(0, 800) + '...' : '(无)';
 
     const decisionAgeDays = Math.floor((Date.now() / 1000 - decision.created_at) / 86400);

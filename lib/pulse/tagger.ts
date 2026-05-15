@@ -10,6 +10,7 @@
 
 import { modelRouter } from '@/lib/model-router';
 import { addMemoryCard, fetchUserMemory } from '@/lib/memory';
+import type { UserMemoryContext } from '@/lib/memory/types';
 import { checkInputSafety, sanitizeOutput } from '@/lib/safety';
 import type { PulseTag } from './schema';
 import { TAG_DISPLAY } from './schema';
@@ -115,6 +116,9 @@ export async function processPulse(args: {
   userId: number;
   questionId: PulseQuestionId;
   content: string;
+  /** Test harness: 跳过 DB · 注入 synthetic memory + skip RMC write. */
+  injectedMemory?: UserMemoryContext;
+  skipRmcWrite?: boolean;
 }): Promise<ProcessResult> {
   const startTime = Date.now();
   const question = getQuestion(args.questionId);
@@ -137,7 +141,7 @@ export async function processPulse(args: {
 
     // Blocklist 不写 RMC (不存这条内容)
     let rmcEpisodicId: number | null = null;
-    if (safetyCheck.trigger !== 'blocklist') {
+    if (safetyCheck.trigger !== 'blocklist' && !args.skipRmcWrite) {
       try {
         rmcEpisodicId = addMemoryCard({
           userId: args.userId,
@@ -162,7 +166,7 @@ export async function processPulse(args: {
     };
   }
 
-  const memory = fetchUserMemory(args.userId);
+  const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
 
   // 拼装 brain context (压缩版, 给 tagger 用)
   const brainContext = memory.brainContent
@@ -210,6 +214,14 @@ ${args.content}
 
   // 写入 RMC episodic 卡 (累积进 brain.md 长期记忆)
   let rmcEpisodicId: number | null = null;
+  if (args.skipRmcWrite) {
+    return {
+      tags,
+      aiResponse,
+      rmcEpisodicId,
+      durationMs: Date.now() - startTime,
+    };
+  }
   try {
     rmcEpisodicId = addMemoryCard({
       userId: args.userId,
