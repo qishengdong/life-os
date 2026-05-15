@@ -408,6 +408,7 @@ function Metric({
 export default function TransparencyPage() {
   const {
     hero: HERO,
+    userFacing: USER_FACING,
     sectionGrader: SECTION_GRADER,
     sectionInspector: SECTION_INSPECTOR,
     sectionBrief: SECTION_BRIEF,
@@ -440,6 +441,72 @@ export default function TransparencyPage() {
           ))}
         </div>
       </header>
+
+      {/* User-facing 透明度 · 普通话 6 条保证 (放 hero 后, technical appendix 前) */}
+      <section className="max-w-prose-xl mx-auto px-6 py-24 border-b border-paper-300">
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
+          {USER_FACING.eyebrow}
+        </p>
+        <h2 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-8 leading-[1.1]">
+          {USER_FACING.title}
+        </h2>
+        <div className="space-y-5 mb-12 max-w-prose-lg">
+          {USER_FACING.intro.map((p, i) => (
+            <p key={i} className="font-serif text-reading text-ink-700 editorial-leading">
+              {p}
+            </p>
+          ))}
+        </div>
+
+        <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+          {USER_FACING.items.map((item, i) => (
+            <li key={i} className="border-b border-paper-300 pb-6">
+              <div className="flex gap-4 items-baseline mb-3">
+                <span className="font-serif italic text-seal-500 text-lg select-none">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="font-serif text-[19px] text-ink-900 tracking-tightish leading-snug">
+                  {item.title}
+                </h3>
+              </div>
+              <p className="font-serif text-[15px] text-ink-700 editorial-leading pl-9">
+                {item.detail}
+              </p>
+            </li>
+          ))}
+        </ol>
+
+        {USER_FACING.ctaLabel && (
+          <div className="mt-12">
+            <Link
+              href={USER_FACING.ctaHref}
+              className="font-serif text-base text-ink-900 border-b border-seal-500 pb-0.5 hover:text-seal-500 transition-colors"
+            >
+              {USER_FACING.ctaLabel}
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {/* Technical Appendix · 下面是详细审计数据 */}
+      <section
+        id="technical-appendix"
+        aria-label="Technical Appendix"
+        className="bg-ink-900/[0.02] border-b border-paper-300"
+      >
+        <div className="max-w-prose-xl mx-auto px-6 pt-24 pb-12">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-3">
+            · Technical Appendix ·
+          </p>
+          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight mb-4">
+            内部审计技术细节.
+          </h2>
+          <p className="font-serif italic text-[15px] text-ink-500 editorial-leading max-w-prose-lg">
+            下面是给愿意看完整审计数据的读者. 我们不藏 — 包括目前还没做到 5/5 的维度,
+            Inspector 的 shadow 模式状态, 内测期的真实样本量.
+          </p>
+        </div>
+      </section>
 
       {/* I. Grader */}
       <section className="max-w-prose-xl mx-auto px-6 py-24 border-b border-paper-300">

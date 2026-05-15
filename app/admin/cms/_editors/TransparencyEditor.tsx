@@ -50,6 +50,50 @@ export default function TransparencyEditor() {
         </Field>
       </SectionCard>
 
+      <SectionCard
+        title="用户版透明度 (6 条普通话保证)"
+        hint="放 hero 后 · Technical Appendix 前 · 给不看技术细节的用户"
+      >
+        <Field label="eyebrow"><TextInput value={c.userFacing.eyebrow} onChange={(v) => p('userFacing', { ...c.userFacing, eyebrow: v })} /></Field>
+        <Field label="标题"><TextInput value={c.userFacing.title} onChange={(v) => p('userFacing', { ...c.userFacing, title: v })} /></Field>
+        <Field label="引言 (每行一段)">
+          <LinesEditor value={c.userFacing.intro} onChange={(v) => p('userFacing', { ...c.userFacing, intro: v })} rows={3} />
+        </Field>
+        <div className="border-t border-stone-200 pt-4">
+          <label className="block text-sm font-medium text-stone-700 mb-3">
+            6 条保证 ({c.userFacing.items.length} 项)
+          </label>
+          {c.userFacing.items.map((item, i) => (
+            <div key={i} className="mb-4 pb-4 border-b border-stone-100 last:border-b-0">
+              <p className="text-xs text-stone-400 uppercase tracking-widest mb-2">#{String(i + 1).padStart(2, '0')}</p>
+              <Field label="短标题">
+                <TextInput
+                  value={item.title}
+                  onChange={(v) => {
+                    const next = c.userFacing.items.map((it, j) => (i === j ? { ...it, title: v } : it));
+                    p('userFacing', { ...c.userFacing, items: next });
+                  }}
+                />
+              </Field>
+              <Field label="一句解释">
+                <TextArea
+                  value={item.detail}
+                  onChange={(v) => {
+                    const next = c.userFacing.items.map((it, j) => (i === j ? { ...it, detail: v } : it));
+                    p('userFacing', { ...c.userFacing, items: next });
+                  }}
+                  rows={2}
+                />
+              </Field>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Field label="CTA 文字"><TextInput value={c.userFacing.ctaLabel} onChange={(v) => p('userFacing', { ...c.userFacing, ctaLabel: v })} /></Field>
+          <Field label="CTA 链接 (锚 #technical-appendix 或 /路径)"><TextInput value={c.userFacing.ctaHref} onChange={(v) => p('userFacing', { ...c.userFacing, ctaHref: v })} placeholder="#technical-appendix" /></Field>
+        </div>
+      </SectionCard>
+
       {introKeys.map((k) => {
         const s = c[k];
         return (
