@@ -15,6 +15,7 @@
 import Link from 'next/link';
 import { loadMembershipContent, type MembershipTier } from '@/lib/content/membership';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 
 export const runtime = 'nodejs';
 
@@ -171,6 +172,7 @@ export default function MembershipPage() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
+      <PageMasthead eyebrow="MEMBERSHIP" volume="创始号" right="MMXXVI" />
 
       {/* ============================================ */}
       {/* HERO                                          */}

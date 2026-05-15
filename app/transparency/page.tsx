@@ -29,6 +29,7 @@ import {
   getGraderScoreTrend,
 } from '@/lib/grader/aggregations';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 import Sparkline, { Gauge } from '@/components/Sparkline';
 
 export const runtime = 'nodejs';
@@ -349,6 +350,7 @@ export default function TransparencyPage() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
+      <PageMasthead eyebrow="TRANSPARENCY" volume="公开 · 第一号" right="MMXXVI" />
 
       {/* HERO */}
       <header className="max-w-prose-lg mx-auto px-6 pt-20 pb-20 border-b border-paper-300">

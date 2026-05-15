@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 
 function TopNav() {
   return (
@@ -80,6 +81,7 @@ export default function InvitePage() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
+      <PageMasthead eyebrow="JOIN" volume="邀请制 · 内测" right="MMXXVI · 春" />
 
       {/* HERO */}
       <header className="max-w-prose-lg mx-auto px-6 pt-20 pb-16 border-b border-paper-300">

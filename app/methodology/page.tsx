@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { Fragment } from 'react';
 import { loadMethodologyContent, type MethodologyContract } from '@/lib/content/methodology';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 import { FleuronDivider } from '@/components/Fleuron';
 
 export const runtime = 'nodejs';
@@ -212,6 +213,7 @@ export default function MethodologyPage() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       <TopNav />
+      <PageMasthead eyebrow="METHODOLOGY" volume="立法版 · 第一号" right="MMXXVI" />
 
       {/* ============================================ */}
       {/* HERO                                          */}

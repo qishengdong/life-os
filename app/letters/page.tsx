@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 import { FleuronDivider } from '@/components/Fleuron';
 
 interface LetterRecord {
@@ -188,6 +189,8 @@ export default function LettersPage() {
           ← Home
         </Link>
       </nav>
+
+      <PageMasthead eyebrow="LETTERS · 通信集" volume="MMXXVI" />
 
       {/* Header */}
       <header className="max-w-prose-xl mx-auto px-6 pt-16 pb-12 animate-fade-in-soft">

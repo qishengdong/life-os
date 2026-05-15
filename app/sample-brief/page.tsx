@@ -18,6 +18,7 @@ import BriefSeal from '@/components/BriefSeal';
 import Link from 'next/link';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 import { loadSampleBriefContent } from '@/lib/content/sample-brief';
 
 export const runtime = 'nodejs';
@@ -77,6 +78,8 @@ async function SampleBriefContent({
           ← Home
         </Link>
       </nav>
+
+      <PageMasthead eyebrow="SAMPLE BRIEFS" volume="MMXXVI" right="春" />
 
       {/* ============================================ */}
       {/* 编辑部说明                                       */}

@@ -18,6 +18,7 @@ import Image from 'next/image';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
+import PageMasthead from '@/components/PageMasthead';
 import { loadHomeContent } from '@/lib/content/home';
 
 export const runtime = 'nodejs';
@@ -76,6 +77,15 @@ export default async function HomePage() {
       </nav>
 
       {/* ============================================ */}
+      {/* PAGE MASTHEAD (B1)                            */}
+      {/* ============================================ */}
+      <PageMasthead
+        eyebrow="KEY EDITORIAL OFFICE"
+        volume="ISSUE No. 005"
+        right="MMXXVI · 春"
+      />
+
+      {/* ============================================ */}
       {/* HERO V4 — Magazine-cover 分屏: 左文 + 右图        */}
       {/* ============================================ */}
       <header className="relative overflow-hidden">
@@ -85,12 +95,8 @@ export default async function HomePage() {
         {/* === 主区: 左文 + 右图 (桌面分屏 / 手机叠加) === */}
         <div className="relative max-w-prose-xl mx-auto px-6 pt-16 md:pt-20 pb-16">
           <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-10 md:gap-14 items-center">
-            {/* LEFT: 标题 + sub-tag + CTAs */}
+            {/* LEFT: 标题 + sub-tag + CTAs · eyebrow 已上移到 PageMasthead */}
             <div className="order-2 md:order-1">
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-                · KEY Editorial Office ·
-              </p>
-
               <h1 className="font-serif text-[clamp(2rem,4.5vw,3.6rem)] text-ink-900 tracking-tighter leading-[1.02] mb-3">
                 {hero.brandStatementEn}
               </h1>
@@ -127,10 +133,9 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT: hero image */}
+            {/* RIGHT: hero image · ISSUE 编号已上移到 PageMasthead (B2) */}
             <div className="order-1 md:order-2">
               <div className="relative aspect-[4/5] bg-ink-900 overflow-hidden shadow-lg">
-                {/* TODO 用户在生 hero-key.png (engraving 风 铁钥匙). 到位后替换 src. */}
                 <Image
                   src="/illustrations/hero-home.png"
                   alt={hero.brandStatementEn}
@@ -141,15 +146,6 @@ export default async function HomePage() {
                 />
                 {/* 顶部 burgundy hairline — 封面书脊金线 */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-seal-500" />
-                {/* 右上 ISSUE 编号 */}
-                <div className="absolute top-4 right-4 inline-flex items-baseline gap-2 px-2.5 py-0.5 bg-paper-100/95 border border-paper-100">
-                  <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-seal-500">
-                    ISSUE
-                  </span>
-                  <span className="font-serif text-base text-seal-500 tracking-tighter leading-none">
-                    N°005
-                  </span>
-                </div>
               </div>
             </div>
           </div>
