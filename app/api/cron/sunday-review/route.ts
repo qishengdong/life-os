@@ -21,6 +21,7 @@ import { generateReview } from '@/lib/sunday-review/generator';
 import { saveReview, getWeekRange } from '@/lib/sunday-review/store';
 import { sendSundayReviewNotification } from '@/lib/email/sender';
 import { getDb } from '@/lib/db';
+import { detectPatternsForUser } from '@/lib/insights/detector';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -79,6 +80,18 @@ async function runSundayReviewWork() {
           reviewContent: result.content,
           pulseCount: result.pulseCount,
         });
+        // JOB-022 · 同一周期跑 pattern detection (Vercel Hobby 限 2 crons, 合并)
+        let patternResult: any = null;
+        try {
+          patternResult = await detectPatternsForUser({
+            userId: c.user_id,
+            weekStart,
+            lookbackWeeks: 4,
+          });
+        } catch (e) {
+          console.error('[cron/sunday-review] pattern detect failed:', e);
+        }
+
         results.push({
           userId: c.user_id,
           status: 'generated',
@@ -86,6 +99,8 @@ async function runSundayReviewWork() {
           pulseCount: result.pulseCount,
           durationMs: result.durationMs,
           emailStatus: 'status' in emailResult ? emailResult.status : 'skipped',
+          patternCandidates: patternResult?.candidatesGenerated ?? 0,
+          patternPassedC30: patternResult?.passedC30 ?? 0,
         });
       } else {
         results.push({ userId: c.user_id, status: 'skipped', reason: result.error });
@@ -93,8 +108,8 @@ async function runSundayReviewWork() {
     } catch (e: any) {
       results.push({ userId: c.user_id, status: 'error', error: e.message });
     }
-    // 防 rate limit
-    await new Promise((r) => setTimeout(r, 500));
+    // 防 rate limit · pattern detect 后多等一下
+    await new Promise((r) => setTimeout(r, 1500));
   }
 
   return NextResponse.json({

@@ -24,6 +24,8 @@ import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
 import type { UserMemoryContext, MemoryCard, CoreState, OpenLoop } from '@/lib/memory/types';
+import type { Insight, InsightStatus } from '@/lib/insights/types';
+import { PATTERN_TYPE_LABEL, PATTERN_TYPE_HINT } from '@/lib/insights/types';
 
 const CARD_TYPE_LABEL: Record<string, string> = {
   factual: '事实',
@@ -54,6 +56,8 @@ function fmtRelativeDate(unix: number): string {
 export default function BrainPage() {
   const [userUid, setUserUid] = useState<string | null>(null);
   const [memory, setMemory] = useState<UserMemoryContext | null>(null);
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [lastInsightRun, setLastInsightRun] = useState<{ createdAt: number; insightsPassedC30: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,12 +70,29 @@ export default function BrainPage() {
   async function load(uid: string) {
     setLoading(true);
     try {
-      const res = await fetch('/api/brain', { headers: { [UID_HEADER]: uid } });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || '加载失败');
+      // 并行拉 memory + insights
+      const [memRes, insightsRes] = await Promise.all([
+        fetch('/api/brain', { headers: { [UID_HEADER]: uid } }),
+        fetch('/api/brain/insights', { headers: { [UID_HEADER]: uid } }),
+      ]);
+      const memData = await memRes.json();
+      const insightsData = await insightsRes.json();
+
+      if (!memRes.ok) {
+        setError(memData.error || '加载失败');
       } else {
-        setMemory(data.memory as UserMemoryContext);
+        setMemory(memData.memory as UserMemoryContext);
+      }
+      if (insightsRes.ok) {
+        setInsights((insightsData.insights as Insight[]) || []);
+        setLastInsightRun(
+          insightsData.lastRun
+            ? {
+                createdAt: insightsData.lastRun.createdAt,
+                insightsPassedC30: insightsData.lastRun.insightsPassedC30,
+              }
+            : null,
+        );
       }
     } catch (e: any) {
       setError(e.message);
@@ -142,6 +163,28 @@ export default function BrainPage() {
                 </div>
               </SectionWrapper>
             )}
+
+            {/* JOB-020 · Pattern detection · grounded insights */}
+            <SectionWrapper
+              eyebrow="· LAYER · PATTERN ·"
+              title={`AI 在你身上看见的 (${insights.length})`}
+              hint="每条 pattern 都至少 3 条具体证据 — 没的就不在这. Inspector C30 守门."
+            >
+              {lastInsightRun && (
+                <p className="font-mono text-[10px] text-ink-400 mb-4">
+                  上次分析: {fmtRelativeDate(lastInsightRun.createdAt)} · 入库 {lastInsightRun.insightsPassedC30} 条
+                </p>
+              )}
+              {insights.length === 0 ? (
+                <EmptyState text="还没有 pattern. 每周日 cron 会跑 LLM 检测, 数据足够 (pulses ≥6 或 decisions ≥2) 才生成. 没数据时不会硬凑." />
+              ) : (
+                <div className="space-y-4">
+                  {insights.map((ins) => (
+                    <InsightRow key={ins.id} insight={ins} userUid={userUid} onChange={refresh} />
+                  ))}
+                </div>
+              )}
+            </SectionWrapper>
 
             <SectionWrapper
               eyebrow="· LAYER 0 · 硬锚点 ·"
@@ -477,6 +520,142 @@ function CardRow({
           )}
         </div>
       </div>
+    </article>
+  );
+}
+
+function InsightRow({
+  insight,
+  userUid,
+  onChange,
+}: {
+  insight: Insight;
+  userUid: string | null;
+  onChange: () => void;
+}) {
+  const [correcting, setCorrecting] = useState(false);
+  const [correction, setCorrection] = useState(insight.userCorrection || '');
+  const [working, setWorking] = useState(false);
+
+  async function act(status: InsightStatus, userCorrection?: string) {
+    if (!userUid) return;
+    setWorking(true);
+    await fetch(`/api/brain/insights/${insight.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+      body: JSON.stringify({ status, userCorrection }),
+    });
+    setWorking(false);
+    setCorrecting(false);
+    onChange();
+  }
+
+  const isReviewed = insight.status !== 'unreviewed';
+
+  return (
+    <article
+      className={`border ${
+        insight.status === 'unreviewed'
+          ? 'border-seal-500/40 bg-paper-50'
+          : insight.status === 'confirmed' || insight.status === 'corrected'
+          ? 'border-sage/30 bg-sage/5'
+          : 'border-paper-300 bg-paper-50 opacity-70'
+      } px-5 py-4`}
+    >
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex-1 min-w-0">
+          <p className="font-sans text-[9px] uppercase tracking-[0.25em] text-seal-500 mb-1.5">
+            {PATTERN_TYPE_LABEL[insight.patternType] || insight.patternType}
+            {insight.status === 'confirmed' && ' · 你确认过'}
+            {insight.status === 'corrected' && ' · 你纠正过'}
+            {insight.status === 'archived' && ' · 已存档'}
+            {insight.status === 'rejected' && ' · 已拒'}
+          </p>
+          <h3 className="font-serif text-lg text-ink-900 mb-2 leading-snug tracking-tightish">
+            {insight.title}
+          </h3>
+          <p className="font-serif text-[14px] text-ink-700 leading-relaxed whitespace-pre-line">
+            {insight.description}
+          </p>
+          {insight.userCorrection && (
+            <div className="mt-3 pl-4 border-l-2 border-sage/40">
+              <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-sage mb-1">
+                你的纠正
+              </p>
+              <p className="font-serif italic text-[13px] text-ink-700">
+                {insight.userCorrection}
+              </p>
+            </div>
+          )}
+          <p className="font-mono text-[10px] text-ink-400 mt-3">
+            {insight.evidenceCount} 条证据 · 置信 {(insight.confidence * 100).toFixed(0)}% · 检测 {fmtRelativeDate(insight.detectedAt)}
+          </p>
+        </div>
+      </div>
+
+      {/* Correcting form */}
+      {correcting && (
+        <div className="mt-3 pt-3 border-t border-paper-300">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500 mb-2">
+            写下你的纠正版本
+          </p>
+          <textarea
+            value={correction}
+            onChange={(e) => setCorrection(e.target.value)}
+            rows={3}
+            className="w-full px-3 py-2 bg-paper border border-paper-300 focus:border-seal-500 focus:outline-none font-serif text-[14px] text-ink-900 resize-y"
+            placeholder="例: 不是回避, 是没时间想 — 上个月一直在赶项目"
+          />
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => act('corrected', correction)}
+              disabled={working || !correction.trim()}
+              className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 bg-sage text-paper-100 hover:bg-sage/80 disabled:opacity-40"
+            >
+              保存纠正
+            </button>
+            <button
+              onClick={() => setCorrecting(false)}
+              className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 text-ink-500 hover:text-ink-900"
+            >
+              取消
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons (unreviewed only) */}
+      {!isReviewed && !correcting && (
+        <div className="flex flex-wrap gap-2 pt-3 border-t border-paper-300">
+          <button
+            onClick={() => act('confirmed')}
+            disabled={working}
+            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 border border-sage text-sage hover:bg-sage hover:text-paper-100 transition-colors disabled:opacity-40"
+          >
+            ✓ 看到了, 准
+          </button>
+          <button
+            onClick={() => setCorrecting(true)}
+            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 border border-seal-500 text-seal-500 hover:bg-seal-500 hover:text-paper-100 transition-colors"
+          >
+            ✎ 我来改
+          </button>
+          <button
+            onClick={() => act('archived')}
+            disabled={working}
+            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 text-ink-500 hover:text-ink-900 disabled:opacity-40"
+          >
+            存档
+          </button>
+          <button
+            onClick={() => act('rejected')}
+            disabled={working}
+            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 text-ink-400 hover:text-ember disabled:opacity-40"
+          >
+            ✕ 不对
+          </button>
+        </div>
+      )}
     </article>
   );
 }
