@@ -607,7 +607,9 @@ export function updateUserProfile(
 export function getUser(userId: number) {
   const db = getDb();
   return db
-    .prepare('SELECT id, user_uid, birth_date, gender, email, email_verified_at, email_preferences, created_at FROM users WHERE id = ?')
+    .prepare(
+      'SELECT id, user_uid, birth_date, gender, email, email_verified_at, email_preferences, created_at, onboarding_completed_at, access_status FROM users WHERE id = ?',
+    )
     .get(userId) as
     | {
         id: number;
@@ -618,6 +620,8 @@ export function getUser(userId: number) {
         email_verified_at: number | null;
         email_preferences: string | null;
         created_at: number;
+        onboarding_completed_at: number | null;
+        access_status: string | null;
       }
     | undefined;
 }

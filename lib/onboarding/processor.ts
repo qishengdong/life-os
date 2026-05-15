@@ -9,7 +9,13 @@
 
 import { modelRouter } from '@/lib/model-router';
 import { addCoreState, addMemoryCard } from '@/lib/memory';
-import { findOrCreateUserByUid, updateUserProfile, getDb } from '@/lib/db';
+import {
+  findOrCreateUserByUid,
+  updateUserProfile,
+  getDb,
+  saveIntakeStep,
+  markOnboardingComplete,
+} from '@/lib/db';
 import type { OnboardingResponse } from './schema';
 
 interface ProcessResult {
@@ -95,6 +101,15 @@ export async function processOnboarding(
 
   // 1. Find or create user
   const userId = findOrCreateUserByUid(userUid);
+
+  // JOB-001 side-write: 保存每步原始答案到 intake_answers (audit trail + 后续 UI 可读)
+  for (const r of responses) {
+    try {
+      saveIntakeStep({ userId, step: r.stage, answers: r.answers });
+    } catch (e) {
+      console.warn('[onboarding] intake_answers side-write failed:', (e as Error).message);
+    }
+  }
 
   // 2. 提取 identity 阶段的 birthDate / gender → 写 user 表
   const identityResp = responses.find((r) => r.stage === 'identity');
@@ -223,6 +238,13 @@ export async function processOnboarding(
     brainCharCount = brainContent.length;
   } catch (e: any) {
     console.error('[onboarding] brain baseline failed:', e);
+  }
+
+  // JOB-001: mark onboarding 完成 — 用于路由 gate
+  try {
+    markOnboardingComplete(userId);
+  } catch (e) {
+    console.warn('[onboarding] markOnboardingComplete failed:', (e as Error).message);
   }
 
   return {

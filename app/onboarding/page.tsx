@@ -81,8 +81,32 @@ export default function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [statusCheck, setStatusCheck] = useState<'pending' | 'ok' | 'redirect'>('pending');
 
-  useEffect(() => { setUserUid(getOrCreateClientUid()); }, []);
+  /** JOB-002 · gate · 已经 onboard 过的用户跳过这页 (除非 ?force=1 重做) */
+  useEffect(() => {
+    const uid = getOrCreateClientUid();
+    setUserUid(uid);
+
+    const force = new URLSearchParams(window.location.search).get('force');
+    if (force === '1') {
+      setStatusCheck('ok');
+      return;
+    }
+
+    fetch('/api/onboarding/status', { headers: { [UID_HEADER]: uid } })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.completed) {
+          // 已完成 → 跳 /letters (默认 next step)
+          window.location.href = '/letters';
+          setStatusCheck('redirect');
+        } else {
+          setStatusCheck('ok');
+        }
+      })
+      .catch(() => setStatusCheck('ok'));
+  }, []);
 
   const currentStage = STAGES[currentStageIdx];
   const isLastStage = currentStageIdx === STAGES.length - 1;
@@ -120,6 +144,11 @@ export default function OnboardingPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  // JOB-002 · gate · 还在检查状态时, 渲染空 paper 避免闪
+  if (statusCheck === 'pending' || statusCheck === 'redirect') {
+    return <div className="min-h-screen bg-paper" />;
   }
 
   if (submitted) {
