@@ -19,6 +19,7 @@ interface CommitArgs {
   path: string;           // repo 内文件路径, e.g. "lib/content/data/home.json"
   content: string;        // 新文件内容 (string, 不是 base64)
   message: string;        // commit message
+  committer?: { name: string; email: string }; // 谁的署名 (默认 KEY CMS generic)
 }
 
 interface CommitResult {
@@ -65,7 +66,11 @@ export async function commitFileToGitHub(args: CommitArgs): Promise<CommitResult
     message: args.message,
     content: contentB64,
     branch: BRANCH,
-    committer: {
+    committer: args.committer || {
+      name: 'KEY CMS',
+      email: 'cms@keypoint.life',
+    },
+    author: args.committer || {
       name: 'KEY CMS',
       email: 'cms@keypoint.life',
     },

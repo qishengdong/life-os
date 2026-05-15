@@ -11,29 +11,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAdminCookie, ADMIN_COOKIE_NAME } from '@/lib/admin/auth';
+import { requireAdmin } from '@/lib/admin/auth';
 import { loadHomeContent, writeHomeContent, validateHomeContent } from '@/lib/content/home';
 import { commitFileToGitHub } from '@/lib/admin/github';
-import path from 'path';
-import fs from 'fs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-function adminGuard(req: NextRequest): NextResponse | null {
-  const cookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
-  if (!verifyAdminCookie(cookie)) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
-  return null;
-}
 
 // ============================================================================
 // GET — 加载当前内容
 // ============================================================================
 export async function GET(req: NextRequest) {
-  const guard = adminGuard(req);
-  if (guard) return guard;
+  const auth = requireAdmin(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const content = loadHomeContent();
@@ -47,8 +37,9 @@ export async function GET(req: NextRequest) {
 // POST — 保存 + (可选) 发布
 // ============================================================================
 export async function POST(req: NextRequest) {
-  const guard = adminGuard(req);
-  if (guard) return guard;
+  const auth = requireAdmin(req);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth; // AdminUser
 
   try {
     const body = await req.json();
@@ -61,17 +52,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `验证失败: ${e.message}` }, { status: 400 });
     }
 
-    // 2. 写本地文件 (在 Vercel 上, /var/task 只读, 这步会失败 — 但发布走 GitHub 不靠本地)
+    // 2. 写本地文件 (Vercel 上 /var/task 只读, 这步会失败但不影响发布)
     let localSaved = false;
     try {
       writeHomeContent(content);
       localSaved = true;
     } catch (e) {
-      // Vercel 只读 fs — 本地保存失败正常, 走 GitHub commit
-      console.warn('[cms] local write failed (expected on Vercel):', e);
+      console.warn('[cms] local write skipped (expected on Vercel):', (e as Error).message);
     }
 
-    // 3. 如果 publish=true, commit 到 GitHub
+    // 3. 如果 publish=true, commit 到 GitHub · 用真实 committer
     let publishResult: any = null;
     if (publish) {
       if (!process.env.GITHUB_TOKEN) {
@@ -85,7 +75,10 @@ export async function POST(req: NextRequest) {
         publishResult = await commitFileToGitHub({
           path: 'lib/content/data/home.json',
           content: formatted,
-          message: commitMessage || `cms(home): 更新内容 via /admin/cms`,
+          message:
+            commitMessage ||
+            `cms(home): 更新内容 (by ${user.displayName} · ${user.username})`,
+          committer: { name: user.displayName, email: user.email },
         });
       } catch (e: any) {
         return NextResponse.json(
@@ -100,6 +93,7 @@ export async function POST(req: NextRequest) {
       localSaved,
       publish: !!publish,
       publishResult,
+      author: { username: user.username, displayName: user.displayName },
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

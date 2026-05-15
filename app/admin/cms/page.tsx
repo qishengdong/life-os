@@ -55,11 +55,29 @@ export default function CmsHomePage() {
     lastPublishedAt?: string;
     githubTokenConfigured?: boolean;
   }>({});
+  const [me, setMe] = useState<{
+    displayName: string;
+    username: string;
+    role: 'owner' | 'editor';
+  } | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/cms/status')
+      .then((r) => {
+        if (r.status === 401) {
+          window.location.href = '/admin/login?from=/admin/cms';
+          return null;
+        }
+        return r.json();
+      })
+      .then((d) => d && setPublishStatus(d))
+      .catch(() => {});
+
+    fetch('/api/admin/me')
       .then((r) => r.json())
-      .then(setPublishStatus)
+      .then((d) => {
+        if (d.authed) setMe(d.user);
+      })
       .catch(() => {});
   }, []);
 
@@ -71,8 +89,21 @@ export default function CmsHomePage() {
             KEY · Admin · CMS
           </p>
           <h1 className="font-serif text-3xl text-paper-50">内容编辑器</h1>
+          {me && (
+            <p className="font-mono text-[11px] text-paper-300/60 mt-1">
+              登录: {me.displayName} <span className="text-paper-300/40">({me.username}, {me.role})</span>
+            </p>
+          )}
         </div>
-        <div className="flex gap-4 items-baseline">
+        <div className="flex gap-4 items-baseline flex-wrap">
+          {me?.role === 'owner' && (
+            <Link
+              href="/admin/users"
+              className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+            >
+              Users →
+            </Link>
+          )}
           <Link
             href="/admin"
             className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"

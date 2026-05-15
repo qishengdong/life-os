@@ -52,6 +52,13 @@ export default function AdminPage() {
 
   async function load() {
     try {
+      // 先检查是否需要 setup
+      const meRes = await fetch('/api/admin/login');
+      const meData = await meRes.json();
+      if (meData.needsSetup) {
+        window.location.href = '/admin/setup';
+        return;
+      }
       const res = await fetch('/api/admin/stats');
       if (res.status === 401) {
         window.location.href = '/admin/login';
@@ -89,7 +96,19 @@ export default function AdminPage() {
           </p>
           <h1 className="font-serif text-3xl text-paper-50">Overview</h1>
         </div>
-        <div className="flex gap-3 items-baseline">
+        <div className="flex gap-3 items-baseline flex-wrap">
+          <Link
+            href="/admin/cms"
+            className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+          >
+            CMS →
+          </Link>
+          <Link
+            href="/admin/users"
+            className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+          >
+            Users →
+          </Link>
           <Link
             href="/admin/invites"
             className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"

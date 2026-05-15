@@ -1,7 +1,11 @@
 /**
- * /admin/login — 极简 admin token 输入页
+ * /admin/login — username + password 登录
  *
- * 没有 publication-grade craft — 这是工具页. 黑底白字 quasi-terminal 感.
+ * 流程:
+ *   - 若 admin 未 setup → 自动跳 /admin/setup
+ *   - 否则: 输 username + password → POST /api/admin/login → set cookie → 跳 /admin
+ *
+ * 视觉: 跟其他 /admin 一致, 黑底工具感.
  */
 
 'use client';
@@ -22,22 +26,24 @@ function AdminLoginInner() {
   const sp = useSearchParams();
   const from = sp.get('from') || '/admin';
 
-  const [token, setToken] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [adminEnabled, setAdminEnabled] = useState(true);
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
-    // 检查 admin 是否启用
     fetch('/api/admin/login')
       .then((r) => r.json())
       .then((d) => {
-        if (!d.adminEnabled) {
-          setAdminEnabled(false);
+        if (d.needsSetup) {
+          setNeedsSetup(true);
+          setTimeout(() => router.push('/admin/setup'), 800);
         } else if (d.authed) {
           router.push(from);
         }
-      });
+      })
+      .catch(() => {});
   }, [from, router]);
 
   async function submit(e: React.FormEvent) {
@@ -48,39 +54,34 @@ function AdminLoginInner() {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ username: username.trim().toLowerCase(), password }),
       });
       const data = await res.json();
       if (!res.ok) {
+        if (data.needsSetup) {
+          router.push('/admin/setup');
+          return;
+        }
         setError(data.error || '登录失败');
-      } else {
-        router.push(from);
+        setSubmitting(false);
+        return;
       }
+      router.push(from);
     } catch (e: any) {
       setError(e.message);
-    } finally {
       setSubmitting(false);
     }
   }
 
-  if (!adminEnabled) {
+  if (needsSetup) {
     return (
       <div className="min-h-screen bg-ink-900 text-paper-50 flex items-center justify-center p-6">
-        <div className="max-w-md">
-          <h1 className="font-serif text-3xl mb-4 text-seal-400">Admin disabled</h1>
-          <p className="font-mono text-sm leading-relaxed">
-            ADMIN_TOKEN env var is not set or too short (&lt; 8 chars).
-            <br />
-            <br />
-            Set it in <code className="bg-ink-700 px-2 py-0.5 rounded">.env.local</code>:
-            <br />
-            <code className="bg-ink-700 px-2 py-0.5 rounded mt-2 inline-block">
-              ADMIN_TOKEN=&lt;random-long-string-≥16-chars&gt;
-            </code>
-            <br />
-            <br />
-            Then restart dev server.
+        <div className="max-w-md text-center">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-seal-400 mb-3">
+            KEY · Admin
           </p>
+          <p className="font-serif text-xl mb-2">Admin 未 setup</p>
+          <p className="font-mono text-sm text-paper-300/60">跳转到 setup 页 ...</p>
         </div>
       </div>
     );
@@ -92,40 +93,54 @@ function AdminLoginInner() {
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-seal-400 mb-2">
           KEY · Admin
         </p>
-        <h1 className="font-serif text-3xl mb-10 tracking-tightish">Admin Login</h1>
+        <h1 className="font-serif text-3xl mb-10 tracking-tightish">登录</h1>
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="font-mono text-[10px] uppercase tracking-widest text-paper-300 block mb-2">
-              ADMIN_TOKEN
+              用户名
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoFocus
+              autoComplete="username"
+              spellCheck={false}
+              className="w-full px-4 py-3 bg-ink-700 border border-ink-700 focus:border-seal-400 focus:outline-none font-mono text-sm text-paper-50 placeholder:text-paper-300/30"
+              placeholder="xiao"
+              required
+            />
+          </div>
+          <div>
+            <label className="font-mono text-[10px] uppercase tracking-widest text-paper-300 block mb-2">
+              密码
             </label>
             <input
               type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="paste admin token..."
-              autoFocus
-              autoComplete="off"
-              spellCheck={false}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               className="w-full px-4 py-3 bg-ink-700 border border-ink-700 focus:border-seal-400 focus:outline-none font-mono text-sm text-paper-50 placeholder:text-paper-300/30"
+              required
             />
           </div>
           <button
             type="submit"
-            disabled={submitting || !token}
+            disabled={submitting || !username || !password}
             className="w-full px-6 py-3 bg-seal-500 hover:bg-seal-600 text-paper-50 font-mono text-sm uppercase tracking-widest disabled:bg-ink-700 disabled:cursor-not-allowed transition-colors"
           >
-            {submitting ? 'verifying...' : 'login'}
+            {submitting ? 'verifying...' : '登录'}
           </button>
           {error && <p className="font-mono text-sm text-ember">{error}</p>}
         </form>
 
-        <p className="mt-12 font-mono text-[10px] text-paper-300/40 leading-relaxed">
-          Brute force protection: 500ms delay on failed attempts.
+        <p className="mt-10 font-mono text-[10px] text-paper-300/40 leading-relaxed">
+          密码 scrypt 哈希 (N=16384, r=8, p=1, 64MB cost) + 失败 400ms 延迟.
           <br />
-          Token is verified server-side with constant-time compare.
+          Session cookie 7 天过期.
           <br />
-          Cookie expires after 7 days.
+          忘记密码? 让 owner 重置, 或重新邀请你.
         </p>
       </div>
     </div>
