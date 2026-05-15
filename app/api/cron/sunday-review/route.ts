@@ -1,8 +1,11 @@
 /**
  * Sunday Review Cron Endpoint
  *
- * 真实部署时, 通过系统 cron 或 GitHub Actions 周日 20:00 调用:
- *   curl -X POST https://lifeos.cn/api/cron/sunday-review \
+ * Vercel Cron (GET) 自动调用 (周日 12:00 UTC = 20:00 BJT, 见 vercel.json):
+ *   GET /api/cron/sunday-review (auto: Authorization: Bearer CRON_SECRET)
+ *
+ * 手动测试 (POST 也支持):
+ *   curl -X POST https://keypoint.life/api/cron/sunday-review \
  *     -H "Authorization: Bearer $CRON_SECRET"
  *
  * 工作:
@@ -10,7 +13,7 @@
  *   2. 跳过本周已生成的 review
  *   3. 给每个用户生成 review
  *   4. 写入 sunday_reviews 表
- *   5. (V1.5) 发邮件通知
+ *   5. 发邮件通知 (dry-run mode by default)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -21,20 +24,16 @@ import { getDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
-export async function POST(req: NextRequest) {
-  // Auth: 简单 bearer token (env CRON_SECRET)
+function isAuthorized(req: NextRequest): boolean {
   const authHeader = req.headers.get('authorization');
   const expectedSecret = process.env.CRON_SECRET;
-  if (expectedSecret) {
-    if (authHeader !== `Bearer ${expectedSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  } else {
-    // 开发环境无 CRON_SECRET 时允许调用, 但 log warning
-    console.warn('[cron/sunday-review] CRON_SECRET not set — allowing unauth call (dev only)');
-  }
+  if (!expectedSecret) return true; // dev: allow
+  return authHeader === `Bearer ${expectedSecret}`;
+}
 
+async function runSundayReviewWork() {
   const { weekStart, weekEnd } = getWeekRange();
   const db = getDb();
 
@@ -110,34 +109,38 @@ export async function POST(req: NextRequest) {
   });
 }
 
-// GET 用于测试: 返回 candidate 列表但不实际生成
+/** Vercel cron 自动 GET. 授权 → 跑工作, 否则返回 dry-run 状态. */
 export async function GET(req: NextRequest) {
+  if (isAuthorized(req)) {
+    return runSundayReviewWork();
+  }
+  // diagnostic: 列 candidates 不实跑
   const { weekStart, weekEnd } = getWeekRange();
   const db = getDb();
-
   const candidates = db
     .prepare(
-      `SELECT u.id AS user_id, u.user_uid,
-              COUNT(p.id) AS pulse_count
-       FROM users u
-       JOIN daily_pulses p ON p.user_id = u.id
+      `SELECT u.id AS user_id, u.user_uid, COUNT(p.id) AS pulse_count
+       FROM users u JOIN daily_pulses p ON p.user_id = u.id
        WHERE p.created_at >= ? AND p.created_at <= ?
-       GROUP BY u.id
-       HAVING pulse_count >= 3`
+       GROUP BY u.id HAVING pulse_count >= 3`,
     )
     .all(weekStart, weekEnd) as any[];
-
   const existingReviews = db
     .prepare(`SELECT user_id FROM sunday_reviews WHERE week_start = ?`)
     .all(weekStart) as Array<{ user_id: number }>;
   const reviewedSet = new Set(existingReviews.map((r) => r.user_id));
-
   return NextResponse.json({
+    mode: 'dry-run (not authorized for live)',
     weekRange: { weekStart, weekEnd },
-    candidates: candidates.map((c) => ({
-      ...c,
-      hasReviewThisWeek: reviewedSet.has(c.user_id),
-    })),
     eligibleForGeneration: candidates.filter((c) => !reviewedSet.has(c.user_id)).length,
+    candidatePreview: candidates.slice(0, 10),
   });
+}
+
+/** Manual trigger via POST (curl). */
+export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return runSundayReviewWork();
 }

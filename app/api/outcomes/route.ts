@@ -8,8 +8,9 @@ import {
   markOutcomeAsked,
   saveOutcomeResponse,
 } from '@/lib/outcomes/store';
-import { processOutcomeResponse } from '@/lib/outcomes/processor';
+import { processOutcomeResponse, JUDGMENT_DISPLAY } from '@/lib/outcomes/processor';
 import { getDb } from '@/lib/db';
+import { addMemoryCard, addOpenLoop } from '@/lib/memory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -86,6 +87,49 @@ export async function POST(req: NextRequest) {
       outcomeJudgment: result.outcomeJudgment,
       aiReflection: result.aiReflection,
     });
+
+    // JOB-017 · 回写 brain: 把 outcome 答案做成一张 episodic RMC 卡, AI 之后跨决策能看到
+    try {
+      const decisionRow = db
+        .prepare(`SELECT question FROM decisions WHERE id = ?`)
+        .get(outcomeRow.decision_id) as { question: string } | undefined;
+      const decisionShort = (decisionRow?.question || '').slice(0, 40);
+      const judgmentLabel = JUDGMENT_DISPLAY[result.outcomeJudgment] || result.outcomeJudgment;
+      addMemoryCard({
+        userId,
+        cardType: 'episodic',
+        title: `${outcomeRow.checkpoint_days}d outcome · ${decisionShort}${decisionShort.length === 40 ? '...' : ''}`,
+        content: `${judgmentLabel}\n\n用户原话: ${parsed.data.userResponse}\n\nAI reflection: ${result.aiReflection}`,
+        confidence: 0.9,
+        source: 'outcome_response',
+        sourceDecisionId: outcomeRow.decision_id,
+        tags: ['outcome', `${outcomeRow.checkpoint_days}d`, result.outcomeJudgment],
+      });
+    } catch (e) {
+      console.error('[outcomes POST] brain writeback failed:', e);
+    }
+
+    // 如果是 worse 或 mixed, 可能值得追踪 — 加 open_loop 供 90/365 day 跨期回看
+    if (
+      (result.outcomeJudgment === 'worse' || result.outcomeJudgment === 'mixed') &&
+      outcomeRow.checkpoint_days < 365
+    ) {
+      try {
+        const nextCheckpoint = outcomeRow.checkpoint_days === 30 ? 90 : 365;
+        const nextDueAt =
+          Math.floor(Date.now() / 1000) + (nextCheckpoint - outcomeRow.checkpoint_days) * 86400;
+        addOpenLoop({
+          userId,
+          title: `${nextCheckpoint}d 复盘: 当前 ${outcomeRow.checkpoint_days}d 的判断是 "${result.outcomeJudgment}"`,
+          description: result.aiReflection.slice(0, 300),
+          kind: 'review',
+          dueAt: nextDueAt,
+          sourceDecisionId: outcomeRow.decision_id,
+        });
+      } catch (e) {
+        console.error('[outcomes POST] open-loop creation failed:', e);
+      }
+    }
 
     return NextResponse.json({
       success: true,

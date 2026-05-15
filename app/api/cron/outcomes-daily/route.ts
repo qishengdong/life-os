@@ -1,14 +1,17 @@
 /**
  * Daily Outcomes Cron — 每天扫 due outcomes 发提醒邮件
  *
- * 真实部署用 GitHub Actions / 系统 cron 每天调用:
- *   curl -X POST https://lifeos.cn/api/cron/outcomes-daily \
+ * Vercel Cron (GET) 自动调用 (每天 01:00 UTC = 09:00 BJT, 见 vercel.json):
+ *   GET /api/cron/outcomes-daily (auto: Authorization: Bearer CRON_SECRET)
+ *
+ * 手动测试 (POST 也支持):
+ *   curl -X POST https://keypoint.life/api/cron/outcomes-daily \
  *     -H "Authorization: Bearer $CRON_SECRET"
  *
  * 工作:
  *   1. 找今天到期 (due_at <= now AND asked_at IS NULL) AND 之前没发过提醒邮件的 outcomes
  *   2. 给每个 outcome 发邮件给用户
- *   3. (V1.5) 标记 last_reminded_at
+ *   3. 24h 去重 (检查 emails_sent 表)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,18 +20,16 @@ import { getDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
-export async function POST(req: NextRequest) {
+function isAuthorized(req: NextRequest): boolean {
   const authHeader = req.headers.get('authorization');
   const expectedSecret = process.env.CRON_SECRET;
-  if (expectedSecret) {
-    if (authHeader !== `Bearer ${expectedSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  } else {
-    console.warn('[cron/outcomes-daily] CRON_SECRET not set — dev only');
-  }
+  if (!expectedSecret) return true;
+  return authHeader === `Bearer ${expectedSecret}`;
+}
 
+async function runOutcomesDailyWork() {
   const db = getDb();
   const now = Math.floor(Date.now() / 1000);
 
@@ -89,20 +90,37 @@ export async function POST(req: NextRequest) {
   });
 }
 
+/** Vercel cron 自动 GET. 授权 → 跑工作, 否则返回 dry-run 状态. */
 export async function GET(req: NextRequest) {
-  // 测试用: 列出今天该提醒的 outcomes (不实际发)
+  if (isAuthorized(req)) {
+    return runOutcomesDailyWork();
+  }
+  // diagnostic
   const db = getDb();
   const now = Math.floor(Date.now() / 1000);
   const dueOutcomes = db
     .prepare(
-      `SELECT o.id AS outcome_id, o.user_id, o.checkpoint_days, datetime(o.due_at, 'unixepoch', '+8 hours') AS due_local,
+      `SELECT o.id AS outcome_id, o.user_id, o.checkpoint_days,
+              datetime(o.due_at, 'unixepoch', '+8 hours') AS due_local,
               substr(d.question, 1, 80) AS question, u.email
        FROM decision_outcomes o
        JOIN decisions d ON d.id = o.decision_id
        JOIN users u ON u.id = o.user_id
        WHERE o.due_at <= ? AND o.asked_at IS NULL
-       LIMIT 50`
+       LIMIT 50`,
     )
     .all(now) as any[];
-  return NextResponse.json({ dueOutcomes, count: dueOutcomes.length });
+  return NextResponse.json({
+    mode: 'dry-run (not authorized for live)',
+    dueOutcomes,
+    count: dueOutcomes.length,
+  });
+}
+
+/** Manual trigger via POST (curl). */
+export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return runOutcomesDailyWork();
 }
