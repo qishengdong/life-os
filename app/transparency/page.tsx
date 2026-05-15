@@ -83,23 +83,32 @@ function SectionHeader({
 // ============================================================================
 // 12 维评分块 - 像一份成绩单
 // ============================================================================
+// B9 阈值: 累计满 20 份 brief 才发布有信号的 grader 评分.
+const GRADER_PUBLISH_MIN_N = 20;
+
 function GraderBlock() {
   const scores = getDimensionScores();
   const overall = getGraderOverallStats();
   const scoreTrend = getGraderScoreTrend(20);
 
+  // 累计样本量决定 schema 视图 vs 完整评分
+  const totalSamples = scores.reduce((sum, s) => sum + s.sampleSize, 0);
+  const showSchemaView = totalSamples < GRADER_PUBLISH_MIN_N;
+
   return (
     <div>
-      {/* 总分 */}
-      <div className="mb-12 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-paper-300">
-        <Metric label="综合均分" value={overall.overallAvg.toFixed(2)} suffix="/ 5" />
-        <Metric label="评分批次" value={String(overall.runCount)} suffix="次" />
-        <Metric label="最佳批次" value={overall.bestRun.toFixed(2)} suffix="/ 5" />
-        <Metric label="最弱批次" value={overall.worstRun.toFixed(2)} suffix="/ 5" />
-      </div>
+      {/* 总分 · schema 视图下隐藏数字 metric, 显示 placeholder */}
+      {!showSchemaView && (
+        <div className="mb-12 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-paper-300">
+          <Metric label="综合均分" value={overall.overallAvg.toFixed(2)} suffix="/ 5" />
+          <Metric label="评分批次" value={String(overall.runCount)} suffix="次" />
+          <Metric label="最佳批次" value={overall.bestRun.toFixed(2)} suffix="/ 5" />
+          <Metric label="最弱批次" value={overall.worstRun.toFixed(2)} suffix="/ 5" />
+        </div>
+      )}
 
-      {/* 评分趋势 sparkline (最近 20 批) */}
-      {scoreTrend.length >= 2 && (
+      {/* 评分趋势 sparkline · 仅 N>=阈值 显示 */}
+      {!showSchemaView && scoreTrend.length >= 2 && (
         <div className="mb-12 flex items-baseline gap-4 -mt-6">
           <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400">
             最近 {scoreTrend.length} 批 综合均分趋势
@@ -117,53 +126,66 @@ function GraderBlock() {
         </div>
       )}
 
-      {/* 12 维明细 */}
-      {scores.length === 0 ? (
-        <p className="font-serif text-ink-500 italic">尚无评分数据.</p>
-      ) : (
-        <ol className="space-y-6">
-          {scores.map((s, i) => {
-            const isWeakest = i >= scores.length - 3; // 最弱 3 条标红
-            return (
-              <li
-                key={s.dimension}
-                className="grid grid-cols-[40px_1fr_100px] gap-6 items-baseline border-b border-paper-300 pb-5"
-              >
-                <span className="font-serif italic text-seal-500 text-lg select-none">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div>
-                  <h4 className="font-serif text-lg text-ink-900 tracking-tightish mb-1">
-                    {getDimensionLabel(s.dimension)}
-                  </h4>
-                  <p className="font-serif text-[14px] text-ink-500 editorial-leading">
-                    {getDimensionDesc(s.dimension)}
-                  </p>
-                  <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mt-1">
-                    n = {s.sampleSize}  ·  {s.dimension}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span
-                    className={`font-serif text-3xl tracking-tighter ${
-                      isWeakest ? 'text-amber' : 'text-ink-900'
-                    }`}
-                  >
-                    {s.avgScore.toFixed(2)}
-                  </span>
-                  <span className="font-serif text-sm text-ink-400 ml-1">/5</span>
-                  <div className="mt-2 flex justify-end">
-                    <Gauge value={s.avgScore} max={5} target={4} width={88} />
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+      {/* 12 维明细 · schema 模式下 "—" 取代数字 */}
+      <ol className="space-y-6">
+        {scores.map((s, i) => {
+          const isWeakest = !showSchemaView && i >= scores.length - 3;
+          return (
+            <li
+              key={s.dimension}
+              className="grid grid-cols-[40px_1fr_100px] gap-6 items-baseline border-b border-paper-300 pb-5"
+            >
+              <span className="font-serif italic text-seal-500 text-lg select-none">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h4 className="font-serif text-lg text-ink-900 tracking-tightish mb-1">
+                  {getDimensionLabel(s.dimension)}
+                </h4>
+                <p className="font-serif text-[14px] text-ink-500 editorial-leading">
+                  {getDimensionDesc(s.dimension)}
+                </p>
+                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mt-1">
+                  {showSchemaView ? s.dimension : `n = ${s.sampleSize}  ·  ${s.dimension}`}
+                </p>
+              </div>
+              <div className="text-right">
+                {showSchemaView ? (
+                  <span className="font-serif text-3xl text-ink-300 tracking-tighter">—</span>
+                ) : (
+                  <>
+                    <span
+                      className={`font-serif text-3xl tracking-tighter ${
+                        isWeakest ? 'text-amber' : 'text-ink-900'
+                      }`}
+                    >
+                      {s.avgScore.toFixed(2)}
+                    </span>
+                    <span className="font-serif text-sm text-ink-400 ml-1">/5</span>
+                    <div className="mt-2 flex justify-end">
+                      <Gauge value={s.avgScore} max={5} target={4} width={88} />
+                    </div>
+                  </>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+
+      {/* B9 · schema 视图下方注释 (hairline + italic 注脚) */}
+      {showSchemaView && (
+        <div className="mt-10 pt-6 border-t border-paper-300">
+          <p className="font-serif italic text-[14px] text-ink-500 editorial-leading max-w-prose-lg">
+            首批评分将在累计第 {GRADER_PUBLISH_MIN_N} 份 brief 完成后发布.
+            <br />
+            当前 N = {totalSamples}, 不足以发布有信号的评分.
+          </p>
+        </div>
       )}
 
-      {/* 最弱的几条诚实说明 */}
-      {scores.length > 0 && (
+      {/* 最弱的几条诚实说明 · 仅 schema 视图退场后显示 */}
+      {!showSchemaView && scores.length > 0 && (
         <div className="mt-10 pl-6 border-l-2 border-amber/60">
           <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-amber mb-3">
             最弱三条 (橙色标识)
@@ -196,7 +218,7 @@ function InspectorBlock() {
         <Metric label="Check 数" value={String(checks.length)} suffix="项" />
         <Metric label="Active" value={String(activeCount)} suffix="项" />
         <Metric label="Shadow" value={String(checks.length - activeCount)} suffix="项" />
-        <Metric label="历史命中" value={String(totalHits)} suffix="次" />
+        <Metric label="历史命中" value={totalHits > 0 ? String(totalHits) : '—'} suffix={totalHits > 0 ? '次' : ''} />
       </div>
 
       <ol className="space-y-8">
@@ -221,18 +243,24 @@ function InspectorBlock() {
               </div>
             </div>
             <div className="text-right">
-              <span
-                className={`font-serif text-2xl tracking-tighter ${
-                  c.hits > 0 ? 'text-amber' : 'text-ink-400'
-                }`}
-              >
-                {c.hits}
-              </span>
-              <span className="font-serif text-sm text-ink-400 ml-1">次</span>
+              {c.hits > 0 ? (
+                <>
+                  <span className="font-serif text-2xl tracking-tighter text-amber">{c.hits}</span>
+                  <span className="font-serif text-sm text-ink-400 ml-1">次</span>
+                </>
+              ) : (
+                /* B9 · 0 显示 — */
+                <span className="font-serif text-2xl text-ink-300 tracking-tighter">—</span>
+              )}
             </div>
           </li>
         ))}
       </ol>
+
+      {/* B9 · Inspector 列表下方 shadow mode 公示 */}
+      <p className="font-serif italic text-[14px] text-ink-500 editorial-leading mt-10 pt-6 border-t border-paper-300">
+        Shadow mode · 累计未命中 / 命中均会在此公示.
+      </p>
     </div>
   );
 }
@@ -240,10 +268,14 @@ function InspectorBlock() {
 // ============================================================================
 // Brief 总览
 // ============================================================================
+// B11 阈值: N >= 10 才显示趋势 sparkline.
+const TRANSPARENCY_TREND_MIN_N = 10;
+
 function BriefBlock() {
   const s = getBriefStats();
   const latencyTrend = getBriefLatencyTrend(20);
   const charTrend = getBriefCharCountTrend(20);
+  const showTrends = s.total >= TRANSPARENCY_TREND_MIN_N;
 
   return (
     <div>
@@ -256,48 +288,68 @@ function BriefBlock() {
         <Metric label="平均 tokens" value={s.avgTokens.toLocaleString()} suffix="" />
       </div>
 
-      {/* 趋势 sparkline — 篇幅 + 撰稿速度 */}
-      <div className="mt-10 grid md:grid-cols-2 gap-10 pb-8 border-b border-paper-300">
-        <div>
-          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
-            最近 {charTrend.length || '—'} 份 · 篇幅趋势
-          </p>
-          <div className="flex items-baseline gap-4">
-            <Sparkline
-              data={charTrend}
-              width={180}
-              height={32}
-              showBaseline
-              ariaLabel="brief 字数趋势"
-            />
-            <span className="font-mono text-[11px] text-ink-500">
-              {charTrend.length >= 2
-                ? `${charTrend[0]} → ${charTrend[charTrend.length - 1]} 字`
-                : '—'}
-            </span>
+      {/* B11 · N >= 10 才显示 sparkline; 否则显示最近 3 个 flat list */}
+      {showTrends ? (
+        <div className="mt-10 grid md:grid-cols-2 gap-10 pb-8 border-b border-paper-300">
+          <div>
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
+              最近 {charTrend.length} 份 · 篇幅趋势
+            </p>
+            <div className="flex items-baseline gap-4">
+              <Sparkline data={charTrend} width={180} height={32} showBaseline ariaLabel="brief 字数趋势" />
+              <span className="font-mono text-[11px] text-ink-500">
+                {charTrend.length >= 2
+                  ? `${charTrend[0]} → ${charTrend[charTrend.length - 1]} 字`
+                  : '—'}
+              </span>
+            </div>
+          </div>
+          <div>
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
+              最近 {latencyTrend.length} 份 · Analyst 耗时
+            </p>
+            <div className="flex items-baseline gap-4">
+              <Sparkline
+                data={latencyTrend}
+                width={180}
+                height={32}
+                showBaseline
+                invertSentiment
+                ariaLabel="brief analyst 耗时趋势"
+              />
+              <span className="font-mono text-[11px] text-ink-500">
+                {latencyTrend.length >= 2
+                  ? `${(latencyTrend[0] / 1000).toFixed(1)}s → ${(latencyTrend[latencyTrend.length - 1] / 1000).toFixed(1)}s`
+                  : '—'}
+              </span>
+            </div>
           </div>
         </div>
-        <div>
+      ) : (
+        /* B11 · N < 10 · 最近 3 个值 flat list 替代 trends */
+        <div className="mt-10 pb-8 border-b border-paper-300">
           <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-400 mb-3">
-            最近 {latencyTrend.length || '—'} 份 · Analyst 耗时
+            最近 3 份 · 篇幅与耗时
           </p>
-          <div className="flex items-baseline gap-4">
-            <Sparkline
-              data={latencyTrend}
-              width={180}
-              height={32}
-              showBaseline
-              invertSentiment
-              ariaLabel="brief analyst 耗时趋势"
-            />
-            <span className="font-mono text-[11px] text-ink-500">
-              {latencyTrend.length >= 2
-                ? `${(latencyTrend[0] / 1000).toFixed(1)}s → ${(latencyTrend[latencyTrend.length - 1] / 1000).toFixed(1)}s`
-                : '—'}
-            </span>
-          </div>
+          {charTrend.length > 0 ? (
+            <ul className="font-mono text-[12px] text-ink-700 space-y-1">
+              {charTrend.slice(-3).map((c, i) => {
+                const latencyIdx = Math.max(0, latencyTrend.length - 3 + i);
+                const latency = latencyTrend[latencyIdx];
+                return (
+                  <li key={i}>
+                    {c} 字 {latency ? `· Analyst ${(latency / 1000).toFixed(1)}s` : ''}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="font-serif italic text-[14px] text-ink-500">
+              N = {s.total}. 趋势图在 N &ge; {TRANSPARENCY_TREND_MIN_N} 时显示.
+            </p>
+          )}
         </div>
-      </div>
+      )}
 
       <p className="mt-8 font-serif text-[14px] text-ink-500 italic editorial-leading">
         数据范围: 自 KEY 决策 brief pipeline (Day 17, 2026-05-12) 上线以来累计.
@@ -426,7 +478,7 @@ export default function TransparencyPage() {
         <BriefBlock />
       </section>
 
-      {/* IV. Not measured */}
+      {/* IV. Not measured · B10 · 最后一行变 pulled callout */}
       <section className="bg-paper-50 border-b border-paper-300">
         <div className="max-w-prose-lg mx-auto px-6 py-24">
           <SectionHeader
@@ -435,7 +487,7 @@ export default function TransparencyPage() {
             englishTitle={SECTION_NOT_MEASURED.englishTitle}
           />
           <div className="space-y-5">
-            {SECTION_NOT_MEASURED.body.map((p, i) => (
+            {SECTION_NOT_MEASURED.body.slice(0, -1).map((p, i) => (
               <p
                 key={i}
                 className="font-serif text-reading text-ink-700 editorial-leading"
@@ -445,6 +497,18 @@ export default function TransparencyPage() {
               />
             ))}
           </div>
+
+          {/* B10 callout · 最后一行拉出 · burgundy hairline 上下 + italic 大字 居中 */}
+          {SECTION_NOT_MEASURED.body.length > 0 && (
+            <div className="mt-14 mb-2 flex flex-col items-center text-center">
+              <div className="w-20 h-px bg-seal-500/60 mb-7" />
+              <p className="font-serif italic text-[22px] text-ink-900 leading-snug max-w-[28em] whitespace-pre-line">
+                {SECTION_NOT_MEASURED.body[SECTION_NOT_MEASURED.body.length - 1]
+                  .replace(/\*\*(.+?)\*\*/g, '$1')}
+              </p>
+              <div className="w-20 h-px bg-seal-500/60 mt-7" />
+            </div>
+          )}
         </div>
       </section>
 
