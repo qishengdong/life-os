@@ -104,10 +104,16 @@ export default function AdminPage() {
             CMS →
           </Link>
           <Link
+            href="/admin/real-users"
+            className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+          >
+            Real Users →
+          </Link>
+          <Link
             href="/admin/users"
             className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
           >
-            Users →
+            Editors →
           </Link>
           <Link
             href="/admin/invites"
