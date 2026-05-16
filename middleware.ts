@@ -5,10 +5,9 @@
  *   - 放行: /admin/login, /admin/setup, /admin/invite-accept
  *   - 其它 /admin/*: 检查 admin_session cookie 格式. 失败 → /admin/login
  *
- * User gate (Day 1):
- *   - 保护路由 (USER_PROTECTED_PATHS) 要求 key_invited=1 + key_acked=1 cookie
+ * User gate:
+ *   - 保护路由 (USER_PROTECTED_PATHS) 要求 key_invited=1 cookie
  *   - 没 invited: 重定向 /invite
- *   - invited 但没 acked: 重定向 /invite (用户没截图恢复码, 强制回去 confirm)
  *
  * Edge runtime · 不签名 cookie (内测期; API 层有 access_status 真校验).
  */
@@ -17,7 +16,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const ADMIN_COOKIE_NAME = 'admin_session';
 const USER_COOKIE_INVITED = 'key_invited';
-const USER_COOKIE_ACKED = 'key_acked';
 
 const PUBLIC_ADMIN_PATHS = [
   '/admin/login',
@@ -70,18 +68,10 @@ export function middleware(req: NextRequest) {
   if (!isProtected) return NextResponse.next();
 
   const invited = req.cookies.get(USER_COOKIE_INVITED)?.value === '1';
-  const acked = req.cookies.get(USER_COOKIE_ACKED)?.value === '1';
 
   if (!invited) {
     const inviteUrl = new URL('/invite', req.url);
     inviteUrl.searchParams.set('from', pathname);
-    return NextResponse.redirect(inviteUrl);
-  }
-  // invited 但没 ack → /invite 让用户截图再 confirm
-  // (兑换 success state 仍在 — 真用户 invited cookie 已设, 但 acked 未设)
-  if (!acked) {
-    const inviteUrl = new URL('/invite', req.url);
-    inviteUrl.searchParams.set('needAck', '1');
     return NextResponse.redirect(inviteUrl);
   }
 

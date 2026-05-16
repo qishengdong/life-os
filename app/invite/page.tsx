@@ -33,21 +33,12 @@ function TopNav() {
   );
 }
 
-interface SuccessState {
-  recipientName: string | null;
-  invitedBy: string;
-  recoveryCode: string;
-  alreadyInvited: boolean;
-}
-
 export default function InvitePage() {
   const router = useRouter();
   const [userUid, setUserUid] = useState<string | null>(null);
   const [code, setCode] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<SuccessState | null>(null);
-  const [acknowledging, setAcknowledging] = useState(false);
 
   useEffect(() => {
     setUserUid(getOrCreateClientUid());
@@ -67,42 +58,14 @@ export default function InvitePage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || '兑换失败');
-      } else {
-        setSuccess({
-          recipientName: data.invitedToUser?.recipientName || null,
-          invitedBy: data.invitedToUser?.invitedBy || 'founder',
-          recoveryCode: data.recoveryCode || '',
-          alreadyInvited: !!data.alreadyInvited,
-        });
+        setSubmitting(false);
+        return;
       }
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function acknowledgeAndContinue() {
-    if (!userUid) return;
-    setAcknowledging(true);
-    try {
-      await fetch('/api/auth/acknowledge-recovery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
-      });
+      // 兑换成功 → 直接进 onboarding · 恢复码默默存好, 用户在 /settings 才看到
       router.push('/onboarding');
     } catch (e: any) {
       setError(e.message);
-      setAcknowledging(false);
-    }
-  }
-
-  async function copyRecoveryCode() {
-    if (!success?.recoveryCode) return;
-    try {
-      await navigator.clipboard.writeText(success.recoveryCode);
-    } catch {
-      // clipboard 失败不阻塞 — 用户能手动选中复制
+      setSubmitting(false);
     }
   }
 
@@ -117,63 +80,8 @@ export default function InvitePage() {
           邀请制内测中.
         </h1>
 
-        {success ? (
-          <div className="border-2 border-seal-500 bg-paper-50 p-8 max-w-prose-md">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-3">
-              ✓ 邀请码已激活
-            </p>
-            {success.recipientName && (
-              <p className="font-serif text-reading text-ink-900 mb-2">
-                欢迎, {success.recipientName}.
-              </p>
-            )}
-            <p className="font-serif text-sm text-ink-500 italic mb-8">
-              邀请人: {success.invitedBy}
-            </p>
-
-            {/* 恢复码 · 必须截图 · 不再显示 */}
-            <div className="border-t-2 border-seal-500/40 pt-6 mb-6">
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ember mb-2">
-                ⚠ 这是你的恢复码 · 只显示这一次
-              </p>
-              <h3 className="font-serif text-2xl text-ink-900 mb-4 tracking-tightish leading-tight">
-                换设备 / 清数据后, 用它找回你的 brain.
-              </h3>
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <code
-                  className="inline-block px-5 py-3 font-mono text-2xl tracking-widest text-ink-900 bg-paper border border-ink-900/20 select-all"
-                  onClick={copyRecoveryCode}
-                >
-                  {success.recoveryCode}
-                </code>
-                <button
-                  type="button"
-                  onClick={copyRecoveryCode}
-                  className="font-serif text-sm text-seal-500 hover:text-seal-700 transition-colors border-b border-seal-500/40 pb-0.5"
-                >
-                  复制
-                </button>
-              </div>
-              <ul className="font-serif text-[14px] text-ink-700 editorial-leading space-y-1.5 list-none">
-                <li>· 截图保存到相册, 或抄到密码管理器.</li>
-                <li>· 没截图就关页面 = 永久找不回. 没法补发.</li>
-                <li>· 丢了可以加管理员微信兜底, 但不要靠这条.</li>
-              </ul>
-            </div>
-
-            <button
-              type="button"
-              onClick={acknowledgeAndContinue}
-              disabled={acknowledging}
-              className="px-8 py-3 font-serif text-base text-paper bg-ink-900 hover:bg-seal-500 disabled:bg-ink-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {acknowledging ? '继续...' : '我已截图. 进入 KEY →'}
-            </button>
-            {error && (
-              <p className="font-serif text-sm text-ember italic mt-3">{error}</p>
-            )}
-          </div>
-        ) : (
+        {/* 兑换成功直接 router.push('/onboarding') · 不在这页 surface success state */}
+        {true && (
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-0 items-stretch">
             {/* 左卡 · 已有邀请码 */}
             <div className="md:pr-10">
@@ -240,19 +148,17 @@ export default function InvitePage() {
         )}
       </header>
 
-      {/* 找回身份 · 老用户换设备入口 (公开 · 不在 success 状态显示) */}
-      {!success && (
-        <section className="max-w-prose-xl mx-auto px-6 pb-12">
-          <div className="border-t border-paper-300 pt-8">
-            <p className="font-serif italic text-[14px] text-ink-500">
-              已经是 KEY 用户, 换了设备 / 清了浏览器数据?{' '}
-              <Link href="/recover" className="text-seal-500 underline underline-offset-2 hover:text-seal-700">
-                用恢复码找回 →
-              </Link>
-            </p>
-          </div>
-        </section>
-      )}
+      {/* 找回身份 · 老用户换设备入口 */}
+      <section className="max-w-prose-xl mx-auto px-6 pb-12">
+        <div className="border-t border-paper-300 pt-8">
+          <p className="font-serif italic text-[14px] text-ink-500">
+            已经是 KEY 用户, 换了设备 / 清了浏览器数据?{' '}
+            <Link href="/recover" className="text-seal-500 underline underline-offset-2 hover:text-seal-700">
+              用恢复码找回 →
+            </Link>
+          </p>
+        </div>
+      </section>
 
       {/* II. 我们邀请的是这些人 (B13 · 移到 philosophy 前) */}
       <section className="bg-paper-50 border-y border-paper-300">
