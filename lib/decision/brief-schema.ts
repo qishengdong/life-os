@@ -78,7 +78,7 @@ export interface DecisionBrief {
   /** 撰稿日期 (unix epoch 秒) */
   authoredAt: number;
 
-  /** 撰稿署名 — 固定为 "KEY Editorial Office" */
+  /** 撰稿署名 — 固定为 "KEY" */
   authoredBy: string;
 
   /** 用户匿名 ID (展示用, 不暴露 user_id) */

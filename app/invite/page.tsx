@@ -239,7 +239,7 @@ export default function InvitePage() {
       <footer className="border-t border-paper-300 bg-paper">
         <div className="max-w-prose-xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row justify-between items-baseline gap-6">
-            <p className="font-serif text-base text-ink-900">KEY Editorial Office · Invite</p>
+            <p className="font-serif text-base text-ink-900">KEY · Invite</p>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">
               <Link href="/methodology" className="hover:text-seal-500 transition-colors">方法论</Link>
               <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">样品</Link>

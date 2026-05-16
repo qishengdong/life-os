@@ -160,7 +160,7 @@ export default function NewLetterPage() {
               · 信件正在送达 ·
             </p>
             <p className="font-serif italic text-2xl text-ink-900 mb-4">
-              KEY 编辑部正在阅读你的来信
+              你的 KEY 顾问正在阅读你的来信
             </p>
             <p className="font-serif text-[15px] text-ink-500 editorial-leading max-w-prose-lg mx-auto mb-12">
               通常 5-30 秒. 编辑会带着你过去说过的话, 读你这一封.
@@ -180,7 +180,7 @@ export default function NewLetterPage() {
                 <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
                   {formatTodayHeader()}
                 </p>
-                <p className="font-serif text-base text-ink-700">致 KEY 编辑部,</p>
+                <p className="font-serif text-base text-ink-700">致 KEY,</p>
               </div>
               <button
                 onClick={() => {
@@ -235,7 +235,7 @@ export default function NewLetterPage() {
             </button>
             {!submitting && (
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 hidden sm:inline">
-                KEY 编辑部约 5-30 秒回信
+                你的 KEY 顾问约 5-30 秒回信
               </span>
             )}
           </div>

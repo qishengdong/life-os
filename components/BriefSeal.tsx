@@ -61,7 +61,7 @@ export default function BriefSeal({
   return (
     <Image
       src={src}
-      alt="KEY 编辑部印章"
+      alt="KEY 印章"
       width={size}
       height={size}
       unoptimized

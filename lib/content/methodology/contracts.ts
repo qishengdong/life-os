@@ -224,7 +224,7 @@ export const CONTRACTS: Contract[] = [
 // Opening + Closing manifesto
 // ============================================================================
 export const METHODOLOGY_OPENING = {
-  eyebrow: '· KEY Editorial Office · Methodology ·',
+  eyebrow: '· KEY · Methodology ·',
   title: '我们为 AI 写了一份决策契约.',
   body: [
     '大多数所谓"AI 决策工具", 不过是给 ChatGPT 套一层 UI. 它们卖的是"AI 的便利". 我们卖的是另一件事 — 我们卖的是"AI 不能跳过的步骤".',

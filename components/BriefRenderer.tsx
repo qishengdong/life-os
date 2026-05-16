@@ -330,7 +330,7 @@ export default function BriefRenderer({
               {brief.meta.aiDisclosure}
             </p>
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mt-4">
-              KEY Editorial Office · {brief.briefNumber}
+              KEY · {brief.briefNumber}
             </p>
             {brief.meta.totalCharCount > 0 && (
               <p className="font-sans text-[10px] text-ink-400 mt-2">

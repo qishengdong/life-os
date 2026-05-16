@@ -78,7 +78,7 @@ function LetterCard({ letter }: { letter: LetterRecord }) {
       >
         <div className="flex items-baseline justify-between mb-3 gap-4 flex-wrap">
           <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
-            · KEY 编辑部 · 致每一位新读者 ·
+            · KEY · 致每一位新通信人 ·
           </span>
           <span className="font-mono text-[10px] text-ink-400 uppercase tracking-wider">
             {letter.letterNumber}
@@ -293,7 +293,7 @@ export default function LettersPage() {
       <footer className="border-t border-paper-300 bg-paper-50">
         <div className="max-w-prose-xl mx-auto px-6 py-8 text-center">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400">
-            KEY Editorial Office · Letters · 没有评价 · 真有记忆
+            KEY · Letters · 没有评价 · 真有记忆
           </p>
         </div>
       </footer>

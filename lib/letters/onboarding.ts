@@ -36,7 +36,7 @@ export const KEY_OPENING_LETTER = `致读者,
  * 用户首次到访的虚拟 "user content"
  * 这不是用户写的, 是系统占位 — 让 letter row 结构完整
  */
-export const KEY_OPENING_USER_PLACEHOLDER = '(KEY 编辑部 · 致每一位新读者 · 第一封开场信)';
+export const KEY_OPENING_USER_PLACEHOLDER = '(KEY · 致每一位新通信人 · 第一封开场信)';
 
 /**
  * 写一封 onboarding letter 给一个 user.

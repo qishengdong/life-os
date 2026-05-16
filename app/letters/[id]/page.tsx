@@ -56,7 +56,7 @@ function IncomingLetterCard({ letter }: { letter: LetterRecord }) {
       <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-1">
         {formatDateHeader(letter.authoredAt)}
       </p>
-      <p className="font-serif text-base text-ink-700 mb-8">致 KEY 编辑部,</p>
+      <p className="font-serif text-base text-ink-700 mb-8">致 KEY,</p>
 
       <div className="letter-prose whitespace-pre-line">
         {letter.userContent}
@@ -194,7 +194,7 @@ function ReplyCard({ letter }: { letter: LetterRecord }) {
       <div className="mt-12 pt-6 border-t border-paper-300 flex items-end justify-between gap-6">
         <div>
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-500">
-            KEY Editorial Office
+            KEY
           </p>
           <p className="font-mono text-[10px] text-ink-400 uppercase tracking-wider mt-1">
             {letter.letterNumber}
@@ -351,7 +351,7 @@ export default function LetterDetailPage() {
               <>
                 <section>
                   <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4 text-center">
-                    KEY 编辑部 · 致每一位新读者
+                    KEY · 致每一位新通信人
                   </p>
                   <ReplyCard letter={letter} />
                 </section>
@@ -387,7 +387,7 @@ export default function LetterDetailPage() {
                 {/* 回信 (按状态分支) */}
                 <section>
                   <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4 text-center">
-                    KEY 编辑部 · 回信
+                    KEY · 回信
                   </p>
                   {letter.status === 'pending' && <PendingPlaceholder />}
                   {letter.status === 'failed' && (

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "header": {
-    "eyebrow": "· KEY Editorial Office · Sample Briefs ·",
+    "eyebrow": "· KEY · Sample Briefs ·",
     "title": "我们交付的东西, 长这样.",
     "body": [
       "三份真实简报. 选一份你回避的决定 — 读完后你大概会知道, KEY 跟 ChatGPT 给你的, 不是同一件事.",
@@ -13,12 +13,12 @@
     "eyebrow": "· 三份简报 · 三类决策 ·"
   },
   "footer": {
-    "eyebrow": "· 进入 KEY 编辑部 ·",
+    "eyebrow": "· 让 KEY 跟你通信 ·",
     "title": "你的下一个重大决定,\n也可以被这样认真对待.",
     "subtitle": "年度会员 ¥1988. 创始会员 (限 100 名) ¥4988/3 年. 第一周不合适, 全退.",
     "ctaPrimary": { "label": "看完整会员制度 →", "href": "/membership" },
     "ctaSecondary": { "label": "先看方法论", "href": "/methodology" },
-    "smallText": "KEY Editorial Office · 中国第一份 AI-Native 决策顾问刊物"
+    "smallText": "KEY · 长期跟你通信的私人顾问"
   },
   "frameworkLabels": {
     "parent-care": "父母养老",

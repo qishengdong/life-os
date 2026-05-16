@@ -155,8 +155,8 @@ export const LETTER_CANON_SEED: Record<string, CanonQuote[]> = {
   'work-meaning': [
     {
       quote: '人生只有走出来的美丽, 没有等出来的辉煌. 但走的方向比走的速度更重要.',
-      author: 'KEY 编辑部',
-      source: '内编引语',
+      author: 'KEY',
+      source: '内部引语',
       themes: ['方向 vs 速度', '走出去'],
     },
     {

@@ -9,7 +9,7 @@
 // HERO
 // ============================================================================
 export const HERO = {
-  eyebrow: '· KEY Editorial Office · Membership ·',
+  eyebrow: '· KEY · Membership ·',
   title: '年度顾问会员 · ¥1988.',
   subtitle: [
     '私人决策顾问的产出, AI 的边际成本, 杂志级的阅读体验.',

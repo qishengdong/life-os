@@ -211,10 +211,10 @@ export function gradeMemory(
 // LLM-based grader (心理藏在笔触里 — 主观判断)
 // ============================================================
 
-const PSYCH_HIDDEN_PROMPT = `你是 KEY 编辑部 voice 守门人. 我给你 3 件事:
-1. 一封读者写来的信
-2. KEY 编辑部的回信
-3. 我检测到的读者心理 themes (这些读者不可见, 是 KEY 内部 attention 引导)
+const PSYCH_HIDDEN_PROMPT = `你是 KEY voice 守门人. 我给你 3 件事:
+1. 一封用户写来的信
+2. 用户的 KEY 顾问的回信
+3. 我检测到的用户心理 themes (这些用户不可见, 是 KEY 内部 attention 引导)
 
 你要判断: KEY 的回信是否做到了 **"心理学专业藏在编辑笔触里"**?
 

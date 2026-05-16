@@ -129,7 +129,7 @@ function Inner() {
           欢迎, {invite.displayName}.
         </h1>
         <p className="font-mono text-[12px] text-paper-300/70 leading-relaxed mb-2">
-          你被邀请加入 KEY 编辑部, 角色:{' '}
+          你被邀请加入 KEY 团队, 角色:{' '}
           <span className="text-seal-400">{invite.role}</span>
           {invite.role === 'editor' && ' (能改 CMS 内容 + 发布)'}
           {invite.role === 'owner' && ' (全权限 + 管账号)'}

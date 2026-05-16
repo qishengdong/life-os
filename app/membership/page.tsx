@@ -419,7 +419,7 @@ export default function MembershipPage() {
             <div className="flex items-center gap-3">
               <KeyWordmark variant="mark-only" height={20} ariaLabel="KEY mark" />
               <p className="font-serif text-base text-ink-900">
-                KEY Editorial Office · Membership
+                KEY · Membership
               </p>
             </div>
             <div className="flex gap-6 text-[10px] font-sans uppercase tracking-[0.25em] text-ink-400">

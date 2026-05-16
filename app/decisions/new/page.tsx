@@ -196,7 +196,7 @@ export default function NewDecisionPage() {
           <div className="fixed inset-0 bg-paper/95 backdrop-blur-sm flex items-center justify-center px-6 z-50">
             <div className="max-w-prose-md text-center">
               <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-                · KEY 编辑部 ·
+                · KEY ·
               </p>
               <h2 className="font-serif text-3xl text-ink-900 tracking-tighter mb-10 leading-tight">
                 正在为你撰写决策简报.

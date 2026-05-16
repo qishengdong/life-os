@@ -350,7 +350,7 @@ export default function MethodologyPage() {
           <div className="max-w-prose-xl mx-auto px-6 py-8 flex flex-col items-center gap-3 text-center">
             <KeyWordmark variant="mark-only" height={18} ariaLabel="KEY mark" />
             <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-ink-400">
-              KEY Editorial Office · Methodology · 决策科学 40 年最佳实践的工程化
+              KEY · Methodology · 决策科学 40 年最佳实践的工程化
             </p>
           </div>
         </div>

@@ -5,7 +5,7 @@
  */
 
 export const HERO = {
-  eyebrow: '· KEY Editorial Office · Transparency ·',
+  eyebrow: '· KEY · Transparency ·',
   title: '我们怎么审自己.',
   body: [
     '大多数 AI 产品的"信任 signal"是 testimonial / star rating / 几万订阅用户数. 我们没有这些 — 我们刚开始, 邀请制内测中.',

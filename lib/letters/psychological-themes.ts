@@ -181,7 +181,7 @@ export function renderThemesForPrompt(themes: PsychologicalTheme[]): string {
   );
 
   return (
-    `[KEY 编辑部的心理学判断 — 你的内部 attention 引导, 用户不可见, 严禁在回信里命名这些 theme]\n\n` +
+    `[KEY 顾问的心理学判断 — 你的内部 attention 引导, 用户不可见, 严禁在回信里命名这些 theme]\n\n` +
     lines.join('\n\n')
   );
 }
