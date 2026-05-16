@@ -159,6 +159,18 @@
         "href": "/pulse"
       },
       {
+        "label": "未交付的信",
+        "href": "/unsent"
+      },
+      {
+        "label": "找回",
+        "href": "/recover"
+      },
+      {
+        "label": "设置",
+        "href": "/settings"
+      },
+      {
         "label": "服务条款",
         "href": "/terms"
       },

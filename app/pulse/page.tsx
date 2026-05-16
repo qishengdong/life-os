@@ -177,14 +177,14 @@ export default function Home() {
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="nav" height={22} />
         </Link>
-        <div className="flex gap-4 text-sm text-ink-500">
-          <Link href="/methodology" className="hover:text-seal transition-colors">方法论</Link>
-          <Link href="/sample-brief" className="hover:text-seal transition-colors">样品</Link>
+        <div className="flex gap-x-4 gap-y-2 text-sm text-ink-500 flex-wrap justify-end">
+          <Link href="/unsent" className="hover:text-seal transition-colors">未交付的信</Link>
+          <Link href="/letters/new" className="hover:text-seal transition-colors">写给 KEY</Link>
           <Link href="/review" className="hover:text-seal transition-colors">Weekly</Link>
           <Link href="/outcomes" className="hover:text-seal transition-colors">账本</Link>
           <Link href="/brain" className="hover:text-seal transition-colors">Brain</Link>
           <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
-          <Link href="/account" className="hover:text-seal transition-colors">邮箱</Link>
+          <Link href="/settings" className="hover:text-seal transition-colors">设置</Link>
         </div>
       </nav>
 

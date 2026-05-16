@@ -53,7 +53,7 @@ export default async function HomePage() {
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="display" height={66} />
         </Link>
-        <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
+        <div className="flex gap-x-5 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
           <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">
             通信集
           </Link>
@@ -71,6 +71,9 @@ export default async function HomePage() {
           </Link>
           <Link href="/invite" className="hover:text-seal-500 transition-colors">
             加入
+          </Link>
+          <Link href="/recover" className="hover:text-seal-500 transition-colors" title="换设备找回身份">
+            找回
           </Link>
         </div>
       </nav>

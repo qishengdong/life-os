@@ -111,13 +111,13 @@ export default function BrainPage() {
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="nav" height={22} />
         </Link>
-        <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
-          <Link href="/decisions/new" className="hover:text-seal-500 transition-colors">
-            写决定 →
-          </Link>
-          <Link href="/" className="hover:text-seal-500 transition-colors">
-            ← Home
-          </Link>
+        <div className="flex gap-x-5 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
+          <Link href="/pulse" className="hover:text-seal-500 transition-colors">Pulse</Link>
+          <Link href="/unsent" className="hover:text-seal-500 transition-colors">未交付的信</Link>
+          <Link href="/letters/new" className="hover:text-seal-500 transition-colors">写给 KEY</Link>
+          <Link href="/decisions/new" className="hover:text-seal-500 transition-colors">写决定</Link>
+          <Link href="/settings" className="hover:text-seal-500 transition-colors">设置</Link>
+          <Link href="/" className="hover:text-seal-500 transition-colors">← Home</Link>
         </div>
       </nav>
 

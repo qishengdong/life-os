@@ -240,6 +240,20 @@ export default function InvitePage() {
         )}
       </header>
 
+      {/* 找回身份 · 老用户换设备入口 (公开 · 不在 success 状态显示) */}
+      {!success && (
+        <section className="max-w-prose-xl mx-auto px-6 pb-12">
+          <div className="border-t border-paper-300 pt-8">
+            <p className="font-serif italic text-[14px] text-ink-500">
+              已经是 KEY 用户, 换了设备 / 清了浏览器数据?{' '}
+              <Link href="/recover" className="text-seal-500 underline underline-offset-2 hover:text-seal-700">
+                用恢复码找回 →
+              </Link>
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* II. 我们邀请的是这些人 (B13 · 移到 philosophy 前) */}
       <section className="bg-paper-50 border-y border-paper-300">
         <div className="max-w-prose-lg mx-auto px-6 py-20">

@@ -103,12 +103,13 @@ export default function NewLetterPage() {
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="nav" height={22} />
         </Link>
-        <Link
-          href="/letters"
-          className="text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 hover:text-seal-500 transition-colors"
-        >
-          ← 通信集
-        </Link>
+        <div className="flex gap-x-4 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
+          <Link href="/pulse" className="hover:text-seal-500 transition-colors">Pulse</Link>
+          <Link href="/unsent" className="hover:text-seal-500 transition-colors">未交付的信</Link>
+          <Link href="/brain" className="hover:text-seal-500 transition-colors">Brain</Link>
+          <Link href="/letters" className="hover:text-seal-500 transition-colors">通信集</Link>
+          <Link href="/settings" className="hover:text-seal-500 transition-colors">设置</Link>
+        </div>
       </nav>
 
       <main className="max-w-prose-xl mx-auto px-6 pt-16 pb-32">
