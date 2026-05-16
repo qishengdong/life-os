@@ -1,22 +1,23 @@
 /**
- * Next.js middleware — admin route gate.
+ * Next.js middleware — admin route gate + user route gate.
  *
- * 放行 (无需 cookie):
- *   - /admin/login
- *   - /admin/setup
- *   - /admin/invite-accept (受邀人接受邀请用)
+ * Admin gate:
+ *   - 放行: /admin/login, /admin/setup, /admin/invite-accept
+ *   - 其它 /admin/*: 检查 admin_session cookie 格式. 失败 → /admin/login
  *
- * 其它 /admin/* 路由: 检查 cookie 存在 + 格式. 失败 → 重定向 /admin/login.
+ * User gate (Day 1):
+ *   - 保护路由 (USER_PROTECTED_PATHS) 要求 key_invited=1 + key_acked=1 cookie
+ *   - 没 invited: 重定向 /invite
+ *   - invited 但没 acked: 重定向 /invite (用户没截图恢复码, 强制回去 confirm)
  *
- * 注意: middleware 跑在 edge runtime, 不能 import node crypto 做 HMAC.
- * 这里仅做存在性 + 格式预检查; 真正的签名验证在每个 API route 里用 lib/admin/auth 做.
- *
- * Cookie 名: admin_session (v2 auth, multi-user).
+ * Edge runtime · 不签名 cookie (内测期; API 层有 access_status 真校验).
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const COOKIE_NAME = 'admin_session';
+const ADMIN_COOKIE_NAME = 'admin_session';
+const USER_COOKIE_INVITED = 'key_invited';
+const USER_COOKIE_ACKED = 'key_acked';
 
 const PUBLIC_ADMIN_PATHS = [
   '/admin/login',
@@ -24,29 +25,79 @@ const PUBLIC_ADMIN_PATHS = [
   '/admin/invite-accept',
 ];
 
+// 真用户保护路由 · 必须 invited + acked
+const USER_PROTECTED_PATHS = [
+  '/pulse',
+  '/letters/new',
+  '/decisions',
+  '/onboarding',
+  '/history',
+  '/brain',
+  '/account',
+  '/outcomes',
+  '/review',
+  '/inbox',
+];
+
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  if (!pathname.startsWith('/admin')) return NextResponse.next();
-
-  // 放行公开 admin 路由 (登录 / setup / 接受邀请)
-  for (const p of PUBLIC_ADMIN_PATHS) {
-    if (pathname === p || pathname.startsWith(p + '/')) return NextResponse.next();
+  // ============================================================
+  // Admin gate
+  // ============================================================
+  if (pathname.startsWith('/admin')) {
+    for (const p of PUBLIC_ADMIN_PATHS) {
+      if (pathname === p || pathname.startsWith(p + '/')) return NextResponse.next();
+    }
+    const cookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    const looksValid = cookie && /^v2:user_[a-f0-9]+:\d+:[a-f0-9]{32}$/.test(cookie);
+    if (!looksValid) {
+      const loginUrl = new URL('/admin/login', req.url);
+      loginUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
   }
 
-  // 受保护路由: 检查 cookie 格式 (v2:<adminId>:<issuedAt>:<sig>)
-  const cookie = req.cookies.get(COOKIE_NAME)?.value;
-  const looksValid = cookie && /^v2:user_[a-f0-9]+:\d+:[a-f0-9]{32}$/.test(cookie);
+  // ============================================================
+  // User gate
+  // ============================================================
+  const isProtected = USER_PROTECTED_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + '/'),
+  );
+  if (!isProtected) return NextResponse.next();
 
-  if (!looksValid) {
-    const loginUrl = new URL('/admin/login', req.url);
-    loginUrl.searchParams.set('from', pathname);
-    return NextResponse.redirect(loginUrl);
+  const invited = req.cookies.get(USER_COOKIE_INVITED)?.value === '1';
+  const acked = req.cookies.get(USER_COOKIE_ACKED)?.value === '1';
+
+  if (!invited) {
+    const inviteUrl = new URL('/invite', req.url);
+    inviteUrl.searchParams.set('from', pathname);
+    return NextResponse.redirect(inviteUrl);
+  }
+  // invited 但没 ack → /invite 让用户截图再 confirm
+  // (兑换 success state 仍在 — 真用户 invited cookie 已设, 但 acked 未设)
+  if (!acked) {
+    const inviteUrl = new URL('/invite', req.url);
+    inviteUrl.searchParams.set('needAck', '1');
+    return NextResponse.redirect(inviteUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/pulse/:path*',
+    '/letters/new/:path*',
+    '/decisions/:path*',
+    '/onboarding/:path*',
+    '/history/:path*',
+    '/brain/:path*',
+    '/account/:path*',
+    '/outcomes/:path*',
+    '/review/:path*',
+    '/inbox/:path*',
+  ],
 };

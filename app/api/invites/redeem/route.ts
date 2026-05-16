@@ -20,6 +20,8 @@ import {
   isValidInviteCodeFormat,
   getUserAccessStatus,
 } from '@/lib/invites';
+import { ensureRecoveryCode } from '@/lib/auth/recovery-code';
+import { setInvitedCookie } from '@/lib/auth/cookies';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -37,13 +39,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '请输入邀请码' }, { status: 400 });
     }
 
-    // 已经 invited 了 — 幂等返回成功
+    // 已经 invited 了 — 幂等返回成功 (也回传 recovery_code, 万一用户重新看)
     const currentStatus = getUserAccessStatus(userId);
     if (currentStatus === 'invited') {
-      return NextResponse.json({
+      const recoveryCode = ensureRecoveryCode(userId);
+      const res = NextResponse.json({
         ok: true,
         alreadyInvited: true,
+        recoveryCode,
       });
+      setInvitedCookie(res);
+      return res;
     }
     if (currentStatus === 'suspended') {
       return NextResponse.json(
@@ -75,14 +81,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
+    // 兑换成功 · 生成恢复码 (一次性 · 屏幕显示 · 用户必须截图)
+    const recoveryCode = ensureRecoveryCode(userId);
+
+    const res = NextResponse.json({
       ok: true,
       message: '邀请码已激活. 欢迎进入 KEY.',
       invitedToUser: {
         recipientName: result.invite.recipientName,
         invitedBy: result.invite.invitedBy,
       },
+      recoveryCode, // 客户端必须 surface + 强制 confirm "我已截图"
     });
+    setInvitedCookie(res);
+    return res;
   } catch (e: any) {
     if (e instanceof InvalidUserUidError) {
       return NextResponse.json(

@@ -496,6 +496,34 @@ export function getDb(): Database.Database {
   }
 
   // ============================================================
+  // Day 1 · 真用户身份 V1 · 恢复码 + 微信兜底 (ICP 来之前的 self-recovery)
+  // ============================================================
+  const usersColsV1 = _db.pragma('table_info(users)') as Array<{ name: string }>;
+  const userColsV1Names = new Set(usersColsV1.map((c) => c.name));
+
+  // recovery_code · 12 位 base32 (KEY-XXXX-XXXX), 兑换时生成一次, 不可重发
+  if (!userColsV1Names.has('recovery_code')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN recovery_code TEXT;`);
+    _db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_recovery_code ON users(recovery_code) WHERE recovery_code IS NOT NULL;`);
+    console.log('[DB Migration Day1] Added users.recovery_code + unique index');
+  }
+  // recovery_code_acknowledged_at · 用户 confirm "我已截图" 的时间, 没 confirm 不允许进入产品
+  if (!userColsV1Names.has('recovery_code_acknowledged_at')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN recovery_code_acknowledged_at INTEGER;`);
+    console.log('[DB Migration Day1] Added users.recovery_code_acknowledged_at');
+  }
+  // wechat_id · admin 后台手填 (V1 manual mode, V2 公众号 OAuth)
+  if (!userColsV1Names.has('wechat_id')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN wechat_id TEXT;`);
+    console.log('[DB Migration Day1] Added users.wechat_id');
+  }
+  // last_active_at · /admin/real-users 用 · 任何 user 行为 update
+  if (!userColsV1Names.has('last_active_at')) {
+    _db.exec(`ALTER TABLE users ADD COLUMN last_active_at INTEGER;`);
+    console.log('[DB Migration Day1] Added users.last_active_at');
+  }
+
+  // ============================================================
   // JOB-018 · brain_insights · AI 在用户身上看见的 pattern
   // 借鉴 Sivon "Linda 看见自己 v0 spec" — grounded 硬约束.
   // ============================================================
