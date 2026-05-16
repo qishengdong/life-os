@@ -524,6 +524,55 @@ export function getDb(): Database.Database {
   }
 
   // ============================================================
+  // Day 2 · 未交付的信 · KEY 真护城河 L2-L3 (意图捕捉 + 7d callback)
+  // ============================================================
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS unsent_letters (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+
+      -- 6 类收件人 (固定 V1)
+      category TEXT NOT NULL CHECK(category IN (
+        'parent',      -- 父母
+        'child',       -- 孩子
+        'partner',     -- 伴侣
+        'boss',        -- 老板
+        'self',        -- 自己 (现在的)
+        'past-self'    -- 十年前那个没选的自己
+      )),
+
+      -- 用户自填具体收件人 (可空 · "妈妈" / "前任老板 / 老李" / "12 岁的我")
+      recipient_label TEXT,
+
+      content TEXT NOT NULL,
+
+      -- 寄/不寄状态机 (Day 4 加 transition · Day 2 只 drafted)
+      -- drafted: 写了, 用户还没选寄不寄
+      -- send_intended: 选"寄出" · 7d 后 KEY 在 admin dashboard surface
+      -- archived: 选"不寄" · 留档不催
+      -- sent: callback 时用户确认"寄了"
+      -- not_sent: callback 时用户确认"没寄" (KEY 默默存档)
+      status TEXT NOT NULL DEFAULT 'drafted' CHECK(status IN (
+        'drafted','send_intended','archived','sent','not_sent'
+      )),
+
+      callback_due_at INTEGER,     -- send_intended 后 7d
+      callback_done_at INTEGER,    -- callback 完成 (用户答了)
+
+      created_at INTEGER DEFAULT (unixepoch()),
+      updated_at INTEGER DEFAULT (unixepoch()),
+
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_unsent_letters_user
+      ON unsent_letters(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_unsent_letters_callback_due
+      ON unsent_letters(callback_due_at)
+      WHERE status='send_intended' AND callback_done_at IS NULL;
+  `);
+
+  // ============================================================
   // JOB-018 · brain_insights · AI 在用户身上看见的 pattern
   // 借鉴 Sivon "Linda 看见自己 v0 spec" — grounded 硬约束.
   // ============================================================

@@ -37,6 +37,7 @@ const USER_PROTECTED_PATHS = [
   '/outcomes',
   '/review',
   '/inbox',
+  '/unsent',
 ];
 
 export function middleware(req: NextRequest) {
@@ -99,5 +100,6 @@ export const config = {
     '/outcomes/:path*',
     '/review/:path*',
     '/inbox/:path*',
+    '/unsent/:path*',
   ],
 };
