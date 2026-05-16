@@ -110,6 +110,12 @@ export default function AdminPage() {
             Real Users →
           </Link>
           <Link
+            href="/admin/unsent-callbacks"
+            className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
+          >
+            Callbacks →
+          </Link>
+          <Link
             href="/admin/users"
             className="font-mono text-xs uppercase tracking-widest text-seal-400 hover:text-paper-50 transition-colors"
           >

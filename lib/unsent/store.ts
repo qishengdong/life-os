@@ -123,6 +123,101 @@ export function getUnsentLetter(args: { userId: number; id: number }): UnsentLet
   return row ? rowToLetter(row) : null;
 }
 
+// ============================================================
+// Day 4 · 寄/不寄 transition + 7d callback (L2 → L3)
+// ============================================================
+
+const CALLBACK_DELAY_DAYS = 7;
+const CALLBACK_DELAY_SECONDS = CALLBACK_DELAY_DAYS * 86400;
+
+/** 用户选"想寄出" · drafted → send_intended · 设 7d callback. */
+export function markSendIntended(args: { userId: number; id: number }): UnsentLetter | null {
+  const db = getDb();
+  const letter = getUnsentLetter(args);
+  if (!letter) return null;
+  if (letter.status !== 'drafted') {
+    throw new Error(`letter ${args.id} 不在 drafted 状态 (当前: ${letter.status}), 不能 mark send_intended`);
+  }
+  const due = Math.floor(Date.now() / 1000) + CALLBACK_DELAY_SECONDS;
+  db.prepare(
+    `UPDATE unsent_letters
+     SET status = 'send_intended', callback_due_at = ?, updated_at = unixepoch()
+     WHERE id = ? AND user_id = ?`,
+  ).run(due, args.id, args.userId);
+  return getUnsentLetter(args);
+}
+
+/** 用户选"不寄, 留档" · drafted → archived · 不催. */
+export function markArchived(args: { userId: number; id: number }): UnsentLetter | null {
+  const db = getDb();
+  const letter = getUnsentLetter(args);
+  if (!letter) return null;
+  if (letter.status !== 'drafted') {
+    throw new Error(`letter ${args.id} 不在 drafted 状态, 不能 archive`);
+  }
+  db.prepare(
+    `UPDATE unsent_letters
+     SET status = 'archived', updated_at = unixepoch()
+     WHERE id = ? AND user_id = ?`,
+  ).run(args.id, args.userId);
+  return getUnsentLetter(args);
+}
+
+/** Callback 时用户确认: 寄了 / 没寄 · send_intended → sent / not_sent. */
+export function resolveCallback(args: {
+  userId: number;
+  id: number;
+  outcome: 'sent' | 'not_sent';
+}): UnsentLetter | null {
+  const db = getDb();
+  const letter = getUnsentLetter(args);
+  if (!letter) return null;
+  if (letter.status !== 'send_intended') {
+    throw new Error(`letter ${args.id} 不在 send_intended 状态, 不能 resolve callback`);
+  }
+  db.prepare(
+    `UPDATE unsent_letters
+     SET status = ?, callback_done_at = unixepoch(), updated_at = unixepoch()
+     WHERE id = ? AND user_id = ?`,
+  ).run(args.outcome, args.id, args.userId);
+  return getUnsentLetter(args);
+}
+
+/** Admin 用 · 列出所有 callback 已到期但用户没答的信件 (跨用户). */
+export interface PendingCallback {
+  letter: UnsentLetter;
+  userId: number;
+  recipientName: string | null;
+  wechatId: string | null;
+  daysOverdue: number;
+}
+
+export function listPendingCallbacks(): PendingCallback[] {
+  const db = getDb();
+  const now = Math.floor(Date.now() / 1000);
+  const rows = db
+    .prepare(
+      `SELECT
+         l.*,
+         u.id AS u_id, u.wechat_id, i.recipient_name
+       FROM unsent_letters l
+       INNER JOIN users u ON u.id = l.user_id
+       LEFT JOIN invites i ON i.redeemed_by_user_id = u.id
+       WHERE l.status = 'send_intended'
+         AND l.callback_due_at <= ?
+         AND l.callback_done_at IS NULL
+       ORDER BY l.callback_due_at ASC`,
+    )
+    .all(now) as Array<any>;
+  return rows.map((r) => ({
+    letter: rowToLetter(r),
+    userId: r.u_id,
+    recipientName: r.recipient_name,
+    wechatId: r.wechat_id,
+    daysOverdue: Math.floor((now - r.callback_due_at) / 86400),
+  }));
+}
+
 /** 各 category 计数 · 用于 dashboard. */
 export function countUnsentByCategory(userId: number): Record<UnsentCategory, number> {
   const db = getDb();

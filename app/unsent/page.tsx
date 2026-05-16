@@ -30,7 +30,9 @@ interface UnsentLetter {
   category: CategoryKey;
   recipientLabel: string | null;
   content: string;
-  status: string;
+  status: 'drafted' | 'send_intended' | 'archived' | 'sent' | 'not_sent';
+  callbackDueAt: number | null;
+  callbackDoneAt: number | null;
   createdAt: number;
 }
 
@@ -296,31 +298,12 @@ export default function UnsentPage() {
         ) : (
           <ol className="space-y-6">
             {letters.map((l) => (
-              <li key={l.id} className="border-b border-paper-300 pb-6">
-                <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                  <div className="flex items-baseline gap-3 flex-wrap">
-                    <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500">
-                      {categoryLabel(l.category)}
-                    </span>
-                    {l.recipientLabel && (
-                      <span className="font-serif italic text-[13px] text-ink-500">
-                        · {l.recipientLabel}
-                      </span>
-                    )}
-                  </div>
-                  <span className="font-mono text-[11px] text-ink-400">{formatDate(l.createdAt)}</span>
-                </div>
-                <p className="font-serif text-reading text-ink-900 editorial-leading whitespace-pre-wrap">
-                  {l.content}
-                </p>
-                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mt-3">
-                  {l.status === 'drafted' && '· 留在档案 ·'}
-                  {l.status === 'send_intended' && '· 想寄出 · 7 天后 KEY 会问 ·'}
-                  {l.status === 'archived' && '· 选择不寄 ·'}
-                  {l.status === 'sent' && '· 已寄 ·'}
-                  {l.status === 'not_sent' && '· 最终没寄 ·'}
-                </p>
-              </li>
+              <LetterCard
+                key={l.id}
+                letter={l}
+                userUid={userUid}
+                onChanged={refresh}
+              />
             ))}
           </ol>
         )}
@@ -334,5 +317,146 @@ export default function UnsentPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function LetterCard({
+  letter: l,
+  userUid,
+  onChanged,
+}: {
+  letter: UnsentLetter;
+  userUid: string | null;
+  onChanged: () => void;
+}) {
+  const [acting, setActing] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function patch(action: 'send_intent' | 'archive' | 'callback_sent' | 'callback_not_sent') {
+    if (!userUid || acting) return;
+    setActing(true);
+    setErr(null);
+    try {
+      const res = await fetch(`/api/unsent/${l.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+        body: JSON.stringify({ action }),
+      });
+      const data = await res.json();
+      if (!res.ok) setErr(data.error || '操作失败');
+      else onChanged();
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setActing(false);
+    }
+  }
+
+  const callbackDueDays = l.status === 'send_intended' && l.callbackDueAt
+    ? Math.floor((l.callbackDueAt - Date.now() / 1000) / 86400)
+    : null;
+  const callbackDue = callbackDueDays !== null && callbackDueDays <= 0;
+
+  return (
+    <li className="border-b border-paper-300 pb-6">
+      <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+        <div className="flex items-baseline gap-3 flex-wrap">
+          <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500">
+            {categoryLabel(l.category)}
+          </span>
+          {l.recipientLabel && (
+            <span className="font-serif italic text-[13px] text-ink-500">
+              · {l.recipientLabel}
+            </span>
+          )}
+        </div>
+        <span className="font-mono text-[11px] text-ink-400">{formatDate(l.createdAt)}</span>
+      </div>
+      <p className="font-serif text-reading text-ink-900 editorial-leading whitespace-pre-wrap mb-4">
+        {l.content}
+      </p>
+
+      {/* 状态 + 操作 */}
+      {l.status === 'drafted' && (
+        <div className="border-t border-paper-300 pt-4">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-ink-500 mb-3">
+            · 接下来 ·
+          </p>
+          <div className="flex flex-wrap gap-3 items-baseline">
+            <button
+              type="button"
+              onClick={() => patch('send_intent')}
+              disabled={acting}
+              className="px-5 py-2 font-serif text-sm text-paper bg-ink-900 hover:bg-seal-500 disabled:bg-ink-400 transition-colors"
+            >
+              想寄出 · 7 天后 KEY 问我
+            </button>
+            <button
+              type="button"
+              onClick={() => patch('archive')}
+              disabled={acting}
+              className="px-5 py-2 font-serif text-sm text-ink-900 border border-ink-900/30 hover:border-seal-500 hover:text-seal-500 transition-colors"
+            >
+              留档不寄
+            </button>
+            <span className="font-serif italic text-[12px] text-ink-500">
+              不决定也行 — 它已经被保管了.
+            </span>
+          </div>
+        </div>
+      )}
+
+      {l.status === 'send_intended' && callbackDue && (
+        <div className="border-t border-amber/40 pt-4 mt-4">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-amber mb-2">
+            ⚠ KEY 在问你
+          </p>
+          <p className="font-serif text-[15px] text-ink-900 mb-3">寄了吗?</p>
+          <div className="flex gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={() => patch('callback_sent')}
+              disabled={acting}
+              className="px-4 py-1.5 font-serif text-sm text-paper bg-sage hover:opacity-80 transition-opacity"
+            >
+              寄了
+            </button>
+            <button
+              type="button"
+              onClick={() => patch('callback_not_sent')}
+              disabled={acting}
+              className="px-4 py-1.5 font-serif text-sm text-ink-900 border border-ink-900/30 hover:border-seal-500 transition-colors"
+            >
+              最终没寄
+            </button>
+          </div>
+        </div>
+      )}
+
+      {l.status === 'send_intended' && !callbackDue && (
+        <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-seal-500 mt-3">
+          · 想寄出 · KEY 还在等
+          {callbackDueDays !== null && callbackDueDays > 0 ? ` · ${callbackDueDays} 天后问 ·` : ' ·'}
+        </p>
+      )}
+
+      {l.status === 'archived' && (
+        <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mt-3">
+          · 留档不寄 ·
+        </p>
+      )}
+      {l.status === 'sent' && (
+        <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-sage mt-3">
+          · 已寄 ·
+        </p>
+      )}
+      {l.status === 'not_sent' && (
+        <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mt-3">
+          · 最终没寄 · 留在档案 ·
+        </p>
+      )}
+
+      {err && <p className="font-serif text-sm text-ember italic mt-3">{err}</p>}
+    </li>
   );
 }
