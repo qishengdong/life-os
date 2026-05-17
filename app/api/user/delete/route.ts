@@ -21,18 +21,29 @@ const Schema = z.object({
   confirmation: z.literal('DELETE MY KEY'),
 });
 
+// 注意: 必须包含 lib/db/index.ts initSchema 里所有带 user_id 外键的表.
+// 加表必须在这里同步加 (隐私铁律 · 不能漏).
+// 重要顺序: decisions 最后删 (decision_briefs / decision_outcomes 都 FK 它).
 const CHILD_TABLES = [
-  'decisions',
+  // 决策相关
   'decision_briefs',
+  'decision_outcomes',
+  'decisions',                     // 最后 — 子表都引它
+  // 日常记录
   'daily_pulses',
   'letters',
   'unsent_letters',
-  'decision_outcomes',
+  'intake_answers',                // P0 fix 2026-05-17: onboarding 答案
+  'life_os_commitments',           // P0 fix 2026-05-17: 用户承诺
+  // 记忆 / brain
   'user_core_state',
   'relationship_memory_cards',
   'relationship_open_loops',
   'user_brain',
   'brain_insights',
+  'brain_insight_runs',            // P0 fix 2026-05-17: brain cron 记录
+  // 审计 / 邮件
+  'inspector_audit',               // P0 fix 2026-05-17: AI 行为审计
   'emails_sent',
   'sunday_reviews',
 ];
