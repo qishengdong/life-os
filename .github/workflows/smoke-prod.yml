@@ -1,0 +1,71 @@
+name: smoke (post-deploy · vs live keypoint.life)
+
+# 跟 smoke.yml (pre-deploy) 互补:
+#   pre-deploy 是抓"代码逻辑 bug" (local build)
+#   post-deploy 是抓"prod env bug" (Turso 连接 / env var / Vercel runtime)
+#
+# 触发: push 到 main 后 90s (给 Vercel deploy 时间), 跑真 keypoint.life.
+# 失败 = prod 真坏了, 优先级 P0.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 每天 09:30 BJT (01:30 UTC) cron 跑一次, 抓 "代码没变但 env / 依赖坏了" 类问题
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  smoke-prod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Wait 90s for Vercel auto-deploy
+        if: github.event_name == 'push'
+        run: |
+          echo "等 Vercel deploy 完成 (90s)..."
+          sleep 90
+
+      - name: Wait for keypoint.life health
+        run: |
+          for i in {1..30}; do
+            if curl -s https://keypoint.life/api/health | grep -q '"ok":true'; then
+              echo "✓ keypoint.life ready"
+              exit 0
+            fi
+            echo "  attempt $i: not ready, retry 5s"
+            sleep 5
+          done
+          echo "✗ keypoint.life health never returned ok"
+          exit 1
+
+      - name: Run Playwright smoke vs PROD
+        run: BASE_URL=https://keypoint.life npx playwright test tests/smoke.spec.ts
+        env:
+          ADMIN_USER: ${{ secrets.SMOKE_ADMIN_USER || 'xiao' }}
+          ADMIN_PASS: ${{ secrets.SMOKE_ADMIN_PASS || 'key-2026-life' }}
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-prod
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

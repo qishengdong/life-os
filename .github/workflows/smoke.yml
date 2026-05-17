@@ -1,0 +1,98 @@
+name: smoke (pre-deploy gate)
+
+# 真浏览器 smoke test · 防 5/17 灾难复现:
+#   "AI Native test 49/51 PASS" 但用户截图 /pulse + /brain 直接崩.
+#   根因: 之前测试全在后端 (API + LLM judge), 从来没人开浏览器.
+#
+# 这个 gate 强制:
+#   - 每次 push 到 main: 自动 build + start local Next.js + Playwright 跑全 21 case
+#   - 任何 page 客户端 exception / "Application error" → workflow RED
+#   - workflow RED = 部署有 bug 的明确证据 (即使 Vercel 自动 deploy 了)
+#   - 失败时上传截图 + trace artifact
+#
+# 我 (Claude) 的承诺: 在 GitHub Actions smoke 变绿之前, 永远不说 "ship 完成 / 测试通过".
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # 手动触发
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Seed admin (xiao / key-2026-life)
+        run: node scripts/seed-admin.mjs
+
+      - name: Build
+        run: npm run build
+
+      - name: Start Next.js (background)
+        run: |
+          npm start > /tmp/nextjs.log 2>&1 &
+          echo $! > /tmp/nextjs.pid
+        env:
+          PORT: 3000
+          NODE_ENV: production
+
+      - name: Wait for server ready
+        run: |
+          for i in {1..60}; do
+            if curl -s http://localhost:3000/api/health | grep -q '"ok":true'; then
+              echo "✓ server ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "✗ server never came up"
+          cat /tmp/nextjs.log
+          exit 1
+
+      - name: Run Playwright smoke
+        run: BASE_URL=http://localhost:3000 npx playwright test tests/smoke.spec.ts
+        env:
+          ADMIN_USER: xiao
+          ADMIN_PASS: key-2026-life
+
+      - name: Stop Next.js
+        if: always()
+        run: |
+          if [ -f /tmp/nextjs.pid ]; then
+            kill $(cat /tmp/nextjs.pid) || true
+          fi
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Upload Next.js logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-logs
+          path: /tmp/nextjs.log
+          retention-days: 7
