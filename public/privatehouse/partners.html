@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>私印 · For Institutional Partners — Pre-Medical, Persistency, and the Joint Actuarial Laboratory</title>
+<meta name="description" content="私印 · For Institutional Partners。Persistency, mortality, and morbidity all begin upstream of the policy. We work upstream. 写给保险机构精算师、核保师、HNW 客户管理总监与资深代理人。" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --ink: #111111;
+    --paper: #F7F3EA;
+    --paper-soft: #EFE9DC;
+    --warm-gray: #BDB6AA;
+    --warm-gray-light: #D9D3C5;
+    --burgundy: #6E1F2A;
+    --navy: #141923;
+    --rule: rgba(17, 17, 17, 0.12);
+    --rule-strong: rgba(17, 17, 17, 0.28);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Cormorant Garamond', 'Songti SC', 'STSong', serif;
+    font-weight: 400;
+    line-height: 1.75;
+    font-feature-settings: "kern" 1, "liga" 1, "tnum" 1;
+  }
+  ::selection { background: var(--burgundy); color: var(--paper); }
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 48px; }
+  .narrow { max-width: 720px; margin: 0 auto; padding: 0 48px; }
+
+  /* ============ Masthead ============ */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+    background: rgba(247, 243, 234, 0.92);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(6px);
+  }
+  .masthead .container { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; }
+  .masthead-brand {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-weight: 500; font-size: 22px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .masthead-brand .mark { display: inline-block; width: 6px; height: 6px; background: var(--burgundy); margin: 0 14px 3px 0; vertical-align: middle; }
+  .masthead-brand a { color: inherit; text-decoration: none; }
+  .masthead-meta { font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--warm-gray); font-weight: 500; }
+  .masthead-meta span { display: inline-block; margin-left: 28px; }
+  .masthead-meta .institutional { color: var(--burgundy); border-left: 1px solid var(--rule); padding-left: 28px; }
+
+  /* ============ Hero ============ */
+  .hero { padding: 110px 0 100px; border-bottom: 1px solid var(--rule); }
+  .hero-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--burgundy); margin-bottom: 48px; font-weight: 500;
+  }
+  .hero-supratitle {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(18px, 2.2vw, 24px);
+    color: var(--warm-gray); margin-bottom: 32px; letter-spacing: 0.01em; max-width: 880px;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 5.4vw, 72px);
+    font-weight: 500; line-height: 1.18; letter-spacing: -0.01em;
+    margin-bottom: 32px; color: var(--ink); max-width: 1080px;
+  }
+  .hero h1 .accent { color: var(--burgundy); font-style: italic; font-weight: 400; }
+  .hero h1 .zh {
+    display: block; font-family: 'Noto Serif SC', serif; font-style: normal;
+    font-size: clamp(20px, 2.4vw, 28px); font-weight: 500;
+    margin-top: 28px; color: var(--ink); line-height: 1.55;
+  }
+  .hero-sub {
+    font-size: 17px; line-height: 1.9; color: var(--ink);
+    max-width: 820px; margin-top: 48px; padding-top: 40px;
+    border-top: 1px solid var(--rule-strong); opacity: 0.86;
+  }
+  .hero-tag {
+    margin-top: 48px; font-family: 'Inter', sans-serif;
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--warm-gray); font-weight: 500;
+  }
+  .hero-tag span { margin-right: 36px; white-space: nowrap; }
+  .hero-tag span::before { content: "—"; color: var(--burgundy); margin-right: 10px; }
+
+  /* ============ Section Generic ============ */
+  section { padding: 100px 0; border-bottom: 1px solid var(--rule); }
+  .section-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--warm-gray); margin-bottom: 24px; font-weight: 500;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif; font-size: clamp(30px, 4.2vw, 50px);
+    font-weight: 500; line-height: 1.2; letter-spacing: -0.005em;
+    margin-bottom: 16px; color: var(--ink);
+  }
+  .section-title .en {
+    display: block; font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 400; font-size: 0.5em; color: var(--warm-gray);
+    margin-top: 12px; letter-spacing: 0.02em;
+  }
+  .section-lead {
+    font-size: 17px; line-height: 1.9; color: var(--ink);
+    max-width: 800px; margin-top: 32px; margin-bottom: 56px; opacity: 0.88;
+  }
+
+  /* ============ Pre-Medical Layers ============ */
+  .layers-section { background: var(--paper-soft); }
+  .layers { margin-top: 56px; border-top: 1px solid var(--rule-strong); }
+  .layer {
+    display: grid; grid-template-columns: 240px 1fr 260px;
+    gap: 48px; padding: 42px 0; border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .layer:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .layer-label {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 32px;
+    color: var(--ink); letter-spacing: -0.005em; line-height: 1.1;
+  }
+  .layer-label .sub {
+    display: block; font-family: 'Inter', sans-serif; font-size: 10px;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--warm-gray);
+    font-weight: 500; margin-top: 12px;
+  }
+  .layer.highlight .layer-label { color: var(--burgundy); }
+  .layer.highlight .layer-label .sub { color: var(--burgundy); opacity: 0.7; }
+  .layer-body { font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.85; color: var(--ink); opacity: 0.82; }
+  .layer.highlight .layer-body { opacity: 1; }
+  .layer-actor {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--warm-gray); font-weight: 500; line-height: 1.7;
+  }
+  .layer-actor .who { color: var(--ink); display: block; margin-bottom: 6px; font-weight: 600; }
+  .layer.highlight .layer-actor .who { color: var(--burgundy); }
+  .layers-closing {
+    margin-top: 56px; padding: 28px 32px; border-left: 2px solid var(--burgundy);
+    max-width: 860px; font-family: 'Noto Serif SC', serif;
+    font-size: 16px; line-height: 1.9; color: var(--ink);
+  }
+  .layers-closing strong { color: var(--burgundy); font-weight: 500; }
+
+  /* ============ Frictions ============ */
+  .frictions-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    margin-top: 56px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong);
+  }
+  .friction {
+    padding: 48px 40px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .friction:nth-child(2n) { border-right: none; }
+  .friction:nth-last-child(-n+2) { border-bottom: none; }
+  .friction-num {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; color: var(--burgundy); letter-spacing: 0.08em; margin-bottom: 20px;
+  }
+  .friction-name {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 30px;
+    line-height: 1.15; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.005em;
+  }
+  .friction-name-zh {
+    font-family: 'Noto Serif SC', serif; font-size: 17px; color: var(--ink);
+    opacity: 0.7; margin-bottom: 24px; font-weight: 500;
+  }
+  .friction-body { font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.85; color: var(--ink); opacity: 0.86; }
+  .friction-metric {
+    margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--rule);
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
+    color: var(--warm-gray); line-height: 1.6;
+  }
+  .friction-metric .kpi { color: var(--burgundy); font-weight: 500; }
+
+  /* ============ Nine Moments ============ */
+  .moments-section { background: var(--paper-soft); }
+  .moments-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    margin-top: 56px; border-top: 1px solid var(--rule-strong); border-left: 1px solid var(--rule);
+  }
+  .moment {
+    padding: 36px 28px 40px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .moment-num {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400;
+    font-size: 24px; color: var(--burgundy); line-height: 1; margin-bottom: 16px;
+  }
+  .moment-title {
+    font-family: 'Noto Serif SC', serif; font-weight: 500; font-size: 19px;
+    line-height: 1.3; color: var(--ink); margin-bottom: 4px;
+  }
+  .moment-title-en {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; color: var(--warm-gray); margin-bottom: 18px;
+  }
+  .moment-body {
+    font-family: 'Noto Serif SC', serif; font-size: 14px; line-height: 1.8;
+    color: var(--ink); opacity: 0.85; margin-bottom: 16px;
+  }
+  .moment-marker {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--burgundy); font-weight: 500;
+  }
+
+  /* ============ Depth & Signature ============ */
+  .depth-section { background: var(--paper); }
+  .depth-intro { max-width: 820px; margin: 0 auto 72px; text-align: center; }
+  .depth-intro .lead {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(22px, 2.6vw, 30px); line-height: 1.45;
+    color: var(--burgundy); margin-top: 28px;
+  }
+  .depth-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    margin-top: 64px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong);
+  }
+  .depth-col { padding: 48px 40px; border-right: 1px solid var(--rule); }
+  .depth-col:last-child { border-right: none; background: var(--paper-soft); }
+  .depth-col-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--warm-gray); font-weight: 500; margin-bottom: 16px;
+  }
+  .depth-col h3 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-style: italic;
+    font-size: 32px; line-height: 1.15; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.005em;
+  }
+  .depth-col-zh {
+    font-family: 'Noto Serif SC', serif; font-size: 17px; color: var(--ink);
+    opacity: 0.65; margin-bottom: 28px; font-weight: 400;
+  }
+  .depth-col-body { font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.9; color: var(--ink); opacity: 0.88; }
+  .depth-col-body p + p { margin-top: 14px; }
+  .depth-col-body strong { color: var(--burgundy); font-weight: 500; }
+
+  /* ============ Mechanisms ============ */
+  .mechanisms-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin-top: 56px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong);
+  }
+  .mechanism { padding: 44px 26px 52px; border-right: 1px solid var(--rule); }
+  .mechanism:last-child { border-right: none; }
+  .mechanism-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--burgundy); font-weight: 500; margin-bottom: 20px;
+  }
+  .mechanism-title {
+    font-family: 'Noto Serif SC', serif; font-size: 20px; font-weight: 500;
+    line-height: 1.3; color: var(--ink); margin-bottom: 6px;
+  }
+  .mechanism-title-en {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
+    color: var(--warm-gray); margin-bottom: 24px;
+  }
+  .mechanism-body { font-family: 'Noto Serif SC', serif; font-size: 14px; line-height: 1.85; color: var(--ink); opacity: 0.84; }
+  .mechanism-kpi {
+    margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--rule);
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.06em;
+    color: var(--burgundy); font-weight: 500; line-height: 1.6;
+  }
+  .mechanism-kpi .label {
+    display: block; font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--warm-gray); margin-bottom: 4px; font-weight: 500;
+  }
+
+  /* ============ Joint Lab ============ */
+  .lab-section { background: var(--navy); color: var(--paper); border-bottom: none; }
+  .lab-section .section-eyebrow { color: rgba(247, 243, 234, 0.5); }
+  .lab-section .section-title { color: var(--paper); }
+  .lab-section .section-title .en { color: rgba(247, 243, 234, 0.45); }
+  .lab-section .section-lead { color: rgba(247, 243, 234, 0.78); }
+  .lab-frame {
+    margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 56px; padding-bottom: 56px; border-bottom: 1px solid rgba(247, 243, 234, 0.18);
+  }
+  .lab-frame h4 {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--burgundy); font-weight: 500; margin-bottom: 20px;
+  }
+  .lab-frame h3 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
+    font-size: 26px; color: var(--paper); margin-bottom: 16px; line-height: 1.35;
+  }
+  .lab-frame p {
+    font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.9;
+    color: rgba(247, 243, 234, 0.85);
+  }
+  .lab-frame p + p { margin-top: 12px; }
+  .lab-frame ul { list-style: none; margin-top: 8px; }
+  .lab-frame li {
+    font-family: 'Noto Serif SC', serif; font-size: 14px; line-height: 1.7;
+    padding: 8px 0; color: rgba(247, 243, 234, 0.85);
+    border-bottom: 1px solid rgba(247, 243, 234, 0.08);
+  }
+  .lab-frame li:last-child { border-bottom: none; }
+  .lab-frame li::before { content: "—"; color: var(--burgundy); margin-right: 10px; }
+  .lab-hypotheses {
+    margin-top: 56px; padding: 40px;
+    border: 1px solid rgba(247, 243, 234, 0.18); border-left: 3px solid var(--burgundy);
+  }
+  .lab-hypotheses h4 {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--burgundy); font-weight: 500; margin-bottom: 28px;
+  }
+  .hypothesis {
+    display: grid; grid-template-columns: 60px 1fr;
+    gap: 24px; padding: 18px 0; border-bottom: 1px solid rgba(247, 243, 234, 0.1);
+    align-items: baseline;
+  }
+  .hypothesis:last-child { border-bottom: none; }
+  .hypothesis-id {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; font-size: 22px; color: var(--burgundy);
+  }
+  .hypothesis-body {
+    font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.85;
+    color: rgba(247, 243, 234, 0.88);
+  }
+  .hypothesis-body em {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    color: rgba(247, 243, 234, 0.55);
+  }
+
+  /* ============ Won't Do ============ */
+  .wont-section { background: var(--paper); }
+  .wont-list { margin-top: 56px; border-top: 1px solid var(--rule-strong); }
+  .wont-item {
+    display: grid; grid-template-columns: 80px 280px 1fr;
+    gap: 40px; padding: 32px 0; border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .wont-item:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .wont-num {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 22px; color: var(--burgundy); font-weight: 400;
+  }
+  .wont-title {
+    font-family: 'Noto Serif SC', serif; font-size: 18px;
+    line-height: 1.5; color: var(--ink); font-weight: 500;
+  }
+  .wont-reason {
+    font-family: 'Noto Serif SC', serif; font-size: 14px; line-height: 1.85; color: var(--ink); opacity: 0.7;
+  }
+
+  /* ============ Two Models ============ */
+  .models-section { background: var(--paper-soft); }
+  .models-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    margin-top: 56px; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong);
+  }
+  .model { padding: 52px 44px; border-right: 1px solid var(--rule); background: var(--paper); }
+  .model:last-child { border-right: none; }
+  .model-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--burgundy); font-weight: 500; margin-bottom: 20px;
+  }
+  .model-title {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 36px;
+    line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.005em;
+  }
+  .model-title-zh {
+    font-family: 'Noto Serif SC', serif; font-size: 17px; color: var(--ink);
+    opacity: 0.7; margin-bottom: 30px; font-weight: 400;
+  }
+  .model-body { font-family: 'Noto Serif SC', serif; font-size: 15px; line-height: 1.9; color: var(--ink); opacity: 0.88; }
+  .model-body p + p { margin-top: 12px; }
+  .model-meta { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .model-meta-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 0; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink);
+  }
+  .model-meta-row .key {
+    color: var(--warm-gray); text-transform: uppercase;
+    letter-spacing: 0.2em; font-size: 10px; font-weight: 500;
+  }
+  .model-meta-row .val { font-family: 'Noto Serif SC', serif; font-size: 13px; color: var(--ink); }
+
+  /* ============ Three Readers ============ */
+  .readers-section { background: var(--paper); }
+  .reader {
+    display: grid; grid-template-columns: 280px 1fr;
+    gap: 56px; padding: 56px 0; border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .reader:first-of-type { border-top: 1px solid var(--rule-strong); margin-top: 56px; }
+  .reader:last-of-type { border-bottom: 1px solid var(--rule-strong); }
+  .reader-label {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-weight: 500; font-size: 26px; color: var(--ink); line-height: 1.25;
+  }
+  .reader-label .role {
+    display: block; font-family: 'Inter', sans-serif; font-style: normal;
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--burgundy); font-weight: 500; margin-top: 12px;
+  }
+  .reader-body { font-family: 'Noto Serif SC', serif; font-size: 16px; line-height: 1.95; color: var(--ink); opacity: 0.92; }
+  .reader-body p + p { margin-top: 14px; }
+  .reader-body strong { color: var(--burgundy); font-weight: 500; }
+  .reader-body em { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--burgundy); }
+
+  /* ============ Conversation ============ */
+  .conversation-section { background: var(--paper-soft); text-align: center; padding: 130px 0; }
+  .conversation-section .section-eyebrow { color: var(--burgundy); }
+  .conversation-title {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400;
+    font-size: clamp(38px, 4.8vw, 58px); line-height: 1.15;
+    color: var(--ink); margin-bottom: 24px; letter-spacing: -0.005em;
+  }
+  .conversation-title-zh {
+    font-family: 'Noto Serif SC', serif; font-size: clamp(22px, 2.8vw, 30px);
+    color: var(--ink); margin-bottom: 44px; font-weight: 500; line-height: 1.45;
+  }
+  .conversation-body {
+    font-family: 'Noto Serif SC', serif; font-size: 16px; line-height: 1.95;
+    color: var(--ink); max-width: 680px; margin: 0 auto 44px;
+  }
+  .conversation-cta {
+    display: inline-block; font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 22px; color: var(--burgundy);
+    text-decoration: none; padding: 18px 48px;
+    border: 1px solid var(--burgundy); background: transparent;
+    transition: all 0.4s ease; letter-spacing: 0.02em;
+  }
+  .conversation-cta:hover { background: var(--burgundy); color: var(--paper); }
+  .conversation-footnote {
+    margin-top: 44px; font-family: 'Inter', sans-serif;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--warm-gray); font-weight: 500;
+  }
+
+  /* ============ Note ============ */
+  .note-section { background: var(--paper); }
+  .note { max-width: 680px; margin: 0 auto; padding: 0 48px; }
+  .note-eyebrow {
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--burgundy);
+    margin-bottom: 44px; text-align: center; font-weight: 500;
+  }
+  .note-body { font-family: 'Noto Serif SC', serif; font-size: 17px; line-height: 2; color: var(--ink); font-weight: 400; }
+  .note-body p + p { margin-top: 16px; }
+  .note-body em { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--burgundy); }
+  .note-signature {
+    margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--rule);
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 16px; color: var(--warm-gray);
+  }
+
+  /* ============ Colophon ============ */
+  .colophon { background: var(--ink); color: var(--paper); padding: 72px 0 44px; }
+  .colophon .container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 56px; align-items: start; }
+  .colophon-brand {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper); margin-bottom: 8px;
+  }
+  .colophon-brand .mark { display: inline-block; width: 6px; height: 6px; background: var(--burgundy); margin: 0 12px 3px 0; vertical-align: middle; }
+  .colophon-tag {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; color: rgba(247, 243, 234, 0.5); letter-spacing: 0.02em;
+  }
+  .colophon h4 {
+    font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: rgba(247, 243, 234, 0.45);
+    margin-bottom: 16px; font-weight: 500;
+  }
+  .colophon p, .colophon a {
+    font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.75;
+    color: rgba(247, 243, 234, 0.75); text-decoration: none;
+  }
+  .colophon p + p { margin-top: 6px; }
+  .colophon a:hover { color: var(--paper); }
+  .colophon-base {
+    margin-top: 56px; padding-top: 28px; border-top: 1px solid rgba(247, 243, 234, 0.12);
+    font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(247, 243, 234, 0.35); text-align: center;
+  }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 900px) {
+    .container, .narrow { padding: 0 24px; }
+    .masthead { padding: 18px 0; }
+    .masthead .container { flex-wrap: wrap; gap: 12px; }
+    .masthead-meta span { margin-left: 14px; }
+    .masthead-meta .institutional { border-left: none; padding-left: 0; }
+    .hero { padding: 64px 0 48px; }
+    section { padding: 56px 0; }
+    .layer { grid-template-columns: 1fr; gap: 14px; padding: 32px 0; }
+    .frictions-grid { grid-template-columns: 1fr; }
+    .friction { border-right: none !important; }
+    .moments-grid { grid-template-columns: 1fr 1fr; }
+    .depth-grid { grid-template-columns: 1fr; }
+    .depth-col { border-right: none; border-bottom: 1px solid var(--rule); }
+    .mechanisms-grid { grid-template-columns: 1fr 1fr; }
+    .mechanism { border-right: 1px solid var(--rule) !important; border-bottom: 1px solid var(--rule); padding: 36px 22px; }
+    .mechanism:nth-child(2n) { border-right: none !important; }
+    .mechanism:nth-last-child(-n+2) { border-bottom: none; }
+    .lab-frame { grid-template-columns: 1fr; gap: 32px; }
+    .wont-item { grid-template-columns: 56px 1fr; gap: 20px; }
+    .wont-reason { grid-column: 1 / -1; padding-left: 76px; opacity: 0.7; }
+    .models-grid { grid-template-columns: 1fr; }
+    .model { border-right: none !important; border-bottom: 1px solid var(--rule); padding: 36px 24px; }
+    .model:last-child { border-bottom: none; }
+    .reader { grid-template-columns: 1fr; gap: 16px; padding: 40px 0; }
+    .colophon .container { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 600px) {
+    .moments-grid { grid-template-columns: 1fr; }
+    .mechanisms-grid { grid-template-columns: 1fr; }
+    .mechanism { border-right: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Masthead ============ -->
+<header class="masthead">
+  <div class="container">
+    <div class="masthead-brand"><a href="/privatehouse/"><span class="mark"></span>私印 &nbsp;·&nbsp; The Private House</a></div>
+    <div class="masthead-meta">
+      <span>Volume I</span>
+      <span class="institutional">For Institutional Partners</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ Hero ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">A private brief for underwriters, actuaries, and senior agents</div>
+    <div class="hero-supratitle">Written for the institutions that already hold a family's trust — and for the years that trust must travel through.</div>
+    <h1>
+      Persistency, mortality, and morbidity<br />
+      all begin <span class="accent">upstream</span> of the policy.<br />
+      We work upstream.
+      <span class="zh">继续率、死亡率、发病率——都在保单触达不到的上游被悄悄写好。<br />私印只在上游工作。</span>
+    </h1>
+    <p class="hero-sub">
+      这一页写给保险机构的<strong>精算师、核保师、HNW 客户管理总监与资深代理人</strong>。关于一类我们称之为 <strong>Pre-Medical</strong> 的客户价值层，关于这一层为何长期是产业空白，以及一种我们不分润、不索取客户数据、不进入保险销售的合作方式——一个真正的 24-36 月精算联合实验，而不是一次渠道采购。
+    </p>
+    <div class="hero-tag">
+      <span>Pre-Medical Layer</span>
+      <span>Actuarial Joint Lab</span>
+      <span>By Invitation</span>
+      <span>No Revenue Share</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Three Layers ============ -->
+<section class="layers-section">
+  <div class="container">
+    <div class="section-eyebrow">A Three-Layer View of Insurance Value</div>
+    <h2 class="section-title">
+      保险业的三层价值结构
+      <span class="en">Post-Medical · Medical · Pre-Medical</span>
+    </h2>
+    <p class="section-lead">
+      您家的产品矩阵在 Medical 与 Post-Medical 两层已经做到行业最完整的覆盖。剩下的一层——Pre-Medical——长期是产业空白。从精算意义上说，这一层是您家未来 Loss Ratio、Lapse 与 Cross-Sell 经济性<strong>在保单触达之前就被悄悄写好</strong>的地方。
+    </p>
+
+    <div class="layers">
+      <div class="layer">
+        <div class="layer-label">
+          Post-Medical
+          <span class="sub">事件之后</span>
+        </div>
+        <div class="layer-body">
+          重疾险、医疗险、长期护理险、年金、传承产品——保的是不可避免发生的事之后的代价。这一层是您家 IFRS 17 框架下 CSM 释放的主体。
+        </div>
+        <div class="layer-actor">
+          <span class="who">您 / 友邦</span>
+          已建立完整覆盖
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-label">
+          Medical
+          <span class="sub">事件之中</span>
+        </div>
+        <div class="layer-body">
+          高端医疗通道、海外就医、紧急转诊、私人医生网络——确保关键时刻医疗的质量与速度。这一层是您家"卓越医疗"系列与高端服务网络的主战场。
+        </div>
+        <div class="layer-actor">
+          <span class="who">您 + 第三方网络</span>
+          联合覆盖
+        </div>
+      </div>
+
+      <div class="layer highlight">
+        <div class="layer-label">
+          Pre-Medical
+          <span class="sub">事件之前 · 五年级</span>
+        </div>
+        <div class="layer-body">
+          代谢偏移、血压上升、激素紊乱、心因性沉淀、婚姻张力累积、孩子从 13 到 22、父母从健朗到衰退——这一层是 morbidity 长尾、persistency 衰减、cross-sell 时机感知的真实生成处。<br /><br />
+          目前由没有任何角色系统覆盖。私印只做这一层。
+        </div>
+        <div class="layer-actor">
+          <span class="who">私印</span>
+          独立承担
+        </div>
+      </div>
+    </div>
+
+    <div class="layers-closing">
+      用精算的语言说：<strong>Pre-Medical 是您家未来 5-25 年精算曲线的产生处，不是出现处。</strong>它生成的不是承保事件本身，而是承保事件发生概率、时点与强度的真实分布。我们处理的是这个分布的输入端。
+    </div>
+  </div>
+</section>
+
+<!-- ============ Four Quantifiable Frictions ============ -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">The Quantifiable Frictions</div>
+    <h2 class="section-title">
+      Pre-Medical 缺失的四种精算代价
+      <span class="en">Four frictions quietly priced into your books today</span>
+    </h2>
+    <p class="section-lead">
+      不是抽象痛点，是四个具体的精算维度。这四件事每天都在您家的 HNW 保单存续期间发生，每一件都在贡献一份您家精算师事后才看见的代价。
+    </p>
+
+    <div class="frictions-grid">
+      <div class="friction">
+        <div class="friction-num">No. 01</div>
+        <div class="friction-name">Persistency Decay</div>
+        <div class="friction-name-zh">继续率衰减</div>
+        <div class="friction-body">
+          长期 HNW 保单从 ANP 签发到 25M / 37M / 61M continuance 的真实衰减曲线，远比 13M 触发率所暗示的更激烈。HNW 客户的脱保不来自财务能力——来自"被照顾感的流失给了别人"。客户在保单之外的 360 天被另外 4-8 个角色照顾时，您家代理人的真实存在感在 25M 之后开始结构性下滑。
+        </div>
+        <div class="friction-metric">
+          <span class="kpi">KPI 受损</span> · 13M / 25M / 37M / 61M Persistency Ratio
+        </div>
+      </div>
+
+      <div class="friction">
+        <div class="friction-num">No. 02</div>
+        <div class="friction-name">Morbidity Tail</div>
+        <div class="friction-name-zh">长尾发病率累积</div>
+        <div class="friction-body">
+          代谢类、心血管类、心因性、神经退化类慢病的"长尾"在保单签发后第 10-25 年才进入真正高发期。这一段是 Loss Ratio 风险曲线最陡的部分，也是 IFRS 17 框架下 CSM 释放路径最敏感的部分。Pre-Medical 层是这一段所有真实信号的产生处——也是它们目前完全没有被任何角色系统接住的地方。
+        </div>
+        <div class="friction-metric">
+          <span class="kpi">KPI 受损</span> · Loss Ratio Long Tail / CSM Release Trajectory
+        </div>
+      </div>
+
+      <div class="friction">
+        <div class="friction-num">No. 03</div>
+        <div class="friction-name">Underwriting Asymmetry</div>
+        <div class="friction-name-zh">核保信号不对称</div>
+        <div class="friction-body">
+          HNW 客户在投保期的单点医疗信息（体检报告 + 既往病史申报）只反映那一刻的健康快照。20-40 年保单周期内客户真实健康轨迹与投保期切片之间的不对称程度，远比当前精算模型预设的严重——尤其在 GLP-1 时代、围绝经管理时代、长期 stress 累积时代之后。逆选择风险在 HNW 段不是降低，是上升。
+        </div>
+        <div class="friction-metric">
+          <span class="kpi">KPI 受损</span> · Underwriting Accuracy / Adverse Selection Margin
+        </div>
+      </div>
+
+      <div class="friction">
+        <div class="friction-num">No. 04</div>
+        <div class="friction-name">Cross-Sell Latency</div>
+        <div class="friction-name-zh">加保时机感知滞后</div>
+        <div class="friction-body">
+          HNW 客户加保的真实驱动是<strong>生命周期事件</strong>——父母重病、孩子留学、跨境配置、家族传承启动、丧亲、配偶健康急变。但您家代理人通常是事件发生 3-8 个月后才被通知。当代理人终于知道时，客户已经在另一个角色的引导下做完了第一轮决定。这意味着您家产品矩阵中转化率最高的窗口，被结构性错过。
+        </div>
+        <div class="friction-metric">
+          <span class="kpi">KPI 受损</span> · Cross-Sell Conversion / ANP per Existing Customer
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Nine Generational Moments ============ -->
+<section class="moments-section">
+  <div class="container">
+    <div class="section-eyebrow">The Nine Generational Moments</div>
+    <h2 class="section-title">
+      HNW 保单 20-40 年内的九个必发事件
+      <span class="en">Nine moments every HNW family will pass through</span>
+    </h2>
+    <p class="section-lead">
+      一份签于客户 38 岁的长期 HNW 保单，到第 25 年时她已经 63 岁。这中间一定会发生下面九件事，每一件都同时影响您家的 morbidity、persistency 与 cross-sell。问题不是"会不会发生"，是"您家代理人是事件发生<strong>之前</strong>到场，<strong>之中</strong>到场，还是<strong>之后</strong>才被通知"。
+    </p>
+
+    <div class="moments-grid">
+      <div class="moment">
+        <div class="moment-num">01</div>
+        <div class="moment-title">本人 / 配偶首次重大医疗诊断</div>
+        <div class="moment-title-en">First Major Diagnosis</div>
+        <div class="moment-body">
+          45-65 岁段的某一次重大诊断（癌症、心血管事件、自身免疫、糖尿病并发症）。一次事件，触发整个家庭对保险体系的真实信任评估。
+        </div>
+        <div class="moment-marker">Persistency Anchor · Loss Trigger</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">02</div>
+        <div class="moment-title">父母从健朗到失能</div>
+        <div class="moment-title-en">Parental Decline</div>
+        <div class="moment-body">
+          父母 65-85 岁的 5-15 年衰退期。子女在此期间真实承担的财务、时间、情绪代价，是触发长期护理险与年金加保的最大单一驱动。
+        </div>
+        <div class="moment-marker">Cross-Sell Window · LTC / Annuity</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">03</div>
+        <div class="moment-title">婚姻系统重大裂痕</div>
+        <div class="moment-title-en">Marital Crisis</div>
+        <div class="moment-body">
+          长期协作关系的某一次真实危机。它不一定终结于离婚，但一定终结于"两个名字下的保单财务结构需要被重新审视"。
+        </div>
+        <div class="moment-marker">Policy Restructure Risk</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">04</div>
+        <div class="moment-title">配偶身故 / 重大健康事件</div>
+        <div class="moment-title-en">Spousal Loss</div>
+        <div class="moment-body">
+          长期婚姻的不可逆终点。除赔付事件本身外，遗属在此后 24 个月内的整体保险结构调整、加保倾向、传承启动需求集中爆发。
+        </div>
+        <div class="moment-marker">Loss Event · Major Cross-Sell Phase</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">05</div>
+        <div class="moment-title">孩子留学决定</div>
+        <div class="moment-title-en">Child Going Abroad</div>
+        <div class="moment-body">
+          13-18 岁那条不可重做的路径选择。触发跨境医疗、境外教育金、子女单独保单与离岸资产结构的整套需求重组。
+        </div>
+        <div class="moment-marker">Cross-Sell Window · Cross-Border</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">06</div>
+        <div class="moment-title">孩子心理 / 自伤危机</div>
+        <div class="moment-title-en">Adolescent Crisis</div>
+        <div class="moment-body">
+          青少年期某一次严重抑郁、自伤或长期迷失。它不进保单赔付，但它决定父母对"传承计划"是否继续推进、何时推进的全部假设。
+        </div>
+        <div class="moment-marker">Legacy Plan Recalibration</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">07</div>
+        <div class="moment-title">家族企业接班</div>
+        <div class="moment-title-en">Generational Handover</div>
+        <div class="moment-body">
+          一代向二代的财富与责任转移。这是友邦增额终身寿、传承类保单与家族信托嫁接最深的事件，但发生节点极难预测。
+        </div>
+        <div class="moment-marker">Legacy Product Activation</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">08</div>
+        <div class="moment-title">跨境配置 / 移民决定</div>
+        <div class="moment-title-en">Migration Decision</div>
+        <div class="moment-body">
+          整个家庭的物理位置重组。一旦启动，HK / SG / 海外保单结构、税务身份、传承安排全部需要被同步重排，否则赔付期可能进入合规黑洞。
+        </div>
+        <div class="moment-marker">Cross-Border Policy Risk</div>
+      </div>
+
+      <div class="moment">
+        <div class="moment-num">09</div>
+        <div class="moment-title">丧亲与传承启动</div>
+        <div class="moment-title-en">Bereavement & Succession</div>
+        <div class="moment-body">
+          父母离世与代际财富真实启动。这是您家产品矩阵中所有"理论价值"被第一次真实兑现的时刻——也是您家代理人价值被第一次真实评估的时刻。
+        </div>
+        <div class="moment-marker">CSM Realization · Reputation Test</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Depth & Signature ============ -->
+<section class="depth-section">
+  <div class="container">
+    <div class="depth-intro">
+      <div class="section-eyebrow" style="margin-bottom: 24px;">On Depth and Signature</div>
+      <h2 class="section-title">
+        AI 的专业深度，真人的执业签字
+        <span class="en">Why Private House does not introduce product-liability risk to your books</span>
+      </h2>
+      <p class="lead">
+        私印之所以能持续覆盖 Pre-Medical 层，<br />是因为它把"专业深度"与"执业责任"分成了两层。<br />这件事对您家合规与法务的意义，需要被讲清楚。
+      </p>
+    </div>
+
+    <div class="depth-grid">
+      <div class="depth-col">
+        <div class="depth-col-eyebrow">Layer I &nbsp;·&nbsp; The Depth</div>
+        <h3>AI Inside</h3>
+        <div class="depth-col-zh">关于专业深度</div>
+        <div class="depth-col-body">
+          <p>Sivon、KEY、Spark 在<strong>代谢、慢病、心血管、营养、激素、围绝经、术后、GLP-1、心理学、决策科学、家庭系统、青少年发展、留学申请</strong>等垂直维度上的专业知识深度与广度，<strong>系统性超越任何由真人组成的服务网络所能持续提供的覆盖</strong>。</p>
+          <p>从精算角度说：这意味着私印持续生成的 Pre-Medical 信号质量，与任何"真人专家网络型 wellness 服务"在数量级上不在同一档。它持续、不疲倦、跨维、随基础模型迭代而升级。</p>
+          <p>这件事我们不掩饰，也不夸大。这是 AI 在垂直专业知识维度上对真人专家的真实差距。</p>
+        </div>
+      </div>
+
+      <div class="depth-col">
+        <div class="depth-col-eyebrow">Layer II &nbsp;·&nbsp; The Signature</div>
+        <h3>Human Signature Outside</h3>
+        <div class="depth-col-zh">关于执业签字与责任主体</div>
+        <div class="depth-col-body">
+          <p>但是。</p>
+          <p>任何关键级输出——医疗判断、法律设计、教育决策、心理干预——<strong>不能由 AI 独自签字</strong>。私印的设计原则是：AI 持有深度，<strong>具备执业资质的第三方真人专家持有签字</strong>，承担全部专业责任。</p>
+          <p>这一架构对您家合规与法务部门的意义：<strong>私印不构成产品责任风险，不需要被纳入您家的核保 / 合规审查框架</strong>。客户在私印中收到的任何专业输出的最终责任，在签字真人的执业资质体系上，与友邦无关、与私印的产品形态无关。</p>
+          <p>这件事是私印能够与保险机构合作的<strong>合规前提</strong>，不是附加条款。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Four Mechanisms ============ -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">Where Pre-Medical Meets Your Economics</div>
+    <h2 class="section-title">
+      私印对您家精算 KPI 的四种作用路径
+      <span class="en">Four mechanisms, four distinct insurance KPIs</span>
+    </h2>
+    <p class="section-lead">
+      私印不向您家客户销售任何保险，也不进入您家产品决策。但当一个家庭被 Pre-Medical 系统化照顾时，<strong>四个与您家长期精算经济性直接相关的变量</strong>会安静地发生改善。这四件事可被精算地量化，可被联合实验地验证。
+    </p>
+
+    <div class="mechanisms-grid">
+      <div class="mechanism">
+        <div class="mechanism-eyebrow">No. 01</div>
+        <div class="mechanism-title">继续率提升</div>
+        <div class="mechanism-title-en">Persistency Lift</div>
+        <div class="mechanism-body">
+          被持续陪伴的 HNW 客户对承保她的代理人产生情感锚定，显著高于只在续保季出现的客户。13M / 25M / 37M / 61M continuance ratio 在 Pre-Medical 系统照顾下存在结构性改善空间。
+        </div>
+        <div class="mechanism-kpi">
+          <span class="label">KPI Affected</span>
+          Persistency Ratio · Lapse Margin
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mechanism-eyebrow">No. 02</div>
+        <div class="mechanism-title">长尾发病率衰减</div>
+        <div class="mechanism-title-en">Morbidity Attenuation</div>
+        <div class="mechanism-body">
+          代谢类、心血管类、心因性慢病在 Pre-Medical 长期照顾下的事件发生率有真实下降空间。对您家重疾、医疗、LTC 三类产品保单后 15-25 年的 Loss Ratio 长尾，私印是直接经济变量。
+        </div>
+        <div class="mechanism-kpi">
+          <span class="label">KPI Affected</span>
+          Loss Ratio · CSM Trajectory
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mechanism-eyebrow">No. 03</div>
+        <div class="mechanism-title">核保信号增强</div>
+        <div class="mechanism-title-en">Underwriting Augmentation</div>
+        <div class="mechanism-body">
+          在客户书面授权 + 单向脱敏数据桥前提下，Pre-Medical 长期累积数据可作为 Medical Underwriting Refinement 的辅助信号源——更精准的核保 = 更低的逆选择 = 更高的 VNB。
+        </div>
+        <div class="mechanism-kpi">
+          <span class="label">KPI Affected</span>
+          VNB · Adverse Selection
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mechanism-eyebrow">No. 04</div>
+        <div class="mechanism-title">加保时机智能</div>
+        <div class="mechanism-title-en">Cross-Sell Timing</div>
+        <div class="mechanism-body">
+          不分享客户内容前提下，私印向您家代理人发送"该家庭正处于某类生命周期事件期"的脱敏时机信号——让代理人在合适时机出现，而不是事后被通知。
+        </div>
+        <div class="mechanism-kpi">
+          <span class="label">KPI Affected</span>
+          Cross-Sell Conversion · ANP/Customer
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Joint Laboratory ============ -->
+<section class="lab-section">
+  <div class="container">
+    <div class="section-eyebrow">The Joint Pre-Medical Laboratory</div>
+    <h2 class="section-title">
+      联合精算实验，不是渠道合作
+      <span class="en">A 24-36 month actuarial cohort study, designed in good faith</span>
+    </h2>
+    <p class="section-lead">
+      私印不接受 SaaS 采购、白标授权、产品打包、wellness 福利券合作。但我们邀请少量保险机构与我们共同设计并执行一项<strong>真正的精算联合实验</strong>——一份能进入您家精算委员会、风控委员会、HNW 客户管理委员会三方议程的合作。
+    </p>
+
+    <div class="lab-frame">
+      <div>
+        <h4>The Cohort Design</h4>
+        <h3>队列设计</h3>
+        <p>30-50 个友邦 HNW 客户家庭种子样本（书面同意 + 完全脱敏 + 单向数据流），24-36 个月周期，对照组采用您家既有 HNW 客户标准队列。</p>
+        <ul>
+          <li>客户级 individual subject consent</li>
+          <li>家庭级 family unit consent</li>
+          <li>聚合级数据流，零个体内容流</li>
+          <li>独立第三方精算审计</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The Joint Committee</h4>
+        <h3>三方联合委员会</h3>
+        <p>由您家四个部门 + 私印组成联合委员会，每月聚合读数 + 季度精算评审 + 年度联合白皮书。</p>
+        <ul>
+          <li>友邦精算部 · Actuarial Office</li>
+          <li>友邦核保部 · Underwriting</li>
+          <li>友邦风控部 · Risk Management</li>
+          <li>友邦 HNW 客户管理 · Distribution</li>
+          <li>私印 · Pre-Medical Operations</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lab-hypotheses">
+      <h4>The Four Hypotheses</h4>
+      <div class="hypothesis">
+        <div class="hypothesis-id">H 1</div>
+        <div class="hypothesis-body">Pre-Medical 长期陪伴对 13M / 25M / 37M / 61M Persistency 衰减曲线的真实改善幅度（按产品线分层）。<em>测试方法：cohort vs control，sliding window，控制 ANP / 年龄 / 地域 / 产品组合等共变量。</em></div>
+      </div>
+      <div class="hypothesis">
+        <div class="hypothesis-id">H 2</div>
+        <div class="hypothesis-body">Pre-Medical 对重疾 / 医疗 / 长期护理三类产品长尾 Loss Ratio 的实际经验改善，及其对 IFRS 17 CSM 释放路径的边际贡献。<em>测试方法：经验研究 + Lloyd's 同业数据校准 + 精算模型回测。</em></div>
+      </div>
+      <div class="hypothesis">
+        <div class="hypothesis-id">H 3</div>
+        <div class="hypothesis-body">Pre-Medical 数据（客户授权前提）作为 Medical Underwriting Refinement 辅助信号，对核保准确度、逆选择风险与 VNB 的边际改善。<em>测试方法：影子核保 + 实测核保对比 + 长期赔付经验回测。</em></div>
+      </div>
+      <div class="hypothesis">
+        <div class="hypothesis-id">H 4</div>
+        <div class="hypothesis-body">脱敏时机信号对资深代理人 Cross-Sell 成功率与 ANP/Existing Customer 的真实提升，及其对 HNW 段 13M 续保率的二阶影响。<em>测试方法：代理人 A/B 试验 + 时机信号关闭组对照。</em></div>
+      </div>
+    </div>
+
+    <p style="margin-top: 56px; max-width: 760px; font-size: 14px; line-height: 1.85; color: rgba(247, 243, 234, 0.62); font-family: 'Noto Serif SC', serif;">
+      研究结束后，由友邦与私印联合发布行业精算白皮书，两个名字。结论用于精算模型校准与产业讨论，不用于个体客户核保决策。这是一份严肃的精算合作，不是一份营销协议。
+    </p>
+  </div>
+</section>
+
+<!-- ============ Won't Do ============ -->
+<section class="wont-section">
+  <div class="container">
+    <div class="section-eyebrow">What We Will Not Do</div>
+    <h2 class="section-title">
+      私印不做的七件事
+      <span class="en">Seven lines we will not cross</span>
+    </h2>
+    <p class="section-lead">
+      合作之前，我们更愿意先说清楚不做什么。下列七件事不会因为商业规模、合作机构地位或商业压力而改变——它们写在产品宪法里，由系统架构本身保证。
+    </p>
+
+    <div class="wont-list">
+      <div class="wont-item">
+        <div class="wont-num">i.</div>
+        <div class="wont-title">不进入保险销售</div>
+        <div class="wont-reason">私印不为您家或任何保险机构销售一份保单。Pre-Medical 一旦与销售挂钩，就会立刻退化成另一种形式的渠道工具，失去对客户家庭的真实价值。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">ii.</div>
+        <div class="wont-title">不分润，也不接受机构对客户的代付</div>
+        <div class="wont-reason">客户付费给私印，私印不向代理人或机构分佣，也不接受机构对客户的代付安排（共建期透明披露的有限度成本共担除外）。Pre-Medical 的成立前提是它只对一个家庭负责。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">iii.</div>
+        <div class="wont-title">不向您家共享客户个体内容</div>
+        <div class="wont-reason">客户在私印里的任何对话、健康数据、家庭关系、决策内容——保险公司、银行、医院、雇主一律不可见。架构上不可见就是不可见，不是合规条款，是系统设计。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">iv.</div>
+        <div class="wont-title">不变成 wellness 福利券</div>
+        <div class="wont-reason">私印不会被打包进任何"高端保单赠送权益"。Pre-Medical 这一层需要客户家庭自己付费来建立"这是为我家做的"这种关系。免费的福利无法承担这种关系的重量。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">v.</div>
+        <div class="wont-title">不进入您家精算定价决策</div>
+        <div class="wont-reason">联合实验的结论用于产业讨论与模型校准，不用于个体客户核保决策。私印不替您家精算师拍板任何一条保单的定价。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">vi.</div>
+        <div class="wont-title">不替代任何核保团队</div>
+        <div class="wont-reason">Pre-Medical 数据只在客户授权 + 完全脱敏 + 单向流动前提下作为核保辅助。永远是辅助，不是替代。您家核保团队保留全部最终判断权。</div>
+      </div>
+      <div class="wont-item">
+        <div class="wont-num">vii.</div>
+        <div class="wont-title">不持有任何保险牌照需求</div>
+        <div class="wont-reason">私印没有也不寻求任何保险中介、销售或精算服务牌照。我们与您家合作的法律性质是"独立第三方精算研究合作"+ "数据桥技术服务"，不进入任何受监管的保险业务范畴。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Two Models ============ -->
+<section class="models-section">
+  <div class="container">
+    <div class="section-eyebrow">Two Models of Engagement</div>
+    <h2 class="section-title">
+      合作的两种方式
+      <span class="en">For the senior agent. For the institution.</span>
+    </h2>
+    <p class="section-lead">
+      私印当前只接受两种合作路径。两种之外的合作形式（产品打包、SaaS 采购、白标授权、wellness 渠道）均不在我们考虑范围内。
+    </p>
+
+    <div class="models-grid">
+      <div class="model">
+        <div class="model-eyebrow">Model A · For the Senior Agent</div>
+        <div class="model-title">As an Introducer</div>
+        <div class="model-title-zh">资深代理人 · 介绍人模式</div>
+        <div class="model-body">
+          <p>面向已与 HNW 家庭建立 5 年以上信任的资深代理人（如百万圆桌 MDRT / COT / TOT 成员或同等地位）。介绍人不分佣，但因为是把该家庭带入私印的人，长期被该家庭与其圈层记住。</p>
+          <p>介绍人本人获得私印的早期使用权——作为对自己执业判断与家庭健康的礼物。</p>
+          <p>介绍人在合作中可定期收到自己客户家庭的脱敏时机信号（如：父母重病期 / 子女出国期 / 家族传承启动期），以非内容方式让他们在合适时机出现。</p>
+          <p>每位介绍人每年介绍家庭数有上限——不是越多越好，是越对越好。</p>
+        </div>
+        <div class="model-meta">
+          <div class="model-meta-row"><span class="key">承担方</span><span class="val">代理人个人</span></div>
+          <div class="model-meta-row"><span class="key">分佣</span><span class="val">无</span></div>
+          <div class="model-meta-row"><span class="key">客户付费</span><span class="val">客户直接付私印</span></div>
+          <div class="model-meta-row"><span class="key">代理人收益</span><span class="val">时机信号 + 长期客户黏性</span></div>
+        </div>
+      </div>
+
+      <div class="model">
+        <div class="model-eyebrow">Model B · For the Institution</div>
+        <div class="model-title">As a Joint Laboratory</div>
+        <div class="model-title-zh">机构 · 精算联合实验</div>
+        <div class="model-body">
+          <p>面向愿意与我们共同验证 Pre-Medical 这一层经济价值的保险机构。30-50 个匹配定位的种子家庭（在客户书面同意前提下），24-36 个月真实精算队列研究。</p>
+          <p>机构不获取客户个体内容，只获得机构维度的脱敏聚合精算信号读数。</p>
+          <p>共建期内可有限度共担首年成本（向客户透明披露）。共建结束后客户自主决定续费。</p>
+          <p>研究结论以联合白皮书形式发布，进入产业讨论。</p>
+        </div>
+        <div class="model-meta">
+          <div class="model-meta-row"><span class="key">承担方</span><span class="val">机构 / 客户双方</span></div>
+          <div class="model-meta-row"><span class="key">数据回流</span><span class="val">仅聚合精算信号</span></div>
+          <div class="model-meta-row"><span class="key">客户隐私</span><span class="val">个体内容零可见</span></div>
+          <div class="model-meta-row"><span class="key">机构价值</span><span class="val">Pre-Medical 真实精算数据资产</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ To Three Readers ============ -->
+<section class="readers-section">
+  <div class="container">
+    <div class="section-eyebrow">To Three Readers</div>
+    <h2 class="section-title">
+      写给三类读者的三段话
+      <span class="en">For BD &amp; Strategy. For HNW Distribution. For the Senior Agent.</span>
+    </h2>
+    <p class="section-lead">
+      这一页同时摆在三类读者面前。如果您是这三类中的某一类，下面这段话写给您。
+    </p>
+
+    <div class="reader">
+      <div class="reader-label">
+        To the BD &amp; Strategy Office
+        <span class="role">写给 BD / 战略办公室</span>
+      </div>
+      <div class="reader-body">
+        <p>您所在的总部 BD 与战略部门，对一件事最敏感：<strong>HNW 客户长期价值（CLV）</strong>的可持续提升路径，与可被精算验证的留存机制。HNW 段过去十年的工具是<em>积分 / 福利券 / 服务俱乐部 / wellness app</em>——这些工具有它们的位置，但都未能进入精算意义上的真留存讨论。</p>
+        <p>私印的 Pre-Medical Joint Laboratory 给您部门一次机会，在精算层面（不是 marketing 层面）真正验证一项新型留存机制对 Persistency / Loss Ratio / VNB / Cross-Sell 的边际经济性。<strong>这是一份能放进精算委员会议程的合作</strong>，不是一份能放进季度营销简报的提案。</p>
+        <p>我们邀请您部门作为 Joint Laboratory 的<em>主导方</em>。</p>
+      </div>
+    </div>
+
+    <div class="reader">
+      <div class="reader-label">
+        To the Head of HNW Distribution
+        <span class="role">写给 HNW 客户管理总监</span>
+      </div>
+      <div class="reader-body">
+        <p>您管理的<strong>卓越营业部精英队伍与高级理财顾问</strong>——他们手中那张 HNW 保单进入第 25-37 个月时的真实 lapse 风险，并非来自您家产品力本身，<em>来自客户在保单之外被其他角色照顾的事实</em>。客户不会用语言告诉您她正在流失——她只是悄悄停止回您电话。</p>
+        <p>私印让您家代理人成为"被该家庭长期记住"的角色——不通过分润，通过让他们在合适的<strong>时机</strong>说合适的话。当父母重病期到来、当子女出国前 3 个月、当家族传承启动信号出现时，您家代理人不再是事后被通知的人。</p>
+        <p>这件事对您部门 13M / 25M Persistency 的影响、对资深代理人保留率的影响、对 HNW 段口碑转介绍率的影响，是可被精算地验证的。</p>
+      </div>
+    </div>
+
+    <div class="reader">
+      <div class="reader-label">
+        To the Senior Agent
+        <span class="role">写给 Linda 这类资深代理人</span>
+      </div>
+      <div class="reader-body">
+        <p>您是您客户家庭过去 5-15 年最熟悉的外部人。私印不取代您，也不分润给您。</p>
+        <p>私印做的是——把您客户家庭真实的<strong>事件期</strong>（父母重病、子女出国、家族传承启动、配偶健康急变、丧亲）以脱敏时机信号方式告诉您。让您不再是"事后才被通知的人"。让您在客户家最需要您的那一刻安静地出现。</p>
+        <p>这件事对您客户家庭的价值，远高于一次 commission。这件事对您本人的执业地位与长期口碑，也是<em>不可被其他代理人复制的</em>。</p>
+        <p>私印的早期使用权对您本人与您家庭开放——作为我们对您过去十年执业判断的礼物。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Conversation ============ -->
+<section class="conversation-section">
+  <div class="container">
+    <div class="section-eyebrow">A Conversation, Not a Pitch</div>
+    <h2 class="conversation-title">We do not sell. We invite conversation.</h2>
+    <div class="conversation-title-zh">我们不销售，我们邀请对话。</div>
+
+    <p class="conversation-body">
+      如果您所在的机构希望与我们共同验证 Pre-Medical 对 HNW 段精算 KPI 的真实影响，<br />或您作为资深代理人，希望以介绍人身份让您客户家庭进入私印——<br />我们愿意在合适的时间安排一次<strong>私下对话</strong>。<br /><br />
+      第一年我们只与少量机构与代理人对话。节奏由真实匹配度决定，不由商业目标决定。
+    </p>
+
+    <a href="mailto:partners@privatehouse.cn?subject=Private%20House%20—%20Institutional%20Partner%20Inquiry" class="conversation-cta">Request a Private Conversation</a>
+
+    <div class="conversation-footnote">partners@privatehouse.cn &nbsp;·&nbsp; Replies are private &nbsp;·&nbsp; No mailing list &nbsp;·&nbsp; By appointment</div>
+  </div>
+</section>
+
+<!-- ============ Founder Note ============ -->
+<section class="note-section">
+  <div class="note">
+    <div class="note-eyebrow">A note from the house</div>
+    <div class="note-body">
+      <p>私印的商业模式很简单：客户付费给私印，私印只对客户家庭负责。</p>
+      <p>这意味着我们必须拒绝一类看起来很顺的合作——保险公司大规模采购、统一发放给客户作为权益、按人头结算。我们拒绝这种合作不是出于姿态，是出于产品本身。Pre-Medical 一旦被中间层支付，就立刻失去对客户家庭的全部意义。</p>
+      <p>但我们非常欢迎一类更慢、更稀、更难量化的合作——少量的机构愿意跟我们做一次真正的精算联合实验，少量的资深代理人愿意作为信任的桥梁，把私印引介给自己最在意的几个家庭。</p>
+      <p>AI 模型会持续变强。但私印不依赖任何一代模型的能力——它依赖的是与客户家庭一起跑过的<em>真实时间</em>，加上一个由真人执业专家组成的签字网络。这件事，是后来者复制不了的。</p>
+      <p><em>慢，是因为这件事值得慢。</em></p>
+    </div>
+    <div class="note-signature">— The Private House</div>
+  </div>
+</section>
+
+<!-- ============ Colophon ============ -->
+<footer class="colophon">
+  <div class="container">
+    <div>
+      <div class="colophon-brand"><span class="mark"></span>私印</div>
+      <div class="colophon-tag">The Private House &nbsp;·&nbsp; For Institutional Partners</div>
+    </div>
+    <div>
+      <h4>Pillars</h4>
+      <p>Sivon &nbsp;·&nbsp; Body &amp; Mind</p>
+      <p>KEY &nbsp;·&nbsp; Decision Counsel</p>
+      <p>Spark &nbsp;·&nbsp; The Heir</p>
+      <h4 style="margin-top: 32px;">Pages</h4>
+      <p><a href="/privatehouse/">For Families &nbsp;·&nbsp; 家庭页</a></p>
+      <p><a href="/privatehouse/partners">For Partners &nbsp;·&nbsp; 机构页（您当前位置）</a></p>
+    </div>
+    <div>
+      <h4>Correspondence</h4>
+      <p>partners@privatehouse.cn</p>
+      <p>By appointment only</p>
+      <p>All correspondence remains private</p>
+    </div>
+  </div>
+  <div class="colophon-base">
+    Set in Cormorant Garamond &amp; Noto Serif SC &nbsp;·&nbsp; Built quietly &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; The Pre-Medical Doctrine
+  </div>
+</footer>
+
+</body>
+</html>
