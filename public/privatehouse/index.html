@@ -3,24 +3,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>私印 · The Private House — 高净值家庭的私密健康与决策内厅</title>
-<meta name="description" content="生理、心理、决策、下一代——四件大事，在一个内厅里。私印是为高净值家庭打造的私密健康与决策系统。邀请制，2026 年第四季度起，限 100 家庭。" />
+<title>私印 · The Private House — AI-Native Private House for Chinese HNW Families</title>
+<meta name="description" content="私印 The Private House — 为中国高净值家庭打造的 AI 原生私人内厅。LifeOS 内核 · 23 维家庭上下文 · 5–10 年长期记忆。2026 年第四季度起, 限 10 户家庭。" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
 <style>
   :root {
-    --ink: #111111;
-    --paper: #F7F3EA;
-    --paper-soft: #EFE9DC;
-    --warm-gray: #BDB6AA;
-    --warm-gray-light: #D9D3C5;
-    --burgundy: #6E1F2A;
-    --navy: #141923;
-    --rule: rgba(17, 17, 17, 0.12);
-    --rule-strong: rgba(17, 17, 17, 0.28);
+    --ink: #0A0E1A;
+    --ink-soft: #1A1F2E;
+    --paper: #F8F6F0;
+    --paper-soft: #EFEBE0;
+    --warm-gray: #908A7D;
+    --warm-gray-light: #C9C3B5;
+    --steel: #1E3A52;
+    --steel-light: #345670;
+    --steel-soft: #E8EEF2;
+    --signal: #B85C42;
+    --rule: rgba(10, 14, 26, 0.10);
+    --rule-strong: rgba(10, 14, 26, 0.22);
+    --rule-steel: rgba(30, 58, 82, 0.18);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,834 +32,717 @@
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Cormorant Garamond', 'Songti SC', 'STSong', serif;
+    font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Cormorant Garamond', serif;
     font-weight: 400;
-    line-height: 1.75;
+    line-height: 1.7;
     font-feature-settings: "kern" 1, "liga" 1, "tnum" 1;
   }
 
-  ::selection { background: var(--burgundy); color: var(--paper); }
+  ::selection { background: var(--steel); color: var(--paper); }
 
   .container { max-width: 1180px; margin: 0 auto; padding: 0 48px; }
-  .narrow { max-width: 720px; margin: 0 auto; padding: 0 48px; }
+  .narrow { max-width: 760px; margin: 0 auto; padding: 0 48px; }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; }
 
   /* ============ Masthead ============ */
   .masthead {
     border-bottom: 1px solid var(--rule);
-    padding: 28px 0 24px;
-    background: var(--paper);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    backdrop-filter: blur(6px);
-    background: rgba(247, 243, 234, 0.92);
+    padding: 22px 0;
+    background: rgba(248, 246, 240, 0.94);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
   }
   .masthead .container {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 32px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 32px;
   }
   .masthead-brand {
-    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
-    font-weight: 500;
-    font-size: 22px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500; font-size: 22px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink);
   }
   .masthead-brand .mark {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--burgundy);
-    margin: 0 14px 3px 0;
-    vertical-align: middle;
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--steel); margin: 0 14px 3px 0; vertical-align: middle;
   }
   .masthead-meta {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--warm-gray); font-weight: 500;
   }
-  .masthead-meta span { display: inline-block; margin-left: 28px; }
+  .masthead-meta span { display: inline-block; margin-left: 24px; }
+  .masthead-meta .live { color: var(--signal); }
 
   /* ============ Hero ============ */
-  .hero {
-    padding: 140px 0 120px;
-    border-bottom: 1px solid var(--rule);
-  }
+  .hero { padding: 120px 0 96px; border-bottom: 1px solid var(--rule); }
   .hero-eyebrow {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--burgundy);
-    margin-bottom: 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--steel); margin-bottom: 48px;
     font-weight: 500;
   }
   .hero h1 {
-    font-family: 'Noto Serif SC', 'Cormorant Garamond', serif;
-    font-size: clamp(64px, 10vw, 152px);
-    font-weight: 500;
-    line-height: 0.96;
-    letter-spacing: -0.01em;
-    margin-bottom: 36px;
-    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(56px, 9vw, 128px);
+    font-weight: 500; line-height: 0.98; letter-spacing: -0.015em;
+    margin-bottom: 32px; color: var(--ink);
   }
   .hero h1 .en {
-    display: block;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(32px, 5vw, 64px);
-    letter-spacing: 0.02em;
-    margin-top: 24px;
-    color: var(--ink);
+    display: block; font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(28px, 4.5vw, 56px);
+    letter-spacing: 0.01em; margin-top: 20px; color: var(--steel);
   }
   .hero-sub {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(20px, 2.2vw, 28px);
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--ink);
-    max-width: 780px;
-    margin-top: 64px;
-    padding-top: 56px;
+    font-size: clamp(18px, 2vw, 24px); font-weight: 400;
+    line-height: 1.5; color: var(--ink); max-width: 820px;
+    margin-top: 56px; padding-top: 48px;
     border-top: 1px solid var(--rule-strong);
   }
-  .hero-sub .lead-quote {
-    font-style: italic;
-    color: var(--burgundy);
-  }
-
-  /* ============ Section Generic ============ */
-  section { padding: 120px 0; border-bottom: 1px solid var(--rule); }
-  .section-eyebrow {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    margin-bottom: 24px;
-    font-weight: 500;
-  }
-  .section-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 500;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin-bottom: 16px;
-    color: var(--ink);
-  }
-  .section-title .en {
-    display: block;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 0.5em;
-    color: var(--warm-gray);
-    margin-top: 12px;
-    letter-spacing: 0.02em;
-  }
-  .section-lead {
-    font-size: 19px;
-    line-height: 1.85;
-    color: var(--ink);
-    max-width: 680px;
-    margin-top: 32px;
-    margin-bottom: 64px;
-  }
-
-  /* ============ Manifesto ============ */
-  .manifesto { background: var(--paper); padding: 140px 0; }
-  .manifesto .narrow { text-align: left; }
-  .manifesto-line {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(22px, 2.4vw, 30px);
-    font-weight: 400;
-    line-height: 1.7;
-    color: var(--ink);
-    margin-bottom: 24px;
-  }
-  .manifesto-line.muted { color: var(--warm-gray); }
-  .manifesto-line.accent {
-    color: var(--burgundy);
-    font-weight: 500;
-    margin-top: 56px;
-    padding-top: 48px;
-    border-top: 1px solid var(--rule-strong);
-  }
-
-  /* ============ Four Concerns ============ */
-  .concerns-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin-top: 64px;
+  .hero-stat-row {
+    margin-top: 64px; display: grid;
+    grid-template-columns: repeat(3, 1fr); gap: 0;
     border-top: 1px solid var(--rule-strong);
     border-bottom: 1px solid var(--rule-strong);
   }
-  .concern {
-    padding: 56px 32px;
-    border-right: 1px solid var(--rule);
-    position: relative;
+  .hero-stat {
+    padding: 36px 28px; border-right: 1px solid var(--rule);
   }
-  .concern:last-child { border-right: none; }
-  .concern-num {
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat-num {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--warm-gray);
-    letter-spacing: 0.08em;
-    margin-bottom: 28px;
+    font-weight: 500; font-size: 44px; color: var(--steel);
+    line-height: 1; margin-bottom: 12px; letter-spacing: -0.015em;
   }
-  .concern-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 4px;
-    color: var(--ink);
-  }
-  .concern-title-en {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: var(--warm-gray);
-    margin-bottom: 24px;
-  }
-  .concern-body {
-    font-size: 15px;
-    line-height: 1.75;
-    color: var(--ink);
-    opacity: 0.78;
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--warm-gray); font-weight: 500;
   }
 
-  /* ============ Pillars ============ */
-  .pillars-section { background: var(--paper); }
-  .pillar {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 80px;
-    padding: 80px 0;
-    border-top: 1px solid var(--rule);
-    align-items: start;
+  /* ============ Section ============ */
+  section { padding: 100px 0; border-bottom: 1px solid var(--rule); }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--warm-gray);
+    margin-bottom: 20px; font-weight: 500;
   }
-  .pillar:first-of-type { border-top: 1px solid var(--rule-strong); margin-top: 48px; }
-  .pillar:last-of-type { border-bottom: 1px solid var(--rule-strong); }
-  .pillar-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 56px;
-    line-height: 1;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .pillar-name .subscript {
-    display: block;
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    margin-top: 16px;
-    font-weight: 500;
-    font-style: normal;
-  }
-  .pillar-content { padding-top: 12px; }
-  .pillar-tagline {
+  .section-title {
     font-family: 'Noto Serif SC', serif;
-    font-size: 26px;
-    font-weight: 500;
-    line-height: 1.4;
-    color: var(--burgundy);
-    margin-bottom: 24px;
-    font-style: italic;
+    font-size: clamp(32px, 4.6vw, 56px);
+    font-weight: 500; line-height: 1.15; letter-spacing: -0.01em;
+    margin-bottom: 14px; color: var(--ink);
   }
-  .pillar-body {
-    font-size: 17px;
-    line-height: 1.85;
-    color: var(--ink);
-    max-width: 620px;
+  .section-title .en {
+    display: block; font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 400; font-size: 0.46em;
+    color: var(--steel); margin-top: 10px; letter-spacing: 0.02em;
   }
-  .pillar-body p + p { margin-top: 16px; }
-  .pillar-tags {
-    margin-top: 32px;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
+  .section-lead {
+    font-size: 18px; line-height: 1.85; color: var(--ink);
+    max-width: 780px; margin-top: 28px; margin-bottom: 56px; opacity: 0.88;
   }
-  .pillar-tags span { margin-right: 24px; }
 
-  /* ============ Artifacts ============ */
-  .artifacts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
+  /* ============ Zeroth Role ============ */
+  .zeroth-section { background: var(--ink); color: var(--paper); border-bottom: none; }
+  .zeroth-section .section-eyebrow { color: rgba(248, 246, 240, 0.45); }
+  .zeroth-section .section-title { color: var(--paper); }
+  .zeroth-section .section-title .en { color: rgba(248, 246, 240, 0.5); }
+  .zeroth-section .section-lead { color: rgba(248, 246, 240, 0.82); }
+  .zeroth-grid {
     margin-top: 64px;
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 80px;
+    align-items: center;
+  }
+  .zeroth-list {
+    border-top: 1px solid rgba(248, 246, 240, 0.15);
+  }
+  .zeroth-list-item {
+    display: grid; grid-template-columns: 60px 1fr 1fr;
+    padding: 18px 0; gap: 24px;
+    border-bottom: 1px solid rgba(248, 246, 240, 0.10);
+    align-items: baseline;
+  }
+  .zeroth-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(248, 246, 240, 0.45);
+    letter-spacing: 0.16em;
+  }
+  .zeroth-role {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px; font-weight: 500; color: var(--paper);
+  }
+  .zeroth-gap {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 15px;
+    color: rgba(248, 246, 240, 0.55);
+  }
+  .zeroth-big {
+    text-align: center; padding: 48px 0;
+    border: 1px solid rgba(248, 246, 240, 0.2);
+    background: rgba(248, 246, 240, 0.04);
+  }
+  .zeroth-big-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500; font-size: 240px; line-height: 0.9;
+    color: var(--signal); letter-spacing: -0.04em;
+  }
+  .zeroth-big-tag {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px; color: var(--paper);
+    margin-top: 24px; font-weight: 500; line-height: 1.4;
+  }
+  .zeroth-big-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 16px;
+    color: rgba(248, 246, 240, 0.6); margin-top: 8px;
+  }
+  .zeroth-quote {
+    margin-top: 64px; padding-top: 48px;
+    border-top: 1px solid rgba(248, 246, 240, 0.18);
+    max-width: 880px;
+  }
+  .zeroth-quote-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 24px; font-weight: 500; line-height: 1.55;
+    color: var(--paper);
+  }
+  .zeroth-quote-text strong {
+    color: var(--signal); font-weight: 500;
+  }
+  .zeroth-quote-source {
+    margin-top: 18px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(248, 246, 240, 0.5);
+    letter-spacing: 0.12em;
+  }
+
+  /* ============ Five Fears (Data) ============ */
+  .fears-grid {
+    margin-top: 56px; display: grid;
+    grid-template-columns: 1fr; gap: 0;
     border-top: 1px solid var(--rule-strong);
   }
-  .artifact {
-    padding: 56px 48px;
-    border-bottom: 1px solid var(--rule);
-    border-right: 1px solid var(--rule);
-  }
-  .artifact:nth-child(2n) { border-right: none; }
-  .artifact:nth-last-child(-n+2) { border-bottom: 1px solid var(--rule-strong); }
-  .artifact-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--burgundy);
-    letter-spacing: 0.08em;
-    margin-bottom: 20px;
-  }
-  .artifact-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 32px;
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 6px;
-    letter-spacing: -0.005em;
-  }
-  .artifact-name-zh {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 18px;
-    color: var(--ink);
-    opacity: 0.7;
-    margin-bottom: 24px;
-    font-weight: 400;
-  }
-  .artifact-body {
-    font-size: 15px;
-    line-height: 1.85;
-    color: var(--ink);
-    opacity: 0.85;
-  }
-
-  /* ============ Pre-Medical ============ */
-  .premedical-section { background: var(--paper-soft); }
-  .layers {
-    margin-top: 64px;
-    border-top: 1px solid var(--rule-strong);
-  }
-  .layer {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 56px;
-    padding: 48px 0;
+  .fear-card {
+    display: grid; grid-template-columns: 320px 1fr 200px;
+    padding: 36px 0; gap: 56px;
     border-bottom: 1px solid var(--rule);
     align-items: baseline;
   }
-  .layer:last-child { border-bottom: 1px solid var(--rule-strong); }
-  .layer-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 34px;
-    color: var(--ink);
-    letter-spacing: -0.005em;
-    line-height: 1.1;
-  }
-  .layer-label .sub {
-    display: block;
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
-    margin-top: 12px;
-  }
-  .layer.highlight .layer-label { color: var(--burgundy); }
-  .layer.highlight .layer-label .sub { color: var(--burgundy); opacity: 0.7; }
-  .layer-body {
+  .fear-card:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .fear-title {
     font-family: 'Noto Serif SC', serif;
-    font-size: 17px;
-    line-height: 1.85;
-    color: var(--ink);
-    opacity: 0.82;
+    font-size: 24px; font-weight: 500; color: var(--ink);
+    line-height: 1.3;
   }
-  .layer.highlight .layer-body { opacity: 1; font-size: 18px; }
-  .layer.highlight .layer-body strong {
-    color: var(--burgundy);
-    font-weight: 500;
-    font-style: normal;
-  }
-  .premedical-closing {
-    margin-top: 72px;
-    padding-top: 48px;
-    border-top: 1px solid var(--rule);
-    max-width: 720px;
-  }
-  .premedical-closing .lead {
+  .fear-title-en {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 26px;
-    line-height: 1.5;
-    color: var(--burgundy);
-    margin-bottom: 32px;
-    letter-spacing: 0.005em;
+    font-style: italic; font-size: 14px;
+    color: var(--steel); margin-top: 6px;
   }
-  .premedical-closing p {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 17px;
-    line-height: 1.95;
-    color: var(--ink);
-    margin-bottom: 12px;
+  .fear-body {
+    font-size: 15px; line-height: 1.85;
+    color: var(--ink); opacity: 0.88;
   }
-  .premedical-doctrine {
-    margin-top: 40px;
-    padding: 28px 32px;
-    border-left: 2px solid var(--burgundy);
-    background: transparent;
-    font-family: 'Noto Serif SC', serif;
-    font-size: 16px;
-    line-height: 1.85;
-    color: var(--ink);
+  .fear-data {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--steel);
+    line-height: 1.7; letter-spacing: 0.01em;
   }
-  .premedical-doctrine .term {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 500;
-    color: var(--burgundy);
-    font-size: 22px;
-    letter-spacing: 0.01em;
+  .fear-data .num {
+    display: block; font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 500; color: var(--signal);
+    line-height: 1; margin-bottom: 6px;
+  }
+  .fear-data .src {
+    display: block; font-size: 10px;
+    color: var(--warm-gray); margin-top: 6px;
+    letter-spacing: 0.18em; text-transform: uppercase;
   }
 
-  /* ============ Is / Isn't ============ */
-  .definition-section { background: var(--navy); color: var(--paper); border-bottom: none; }
-  .definition-section .section-eyebrow { color: rgba(247, 243, 234, 0.5); }
-  .definition-section .section-title { color: var(--paper); }
-  .definition-section .section-title .en { color: rgba(247, 243, 234, 0.45); }
-  .def-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    margin-top: 72px;
+  /* ============ LifeOS Core ============ */
+  .lifeos-section { background: var(--steel-soft); }
+  .lifeos-intro {
+    max-width: 880px; margin-bottom: 56px;
   }
-  .def-col h3 {
+  .lifeos-quote {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 26px;
-    color: rgba(247, 243, 234, 0.65);
-    padding-bottom: 24px;
-    margin-bottom: 28px;
-    border-bottom: 1px solid rgba(247, 243, 234, 0.15);
-    letter-spacing: 0.02em;
+    font-style: italic; font-size: 28px; line-height: 1.5;
+    color: var(--steel); margin-top: 28px;
   }
-  .def-col ul { list-style: none; }
-  .def-col li {
+  .lifeos-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .lifeos-cell {
+    padding: 40px 24px 48px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .lifeos-cell:last-child { border-right: none; }
+  .lifeos-cell-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--steel);
+    letter-spacing: 0.22em; margin-bottom: 18px;
+  }
+  .lifeos-cell-title {
     font-family: 'Noto Serif SC', serif;
-    font-size: 19px;
-    line-height: 1.55;
-    padding: 14px 0;
-    color: rgba(247, 243, 234, 0.92);
-    border-bottom: 1px solid rgba(247, 243, 234, 0.08);
+    font-size: 19px; font-weight: 500; color: var(--ink);
+    margin-bottom: 6px; line-height: 1.3;
   }
-  .def-col li:last-child { border-bottom: none; }
-  .def-col.is li::before {
-    content: "—";
-    color: var(--burgundy);
-    margin-right: 14px;
+  .lifeos-cell-en {
     font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 13px;
+    color: var(--warm-gray); margin-bottom: 20px;
   }
-  .def-col.isnt li {
-    color: rgba(247, 243, 234, 0.45);
-    text-decoration: line-through;
-    text-decoration-color: rgba(247, 243, 234, 0.2);
+  .lifeos-cell-body {
+    font-size: 14px; line-height: 1.85;
+    color: var(--ink); opacity: 0.85;
+  }
+  .lifeos-spec {
+    margin-top: 64px; padding: 32px 36px;
+    background: var(--ink); color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.95; letter-spacing: 0.02em;
+  }
+  .lifeos-spec .label {
+    color: var(--signal); font-weight: 500;
+    margin-right: 8px;
+  }
+
+  /* ============ Three Systems ============ */
+  .systems-section { background: var(--paper); }
+  .system {
+    display: grid; grid-template-columns: 280px 1fr;
+    gap: 64px; padding: 64px 0;
+    border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .system:first-of-type {
+    border-top: 1px solid var(--rule-strong); margin-top: 56px;
+  }
+  .system:last-of-type {
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .system-id {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500; font-size: 64px;
+    color: var(--steel); letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  .system-meta {
+    margin-top: 16px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--warm-gray);
+    letter-spacing: 0.16em; line-height: 1.8;
+    text-transform: uppercase;
+  }
+  .system-meta .status {
+    color: var(--signal); font-weight: 500;
+  }
+  .system-name-zh {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 26px; font-weight: 500; color: var(--ink);
+    margin-bottom: 6px; line-height: 1.3;
+  }
+  .system-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 17px;
+    color: var(--steel); margin-bottom: 28px;
+  }
+  .system-body {
+    font-size: 16px; line-height: 1.85;
+    color: var(--ink); opacity: 0.9; margin-bottom: 24px;
+  }
+  .system-dims {
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px dashed var(--rule);
+  }
+  .system-dims-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--warm-gray);
+    margin-bottom: 12px;
+  }
+  .system-dims-list {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .system-dim {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; padding: 6px 12px;
+    background: var(--steel-soft); color: var(--steel);
+    border: 1px solid var(--rule-steel);
+  }
+
+  /* ============ Signature Layer ============ */
+  .signature-section { background: var(--ink); color: var(--paper); border-bottom: none; }
+  .signature-section .section-eyebrow { color: rgba(248, 246, 240, 0.5); }
+  .signature-section .section-title { color: var(--paper); }
+  .signature-section .section-title .en { color: rgba(248, 246, 240, 0.5); }
+  .signature-section .section-lead { color: rgba(248, 246, 240, 0.85); }
+  .layer-grid {
+    margin-top: 56px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 1px solid rgba(248, 246, 240, 0.18);
+    border-bottom: 1px solid rgba(248, 246, 240, 0.18);
+  }
+  .layer-col {
+    padding: 44px 36px;
+    border-right: 1px solid rgba(248, 246, 240, 0.10);
+  }
+  .layer-col:last-child { border-right: none; }
+  .layer-col-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--signal);
+    letter-spacing: 0.22em; margin-bottom: 14px;
+  }
+  .layer-col-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 500;
+    font-size: 32px; color: var(--paper);
+    line-height: 1.2; margin-bottom: 6px;
+  }
+  .layer-col-zh {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; color: rgba(248, 246, 240, 0.65);
+    margin-bottom: 28px;
+  }
+  .layer-col-body {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px; line-height: 1.95;
+    color: rgba(248, 246, 240, 0.88);
+  }
+  .layer-col-body p + p { margin-top: 14px; }
+  .layer-col-body strong {
+    color: var(--signal); font-weight: 500;
+  }
+  .layer-spec {
+    margin-top: 48px;
+    border-left: 2px solid var(--signal);
+    padding: 24px 32px;
+    background: rgba(248, 246, 240, 0.04);
+  }
+  .layer-spec-row {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.9;
+    color: rgba(248, 246, 240, 0.85);
+  }
+  .layer-spec-row .key {
+    color: var(--signal); margin-right: 10px;
+  }
+
+  /* ============ Crisis Cases ============ */
+  .crisis-section { background: var(--paper); }
+  .crisis-intro {
+    max-width: 880px; margin-bottom: 56px;
+  }
+  .crisis-warn {
+    margin-top: 32px; padding: 20px 28px;
+    border-left: 3px solid var(--signal);
+    background: var(--paper-soft);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 17px; line-height: 1.7;
+    color: var(--ink);
+  }
+  .crisis-warn em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; color: var(--signal);
+  }
+  .crisis-list {
+    border-top: 1px solid var(--rule-strong);
+  }
+  .crisis-card {
+    display: grid; grid-template-columns: 60px 1fr 1.2fr;
+    gap: 48px; padding: 40px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .crisis-card:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .crisis-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 24px;
+    color: var(--steel); line-height: 1;
+    padding-top: 4px;
+  }
+  .crisis-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px; font-weight: 500;
+    color: var(--ink); line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .crisis-title-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 14px;
+    color: var(--steel); margin-bottom: 16px;
+  }
+  .crisis-private {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px; line-height: 1.85;
+    color: var(--ink); opacity: 0.86;
+  }
+  .crisis-private .label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--signal);
+    margin-bottom: 8px; font-weight: 500;
+  }
+  .crisis-case {
+    background: var(--paper-soft); padding: 24px 28px;
+    border-left: 2px solid var(--warm-gray);
+  }
+  .crisis-case-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--warm-gray);
+    margin-bottom: 12px; font-weight: 500;
+  }
+  .crisis-case-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px; font-weight: 500;
+    color: var(--ink); line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .crisis-case-body {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 13px; line-height: 1.8;
+    color: var(--ink); opacity: 0.82;
+  }
+  .crisis-case-source {
+    margin-top: 12px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--steel);
+    letter-spacing: 0.06em;
+  }
+
+  /* ============ Moats ============ */
+  .moats-section { background: var(--steel-soft); }
+  .moat-list {
+    margin-top: 56px;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .moat-item {
+    display: grid; grid-template-columns: 100px 320px 1fr;
+    gap: 56px; padding: 36px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .moat-item:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .moat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--steel);
+    letter-spacing: 0.22em; font-weight: 500;
+  }
+  .moat-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px; font-weight: 500;
+    color: var(--ink); line-height: 1.4;
+  }
+  .moat-title-en {
+    display: block; font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 14px;
+    color: var(--steel); margin-top: 4px;
+  }
+  .moat-body {
+    font-size: 15px; line-height: 1.85;
+    color: var(--ink); opacity: 0.88;
   }
 
   /* ============ Privacy ============ */
   .privacy-list {
-    margin-top: 64px;
+    margin-top: 56px;
     border-top: 1px solid var(--rule-strong);
   }
   .privacy-item {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 48px;
-    padding: 40px 0;
+    display: grid; grid-template-columns: 80px 1fr 320px;
+    gap: 40px; padding: 30px 0;
     border-bottom: 1px solid var(--rule);
     align-items: baseline;
   }
+  .privacy-item:last-child { border-bottom: 1px solid var(--rule-strong); }
   .privacy-num {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 28px;
-    color: var(--burgundy);
-    font-weight: 400;
+    font-style: italic; font-size: 22px;
+    color: var(--steel);
   }
   .privacy-body {
     font-family: 'Noto Serif SC', serif;
-    font-size: 20px;
-    line-height: 1.55;
+    font-size: 17px; line-height: 1.7;
     color: var(--ink);
-    font-weight: 400;
   }
   .privacy-body strong {
-    font-weight: 600;
-    color: var(--burgundy);
+    color: var(--steel); font-weight: 600;
+  }
+  .privacy-arch {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.7;
+    color: var(--warm-gray); letter-spacing: 0.01em;
+  }
+  .privacy-arch .label {
+    color: var(--signal); font-weight: 500;
   }
 
   /* ============ Invitation ============ */
   .invitation-section {
-    background: var(--paper-soft);
-    text-align: center;
-    padding: 160px 0;
+    background: var(--paper);
+    text-align: center; padding: 140px 0;
   }
-  .invitation-section .section-eyebrow { color: var(--burgundy); }
+  .invitation-section .section-eyebrow { color: var(--signal); }
   .invitation-title {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(40px, 5vw, 64px);
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 32px;
-    letter-spacing: -0.005em;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(40px, 5vw, 68px); line-height: 1.15;
+    color: var(--ink); margin-bottom: 24px;
+    letter-spacing: -0.01em;
   }
   .invitation-title-zh {
     font-family: 'Noto Serif SC', serif;
-    font-size: clamp(28px, 3.5vw, 40px);
-    color: var(--ink);
-    margin-bottom: 56px;
-    font-weight: 500;
-    line-height: 1.4;
+    font-size: clamp(24px, 3vw, 36px);
+    color: var(--ink); margin-bottom: 56px;
+    font-weight: 500; line-height: 1.4;
   }
   .invitation-meta {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    margin: 56px auto;
-    max-width: 720px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin: 56px auto; max-width: 760px;
     border-top: 1px solid var(--rule-strong);
     border-bottom: 1px solid var(--rule-strong);
   }
   .invitation-meta-item {
-    flex: 1;
-    padding: 28px 16px;
+    padding: 32px 16px;
     border-right: 1px solid var(--rule);
   }
   .invitation-meta-item:last-child { border-right: none; }
   .invitation-meta-num {
     font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 36px;
-    color: var(--ink);
-    margin-bottom: 8px;
-    line-height: 1;
+    font-weight: 500; font-size: 40px;
+    color: var(--steel); margin-bottom: 8px; line-height: 1;
   }
   .invitation-meta-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--warm-gray); font-weight: 500;
   }
   .invitation-body {
-    font-size: 18px;
-    line-height: 1.85;
-    color: var(--ink);
-    max-width: 640px;
-    margin: 0 auto 48px;
+    font-size: 17px; line-height: 1.95;
+    color: var(--ink); max-width: 680px;
+    margin: 0 auto 48px; opacity: 0.88;
   }
   .invitation-cta {
-    display: inline-block;
-    margin-top: 16px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 22px;
-    color: var(--burgundy);
-    text-decoration: none;
-    padding: 18px 48px;
-    border: 1px solid var(--burgundy);
-    background: transparent;
-    transition: all 0.4s ease;
-    letter-spacing: 0.02em;
+    display: inline-block; font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 22px; color: var(--steel);
+    text-decoration: none; padding: 18px 52px;
+    border: 1px solid var(--steel); background: transparent;
+    transition: all 0.4s ease; letter-spacing: 0.02em;
   }
-  .invitation-cta:hover {
-    background: var(--burgundy);
-    color: var(--paper);
-  }
+  .invitation-cta:hover { background: var(--steel); color: var(--paper); }
   .invitation-footnote {
-    margin-top: 48px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
-  }
-
-  /* ============ Depth & Signature ============ */
-  .depth-section { background: var(--paper); }
-  .depth-intro {
-    max-width: 760px;
-    margin: 0 auto 80px;
-    text-align: center;
-  }
-  .depth-intro .lead {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(24px, 2.8vw, 32px);
-    line-height: 1.45;
-    color: var(--burgundy);
-    margin-top: 32px;
-  }
-  .depth-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin-top: 72px;
-    border-top: 1px solid var(--rule-strong);
-    border-bottom: 1px solid var(--rule-strong);
-  }
-  .depth-col {
-    padding: 56px 48px;
-    border-right: 1px solid var(--rule);
-  }
-  .depth-col:last-child { border-right: none; background: var(--paper-soft); }
-  .depth-col-eyebrow {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--warm-gray);
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-  .depth-col h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-style: italic;
-    font-size: 38px;
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 8px;
-    letter-spacing: -0.005em;
-  }
-  .depth-col-zh {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 18px;
-    color: var(--ink);
-    opacity: 0.65;
-    margin-bottom: 32px;
-    font-weight: 400;
-  }
-  .depth-col-body {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 16px;
-    line-height: 1.95;
-    color: var(--ink);
-    opacity: 0.88;
-  }
-  .depth-col-body p + p { margin-top: 14px; }
-  .depth-col-body strong {
-    color: var(--burgundy);
-    font-weight: 500;
-  }
-  .depth-closing {
-    max-width: 720px;
-    margin: 80px auto 0;
-    padding-top: 56px;
-    border-top: 1px solid var(--rule);
-    text-align: center;
-    font-family: 'Noto Serif SC', serif;
-    font-size: 18px;
-    line-height: 1.95;
-    color: var(--ink);
-  }
-  .depth-closing em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    color: var(--burgundy);
-    font-size: 22px;
-    display: block;
-    margin-top: 18px;
-  }
-
-  /* ============ The Boundary ============ */
-  .boundary-section { background: var(--paper-soft); }
-  .boundary-list {
-    margin-top: 56px;
-    border-top: 1px solid var(--rule-strong);
-  }
-  .boundary-item {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 56px;
-    padding: 44px 0;
-    border-bottom: 1px solid var(--rule);
-    align-items: baseline;
-  }
-  .boundary-item:last-child { border-bottom: 1px solid var(--rule-strong); }
-  .boundary-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 1.25;
-    color: var(--burgundy);
-    letter-spacing: -0.005em;
-  }
-  .boundary-label .roman {
-    font-style: italic;
-    font-size: 18px;
-    color: var(--warm-gray);
-    margin-right: 12px;
-    font-weight: 400;
-  }
-  .boundary-body {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 16px;
-    line-height: 1.9;
-    color: var(--ink);
-    opacity: 0.88;
+    margin-top: 48px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.14em;
+    color: var(--warm-gray); font-weight: 500;
   }
 
   /* ============ Note ============ */
-  .note-section { background: var(--paper); }
-  .note {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 48px;
-  }
+  .note-section { background: var(--paper-soft); }
+  .note { max-width: 720px; margin: 0 auto; padding: 0 48px; }
   .note-eyebrow {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--burgundy);
-    margin-bottom: 48px;
-    text-align: center;
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--steel);
+    margin-bottom: 44px; text-align: center; font-weight: 500;
   }
   .note-body {
     font-family: 'Noto Serif SC', serif;
-    font-size: 19px;
-    line-height: 2;
-    color: var(--ink);
-    font-weight: 400;
+    font-size: 18px; line-height: 1.95;
+    color: var(--ink); font-weight: 400;
   }
-  .note-body p + p { margin-top: 20px; }
+  .note-body p + p { margin-top: 18px; }
   .note-body em {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    color: var(--burgundy);
+    font-style: italic; color: var(--steel);
   }
   .note-signature {
-    margin-top: 56px;
-    padding-top: 32px;
+    margin-top: 48px; padding-top: 28px;
     border-top: 1px solid var(--rule);
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px;
+    font-style: italic; font-size: 17px;
     color: var(--warm-gray);
   }
 
-  /* ============ Colophon Footer ============ */
+  /* ============ Colophon ============ */
   .colophon {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 80px 0 48px;
+    background: var(--ink); color: var(--paper); padding: 72px 0 44px;
   }
   .colophon .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 56px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 48px;
     align-items: start;
   }
   .colophon-brand {
     font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 24px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--paper);
-    margin-bottom: 8px;
+    font-weight: 500; font-size: 22px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper); margin-bottom: 8px;
   }
   .colophon-brand .mark {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--burgundy);
-    margin: 0 12px 3px 0;
-    vertical-align: middle;
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--signal); margin: 0 12px 3px 0; vertical-align: middle;
   }
   .colophon-tag {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: rgba(247, 243, 234, 0.5);
-    letter-spacing: 0.02em;
+    font-style: italic; font-size: 13px;
+    color: rgba(248, 246, 240, 0.5);
   }
   .colophon h4 {
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: rgba(247, 243, 234, 0.45);
-    margin-bottom: 16px;
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: rgba(248, 246, 240, 0.45);
+    margin-bottom: 16px; font-weight: 500;
   }
   .colophon p, .colophon a {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.75;
-    color: rgba(247, 243, 234, 0.75);
-    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.85;
+    color: rgba(248, 246, 240, 0.75); text-decoration: none;
   }
-  .colophon p + p { margin-top: 6px; }
+  .colophon a:hover { color: var(--signal); }
+  .colophon p + p { margin-top: 4px; }
   .colophon-base {
-    margin-top: 64px;
-    padding-top: 32px;
-    border-top: 1px solid rgba(247, 243, 234, 0.12);
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.18em;
+    margin-top: 56px; padding-top: 28px;
+    border-top: 1px solid rgba(248, 246, 240, 0.12);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(247, 243, 234, 0.35);
-    text-align: center;
+    color: rgba(248, 246, 240, 0.35); text-align: center;
   }
 
   /* ============ Responsive ============ */
-  @media (max-width: 900px) {
+  @media (max-width: 980px) {
     .container, .narrow { padding: 0 28px; }
-    .masthead { padding: 20px 0; }
     .masthead .container { flex-wrap: wrap; gap: 12px; }
-    .masthead-meta span { margin-left: 16px; }
-    .hero { padding: 80px 0 64px; }
-    .hero h1 { font-size: clamp(48px, 14vw, 88px); }
-    section { padding: 72px 0; }
-    .concerns-grid { grid-template-columns: 1fr 1fr; }
-    .concern { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 36px 24px; }
-    .concern:nth-child(2n) { border-right: none; }
-    .concern:nth-last-child(-n+2) { border-bottom: none; }
-    .pillar { grid-template-columns: 1fr; gap: 24px; padding: 56px 0; }
-    .pillar-name { font-size: 44px; }
-    .artifacts-grid { grid-template-columns: 1fr; }
-    .artifact { border-right: none !important; padding: 40px 28px; }
-    .def-grid { grid-template-columns: 1fr; gap: 48px; }
-    .privacy-item { grid-template-columns: 64px 1fr; gap: 24px; }
-    .invitation-meta { flex-direction: column; max-width: 320px; }
+    .masthead-meta span { margin-left: 14px; }
+    .hero { padding: 72px 0 56px; }
+    .hero-stat-row { grid-template-columns: 1fr; }
+    .hero-stat { border-right: none; border-bottom: 1px solid var(--rule); }
+    .hero-stat:last-child { border-bottom: none; }
+    section { padding: 64px 0; }
+    .zeroth-grid { grid-template-columns: 1fr; gap: 48px; }
+    .zeroth-big-num { font-size: 160px; }
+    .fear-card { grid-template-columns: 1fr; gap: 18px; padding: 28px 0; }
+    .lifeos-grid { grid-template-columns: 1fr 1fr; }
+    .lifeos-cell { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .lifeos-cell:nth-child(2n) { border-right: none; }
+    .lifeos-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .system { grid-template-columns: 1fr; gap: 28px; padding: 48px 0; }
+    .layer-grid { grid-template-columns: 1fr; }
+    .layer-col { border-right: none; border-bottom: 1px solid rgba(248, 246, 240, 0.12); }
+    .layer-col:last-child { border-bottom: none; }
+    .crisis-card { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
+    .moat-item { grid-template-columns: 1fr; gap: 14px; padding: 28px 0; }
+    .privacy-item { grid-template-columns: 1fr; gap: 14px; padding: 22px 0; }
+    .invitation-meta { grid-template-columns: 1fr; max-width: 360px; }
     .invitation-meta-item { border-right: none; border-bottom: 1px solid var(--rule); }
     .invitation-meta-item:last-child { border-bottom: none; }
-    .colophon .container { grid-template-columns: 1fr; gap: 40px; }
+    .colophon .container { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
-
   @media (max-width: 600px) {
-    .concerns-grid { grid-template-columns: 1fr; }
-    .concern { border-right: none; }
-    .concern:nth-last-child(2) { border-bottom: 1px solid var(--rule); }
+    .lifeos-grid { grid-template-columns: 1fr; }
+    .lifeos-cell { border-right: none !important; }
+    .colophon .container { grid-template-columns: 1fr; gap: 28px; }
   }
 </style>
 </head>
@@ -868,7 +755,7 @@
     <div class="masthead-meta">
       <span>Volume I</span>
       <span>By Invitation</span>
-      <span>MMXXVI</span>
+      <span class="live">● MMXXVI</span>
     </div>
   </div>
 </header>
@@ -876,214 +763,602 @@
 <!-- ============ Hero ============ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-eyebrow">A private house for a few families · Beginning Q4 2026</div>
+    <div class="hero-eyebrow">AI-NATIVE PRIVATE HOUSE · FOR CHINESE HNW FAMILIES · BEGINNING Q4 2026</div>
     <h1>
       私印
       <span class="en">The Private House</span>
     </h1>
     <p class="hero-sub">
-      <span class="lead-quote">有些事，等出事再找人，已经晚了。</span><br />
-      中国高净值家庭的私人内厅。
+      为中国高净值家庭打造的 <strong>AI 原生私人内厅</strong>。<br />
+      不是健康 app，不是私人管家，也不是顾问公司。<br />
+      是同时承担父母、孩子、自己、家庭重大决定的<strong>第 0 个角色</strong>。
     </p>
+
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <div class="hero-stat-num">LifeOS</div>
+        <div class="hero-stat-label">Core Architecture</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">23</div>
+        <div class="hero-stat-label">Family Context Dimensions</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">5–10 yrs</div>
+        <div class="hero-stat-label">Long-Term Memory</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ============ Manifesto ============ -->
-<section class="manifesto">
-  <div class="narrow">
-    <div class="section-eyebrow" style="text-align:left; margin-bottom: 48px;">Manifesto</div>
-    <p class="manifesto-line">家里真正难的事，从来不是缺一个 app。</p>
-    <p class="manifesto-line muted">是父母身体开始变化，没人连续看；</p>
-    <p class="manifesto-line muted">是孩子越来越大，父母越来越看不懂；</p>
-    <p class="manifesto-line muted">是自己撑着全家，却没人提醒您也累了；</p>
-    <p class="manifesto-line muted">是每一次大事来临，都要临时找人、临时问、临时判断。</p>
-    <p class="manifesto-line accent" style="margin-top: 48px;">私印，是给少数家庭准备的、长期记得这一切的内厅。</p>
+<!-- ============ The Zeroth Role ============ -->
+<section class="zeroth-section">
+  <div class="container">
+    <div class="section-eyebrow">The Zeroth Role</div>
+    <h2 class="section-title">
+      您家身边已经有 8 个角色
+      <span class="en">No one holds the whole picture</span>
+    </h2>
+    <p class="section-lead">
+      根据招商银行 · 贝恩 2023 中国私人财富报告与本研究调研，一个中国 HNW 家庭周边平均有 4–8 个私人服务角色。每个角色专精一块，每个角色按事收费，每个角色都看不到您家其他 7 个角色在做什么。
+    </p>
+
+    <div class="zeroth-grid">
+      <div class="zeroth-list">
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">01</div>
+          <div class="zeroth-role">私人医生 / 体检中心</div>
+          <div class="zeroth-gap">只看就诊那一刻</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">02</div>
+          <div class="zeroth-role">律师 / 公证</div>
+          <div class="zeroth-gap">只解决签字那一刻</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">03</div>
+          <div class="zeroth-role">家族办公室 / 私人银行</div>
+          <div class="zeroth-gap">只看钱，不看人</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">04</div>
+          <div class="zeroth-role">留学顾问</div>
+          <div class="zeroth-gap">只管录取那一年</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">05</div>
+          <div class="zeroth-role">营养师 / 健身教练</div>
+          <div class="zeroth-gap">只管表面那一层</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">06</div>
+          <div class="zeroth-role">心理咨询师</div>
+          <div class="zeroth-gap">只服务那一人</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">07</div>
+          <div class="zeroth-role">保险代理人</div>
+          <div class="zeroth-gap">只管承保那一份</div>
+        </div>
+        <div class="zeroth-list-item">
+          <div class="zeroth-num">08</div>
+          <div class="zeroth-role">私人会所 / 圈层</div>
+          <div class="zeroth-gap">只是社交那一层</div>
+        </div>
+      </div>
+
+      <div class="zeroth-big">
+        <div class="zeroth-big-num">0</div>
+        <div class="zeroth-big-tag">私印 · 第 0 个角色</div>
+        <div class="zeroth-big-en">The role before all roles</div>
+      </div>
+    </div>
+
+    <div class="zeroth-quote">
+      <div class="zeroth-quote-text">
+        私印不是<strong>第 9 个加进来的服务</strong>，<br />
+        是<strong>第 0 个把前 8 个串起来的角色</strong>——<br />
+        长期记得这个家的全貌，在每一次专业角色出场之前替您把背景整理好。
+      </div>
+      <div class="zeroth-quote-source">SOURCE · 招商银行 · 贝恩 2023 中国私人财富报告 · 本研究竞争格局调研 2026-05</div>
+    </div>
   </div>
 </section>
 
-<!-- ============ Four Matters ============ -->
+<!-- ============ Five Fears (Data) ============ -->
 <section>
   <div class="container">
-    <div class="section-eyebrow">The Four Matters</div>
+    <div class="section-eyebrow">Five Real Pressures</div>
     <h2 class="section-title">
-      私印替您看见的四件事
-      <span class="en">Four matters quietly held</span>
+      中国高净值家庭真正承担的五件事
+      <span class="en">What Chinese HNW families actually carry</span>
     </h2>
     <p class="section-lead">
-      不是一个抽象的"健康+决策+陪伴"体系。是这个家正在每天发生、但没人长期连接起来的四件事。
+      不是文学化的"四件大事"，不是抽象的"健康决策内厅"。是有真公开数据支撑、每一件都正在中国 HNW 家庭里同时发生的五件事。
     </p>
 
-    <div class="concerns-grid">
-      <div class="concern">
-        <div class="concern-num">I</div>
-        <div class="concern-title">父母的事</div>
-        <div class="concern-title-en">Aging Parents</div>
-        <div class="concern-body">
-          父母的身体，不该只在体检报告和住院单里被看见。慢病趋势、用药、睡眠、跌倒风险、医院选择、兄弟姐妹分工——这些事散在十几张报告里，没人替您家长期总览。
+    <div class="fears-grid">
+
+      <div class="fear-card">
+        <div>
+          <div class="fear-title">父母从健朗到失能</div>
+          <div class="fear-title-en">Aging Parents · Inevitable Decline</div>
+        </div>
+        <div class="fear-body">
+          40–49 岁中国 HNW 主力家庭平均赡养 3 位、平均年龄 73 岁的老人。慢病、跌倒、卒中、用药、医院选择、兄弟姐妹分工——这些事在父母真正住院的那一天之前，没有任何一个角色长期连续地看。
+        </div>
+        <div class="fear-data">
+          <span class="num">4,500 万</span>
+          中国 60+ 失能 / 半失能老人
+          <span class="src">国家卫健委 · 2023</span>
         </div>
       </div>
-      <div class="concern">
-        <div class="concern-num">II</div>
-        <div class="concern-title">孩子的事</div>
-        <div class="concern-title-en">The Heir</div>
-        <div class="concern-body">
-          孩子不是一个申请项目，他是这个家最重要、也最容易被误读的未来。兴趣、压力、自我认知、跟父母的沟通——留学顾问不管，学校不管，大多数父母在最关键的那几年其实也没真懂他。
+
+      <div class="fear-card">
+        <div>
+          <div class="fear-title">下一代偏离 / 心理崩溃</div>
+          <div class="fear-title-en">The Heir · Quiet Collapse</div>
+        </div>
+        <div class="fear-body">
+          中国 HNW 家庭对孩子的爱混杂着控制焦虑、传承焦虑、社会形象焦虑。父母期望 + 文化孤立 + 财富与身份带来的"伪安全感"叠加，是 HNW 子女抑郁高发的真结构。中国 HNW 子女不是抑郁例外，是抑郁高发群体。
+        </div>
+        <div class="fear-data">
+          <span class="num">45%</span>
+          中国留学生有抑郁症状
+          <span class="src">耶鲁大学公开调查</span>
         </div>
       </div>
-      <div class="concern">
-        <div class="concern-num">III</div>
-        <div class="concern-title">自己的事</div>
-        <div class="concern-title-en">Yourself</div>
-        <div class="concern-body">
-          家里最会照顾别人的那个人，也需要有人长期照顾她的状态。激素、睡眠、疲惫、心理张力——往往是最后被自己注意到的。但她一旦掉线，整个家都跟着失序。
+
+      <div class="fear-card">
+        <div>
+          <div class="fear-title">家业接班断裂</div>
+          <div class="fear-title-en">Generational Handover · The Real Failure Rate</div>
+        </div>
+        <div class="fear-body">
+          中国 85% 民营企业是家族企业，未来 5–10 年约 3/4 面临交接班问题。但只有 18% 的二代愿意主动接班。一代到二代传承成功率约 30%，二代到三代约 13%——超过 200 万家家族企业将在二代消亡。
+        </div>
+        <div class="fear-data">
+          <span class="num">18% / 30% / 13%</span>
+          接班意愿 / 一代传二代 / 二代传三代
+          <span class="src">中欧家族传承研究中心 · 清华五道口 2023</span>
         </div>
       </div>
-      <div class="concern">
-        <div class="concern-num">IV</div>
-        <div class="concern-title">难决定的事</div>
-        <div class="concern-title-en">Difficult Choices</div>
-        <div class="concern-body">
-          父母要不要接来住、孩子要不要中断学业、要不要卖一线房产、要不要做某个手术——每个建议背后都有立场，错一个代价以"家庭十年"计算。私印不替您做主，先把该知道的事、该问的人、该避的坑，整理清楚。
+
+      <div class="fear-card">
+        <div>
+          <div class="fear-title">财富传承临界点</div>
+          <div class="fear-title-en">Wealth Transfer · 79 Trillion in 30 Years</div>
+        </div>
+        <div class="fear-body">
+          中国正在进入财富传承浪潮。未来 10 年 20 万亿元财富转移到下一代，20 年内 45 万亿，30 年内 79 万亿。传承不是抽象理念，是正在发生的家庭事件——而中国 HNW 家庭的真焦虑不是"如何更优雅地规划"，是"辛苦攒下来的东西，别在下一代手里散掉"。
+        </div>
+        <div class="fear-data">
+          <span class="num">79 万亿</span>
+          中国 30 年内代际财富转移规模
+          <span class="src">胡润 2024 财富报告</span>
+        </div>
+      </div>
+
+      <div class="fear-card">
+        <div>
+          <div class="fear-title">找错人 / 没人总览</div>
+          <div class="fear-title-en">Fragmented Service · No One Holds It All</div>
+        </div>
+        <div class="fear-body">
+          中国 HNW 家庭日常依赖 4–8 个私人服务角色——体检中心 / 私人医生 / 营养师 / 心理咨询师 / 留学顾问 / 律师 / 家办 / 圈层。她对其中任何一个的依赖，都高于她对保险代理人的依赖。但<strong>没有任何一个角色把这些信息串起来</strong>。
+        </div>
+        <div class="fear-data">
+          <span class="num">0</span>
+          长期持有家庭上下文的角色
+          <span class="src">本研究 · 2026-05</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ LifeOS Core ============ -->
+<section class="lifeos-section">
+  <div class="container">
+    <div class="lifeos-intro">
+      <div class="section-eyebrow">LifeOS · The AI Core Beneath Private House</div>
+      <h2 class="section-title">
+        私印的 AI 底层 — LifeOS
+        <span class="en">An AI-native family operating system, built for HNW</span>
+      </h2>
+      <p class="lifeos-quote">
+        私印不依赖某一代 AI 模型的能力，依赖跟您家一起跑过的真实时间——加上一套为中国高净值家庭专门设计的 AI 内核架构。
+      </p>
+    </div>
+
+    <div class="lifeos-grid">
+      <div class="lifeos-cell">
+        <div class="lifeos-cell-num">01</div>
+        <div class="lifeos-cell-title">长期记忆</div>
+        <div class="lifeos-cell-en">Long-Term Memory · 5–10 yrs</div>
+        <div class="lifeos-cell-body">
+          每户家庭累积上下文档案 5,000–10,000 字 + 完整 timeline，跨 5–10 年持续更新。三层记忆架构：极短期 (当前对话) / 短期 (近 20 条窗口) / 长期 (Cloudflare R2 加密 markdown)。
+        </div>
+      </div>
+      <div class="lifeos-cell">
+        <div class="lifeos-cell-num">02</div>
+        <div class="lifeos-cell-title">23 维家庭上下文</div>
+        <div class="lifeos-cell-en">23 Dimensions of Family Context</div>
+        <div class="lifeos-cell-body">
+          12 维代谢与身心 + 6 维决策科学 + 5 维青少年发展 = 23 维跨人 / 跨时间 / 跨维度的家庭上下文建模。详细维度展开见下一章。
+        </div>
+      </div>
+      <div class="lifeos-cell">
+        <div class="lifeos-cell-num">03</div>
+        <div class="lifeos-cell-title">多人协调引擎</div>
+        <div class="lifeos-cell-en">Multi-Member Coordination</div>
+        <div class="lifeos-cell-body">
+          跨成员关系图谱 + 跨人 pattern detection。父亲血糖恶化时提示您；母亲睡眠崩坏的那一周安静接住她；孩子状态变化时给您一份家长翻译版。
+        </div>
+      </div>
+      <div class="lifeos-cell">
+        <div class="lifeos-cell-num">04</div>
+        <div class="lifeos-cell-title">隐私层</div>
+        <div class="lifeos-cell-en">Privacy by Architecture</div>
+        <div class="lifeos-cell-body">
+          每位家庭成员独立 individual subject 加密 + 端到端架构。配偶看不到配偶，子女看不到父母，除非本人显式授权。私印团队本身也读不到原始内容。
+        </div>
+      </div>
+    </div>
+
+    <div class="lifeos-spec">
+      <div><span class="label">CURRENT LIVE</span>18 层 prompt-engineering middleware + 3 层记忆架构 (极短期 / 短期 / Cloudflare R2 长期)</div>
+      <div><span class="label">DOCTRINE ASSETS</span>30+ 条产品 doctrine + 6 个月真用户测试沉淀</div>
+      <div><span class="label">VECTOR EMBEDDING</span>BGE-M3 中文优化 · 跨成员语义检索 · per-family R2 隔离</div>
+      <div><span class="label">LLM BACKBONE</span>Claude 4.7 (1M context) 主 · GPT-5 / DeepSeek V4 备 · per-call cost-aware routing</div>
+      <div><span class="label">CONTEXT WINDOW</span>每次对话动态拼接 ~25,000 字 · 包含家庭历史 + 实时上下文 + 触发 doctrine</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Three Systems ============ -->
+<section class="systems-section">
+  <div class="container">
+    <div class="section-eyebrow">Three Interconnected AI Systems</div>
+    <h2 class="section-title">
+      三个互联的垂直 AI 系统
+      <span class="en">23 dimensions, composed of three named systems</span>
+    </h2>
+    <p class="section-lead">
+      私印的 23 维 AI 综合实力，工程上由三个互联的、各自专精一类家庭事务的垂直 AI 系统组成。三个系统共享同一个 LifeOS 内核与长期记忆，但各有独立的 prompt 架构、知识库、与产品宪法。
+    </p>
+
+    <div class="system">
+      <div>
+        <div class="system-id">
+          Sivon
+        </div>
+        <div class="system-meta">
+          System I &nbsp;·&nbsp; Body &amp; Mind<br />
+          <span class="status">● LIVE · 6 MONTHS · 4 REAL USERS</span>
+        </div>
+      </div>
+      <div>
+        <div class="system-name-zh">代谢与身心健康 AI 系统</div>
+        <div class="system-name-en">Metabolic &amp; Psychological Health</div>
+        <div class="system-body">
+          Sivon 持续跟踪家庭每位成员的代谢、心血管、激素、慢病轨迹，跨人识别相互影响 (父亲血糖恶化 → 母亲照护压力上升 → 您自身睡眠崩坏 → 孩子敏感觉察)。已 LIVE 6 个月，4 真用户长期测试，沉淀 30+ doctrine 与 R2 长期记忆。
+        </div>
+        <div class="system-dims">
+          <div class="system-dims-label">12 Dimensions Covered</div>
+          <div class="system-dims-list">
+            <span class="system-dim">代谢</span>
+            <span class="system-dim">内分泌</span>
+            <span class="system-dim">心血管</span>
+            <span class="system-dim">营养</span>
+            <span class="system-dim">睡眠</span>
+            <span class="system-dim">慢病</span>
+            <span class="system-dim">激素</span>
+            <span class="system-dim">术后恢复</span>
+            <span class="system-dim">围绝经</span>
+            <span class="system-dim">GLP-1</span>
+            <span class="system-dim">孕产</span>
+            <span class="system-dim">丧亲</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="system">
+      <div>
+        <div class="system-id">
+          KEY
+        </div>
+        <div class="system-meta">
+          System II &nbsp;·&nbsp; Decision Counsel<br />
+          <span class="status">● BRAND v1 COMPLETE · ENGINEERING 0→1</span>
+        </div>
+      </div>
+      <div>
+        <div class="system-name-zh">决策科学 AI 系统</div>
+        <div class="system-name-en">Decision Science · Private Decision Brief</div>
+        <div class="system-body">
+          KEY 为您家每年最难的几个选择 (父母换医院 · 孩子留学 · 卖一线房产 · 家族企业接班 · 跨境配置 · 婚姻去留) 生成可阅读、可行动、可复盘的私人决策简报。每份简报从三件事开始：关键问题、真实证据、最终判断。AI 起草 → 真人专家 sign-off → 交付。
+        </div>
+        <div class="system-dims">
+          <div class="system-dims-label">6 Dimensions Covered</div>
+          <div class="system-dims-list">
+            <span class="system-dim">决策科学</span>
+            <span class="system-dim">家庭系统</span>
+            <span class="system-dim">风险评估</span>
+            <span class="system-dim">长期博弈</span>
+            <span class="system-dim">不可逆识别</span>
+            <span class="system-dim">传承结构</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="system">
+      <div>
+        <div class="system-id">
+          Spark
+        </div>
+        <div class="system-meta">
+          System III &nbsp;·&nbsp; The Heir<br />
+          <span class="status">● CONSTITUTION v2 · MVP Q1 2027</span>
+        </div>
+      </div>
+      <div>
+        <div class="system-name-zh">青少年发展 AI 系统</div>
+        <div class="system-name-en">Adolescent Development · Parent-Translation Layer</div>
+        <div class="system-body">
+          Spark 陪您家 13–22 岁的孩子从兴趣探索、自我认知、心理压力、身体状态到大学申请。三层感知架构：Arc (兴趣成长) / Current (心理) / Root (身体)。给您一份"翻译版"摘要——您看见的是孩子被照顾得很好的证据，不是孩子原话。
+        </div>
+        <div class="system-dims">
+          <div class="system-dims-label">5 Dimensions Covered</div>
+          <div class="system-dims-list">
+            <span class="system-dim">青少年心理</span>
+            <span class="system-dim">兴趣建模</span>
+            <span class="system-dim">自我认知</span>
+            <span class="system-dim">申请战略</span>
+            <span class="system-dim">家庭张力</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ Front Stop ============ -->
-<section class="boundary-section">
+<!-- ============ Signature Layer ============ -->
+<section class="signature-section">
   <div class="container">
-    <div class="section-eyebrow">Where Private House Stands</div>
+    <div class="section-eyebrow">AI Depth · Human Signature</div>
     <h2 class="section-title">
-      私印是这些专业角色的前一站
-      <span class="en">The first stop, before any specialist</span>
+      AI 持有深度，真人持有签字
+      <span class="en">Where Private House is not a product-liability risk to you</span>
     </h2>
     <p class="section-lead">
-      您身边的医生、律师、家办、留学顾问、保险代理——他们各自专精，各自收费，各自只看自己那一块。私印不替代任何一个，私印是您去找他们之前的整理人。
+      私印的专业知识来自 AI。但医疗判断、法律设计、教育决策、心理干预的执业责任，全部由具备资质的第三方真人专家承担。这一架构对您家合规与法务的意义被设计在第一天。
     </p>
 
-    <div class="boundary-list">
-      <div class="boundary-item">
-        <div class="boundary-label"><span class="roman">i.</span>不替代医生</div>
-        <div class="boundary-body">
-          私印不诊断、不开方、不替医生说话。它做的是——在您看医生之前，把这家人五年的身体轨迹整理清楚，让医生不必从零问起。
+    <div class="layer-grid">
+      <div class="layer-col">
+        <div class="layer-col-num">LAYER I · THE DEPTH</div>
+        <div class="layer-col-title">AI Inside</div>
+        <div class="layer-col-zh">AI 持有 23 维专业深度</div>
+        <div class="layer-col-body">
+          <p>Sivon / KEY / Spark 在各自垂直维度的专业知识深度<strong>系统性超越任何由真人组成的服务网络</strong>所能持续提供的覆盖。一位极致优秀的私人医生在执业三十年里所能积累的，私印 AI 在第一天就已完整持有，并每天随基础模型迭代更新。</p>
+          <p>这件事不掩饰也不夸大。这是 AI 与真人在专业知识广度与深度上的真实差距。</p>
         </div>
       </div>
 
-      <div class="boundary-item">
-        <div class="boundary-label"><span class="roman">ii.</span>不替代律师</div>
-        <div class="boundary-body">
-          私印不给法律建议、不办手续、不站立场。它做的是——在您找律师之前，把您家庭的事实、关系、约束、底线整理成律师能直接读懂的简报。
+      <div class="layer-col">
+        <div class="layer-col-num">LAYER II · THE SIGNATURE</div>
+        <div class="layer-col-title">Human Outside</div>
+        <div class="layer-col-zh">真人持有执业签字</div>
+        <div class="layer-col-body">
+          <p>任何关键级别的输出——KEY Brief、Counsel Line 真人对话、医疗 / 法律 / 教育层面的判断——都由具备<strong>执业资质的第三方真人专家 sign-off</strong> 后才交付到您手中。</p>
+          <p>私印不雇佣这些真人，私印对接他们。<strong>责任主体永远在签字真人的执业体系上</strong>——这意味着私印不构成产品责任风险，不需进入您家合规审查框架。</p>
         </div>
       </div>
+    </div>
 
-      <div class="boundary-item">
-        <div class="boundary-label"><span class="roman">iii.</span>不替代家办 / 私行</div>
-        <div class="boundary-body">
-          私印不给投资建议、不替您配置资产、不挑战您家办的判断。它做的是——把家事（不止钱）的全貌长期持有，让家办决策时有更完整的家庭背景。
-        </div>
-      </div>
-
-      <div class="boundary-item">
-        <div class="boundary-label"><span class="roman">iv.</span>不替代留学顾问</div>
-        <div class="boundary-body">
-          私印不写文书、不打榜单、不替孩子做申请。它做的是——在您选顾问之前，把孩子真实的兴趣、压力、节奏、家庭张力安静地长期看清。
-        </div>
-      </div>
-
-      <div class="boundary-item">
-        <div class="boundary-label"><span class="roman">v.</span>不替代保险代理</div>
-        <div class="boundary-body">
-          私印不卖保单、不分析您家保单、不抢您代理人的工作。它做的是——把保险之外的家事接住，让您的代理人更被需要、不被边缘化。
-        </div>
-      </div>
+    <div class="layer-spec">
+      <div class="layer-spec-row"><span class="key">KEY BRIEF WORKFLOW</span>AI 起草 → 真人 reviewer 审查 → 真人 sign-off → 交付</div>
+      <div class="layer-spec-row"><span class="key">COUNSEL LINE</span>5–10 个第三方执业医生 / 律师 / 心理师 / 营养师 · 1 小时响应 · 24/7</div>
+      <div class="layer-spec-row"><span class="key">LIABILITY MODEL</span>专家执业资质 + E&amp;O 专业责任险 + Cyber 保险 + 媒介责任险</div>
+      <div class="layer-spec-row"><span class="key">PRIVATE HOUSE LIABILITY</span>对接 + 上下文供给 · 不输出诊断 / 法律 / 投资建议</div>
     </div>
   </div>
 </section>
 
-<!-- ============ Six Things ============ -->
-<section>
+<!-- ============ Crisis Cases ============ -->
+<section class="crisis-section">
   <div class="container">
-    <div class="section-eyebrow">What Private House Does</div>
+    <div class="section-eyebrow">Five Crisis Moments</div>
     <h2 class="section-title">
-      私印替您家做的六件事
-      <span class="en">Six things, done quietly over years</span>
+      私印替您家预备的五类危机时刻
+      <span class="en">When the moment comes, Private House is in place</span>
     </h2>
     <p class="section-lead">
-      不是聊天记录，也不是 dashboard。是六件可以被阅读、被收藏、被传递的私人交付。
+      私印不需要解决您家所有问题，只需要做到一件事：当那一次危机来临时，<strong>私印在</strong>。下列五类危机是中国 HNW 家庭真公开发生过、且距离崩塌只有一次决定距离的真灾难时刻。
     </p>
+    <div class="crisis-warn">
+      <em>中国 HNW 家庭，距离崩塌只有一次危机的距离。</em> — 本研究 HNW 心理与公开灾难案例调研，2026-05
+    </div>
 
-    <div class="artifacts-grid">
-      <div class="artifact">
-        <div class="artifact-num">No. 01</div>
-        <div class="artifact-name">Family Account</div>
-        <div class="artifact-name-zh">家庭底账</div>
-        <div class="artifact-body">
-          一份持续更新的家庭档案——父母、本人、孩子三代的健康、用药、关键节点、重要联系人。不是一次性体检报告，是长期持有的家中事实。
+    <div class="crisis-list">
+
+      <div class="crisis-card">
+        <div class="crisis-num">I.</div>
+        <div>
+          <div class="crisis-title">父母突然失能 / 长辈危机</div>
+          <div class="crisis-title-en">Parental Decline · Asset Dispute</div>
+          <div class="crisis-private">
+            <span class="label">Private House Does</span>
+            私印在父母真正失能之前已经持有 3–5 年的健康、用药、认知与跌倒风险轨迹。当危机来临时，您家可以一份完整的医疗与照护决策简报，对接顶级三甲 / 私立医院通道，与兄弟姐妹同步上下文，最大化降低家族纷争与照护代价。
+          </div>
+        </div>
+        <div class="crisis-case">
+          <div class="crisis-case-label">Real Case Reference</div>
+          <div class="crisis-case-name">宗庆后家族遗产战 · 2024</div>
+          <div class="crisis-case-body">
+            宗庆后去世后第 10 个月，三名持美国籍、自称非婚生子女的当事人在中港双线起诉宗馥莉，要求分割 18 亿美元境外信托。宗馥莉的"独女继承"遗嘱见证人无家族成员签字，成为致命合法性硬伤。
+          </div>
+          <div class="crisis-case-source">SOURCE · 维基百科 · 新浪财经 · 华尔街见闻</div>
         </div>
       </div>
-      <div class="artifact">
-        <div class="artifact-num">No. 02</div>
-        <div class="artifact-name">Monthly Letter</div>
-        <div class="artifact-name-zh">月度家书</div>
-        <div class="artifact-body">
-          每月一封写给您一个人的长信。复盘这个月家里真正发生的、容易被忽略的事，提醒下个月最值得您注意的一件事。
+
+      <div class="crisis-card">
+        <div class="crisis-num">II.</div>
+        <div>
+          <div class="crisis-title">孩子心理崩溃 / 留学危机</div>
+          <div class="crisis-title-en">Adolescent Collapse · Far From Home</div>
+          <div class="crisis-private">
+            <span class="label">Private House Does</span>
+            Spark 在孩子崩溃之前已经持有他的兴趣、压力、自我认知、家庭张力的长期连续档案。家长在家长翻译层看见的不是孩子原话，而是孩子状态变化的早期信号——配合 Counsel Line 真人心理师与海外紧急通道，避免家长第一次知道孩子崩溃时已是事后通知。
+          </div>
+        </div>
+        <div class="crisis-case">
+          <div class="crisis-case-label">Real Case Reference</div>
+          <div class="crisis-case-name">中国留学生抑郁高发 · 耶鲁公开调查</div>
+          <div class="crisis-case-body">
+            耶鲁大学调查显示 45% 中国留学生有抑郁症状，29% 有焦虑症状——远超美国大学生整体 13% 的水平。多起公开报道案例 (Justin Cheng、唐晓琳等) 共同指向：HNW 子女是抑郁高发群体，不是例外。
+          </div>
+          <div class="crisis-case-source">SOURCE · 耶鲁大学公开研究 · 虎嗅深度报道</div>
         </div>
       </div>
-      <div class="artifact">
-        <div class="artifact-num">No. 03</div>
-        <div class="artifact-name">Decision Brief</div>
-        <div class="artifact-name-zh">大事简报</div>
-        <div class="artifact-body">
-          重要决定来临之前——父母换医院、孩子留学、卖一线房产、做某个手术——一份严肃的私人简报：关键问题、真实证据、不可逆部分、下一步该问谁。
+
+      <div class="crisis-card">
+        <div class="crisis-num">III.</div>
+        <div>
+          <div class="crisis-title">配偶健康突变 / 婚姻战</div>
+          <div class="crisis-title-en">Spousal Crisis · Long-Term Marriage Strain</div>
+          <div class="crisis-private">
+            <span class="label">Private House Does</span>
+            私印持有配偶的长期健康轨迹与家庭关系状态。配偶突发重病时，您家有完整的医疗历史与决策上下文。婚姻战发生前，私印已识别长期张力信号——配合 KEY 决策简报与真人律师 sign-off，避免重大不可逆决策在情绪高峰时做出。
+          </div>
+        </div>
+        <div class="crisis-case">
+          <div class="crisis-case-label">Real Case Reference</div>
+          <div class="crisis-case-name">徐翔 210 亿离婚案 · 法院 4 次驳回</div>
+          <div class="crisis-case-body">
+            私募"涨停板敢死队"徐翔 2015 年被捕，家庭名下约 210 亿元被查封。妻子应莹 2019 年起诉离婚要求分割 130 亿，2023 年法院判决不予离婚——财产甄别 3 年未完，与公婆争产同时发生。慢性溃烂式灾难持续 7 年。
+          </div>
+          <div class="crisis-case-source">SOURCE · 财联社 · 证券时报 · 澎湃新闻</div>
         </div>
       </div>
-      <div class="artifact">
-        <div class="artifact-num">No. 04</div>
-        <div class="artifact-name">Counsel Line</div>
-        <div class="artifact-name-zh">真人通道</div>
-        <div class="artifact-body">
-          关键时刻——半夜父母不舒服、孩子突然崩溃、自己拿不定主意——一通电话连接到第三方真人医生、律师、心理师、营养师。一小时响应。责任由专家执业资质承担。
+
+      <div class="crisis-card">
+        <div class="crisis-num">IV.</div>
+        <div>
+          <div class="crisis-title">家业接班 / 创二代失联</div>
+          <div class="crisis-title-en">Generational Handover · The Real Failure</div>
+          <div class="crisis-private">
+            <span class="label">Private House Does</span>
+            私印从二代 13 岁起持有他的兴趣建模、自我认知、家庭张力。家业接班讨论开始之前的 5–10 年，您家已经知道这个孩子是不是这块料、他真在意什么、他能担什么。KEY 决策简报与家族信托 / 律师网络配合，让接班从"父辈拍板"变成"基于真实长期上下文的家族决定"。
+          </div>
+        </div>
+        <div class="crisis-case">
+          <div class="crisis-case-label">Real Case Reference</div>
+          <div class="crisis-case-name">王思聪退出万达 · 2024</div>
+          <div class="crisis-case-body">
+            王健林公开访谈承认："我跟思聪探讨过几次，他没兴趣接我的班，管十几万人他觉得太辛苦。"同期万达陷入债务危机，2023–2024 售出至少 26 座万达广场。中欧研究：中国二代主动接班意愿仅 18%，一代到二代传承成功率 30%，二代到三代 13%。
+          </div>
+          <div class="crisis-case-source">SOURCE · 界面新闻 · 新浪财经 · 中欧家族传承研究中心</div>
         </div>
       </div>
-      <div class="artifact">
-        <div class="artifact-num">No. 05</div>
-        <div class="artifact-name">Quarterly Review</div>
-        <div class="artifact-name-zh">季度面询</div>
-        <div class="artifact-body">
-          每季度一次，私印替您把家中四件事整理一份，跟您一对一面询。不催进度，不加销售，只让您家一次性看清现状。
+
+      <div class="crisis-card">
+        <div class="crisis-num">V.</div>
+        <div>
+          <div class="crisis-title">海外资产 / 跨境 / 反腐 / 税务危机</div>
+          <div class="crisis-title-en">Cross-Border Asset · Legal &amp; Tax Crisis</div>
+          <div class="crisis-private">
+            <span class="label">Private House Does</span>
+            私印持有您家完整的跨境配置上下文、家庭真实需求、不可逆决策记录。当海外法律 / 税务事件突然发生时，您家有一份私印年报作为家族决策的真实证据，配合 KEY 跨境决策简报与真人律师网络，避免"事件发生 + 决策真空"的双重灾难。
+          </div>
+        </div>
+        <div class="crisis-case">
+          <div class="crisis-case-label">Real Case Reference</div>
+          <div class="crisis-case-name">伦敦 85 套房 7.5 亿被冻结 · POCA</div>
+          <div class="crisis-case-body">
+            英国《2002 犯罪收益法案》(POCA) 允许执法机关只要"合理怀疑"即可申请财产冻结令。一名身份未公开的中国富豪 85 套伦敦房产被全部冻结，总价值 8,100 万英镑。富力地产张力 2022 年伦敦被捕。太子集团陈志 2024 年 1.1 亿英镑被冻。
+          </div>
+          <div class="crisis-case-source">SOURCE · 新浪财经 · 网易 · 自由亚洲电台</div>
         </div>
       </div>
-      <div class="artifact">
-        <div class="artifact-num">No. 06</div>
-        <div class="artifact-name">Annual House Report</div>
-        <div class="artifact-name-zh">私印年报</div>
-        <div class="artifact-body">
-          每年一份家事综合回望——五年趋势、本年关键决定、年终家事盘点。这份年报是您家"私印关系"沉淀的真实证据，也是若有续约时您唯一需要的判断依据。
-        </div>
-      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ============ Stance ============ -->
-<section class="definition-section">
+<!-- ============ Moats ============ -->
+<section class="moats-section">
   <div class="container">
-    <div class="section-eyebrow">Where Private House Stands</div>
+    <div class="section-eyebrow">Five Moats Built Outside the Model</div>
     <h2 class="section-title">
-      私印的姿态
-      <span class="en">Only on your family's side</span>
+      私印的五大护城河
+      <span class="en">What no future AI model can replicate</span>
     </h2>
+    <p class="section-lead">
+      AI 模型会持续变强。但私印不依赖任何一代模型的能力——它的真护城河建在模型之外的五件事上，全部需要时间累积，无法靠下一代基础模型 commoditize。
+    </p>
 
-    <div class="def-grid" style="grid-template-columns: 1fr; max-width: 760px; margin: 56px auto 0;">
-      <div class="def-col is">
-        <ul style="font-size: 22px; line-height: 1.85;">
-          <li>不卖保险，不卖医疗，不替您投资，不替您做家庭决定。</li>
-          <li>不分润，不分销，不接受任何机构付费——只接受您家庭付费。</li>
-          <li>不替您跟家人传话，不构建"逃离"路径——配偶之间、亲子之间彼此不可见，但这不是秘密武器。</li>
-          <li>私印只站在您家这一边。</li>
-        </ul>
+    <div class="moat-list">
+
+      <div class="moat-item">
+        <div class="moat-num">MOAT I</div>
+        <div>
+          <div class="moat-title">5–10 年真用户家庭上下文</div>
+          <span class="moat-title-en">Multi-year Real Family Context</span>
+        </div>
+        <div class="moat-body">
+          每户家庭累积 ~5,000–10,000 字 R2 markdown 长期记忆 + 完整 timeline 数据。新基础模型可以 commoditize 推理能力，但 commoditize 不了 100 户家庭 × 5–10 年的真上下文数据。
+        </div>
       </div>
+
+      <div class="moat-item">
+        <div class="moat-num">MOAT II</div>
+        <div>
+          <div class="moat-title">真人执业专家网络</div>
+          <span class="moat-title-en">Long-Term Exclusive Specialist Network</span>
+        </div>
+        <div class="moat-body">
+          5–10 个核心执业专家 (医生 / 律师 / 心理师 / 营养师) 与私印的长期独家合约。任何新进入者要复制这张网络需要 2–3 年时间 + 真实信任建立 + 危机时刻共同经历。
+        </div>
+      </div>
+
+      <div class="moat-item">
+        <div class="moat-num">MOAT III</div>
+        <div>
+          <div class="moat-title">品牌信任资产</div>
+          <span class="moat-title-en">Linda-Finds-Linda · HNW Trust Network</span>
+        </div>
+        <div class="moat-body">
+          HNW 圈层是封闭的，信任不可空降。私印通过资深保险代理人 (如 Linda) 的真实口碑，在 HNW 圈层 6–10 年累积品牌信任资产——这是后来者完全无法以广告或营销复制的稀缺资源。
+        </div>
+      </div>
+
+      <div class="moat-item">
+        <div class="moat-num">MOAT IV</div>
+        <div>
+          <div class="moat-title">机构合规合同壁垒</div>
+          <span class="moat-title-en">Joint Pre-Medical Laboratory</span>
+        </div>
+        <div class="moat-body">
+          与友邦 AIA 类保险机构通过 Pre-Medical Joint Laboratory 共建 24–36 月精算队列研究。一旦数据桥建立，竞品要进入需要重新跟监管 + 机构走 18–24 个月的合规与信任流程。
+        </div>
+      </div>
+
+      <div class="moat-item">
+        <div class="moat-num">MOAT V</div>
+        <div>
+          <div class="moat-title">真实精算 / 医疗经验数据</div>
+          <span class="moat-title-en">Actuarial &amp; Medical Outcomes Asset</span>
+        </div>
+        <div class="moat-body">
+          100 户 × 5 年的 Pre-Medical 真实改善数据被精算师承认为"真有用"——这是任何后来者无法复制的统计资产，也是私印长期跟保险机构合作的真实经济基础。
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1091,35 +1366,40 @@
 <!-- ============ Privacy ============ -->
 <section>
   <div class="container">
-    <div class="section-eyebrow">On Privacy</div>
+    <div class="section-eyebrow">Privacy by Architecture</div>
     <h2 class="section-title">
-      关于隐私
-      <span class="en">Five things, by design</span>
+      关于隐私 — 五条由系统保证的事
+      <span class="en">Not by policy, by architecture</span>
     </h2>
     <p class="section-lead">
-      私印是一个内厅，内厅之所以是内厅，是因为里面发生的事不流出去。下面五件事，由<strong>系统架构</strong>保证，不靠公司承诺。
+      架构上做不到的事，承诺再多也没有意义。下列五件事，由系统架构本身保证——不是公司政策。
     </p>
 
     <div class="privacy-list">
       <div class="privacy-item">
         <div class="privacy-num">i.</div>
-        <div class="privacy-body">家里每位成员的对话，<strong>别人看不到</strong>——包括您的配偶。除非本人明确授权。</div>
+        <div class="privacy-body">您家每位成员，是<strong>独立的 individual</strong>。配偶之间、亲子之间彼此不可见，除非本人显式授权。</div>
+        <div class="privacy-arch"><span class="label">ARCH</span>per-member encryption · individual subject schema</div>
       </div>
       <div class="privacy-item">
         <div class="privacy-num">ii.</div>
-        <div class="privacy-body">私印自己也<strong>读不到您家原始对话</strong>。不是公司政策不读，是技术做不到读。</div>
+        <div class="privacy-body">所有内容<strong>端到端加密</strong>。私印团队自己也无法读取您家原始对话内容。</div>
+        <div class="privacy-arch"><span class="label">ARCH</span>E2E encryption · zero-knowledge ops</div>
       </div>
       <div class="privacy-item">
         <div class="privacy-num">iii.</div>
-        <div class="privacy-body"><strong>保险公司、银行、医院、雇主</strong>——哪怕您的代理人，都看不到您家在私印里说了什么。这件事写在架构里，不是政策里。</div>
+        <div class="privacy-body">保险公司、银行、医院、雇主、平台——<strong>任何第三方</strong>永远碰不到您家内容。架构上不可见就是不可见。</div>
+        <div class="privacy-arch"><span class="label">ARCH</span>no third-party SDK · zero outbound by design</div>
       </div>
       <div class="privacy-item">
         <div class="privacy-num">iv.</div>
-        <div class="privacy-body">孩子说的话<strong>由孩子保管</strong>。您看到的只是"这个月孩子过得怎么样"，不是孩子原话。孩子 18 岁后自动转独立同意。</div>
+        <div class="privacy-body">未成年成员 (Spark 服务的 13–17 岁孩子) 走<strong>特殊未成年人 consent 框架</strong>。孩子说的话由孩子保管，18 岁自动转独立同意。</div>
+        <div class="privacy-arch"><span class="label">ARCH</span>parental-grant · child-knowing · 18+ auto-transition</div>
       </div>
       <div class="privacy-item">
         <div class="privacy-num">v.</div>
-        <div class="privacy-body">您说删，<strong>立刻删干净</strong>。我们不为"留下您"设计任何东西——粘性来自真实价值，不来自数据扣留。</div>
+        <div class="privacy-body">您随时可以<strong>导出或删除</strong>您家全部档案。我们不为"留下您"设计任何东西。</div>
+        <div class="privacy-arch"><span class="label">ARCH</span>one-click export · cryptographic erasure</div>
       </div>
     </div>
   </div>
@@ -1135,28 +1415,26 @@
     <div class="invitation-meta">
       <div class="invitation-meta-item">
         <div class="invitation-meta-num">10</div>
-        <div class="invitation-meta-label">Inaugural Seeds</div>
-      </div>
-      <div class="invitation-meta-item">
-        <div class="invitation-meta-num">Q4 2026</div>
-        <div class="invitation-meta-label">From This Year</div>
+        <div class="invitation-meta-label">Inaugural Families · Q4 2026</div>
       </div>
       <div class="invitation-meta-item">
         <div class="invitation-meta-num">≤ 100</div>
         <div class="invitation-meta-label">By 2028, At Most</div>
       </div>
+      <div class="invitation-meta-item">
+        <div class="invitation-meta-num">5–10 yrs</div>
+        <div class="invitation-meta-label">Long-Term Commitment</div>
+      </div>
     </div>
 
     <p class="invitation-body">
-      2026 年第四季度起，私印先接 <strong>10 个种子家庭</strong>。<br />
-      2027 至 2028 年间，根据这 10 个家庭的真实体验，分批扩展至最多 100。<br /><br />
-      不打折，不分销，不进入任何渠道。规模由真实匹配度决定，不由市场目标决定。<br />
+      2026 年第四季度起，私印先接 <strong>10 户家庭</strong>。2027 至 2028 年间，根据这 10 户家庭的真实体验，分批扩展至最多 100。不打折，不分销，不进入任何渠道。规模由真实匹配度决定，不由市场目标决定。<br /><br />
       若您家与私印的定位相称，欢迎留下您的联系方式。我们会安静地回到您。
     </p>
 
     <a href="mailto:house@privatehouse.cn?subject=Private%20House%20—%20Inquiry" class="invitation-cta">Request an Introduction</a>
 
-    <div class="invitation-footnote">house@privatehouse.cn &nbsp;·&nbsp; Replies are private &nbsp;·&nbsp; No mailing list &nbsp;·&nbsp; By appointment</div>
+    <div class="invitation-footnote">HOUSE@PRIVATEHOUSE.CN &nbsp;·&nbsp; REPLIES ARE PRIVATE &nbsp;·&nbsp; NO MAILING LIST &nbsp;·&nbsp; BY APPOINTMENT</div>
   </div>
 </section>
 
@@ -1165,41 +1443,44 @@
   <div class="note">
     <div class="note-eyebrow">A note from the house</div>
     <div class="note-body">
-      <p>私印不是要做一个新行业。是要补一件中国高净值家庭一直有、但没人系统接住的事。</p>
+      <p>私印不是要做一个新行业，是要补一件中国高净值家庭一直有、但没人系统接住的事。</p>
       <p>钱有人管，体检有人管，孩子申请有人管，老人住院有人管一阵子。<em>但没有一个人长期管"这个家正在发生什么"</em>。</p>
-      <p>第一年我们只接 10 户家庭。第二年起是否扩展，由这 10 户决定，不由我们决定。</p>
-      <p>私印不依赖任何工具的代际更新——它依赖的是与您家一起跑过的<em>真实时间</em>。一份五年、十年的家事档案，加上由真人专家组成的签字网络，是后来者复制不了的。</p>
+      <p>这件事过去做不到，是因为 AI 与长期记忆架构还不成熟。今天 AI 模型已经在 23 个垂直维度上系统性超越任何真人服务网络的覆盖广度——但执业责任仍然属于真人。私印只在这两件事的交叉点上工作：AI 持有深度，真人持有签字。</p>
+      <p>第一年我们只接 10 户家庭。第二年起是否扩展，由这 10 户决定，不由我们决定。AI 会持续变强，但私印不依赖任何一代模型——它依赖的是与您家一起跑过的<em>真实时间</em>。</p>
       <p><em>不替您活，只让您家少错。</em></p>
     </div>
     <div class="note-signature">— The Private House</div>
   </div>
 </section>
 
-<!-- ============ Colophon Footer ============ -->
+<!-- ============ Colophon ============ -->
 <footer class="colophon">
   <div class="container">
     <div>
       <div class="colophon-brand"><span class="mark"></span>私印</div>
-      <div class="colophon-tag">The Private House</div>
+      <div class="colophon-tag">The Private House &nbsp;·&nbsp; AI-Native</div>
     </div>
     <div>
-      <h4>Pillars</h4>
-      <p>Sivon &nbsp;·&nbsp; Body &amp; Mind</p>
-      <p>KEY &nbsp;·&nbsp; Decision Counsel</p>
-      <p>Spark &nbsp;·&nbsp; The Heir</p>
-      <h4 style="margin-top: 32px;">Pages</h4>
-      <p><a href="/privatehouse/">For Families &nbsp;·&nbsp; 家庭页（您当前位置）</a></p>
-      <p><a href="/privatehouse/partners">For Partners &nbsp;·&nbsp; 机构页 →</a></p>
+      <h4>Systems</h4>
+      <p>Sivon · Body &amp; Mind</p>
+      <p>KEY · Decision Counsel</p>
+      <p>Spark · The Heir</p>
+      <p style="margin-top: 12px; opacity: 0.55;">LifeOS · Core</p>
+    </div>
+    <div>
+      <h4>For Partners</h4>
+      <p><a href="/privatehouse/partners">For Institutional Partners →</a></p>
+      <p style="opacity: 0.55;">partners@privatehouse.cn</p>
     </div>
     <div>
       <h4>Correspondence</h4>
       <p>house@privatehouse.cn</p>
       <p>By appointment only</p>
-      <p>Replies are private</p>
+      <p>All correspondence private</p>
     </div>
   </div>
   <div class="colophon-base">
-    Set in Cormorant Garamond &amp; Noto Serif SC &nbsp;·&nbsp; Built quietly &nbsp;·&nbsp; MMXXVI &nbsp;·&nbsp; All correspondence remains within the house
+    Built quietly · MMXXVI · Set in Cormorant Garamond &amp; Noto Serif SC &amp; JetBrains Mono
   </div>
 </footer>
 
