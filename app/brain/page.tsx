@@ -395,7 +395,7 @@ function CoreStateRow({
   );
 }
 
-async function CardRow({
+function CardRow({
   card,
   userUid,
   onChange,
@@ -524,7 +524,7 @@ async function CardRow({
   );
 }
 
-async function InsightRow({
+function InsightRow({
   insight,
   userUid,
   onChange,
@@ -660,7 +660,7 @@ async function InsightRow({
   );
 }
 
-async function OpenLoopRow({
+function OpenLoopRow({
   loop,
   userUid,
   onChange,
