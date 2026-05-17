@@ -84,13 +84,23 @@ async function runOutcomesDailyWork() {
     await new Promise((r) => setTimeout(r, 300));
   }
 
-  // JOB-028 · 同 cron 周期 chain AI Native daily fleet (Layer A only, 全 40, 毫秒级)
-  // Layer C 抽样太烧 token, 不进 daily cron (admin /admin/qa 手动跑)
+  // JOB-028 · 同 cron 周期 chain AI Native daily fleet (Layer A only)
+  //
+  // 2026-05-17 校准 (Tier 1 + 我手跑 baseline 发现):
+  //   - 全 40 跑要 ~12 min; cron maxDuration=60s 不够
+  //   - decision stage 每个 25-45s, 跑全 17 decision 必 timeout
+  //   - 改用 sampleSize=8 random + 跳 decision (decision 周日 deep run 单跑)
+  //   - Layer A 毫秒级, 慢的是上游 stage AI 生成
+  //
+  // 这个 daily fleet 是 paranoia signal: F > baseline + 2 才 alert (Sivon doctrine).
+  // 真 ground truth 是 Linda × 5 真用户反馈, 不是 grader.
   let qaResult: any = null;
   try {
     qaResult = await runTestBattery({
       mode: 'layer_a_only',
       label: 'daily-fleet',
+      sampleSize: 8,
+      filterStages: ['pulse', 'letter', 'outcome'], // skip decision (太慢, 周末 deep run)
     });
   } catch (e: any) {
     console.error('[cron/outcomes-daily] QA fleet failed:', e.message);
