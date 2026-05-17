@@ -68,13 +68,17 @@ export default function Home() {
       fetch('/api/outcomes', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
     ])
       .then(([pulseData, commitData, reviewData, outcomeData]) => {
-        setTodayQuestion(pulseData.todayQuestion);
-        setPulseStats(pulseData.stats);
-        setDueCommits(commitData.commitments || []);
-        setHasUnreadReview(reviewData.hasUnread || false);
-        setDueOutcomesCount((outcomeData.due || []).length);
+        // Defensive: API 错误时 stats / todayQuestion 可能 undefined
+        // 之前直接 setPulseStats(undefined) 后续读 .totalPulses 崩 → 用户截图 5/17
+        if (pulseData?.todayQuestion) setTodayQuestion(pulseData.todayQuestion);
+        if (pulseData?.stats) setPulseStats(pulseData.stats);
+        setDueCommits(commitData?.commitments || []);
+        setHasUnreadReview(reviewData?.hasUnread || false);
+        setDueOutcomesCount((outcomeData?.due || []).length);
       })
-      .catch(() => {});
+      .catch((e) => {
+        console.warn('[/pulse] initial fetch failed:', e?.message || e);
+      });
   }, []);
 
   async function actCommitment(id: number, action: 'fulfill' | 'cancel') {
@@ -100,8 +104,8 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) { setPulseError(data.error || '出错了'); setPulseLoading(false); return; }
       setPulseResponse({ aiResponse: data.aiResponse, tags: data.tags });
-      setPulseStats(data.stats);
-      setTodayQuestion(data.nextQuestion);
+      if (data.stats) setPulseStats(data.stats);
+      if (data.nextQuestion) setTodayQuestion(data.nextQuestion);
       setMode('pulse-response');
     } catch (e: any) {
       setPulseError(e.message || '网络错误');

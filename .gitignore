@@ -69,3 +69,5 @@ design-handoff/*.zip
 scripts/init_turso_schema.mjs
 scripts/test_turso*.mjs
 scripts/*.mjs
+test-results/
+playwright-report/
