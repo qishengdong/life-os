@@ -104,7 +104,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
       `INSERT INTO test_runs (label, mode, total_cases) VALUES (?, ?, ?)`,
     )
     .run(opts.label || 'manual', opts.mode, scenarios.length);
-  const runId = runRes.lastInsertRowid as number;
+  const runId = Number(runRes.lastInsertRowid);
 
   let passedA = 0;
   let passedC = 0;
@@ -142,7 +142,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
         aiOutput: aiOutput.slice(0, 200),
       });
       // 仍写 DB 以 audit (Layer A pass=0, fails=[{reason:'stage_stub'}])
-      db.prepare(
+      await db.prepare(
         `INSERT INTO test_results (
           run_id, scenario_id, persona_id, trap_type, stage,
           ai_output, layer_a_pass, layer_a_fails
@@ -180,7 +180,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
     }
 
     // 4. 写 test_results (DB · 同 instance 才看得到)
-    db.prepare(
+    await db.prepare(
       `INSERT INTO test_results (
         run_id, scenario_id, persona_id, trap_type, stage,
         ai_output, layer_a_pass, layer_a_fails,
@@ -219,7 +219,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
 
   // 5. 更新 run 总结
   const durationMs = Date.now() - t0;
-  db.prepare(
+  await db.prepare(
     `UPDATE test_runs SET passed_a = ?, passed_c = ?, tokens_used = ?, duration_ms = ? WHERE id = ?`,
   ).run(passedA, passedC, tokensUsed, durationMs, runId);
 
