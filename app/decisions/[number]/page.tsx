@@ -122,6 +122,45 @@ export default function DecisionBriefDetailPage() {
                 </Link>
               </div>
             </div>
+
+            {/* 渐进式 surface · UX 方向 A · 仅在用户读完简报后才暴露其他功能 */}
+            <div className="mt-16 pt-8 border-t border-paper-200">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-400 mb-6 text-center">
+                · KEY 还能做的 ·
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <Link
+                  href="/pulse"
+                  className="group block py-6 px-4 border border-paper-200 hover:border-seal-500 transition-colors"
+                >
+                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">每天 1 分钟 · Pulse</p>
+                  <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                    一句话写今天的状态. 累计成 KEY 越来越懂你的素材.
+                  </p>
+                </Link>
+                <Link
+                  href="/unsent"
+                  className="group block py-6 px-4 border border-paper-200 hover:border-seal-500 transition-colors"
+                >
+                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">写不寄的信</p>
+                  <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                    给妈妈 / 老板 / 过去的自己 — 写出来不发送. 7 天后 KEY 问你寄不寄.
+                  </p>
+                </Link>
+                <Link
+                  href="/brain"
+                  className="group block py-6 px-4 border border-paper-200 hover:border-seal-500 transition-colors"
+                >
+                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">看 KEY 怎么记得你</p>
+                  <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                    Brain 是你的私人档案. 不准就改, 不该有就删.
+                  </p>
+                </Link>
+              </div>
+              <p className="font-mono text-[10px] text-ink-400 text-center mt-6 tracking-wider">
+                <Link href="/settings" className="hover:text-seal-500 transition-colors">· 设置 / 数据导出 / 删账户 ·</Link>
+              </p>
+            </div>
           </div>
         )}
       </main>

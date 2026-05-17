@@ -61,8 +61,11 @@ export default function InvitePage() {
         setSubmitting(false);
         return;
       }
-      // 兑换成功 → 直接进 onboarding · 恢复码默默存好, 用户在 /settings 才看到
-      router.push('/onboarding');
+      // 兑换成功 → 直接进决策入口 (跳 /onboarding · 方向 A · 5/17 ship)
+      // 用户反馈: /onboarding 多 stage 表单是混乱根源 · 改"最少 friction, 最快到价值"
+      // ?welcome=1 触发 /decisions/new 顶部欢迎 banner
+      // 想填完整 profile 之后 /settings 有入口 (后续 ship)
+      router.push('/decisions/new?welcome=1');
     } catch (e: any) {
       setError(e.message);
       setSubmitting(false);

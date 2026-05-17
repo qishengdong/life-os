@@ -15,8 +15,8 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyWordmark from '@/components/KeyWordmark';
@@ -30,7 +30,17 @@ const PROGRESS_STAGES = [
 ];
 
 export default function NewDecisionPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-paper" />}>
+      <NewDecisionPageInner />
+    </Suspense>
+  );
+}
+
+function NewDecisionPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isFirstRun = searchParams.get('welcome') === '1';
   const [userUid, setUserUid] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState<'female' | 'male' | 'other'>('female');
@@ -104,12 +114,27 @@ export default function NewDecisionPage() {
       </nav>
 
       <main className="max-w-prose-lg mx-auto px-6 pb-20">
+        {/* First-run welcome banner · 仅兑换后第一次显示 (?welcome=1) */}
+        {isFirstRun && !submitting && (
+          <div className="mt-6 mb-2 px-6 py-5 border-l-2 border-seal-500 bg-paper-50">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · 欢迎进入 KEY ·
+            </p>
+            <p className="font-serif text-reading text-ink-700 editorial-leading mb-2">
+              你刚激活. KEY 不需要你先填一堆问卷 — 就从你最近真在卡的那件事开始.
+            </p>
+            <p className="font-serif italic text-[14px] text-ink-500">
+              写得越具体 (谁 / 什么时候 / 卡在哪), 简报越准. 25-45 秒后你拿到第一份决策简报.
+            </p>
+          </div>
+        )}
+
         <header className="pt-10 pb-12">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
             · KEY · Decision Brief ·
           </p>
           <h1 className="font-serif text-editorial-lg text-ink-900 tracking-tighter mb-6 leading-tight">
-            写下你最近最难的决定.
+            {isFirstRun ? '你的第一个决定.' : '写下你最近最难的决定.'}
           </h1>
           <p className="font-serif italic text-reading text-ink-700 editorial-leading">
             KEY 会跑完整 12 维分析 + Editor 改写 + Inspector 自审 ·
