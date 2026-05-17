@@ -37,6 +37,18 @@ function fmtTime(unix: number): string {
   return `${d.getMinutes()}:${String(d.getSeconds()).padStart(2, '0')}`;
 }
 
+interface RunRow {
+  id: number;
+  label: string;
+  mode: string;
+  total_cases: number;
+  passed_a: number;
+  passed_c: number;
+  tokens_used: number;
+  duration_ms: number;
+  created_at: number;
+}
+
 export default function QaPage() {
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
@@ -45,6 +57,15 @@ export default function QaPage() {
   const [me, setMe] = useState<{ displayName: string } | null>(null);
   const [stopRequested, setStopRequested] = useState(false);
   const [mode, setMode] = useState<'layer_a_only' | 'layer_ac'>('layer_a_only');
+  const [recentRuns, setRecentRuns] = useState<RunRow[]>([]);
+  const [showAllRuns, setShowAllRuns] = useState(false);
+
+  function loadRuns() {
+    fetch('/api/admin/qa/runs')
+      .then((r) => r.json())
+      .then((d) => setRecentRuns(d.runs || []))
+      .catch(() => {});
+  }
 
   useEffect(() => {
     fetch('/api/admin/me')
@@ -64,6 +85,8 @@ export default function QaPage() {
       .then((r) => r.json())
       .then((d) => setScenarios(d.scenarios || []))
       .catch(() => {});
+
+    loadRuns();
   }, []);
 
   async function runOne(scenario: Scenario, modeArg: 'layer_a_only' | 'layer_ac'): Promise<ResultRow> {
@@ -328,6 +351,14 @@ export default function QaPage() {
             </div>
           </section>
         )}
+
+        {/* Recent Runs · daily-fleet + 手动 run 历史 */}
+        <RecentRunsSection
+          recentRuns={recentRuns}
+          showAll={showAllRuns}
+          onToggle={() => setShowAllRuns((v) => !v)}
+          onReload={loadRuns}
+        />
       </main>
     </div>
   );
@@ -338,6 +369,113 @@ function Stat({ label, value, color }: { label: string; value: string | number; 
     <div>
       <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-1">{label}</p>
       <p className={`font-serif text-2xl ${color}`}>{value}</p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Recent Runs · 历史 runs · daily-fleet (cron) vs manual / orchestrator 分类
+// ============================================================================
+function RecentRunsSection({
+  recentRuns,
+  showAll,
+  onToggle,
+  onReload,
+}: {
+  recentRuns: RunRow[];
+  showAll: boolean;
+  onToggle: () => void;
+  onReload: () => void;
+}) {
+  if (recentRuns.length === 0) {
+    return (
+      <section className="bg-white rounded-md border border-stone-200 p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-serif text-xl text-stone-900">历史 runs</h2>
+          <button onClick={onReload} className="text-xs font-mono uppercase tracking-widest text-stone-400 hover:text-stone-900">
+            刷新
+          </button>
+        </div>
+        <p className="text-sm text-stone-500">还没跑过. 上面"跑全 40"按一下.</p>
+      </section>
+    );
+  }
+
+  // 分类: daily-fleet (cron) vs 其它 (manual / orchestrator / baseline)
+  const dailyRuns = recentRuns.filter((r) => r.label === 'daily-fleet');
+  const manualRuns = recentRuns.filter((r) => r.label !== 'daily-fleet');
+  const visibleManual = showAll ? manualRuns : manualRuns.slice(0, 5);
+  const visibleDaily = showAll ? dailyRuns : dailyRuns.slice(0, 5);
+
+  return (
+    <section className="bg-white rounded-md border border-stone-200 p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-serif text-xl text-stone-900">历史 runs</h2>
+        <div className="flex items-center gap-3">
+          <button onClick={onToggle} className="text-xs font-mono uppercase tracking-widest text-stone-500 hover:text-stone-900">
+            {showAll ? '收起' : `展开 (${recentRuns.length} 条)`}
+          </button>
+          <button onClick={onReload} className="text-xs font-mono uppercase tracking-widest text-stone-400 hover:text-stone-900">
+            刷新
+          </button>
+        </div>
+      </div>
+
+      {/* Daily Fleet · cron 自动跑 · 09:00 BJT */}
+      <div className="mb-6">
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-seal-600 mb-2">
+          · DAILY FLEET (cron 09:00 BJT) · {dailyRuns.length} 条 ·
+        </p>
+        {visibleDaily.length === 0 ? (
+          <p className="text-sm text-stone-400 italic">还没跑过 daily-fleet · 等 09:00 BJT 第一次 cron · 或手动调 /api/cron/outcomes-daily POST</p>
+        ) : (
+          <div className="space-y-1">
+            {visibleDaily.map((r) => (
+              <RunRow row={r} key={r.id} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 手动 / orchestrator / baseline */}
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-stone-600 mb-2">
+          · 手动 / orchestrator / baseline · {manualRuns.length} 条 ·
+        </p>
+        {visibleManual.length === 0 ? (
+          <p className="text-sm text-stone-400 italic">没手动 run.</p>
+        ) : (
+          <div className="space-y-1">
+            {visibleManual.map((r) => (
+              <RunRow row={r} key={r.id} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function RunRow({ row: r }: { row: RunRow }) {
+  const realRuns = r.total_cases; // 简化: passed_a + 不通过都计;不区分 stub (UI 显示用)
+  const passRate = realRuns > 0 ? Math.round((100 * r.passed_a) / realRuns) : 0;
+  const passColor = passRate >= 90 ? 'text-green-700' : passRate >= 70 ? 'text-amber-700' : 'text-red-700';
+  const date = new Date(r.created_at * 1000);
+  const dateStr = `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+  return (
+    <div className="flex items-center gap-3 px-3 py-2 hover:bg-stone-50 border border-stone-100 rounded text-xs font-mono">
+      <span className="text-stone-400 w-20 shrink-0">{dateStr}</span>
+      <span className="text-stone-500 w-12 shrink-0">#{r.id}</span>
+      <span className="text-stone-400 w-24 shrink-0 truncate">{r.label}</span>
+      <span className="text-stone-400 w-20 shrink-0">{r.mode}</span>
+      <span className="text-stone-700 w-16 shrink-0">
+        {r.passed_a}/{r.total_cases}
+      </span>
+      <span className={`${passColor} w-12 shrink-0`}>{passRate}%</span>
+      {r.passed_c > 0 && <span className="text-stone-500 w-16 shrink-0">C: {r.passed_c}</span>}
+      {r.tokens_used > 0 && <span className="text-stone-400 w-20 shrink-0">{r.tokens_used} tok</span>}
+      <span className="text-stone-400 ml-auto">{((r.duration_ms || 0) / 1000).toFixed(0)}s</span>
     </div>
   );
 }

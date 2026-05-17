@@ -68,3 +68,4 @@ design-handoff/*.zip
 .vercel
 scripts/init_turso_schema.mjs
 scripts/test_turso*.mjs
+scripts/*.mjs

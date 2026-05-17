@@ -98,23 +98,42 @@ export default function SettingsPage() {
   }
 
   if (deleted) {
+    // ✋ 删除后故意不显示 TopNav · 用户现在是匿名访客, 链接 (Pulse/Brain/未交付的信)
+    // 都被 middleware 挡回 /invite · 显示链接反而 confusing
     return (
-      <div className="min-h-screen bg-paper text-ink-900">
-        <TopNav />
-        <div className="max-w-prose-md mx-auto px-6 py-32 text-center">
-          <h1 className="font-serif text-editorial text-ink-900 tracking-tightish mb-6">
-            数据已删除.
-          </h1>
-          <p className="font-serif italic text-reading text-ink-500 mb-8">
-            谢谢使用过 KEY. 如果哪天想回来, 邮件到 hello@lifeos.cn.
+      <div className="min-h-screen bg-paper text-ink-900 flex flex-col">
+        {/* 简化顶: 只有 wordmark, 没有 nav */}
+        <header className="max-w-prose-xl mx-auto w-full px-6 pt-10 pb-6">
+          <Link href="/" aria-label="KEY home" className="block w-fit">
+            <KeyWordmark variant="nav" height={22} />
+          </Link>
+        </header>
+
+        <main className="flex-1 max-w-prose-md mx-auto px-6 py-24 text-center">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ember mb-6">
+            · 数据已删除 ·
           </p>
+          <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tightish mb-8 leading-[1.1]">
+            KEY 已经忘掉你.
+          </h1>
+          <div className="font-serif italic text-reading text-ink-500 leading-relaxed mb-10 space-y-3">
+            <p>
+              brain / 决策 / 简报 / Pulse / 信件 / 未交付的信 / outcome — 全部删了.
+            </p>
+            <p className="text-[14px] text-ink-400">
+              你现在是 keypoint.life 的匿名访客. 之前的恢复码 (KEY-XXXX-XXXX) 也作废.
+            </p>
+            <p className="text-[14px] text-ink-400">
+              哪天想回来, 重新拿一个邀请码就行. 谢谢用过 KEY.
+            </p>
+          </div>
           <Link
             href="/"
-            className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors"
+            className="font-serif text-base text-ink-900 border-b-2 border-seal-500 pb-1 hover:text-seal-500 transition-colors inline-block"
           >
             回首页 →
           </Link>
-        </div>
+        </main>
       </div>
     );
   }
