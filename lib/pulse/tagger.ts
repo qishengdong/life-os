@@ -144,7 +144,7 @@ export async function processPulse(args: {
     let rmcEpisodicId: number | null = null;
     if (safetyCheck.trigger !== 'blocklist' && !args.skipRmcWrite) {
       try {
-        rmcEpisodicId = addMemoryCard({
+        rmcEpisodicId = await addMemoryCard({
           userId: args.userId,
           cardType: 'episodic',
           title: `Pulse (${question?.name || args.questionId}, ${safetyCheck.trigger}): ${args.content.slice(0, 40)}...`,
@@ -167,7 +167,7 @@ export async function processPulse(args: {
     };
   }
 
-  const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
+  const memory = args.injectedMemory ?? await fetchUserMemory(args.userId);
 
   // 1. 硬边界 — 必须显式 surface, 严禁 pulse 试探破口 (5/15 F05-T5 case 修)
   // coreState[severity='hard'] + boundary 卡片 = 用户已 voice 的硬边界
@@ -240,7 +240,7 @@ ${args.content}
     };
   }
   try {
-    rmcEpisodicId = addMemoryCard({
+    rmcEpisodicId = await addMemoryCard({
       userId: args.userId,
       cardType: 'episodic',
       title: `Pulse (${question?.name || args.questionId}): ${args.content.slice(0, 40)}...`,

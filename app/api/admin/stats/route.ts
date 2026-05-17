@@ -30,12 +30,12 @@ export async function GET(req: NextRequest) {
   const gate = adminGate(req);
   if (gate) return gate;
 
-  const db = getDb();
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
   const week = 7 * 86400;
 
   // 用户
-  const userStats = db
+  const userStats = (await db
     .prepare(
       `SELECT
          COUNT(*) as total,
@@ -45,27 +45,27 @@ export async function GET(req: NextRequest) {
          SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as new_this_week
        FROM users`
     )
-    .get(now - week) as any;
+    .get(now - week)) as any;
 
   // Brief
-  const briefStats = getBriefStats();
-  const briefThisWeek = db
+  const briefStats = await getBriefStats();
+  const briefThisWeek = (await db
     .prepare(`SELECT COUNT(*) as n FROM decision_briefs WHERE authored_at >= ?`)
-    .get(now - week) as any;
+    .get(now - week)) as any;
 
   // Pulse
-  const pulseStats = db
+  const pulseStats = (await db
     .prepare(`SELECT COUNT(*) as total FROM daily_pulses`)
-    .get() as any;
-  const pulseThisWeek = db
+    .get()) as any;
+  const pulseThisWeek = (await db
     .prepare(`SELECT COUNT(*) as n FROM daily_pulses WHERE created_at >= ?`)
-    .get(now - week) as any;
+    .get(now - week)) as any;
 
   // 邀请
-  const inviteSummary = getInviteSummary();
+  const inviteSummary = await getInviteSummary();
 
   // 邮件
-  const emailStats = db
+  const emailStats = (await db
     .prepare(
       `SELECT
          COUNT(*) as total,
@@ -74,14 +74,14 @@ export async function GET(req: NextRequest) {
          SUM(CASE WHEN status = 'dry-run' THEN 1 ELSE 0 END) as dryRun
        FROM emails_sent`
     )
-    .get() as any;
-  const emailThisMonth = db
+    .get()) as any;
+  const emailThisMonth = (await db
     .prepare(`SELECT COUNT(*) as n FROM emails_sent WHERE created_at >= ?`)
-    .get(now - 30 * 86400) as any;
+    .get(now - 30 * 86400)) as any;
 
   // 审计
-  const checks = getCheckStats();
-  const dims = getDimensionScores();
+  const checks = await getCheckStats();
+  const dims = await getDimensionScores();
   const overallScore = dims.length
     ? dims.reduce((s, d) => s + d.avgScore, 0) / dims.length
     : 0;

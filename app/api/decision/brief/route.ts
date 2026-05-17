@@ -40,7 +40,7 @@ const RequestSchema = z.object({
 export async function POST(req: NextRequest) {
   let userId: number;
   try {
-    ({ userId } = resolveUserId(req));
+    ({ userId } = await resolveUserId(req));
   } catch (e) {
     if (e instanceof InvalidUserUidError) {
       return NextResponse.json(
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     }
 
     const input = parsed.data;
-    updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
+    await updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
 
     // 跑 pipeline
     const result = await generateBrief({
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     const renderedMarkdown = renderBriefMarkdown(brief);
 
     // 双写: 老 decisions 表 (保持 Outcome / Inspector / 历史页兼容)
-    const decisionId = saveDecision({
+    const decisionId = await saveDecision({
       userId,
       question: input.decision,
       aiResponse: renderedMarkdown, // 渲染好的 markdown 给历史页用
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 新表: decision_briefs (结构化)
-    const briefRowId = saveBrief({
+    const briefRowId = await saveBrief({
       userId,
       decisionId,
       briefJson: JSON.stringify(brief),
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
     // 排 outcome checkpoints (30/90/365)
     try {
-      scheduleOutcomes(decisionId, userId);
+      await scheduleOutcomes(decisionId, userId);
     } catch (e) {
       console.error('[decision/brief] scheduleOutcomes failed:', e);
     }
@@ -140,8 +140,8 @@ export async function POST(req: NextRequest) {
     // V0 mode='shadow' — 永远只入 audit, 不 block, 不 retry
     let inspectorHits: number | undefined;
     try {
-      const userMemory = fetchUserMemory(userId);
-      const inspectorReport = runInspector({
+      const userMemory = await fetchUserMemory(userId);
+      const inspectorReport = await runInspector({
         userId,
         decisionId,
         userQuestion: input.decision,

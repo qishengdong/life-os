@@ -16,13 +16,13 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    if (hasAcknowledgedRecoveryCode(userId)) {
+    const { userId } = await resolveUserId(req);
+    if (await hasAcknowledgedRecoveryCode(userId)) {
       const res = NextResponse.json({ ok: true, alreadyAcknowledged: true });
       setAckedCookie(res);
       return res;
     }
-    acknowledgeRecoveryCode(userId);
+    await acknowledgeRecoveryCode(userId);
     const res = NextResponse.json({ ok: true });
     setAckedCookie(res);
     return res;

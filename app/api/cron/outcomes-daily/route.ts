@@ -31,12 +31,12 @@ function isAuthorized(req: NextRequest): boolean {
 }
 
 async function runOutcomesDailyWork() {
-  const db = getDb();
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
 
   // 找 due + asked_at IS NULL + 用户有 email 的 outcomes
   // V0: 简单实现, 没去重 (每天都会重发未答的). V1.5 加 reminded_at 字段限频率.
-  const dueOutcomes = db
+  const dueOutcomes = (await db
     .prepare(
       `SELECT
          o.id AS outcome_id, o.user_id, o.checkpoint_days, o.due_at,
@@ -56,7 +56,7 @@ async function runOutcomesDailyWork() {
          )
        LIMIT 50`
     )
-    .all(now, now - 86400) as any[];
+    .all(now, now - 86400)) as any[];
 
   const results: any[] = [];
   for (const o of dueOutcomes) {
@@ -117,9 +117,9 @@ export async function GET(req: NextRequest) {
     return runOutcomesDailyWork();
   }
   // diagnostic
-  const db = getDb();
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
-  const dueOutcomes = db
+  const dueOutcomes = (await db
     .prepare(
       `SELECT o.id AS outcome_id, o.user_id, o.checkpoint_days,
               datetime(o.due_at, 'unixepoch', '+8 hours') AS due_local,
@@ -130,7 +130,7 @@ export async function GET(req: NextRequest) {
        WHERE o.due_at <= ? AND o.asked_at IS NULL
        LIMIT 50`,
     )
-    .all(now) as any[];
+    .all(now)) as any[];
   return NextResponse.json({
     mode: 'dry-run (not authorized for live)',
     dueOutcomes,

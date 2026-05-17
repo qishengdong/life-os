@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
 
-    const decisions = getUserDecisions(userId);
-    const memory = fetchUserMemory(userId);
+    const decisions = await getUserDecisions(userId);
+    const memory = await fetchUserMemory(userId);
 
     return NextResponse.json({
       decisions,

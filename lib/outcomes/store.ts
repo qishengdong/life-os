@@ -41,19 +41,19 @@ export interface OutcomeWithDecision extends OutcomeRecord {
 /**
  * 决策创建后自动 schedule 3 个 outcome checkpoint
  */
-export function scheduleOutcomes(
+export async function scheduleOutcomes(
   decisionId: number,
   userId: number,
   decisionCreatedAt: number = Math.floor(Date.now() / 1000)
-): number[] {
-  const db = getDb();
+): Promise<number[]> {
+  const db = await getDb();
   const checkpoints: CheckpointDays[] = [30, 90, 365];
   const ids: number[] = [];
 
   for (const days of checkpoints) {
     const dueAt = decisionCreatedAt + days * 86400;
     try {
-      const result = db
+      const result = await db
         .prepare(
           `INSERT INTO decision_outcomes (decision_id, user_id, checkpoint_days, due_at)
            VALUES (?, ?, ?, ?)`
@@ -73,10 +73,10 @@ export function scheduleOutcomes(
 /**
  * 拉用户当前到期的 outcomes (due_at <= now AND asked_at IS NULL)
  */
-export function getDueOutcomes(userId: number): OutcomeWithDecision[] {
-  const db = getDb();
+export async function getDueOutcomes(userId: number): Promise<OutcomeWithDecision[]> {
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
-  const rows = db
+  const rows = (await db
     .prepare(
       `SELECT
          o.id, o.decision_id, o.user_id, o.checkpoint_days, o.due_at, o.asked_at,
@@ -90,16 +90,16 @@ export function getDueOutcomes(userId: number): OutcomeWithDecision[] {
        ORDER BY o.due_at ASC
        LIMIT 10`
     )
-    .all(userId, now) as any[];
+    .all(userId, now)) as any[];
   return rows.map(rowToOutcomeWithDecision);
 }
 
 /**
  * 拉用户已回答的 outcomes (用于 dashboard 看历史)
  */
-export function getResolvedOutcomes(userId: number, limit = 30): OutcomeWithDecision[] {
-  const db = getDb();
-  const rows = db
+export async function getResolvedOutcomes(userId: number, limit = 30): Promise<OutcomeWithDecision[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT
          o.id, o.decision_id, o.user_id, o.checkpoint_days, o.due_at, o.asked_at,
@@ -112,42 +112,42 @@ export function getResolvedOutcomes(userId: number, limit = 30): OutcomeWithDeci
        ORDER BY o.asked_at DESC
        LIMIT ?`
     )
-    .all(userId, limit) as any[];
+    .all(userId, limit)) as any[];
   return rows.map(rowToOutcomeWithDecision);
 }
 
 /**
  * 拉一个 decision 的所有 outcomes (pending + resolved)
  */
-export function getOutcomesForDecision(decisionId: number): OutcomeRecord[] {
-  const db = getDb();
-  const rows = db
+export async function getOutcomesForDecision(decisionId: number): Promise<OutcomeRecord[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT * FROM decision_outcomes WHERE decision_id = ? ORDER BY checkpoint_days ASC`
     )
-    .all(decisionId) as any[];
+    .all(decisionId)) as any[];
   return rows.map(rowToOutcome);
 }
 
 /**
  * 标记 outcome 已被问 (用户点开看到了, 即使没回答)
  */
-export function markOutcomeAsked(outcomeId: number): void {
-  const db = getDb();
+export async function markOutcomeAsked(outcomeId: number): Promise<void> {
+  const db = await getDb();
   db.prepare(`UPDATE decision_outcomes SET asked_at = unixepoch() WHERE id = ? AND asked_at IS NULL`).run(outcomeId);
 }
 
 /**
  * 保存用户回答 + AI reflection
  */
-export function saveOutcomeResponse(args: {
+export async function saveOutcomeResponse(args: {
   outcomeId: number;
   userResponse: string;
   outcomeJudgment: OutcomeJudgment;
   aiReflection: string;
   patternInsight?: string;
-}): void {
-  const db = getDb();
+}): Promise<void> {
+  const db = await getDb();
   db.prepare(
     `UPDATE decision_outcomes
      SET user_response = ?,
@@ -184,13 +184,13 @@ export interface OutcomeStats {
   };
 }
 
-export function getUserOutcomeStats(userId: number): OutcomeStats {
-  const db = getDb();
-  const totalDecisionsRow = db
+export async function getUserOutcomeStats(userId: number): Promise<OutcomeStats> {
+  const db = await getDb();
+  const totalDecisionsRow = (await db
     .prepare(`SELECT COUNT(*) as n FROM decisions WHERE user_id = ?`)
-    .get(userId) as { n: number };
+    .get(userId)) as { n: number };
 
-  const checkpointsRow = db
+  const checkpointsRow = (await db
     .prepare(`
       SELECT
         COUNT(*) AS total,
@@ -200,16 +200,16 @@ export function getUserOutcomeStats(userId: number): OutcomeStats {
       FROM decision_outcomes
       WHERE user_id = ?
     `)
-    .get(userId) as any;
+    .get(userId)) as any;
 
-  const judgments = db
+  const judgments = (await db
     .prepare(`
       SELECT outcome_judgment, COUNT(*) as n
       FROM decision_outcomes
       WHERE user_id = ? AND outcome_judgment IS NOT NULL
       GROUP BY outcome_judgment
     `)
-    .all(userId) as Array<{ outcome_judgment: string; n: number }>;
+    .all(userId)) as Array<{ outcome_judgment: string; n: number }>;
 
   const judgmentMap: Record<string, number> = {};
   for (const j of judgments) judgmentMap[j.outcome_judgment] = j.n;

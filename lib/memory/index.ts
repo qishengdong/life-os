@@ -24,72 +24,72 @@ import type {
 // 主入口: fetchUserMemory
 // ============================================================================
 
-export function fetchUserMemory(userId: number): UserMemoryContext {
-  const db = getDb();
+export async function fetchUserMemory(userId: number): Promise<UserMemoryContext> {
+  const db = await getDb();
 
-  const user = getUser(userId);
+  const user = await getUser(userId);
   if (!user) {
     throw new Error(`User ${userId} not found`);
   }
 
   // Layer 0: 硬锚点
-  const coreState = (db
+  const coreState = ((await db
     .prepare(
       `SELECT id, kind, fact_text, violation_pattern, severity, status, source, created_at
        FROM user_core_state
        WHERE user_id = ? AND status = 'active'
        ORDER BY created_at ASC`
     )
-    .all(userId) as any[]).map(rowToCore);
+    .all(userId)) as any[]).map(rowToCore);
 
   // Layer 1: 5 类 RMC
-  const factual = (db
+  const factual = ((await db
     .prepare(
       `SELECT * FROM relationship_memory_cards
        WHERE user_id = ? AND card_type = 'factual' AND confidence >= 0.6
        ORDER BY confidence DESC, last_verified_at DESC
        LIMIT 30`
     )
-    .all(userId) as any[]).map(rowToCard);
+    .all(userId)) as any[]).map(rowToCard);
 
-  const boundary = (db
+  const boundary = ((await db
     .prepare(
       `SELECT * FROM relationship_memory_cards
        WHERE user_id = ? AND card_type = 'boundary' AND confidence >= 0.7
        ORDER BY confidence DESC
        LIMIT 20`
     )
-    .all(userId) as any[]).map(rowToCard);
+    .all(userId)) as any[]).map(rowToCard);
 
-  const episodic = (db
+  const episodic = ((await db
     .prepare(
       `SELECT * FROM relationship_memory_cards
        WHERE user_id = ? AND card_type = 'episodic'
        ORDER BY last_verified_at DESC
        LIMIT 15`
     )
-    .all(userId) as any[]).map(rowToCard);
+    .all(userId)) as any[]).map(rowToCard);
 
-  const relational = (db
+  const relational = ((await db
     .prepare(
       `SELECT * FROM relationship_memory_cards
        WHERE user_id = ? AND card_type = 'relational' AND confidence >= 0.7
        ORDER BY confidence DESC
        LIMIT 20`
     )
-    .all(userId) as any[]).map(rowToCard);
+    .all(userId)) as any[]).map(rowToCard);
 
-  const psychSignal = (db
+  const psychSignal = ((await db
     .prepare(
       `SELECT * FROM relationship_memory_cards
        WHERE user_id = ? AND card_type = 'psych_signal' AND confidence >= 0.7
        ORDER BY last_verified_at DESC
        LIMIT 10`
     )
-    .all(userId) as any[]).map(rowToCard);
+    .all(userId)) as any[]).map(rowToCard);
 
   // Layer 2: open loops
-  const openLoops = (db
+  const openLoops = ((await db
     .prepare(
       `SELECT id, title, description, kind, status, due_at, created_at
        FROM relationship_open_loops
@@ -97,20 +97,20 @@ export function fetchUserMemory(userId: number): UserMemoryContext {
        ORDER BY created_at DESC
        LIMIT 20`
     )
-    .all(userId) as any[]).map(rowToOpenLoop);
+    .all(userId)) as any[]).map(rowToOpenLoop);
 
   // Layer 3: brain.md
-  const brainRow = db
+  const brainRow = (await db
     .prepare(`SELECT content FROM user_brain WHERE user_id = ?`)
-    .get(userId) as { content: string } | undefined;
+    .get(userId)) as { content: string } | undefined;
 
   // Stats
-  const totalCardsRow = db
+  const totalCardsRow = (await db
     .prepare(`SELECT COUNT(*) as n FROM relationship_memory_cards WHERE user_id = ?`)
-    .get(userId) as { n: number };
-  const totalDecisionsRow = db
+    .get(userId)) as { n: number };
+  const totalDecisionsRow = (await db
     .prepare(`SELECT COUNT(*) as n FROM decisions WHERE user_id = ?`)
-    .get(userId) as { n: number };
+    .get(userId)) as { n: number };
 
   const accountAgeDays = Math.floor(
     (Date.now() / 1000 - user.created_at) / 86400
@@ -139,21 +139,21 @@ export function fetchUserMemory(userId: number): UserMemoryContext {
 // Memory mutations (写入)
 // ============================================================================
 
-export function addCoreState(args: {
+export async function addCoreState(args: {
   userId: number;
   kind: string;
   factText: string;
   violationPattern?: string;
   severity?: 'hard' | 'soft';
   source?: 'admin' | 'user_self' | 'llm_extract';
-}): number {
-  const db = getDb();
+}): Promise<number> {
+  const db = await getDb();
   // dedup by (user_id, kind, status='active')
-  const existing = db
+  const existing = (await db
     .prepare(
       `SELECT id FROM user_core_state WHERE user_id = ? AND kind = ? AND status = 'active'`
     )
-    .get(args.userId, args.kind) as { id: number } | undefined;
+    .get(args.userId, args.kind)) as { id: number } | undefined;
 
   if (existing) {
     db.prepare(
@@ -162,7 +162,7 @@ export function addCoreState(args: {
     return existing.id;
   }
 
-  const result = db
+  const result = await db
     .prepare(
       `INSERT INTO user_core_state (user_id, kind, fact_text, violation_pattern, severity, source)
        VALUES (?, ?, ?, ?, ?, ?)`
@@ -178,7 +178,7 @@ export function addCoreState(args: {
   return result.lastInsertRowid as number;
 }
 
-export function addMemoryCard(args: {
+export async function addMemoryCard(args: {
   userId: number;
   cardType: CardType;
   title: string;
@@ -187,9 +187,9 @@ export function addMemoryCard(args: {
   source?: string;
   sourceDecisionId?: number;
   tags?: string[];
-}): number {
-  const db = getDb();
-  const result = db
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .prepare(
       `INSERT INTO relationship_memory_cards
        (user_id, card_type, title, content, confidence, source, source_decision_id, tags)
@@ -208,16 +208,16 @@ export function addMemoryCard(args: {
   return result.lastInsertRowid as number;
 }
 
-export function addOpenLoop(args: {
+export async function addOpenLoop(args: {
   userId: number;
   title: string;
   description?: string;
   kind?: string;
   dueAt?: number;
   sourceDecisionId?: number;
-}): number {
-  const db = getDb();
-  const result = db
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .prepare(
       `INSERT INTO relationship_open_loops
        (user_id, title, description, kind, due_at, source_decision_id)
@@ -239,36 +239,36 @@ export function addOpenLoop(args: {
 // ============================================================================
 
 /** 检查某条 core_state 是否属于该用户. */
-function ownsCoreState(userId: number, id: number): boolean {
-  const db = getDb();
-  const r = db
+async function ownsCoreState(userId: number, id: number): Promise<boolean> {
+  const db = await getDb();
+  const r = (await db
     .prepare(`SELECT user_id FROM user_core_state WHERE id = ?`)
-    .get(id) as { user_id: number } | undefined;
+    .get(id)) as { user_id: number } | undefined;
   return !!r && r.user_id === userId;
 }
-function ownsCard(userId: number, id: number): boolean {
-  const db = getDb();
-  const r = db
+async function ownsCard(userId: number, id: number): Promise<boolean> {
+  const db = await getDb();
+  const r = (await db
     .prepare(`SELECT user_id FROM relationship_memory_cards WHERE id = ?`)
-    .get(id) as { user_id: number } | undefined;
+    .get(id)) as { user_id: number } | undefined;
   return !!r && r.user_id === userId;
 }
-function ownsOpenLoop(userId: number, id: number): boolean {
-  const db = getDb();
-  const r = db
+async function ownsOpenLoop(userId: number, id: number): Promise<boolean> {
+  const db = await getDb();
+  const r = (await db
     .prepare(`SELECT user_id FROM relationship_open_loops WHERE id = ?`)
-    .get(id) as { user_id: number } | undefined;
+    .get(id)) as { user_id: number } | undefined;
   return !!r && r.user_id === userId;
 }
 
-export function updateCoreState(args: {
+export async function updateCoreState(args: {
   userId: number;
   id: number;
   factText?: string;
   status?: 'active' | 'deprecated' | 'user_overrode';
-}): { ok: true } | { ok: false; error: string } {
-  if (!ownsCoreState(args.userId, args.id)) return { ok: false, error: 'not owner' };
-  const db = getDb();
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!(await ownsCoreState(args.userId, args.id))) return { ok: false, error: 'not owner' };
+  const db = await getDb();
   const fields: string[] = ['updated_at = unixepoch()'];
   const vals: any[] = [];
   if (args.factText !== undefined) {
@@ -281,29 +281,29 @@ export function updateCoreState(args: {
   }
   if (vals.length === 0) return { ok: true };
   vals.push(args.id);
-  db.prepare(`UPDATE user_core_state SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
+  await db.prepare(`UPDATE user_core_state SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
   return { ok: true };
 }
 
-export function deleteCoreState(args: { userId: number; id: number }): boolean {
-  if (!ownsCoreState(args.userId, args.id)) return false;
-  const db = getDb();
+export async function deleteCoreState(args: { userId: number; id: number }): Promise<boolean> {
+  if (!(await ownsCoreState(args.userId, args.id))) return false;
+  const db = await getDb();
   // 软删除 — 标 deprecated 而非 真删, 保留审计
-  db.prepare(
+  await db.prepare(
     `UPDATE user_core_state SET status = 'deprecated', updated_at = unixepoch() WHERE id = ?`,
   ).run(args.id);
   return true;
 }
 
-export function updateMemoryCard(args: {
+export async function updateMemoryCard(args: {
   userId: number;
   id: number;
   title?: string;
   content?: string;
   confidence?: number;
-}): { ok: true } | { ok: false; error: string } {
-  if (!ownsCard(args.userId, args.id)) return { ok: false, error: 'not owner' };
-  const db = getDb();
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!(await ownsCard(args.userId, args.id))) return { ok: false, error: 'not owner' };
+  const db = await getDb();
   const fields: string[] = ['last_verified_at = unixepoch()'];
   const vals: any[] = [];
   if (args.title !== undefined) {
@@ -319,35 +319,35 @@ export function updateMemoryCard(args: {
     vals.push(args.confidence);
   }
   vals.push(args.id);
-  db.prepare(`UPDATE relationship_memory_cards SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
+  await db.prepare(`UPDATE relationship_memory_cards SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
   return { ok: true };
 }
 
-export function deleteMemoryCard(args: { userId: number; id: number }): boolean {
-  if (!ownsCard(args.userId, args.id)) return false;
-  const db = getDb();
-  db.prepare(`DELETE FROM relationship_memory_cards WHERE id = ?`).run(args.id);
+export async function deleteMemoryCard(args: { userId: number; id: number }): Promise<boolean> {
+  if (!(await ownsCard(args.userId, args.id))) return false;
+  const db = await getDb();
+  await db.prepare(`DELETE FROM relationship_memory_cards WHERE id = ?`).run(args.id);
   return true;
 }
 
-export function resolveOpenLoop(args: {
+export async function resolveOpenLoop(args: {
   userId: number;
   id: number;
   status: 'resolved' | 'cancelled';
-}): boolean {
-  if (!ownsOpenLoop(args.userId, args.id)) return false;
-  const db = getDb();
-  db.prepare(
+}): Promise<boolean> {
+  if (!(await ownsOpenLoop(args.userId, args.id))) return false;
+  const db = await getDb();
+  await db.prepare(
     `UPDATE relationship_open_loops SET status = ?, resolved_at = unixepoch() WHERE id = ?`,
   ).run(args.status, args.id);
   return true;
 }
 
 /** 用户确认 (verify) 某条卡 — 没改内容, 只更新 last_verified_at. */
-export function reverifyCard(args: { userId: number; id: number }): boolean {
-  if (!ownsCard(args.userId, args.id)) return false;
-  const db = getDb();
-  db.prepare(`UPDATE relationship_memory_cards SET last_verified_at = unixepoch() WHERE id = ?`).run(args.id);
+export async function reverifyCard(args: { userId: number; id: number }): Promise<boolean> {
+  if (!(await ownsCard(args.userId, args.id))) return false;
+  const db = await getDb();
+  await db.prepare(`UPDATE relationship_memory_cards SET last_verified_at = unixepoch() WHERE id = ?`).run(args.id);
   return true;
 }
 

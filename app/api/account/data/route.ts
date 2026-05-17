@@ -40,8 +40,8 @@ const USER_TABLES = [
 // ============================================================================
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const db = getDb();
+    const { userId } = await resolveUserId(req);
+    const db = await getDb();
     const url = new URL(req.url);
     const download = url.searchParams.get('download') === '1';
 
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
 
     for (const t of USER_TABLES) {
       try {
-        const rows = db
+        const rows = await db
           .prepare(`SELECT * FROM ${t.name} WHERE ${t.whereCol} = ?`)
           .all(userId);
         exportData[t.name] = rows;
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
 // ============================================================================
 export async function DELETE(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json().catch(() => ({}));
 
     // 二次确认 — 必须传 confirm: "删除我的全部数据"
@@ -105,30 +105,26 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const db = getDb();
+    const db = await getDb();
     const summary: Record<string, number> = {};
     let totalDeleted = 0;
 
     // 用一个事务删除, 任一表失败全部回滚
-    const tx = db.transaction(() => {
-      // 删 users 表放最后 (避免外键级联问题)
+    await db.transaction(async (txdb) => {
       const nonUserTables = USER_TABLES.filter((t) => t.name !== 'users');
       for (const t of nonUserTables) {
         try {
-          const res = db.prepare(`DELETE FROM ${t.name} WHERE ${t.whereCol} = ?`).run(userId);
+          const res = await txdb.prepare(`DELETE FROM ${t.name} WHERE ${t.whereCol} = ?`).run(userId);
           summary[t.name] = res.changes;
           totalDeleted += res.changes;
         } catch (e) {
-          summary[t.name] = -1; // 表不存在
+          summary[t.name] = -1;
         }
       }
-      // 最后删 users
-      const userRes = db.prepare(`DELETE FROM users WHERE id = ?`).run(userId);
+      const userRes = await txdb.prepare(`DELETE FROM users WHERE id = ?`).run(userId);
       summary['users'] = userRes.changes;
       totalDeleted += userRes.changes;
     });
-
-    tx();
 
     return NextResponse.json({
       success: true,

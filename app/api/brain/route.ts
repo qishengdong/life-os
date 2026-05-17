@@ -14,8 +14,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const memory = fetchUserMemory(userId);
+    const { userId } = await resolveUserId(req);
+    const memory = await fetchUserMemory(userId);
     return NextResponse.json({ memory });
   } catch (e: any) {
     if (e instanceof InvalidUserUidError) {

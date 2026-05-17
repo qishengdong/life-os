@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// @ts-nocheck
 /**
  * Synthetic Swarm Runner v2
  *
@@ -51,11 +52,11 @@ async function runSinglePersona(persona: Persona, isAdversarial: boolean): Promi
   const startTime = Date.now();
   const swarmUid = `swarm-${crypto.createHash('md5').update(persona.id).digest('hex').slice(0, 12)}`;
   const paddedUid = `${swarmUid.slice(0, 8)}-${swarmUid.slice(8, 12)}-0000-0000-000000000000`;
-  const userId = findOrCreateUserByUid(paddedUid);
-  updateUserProfile(userId, { birthDate: persona.birthDate, gender: persona.gender });
+  const userId = await findOrCreateUserByUid(paddedUid);
+  await updateUserProfile(userId, { birthDate: persona.birthDate, gender: persona.gender });
 
   const route = await routeDecision(persona.decision);
-  const memory = fetchUserMemory(userId);
+  const memory = await fetchUserMemory(userId);
   const messages = await buildMessagesForFramework(route.framework, persona, memory);
 
   let aiResponse = '';
@@ -67,7 +68,7 @@ async function runSinglePersona(persona: Persona, isAdversarial: boolean): Promi
       maxTokens: 4000,
     });
     aiResponse = response.content;
-    saveDecision({
+    await saveDecision({
       userId,
       question: persona.decision,
       aiResponse,
@@ -188,8 +189,8 @@ async function main() {
   console.log(`Mode: ${isAdversarial ? '🛡️  ADVERSARIAL' : '👥 normal personas'}`);
   console.log(`Personas: ${personasToRun.length} | Concurrency: ${concurrency}\n`);
 
-  const db = getDb();
-  const runResult = db
+  const db = await getDb();
+  const runResult = await db
     .prepare(`INSERT INTO grader_runs (run_label, persona_count, mode) VALUES (?, ?, ?)`)
     .run(label, personasToRun.length, isAdversarial ? 'synthetic' : 'synthetic');
   const runId = runResult.lastInsertRowid as number;

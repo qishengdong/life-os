@@ -101,12 +101,12 @@ export async function processOnboarding(
   const startTime = Date.now();
 
   // 1. Find or create user
-  const userId = findOrCreateUserByUid(userUid);
+  const userId = await findOrCreateUserByUid(userUid);
 
   // JOB-001 side-write: 保存每步原始答案到 intake_answers (audit trail + 后续 UI 可读)
   for (const r of responses) {
     try {
-      saveIntakeStep({ userId, step: r.stage, answers: r.answers });
+      await saveIntakeStep({ userId, step: r.stage, answers: r.answers });
     } catch (e) {
       console.warn('[onboarding] intake_answers side-write failed:', (e as Error).message);
     }
@@ -119,7 +119,7 @@ export async function processOnboarding(
     const genderRaw = identityResp.answers.gender;
     const gender =
       genderRaw === '女' ? 'female' : genderRaw === '男' ? 'male' : 'other';
-    if (birthDate) updateUserProfile(userId, { birthDate, gender });
+    if (birthDate) await updateUserProfile(userId, { birthDate, gender });
   }
 
   // 3. Identity → core_state hardcoded inserts (高 confidence)
@@ -127,7 +127,7 @@ export async function processOnboarding(
   if (identityResp) {
     const a = identityResp.answers;
     if (a.familyStructure) {
-      addCoreState({
+      await addCoreState({
         userId,
         kind: 'family_structure',
         factText: a.familyStructure,
@@ -137,7 +137,7 @@ export async function processOnboarding(
       coreStateInserted++;
     }
     if (a.currentCity) {
-      addCoreState({
+      await addCoreState({
         userId,
         kind: 'current_city',
         factText: `目前生活在${a.currentCity}`,
@@ -147,7 +147,7 @@ export async function processOnboarding(
       coreStateInserted++;
     }
     if (a.professionPulse) {
-      addCoreState({
+      await addCoreState({
         userId,
         kind: 'profession',
         factText: a.professionPulse,
@@ -186,7 +186,7 @@ export async function processOnboarding(
       try {
         if (c.type === 'core_state') {
           if (c.kind) {
-            addCoreState({
+            await addCoreState({
               userId,
               kind: c.kind,
               factText: c.content,
@@ -196,7 +196,7 @@ export async function processOnboarding(
             coreStateInserted++;
           }
         } else {
-          addMemoryCard({
+          await addMemoryCard({
             userId,
             cardType: c.type as any,
             title: c.title,
@@ -230,7 +230,7 @@ export async function processOnboarding(
     let brainContent = brainResp.content.trim();
     brainContent = brainContent.replace(/^```markdown\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
 
-    const db = getDb();
+    const db = await getDb();
     db.prepare(
       `INSERT INTO user_brain (user_id, content, version, updated_at) VALUES (?, ?, 1, unixepoch())
        ON CONFLICT(user_id) DO UPDATE SET content = excluded.content, version = user_brain.version + 1, updated_at = unixepoch()`
@@ -243,7 +243,7 @@ export async function processOnboarding(
 
   // JOB-001: mark onboarding 完成 — 用于路由 gate
   try {
-    markOnboardingComplete(userId);
+    await markOnboardingComplete(userId);
   } catch (e) {
     console.warn('[onboarding] markOnboardingComplete failed:', (e as Error).message);
   }
@@ -290,13 +290,12 @@ function parseExtractorOutput(content: string): Array<{
 export async function regenerateBrainSeedForUser(
   userId: number,
 ): Promise<ProcessResult & { responsesFound: number }> {
-  const db = getDb();
-  const userRow = db.prepare(`SELECT user_uid FROM users WHERE id = ?`).get(userId) as
-    | { user_uid: string }
+  const db = await getDb();
+  const userRow = (await db.prepare(`SELECT user_uid FROM users WHERE id = ?`).get(userId)) as | { user_uid: string }
     | undefined;
   if (!userRow) throw new Error(`user ${userId} not found`);
 
-  const intake = getIntakeAnswers(userId); // { 'identity': {...}, 'values': {...}, ... }
+  const intake = await getIntakeAnswers(userId); // { 'identity': {...}, 'values': {...}, ... }
   const responses: OnboardingResponse[] = Object.entries(intake).map(([stage, answers]) => ({
     stage: stage as StageId,
     answers: (answers as Record<string, unknown>) || {},

@@ -27,9 +27,9 @@ import type {
 
 const SEVERITY_ORDER: Record<Severity, number> = { low: 0, high: 1, p0: 2 };
 
-export function runInspector(ctx: InspectorContext): InspectorReport {
-  const allResults = runAllChecks(ctx);
-  const hits = allResults.filter((r) => r.hit);
+export async function runInspector(ctx: InspectorContext): Promise<InspectorReport> {
+  const allResults = await runAllChecks(ctx);
+  const hits = allResults.filter((r: any) => r.hit);
 
   // 决定推荐 action
   let worstSeverity: Severity | null = null;
@@ -54,7 +54,7 @@ export function runInspector(ctx: InspectorContext): InspectorReport {
   }
 
   // 写 audit
-  writeAuditEntries(ctx, hits, recommendedAction);
+  await writeAuditEntries(ctx, hits, recommendedAction);
 
   return {
     decisionId: ctx.decisionId,
@@ -67,14 +67,14 @@ export function runInspector(ctx: InspectorContext): InspectorReport {
   };
 }
 
-function writeAuditEntries(
+async function writeAuditEntries(
   ctx: InspectorContext,
   hits: CheckResult[],
   action: Action
-): void {
+): Promise<void> {
   if (hits.length === 0) return;
 
-  const db = getDb();
+  const db = await getDb();
   const stmt = db.prepare(
     `INSERT INTO inspector_audit
        (user_id, decision_id, check_code, severity, action, matched_text, detail)
@@ -97,8 +97,8 @@ function writeAuditEntries(
 /**
  * 查询某用户最近 N 天的 audit 记录(用于 admin 面板 / shadow 监控)
  */
-export function getRecentAudit(userId: number, sinceDaysAgo = 7) {
-  const db = getDb();
+export async function getRecentAudit(userId: number, sinceDaysAgo = 7) {
+  const db = await getDb();
   const sinceTs = Math.floor(Date.now() / 1000) - sinceDaysAgo * 86400;
   return db
     .prepare(
@@ -113,8 +113,8 @@ export function getRecentAudit(userId: number, sinceDaysAgo = 7) {
 /**
  * Shadow 模式总览(全部用户聚合, 用于检验假阳性率)
  */
-export function getShadowSummary(sinceDaysAgo = 7) {
-  const db = getDb();
+export async function getShadowSummary(sinceDaysAgo = 7) {
+  const db = await getDb();
   const sinceTs = Math.floor(Date.now() / 1000) - sinceDaysAgo * 86400;
   return db
     .prepare(

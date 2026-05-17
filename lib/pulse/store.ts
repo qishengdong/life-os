@@ -16,16 +16,16 @@ export interface PulseRecord {
   createdAt: number;
 }
 
-export function addPulse(args: {
+export async function addPulse(args: {
   userId: number;
   questionId: PulseQuestionId;
   content: string;
   tags?: PulseTag[];
   aiResponse?: string | null;
   rmcEpisodicId?: number | null;
-}): number {
-  const db = getDb();
-  const result = db
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .prepare(
       `INSERT INTO daily_pulses (user_id, question_id, content, tags, ai_response, rmc_episodic_id)
        VALUES (?, ?, ?, ?, ?, ?)`
@@ -41,9 +41,9 @@ export function addPulse(args: {
   return result.lastInsertRowid as number;
 }
 
-export function getUserPulses(userId: number, limit = 50): PulseRecord[] {
-  const db = getDb();
-  const rows = db
+export async function getUserPulses(userId: number, limit = 50): Promise<PulseRecord[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT id, user_id, question_id, content, tags, ai_response, rmc_episodic_id, created_at
        FROM daily_pulses
@@ -51,56 +51,56 @@ export function getUserPulses(userId: number, limit = 50): PulseRecord[] {
        ORDER BY created_at DESC
        LIMIT ?`
     )
-    .all(userId, limit) as any[];
+    .all(userId, limit)) as any[];
   return rows.map(rowToPulse);
 }
 
-export function getUserPulseCount(userId: number): number {
-  const db = getDb();
-  const row = db
+export async function getUserPulseCount(userId: number): Promise<number> {
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT COUNT(*) as n FROM daily_pulses WHERE user_id = ?`)
-    .get(userId) as { n: number };
+    .get(userId)) as { n: number };
   return row.n;
 }
 
-export function getThisWeekPulseCount(userId: number): number {
-  const db = getDb();
+export async function getThisWeekPulseCount(userId: number): Promise<number> {
+  const db = await getDb();
   // 过去 7 天
   const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 86400;
-  const row = db
+  const row = (await db
     .prepare(`SELECT COUNT(*) as n FROM daily_pulses WHERE user_id = ? AND created_at >= ?`)
-    .get(userId, sevenDaysAgo) as { n: number };
+    .get(userId, sevenDaysAgo)) as { n: number };
   return row.n;
 }
 
-export function getTodayPulseCount(userId: number): number {
-  const db = getDb();
+export async function getTodayPulseCount(userId: number): Promise<number> {
+  const db = await getDb();
   // 今天本地零点
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-  const row = db
+  const row = (await db
     .prepare(`SELECT COUNT(*) as n FROM daily_pulses WHERE user_id = ? AND created_at >= ?`)
-    .get(userId, todayStart) as { n: number };
+    .get(userId, todayStart)) as { n: number };
   return row.n;
 }
 
 /**
  * 拉过去 N 天的 Pulse, 按 tag 分组 — 用于 Weekly Review pattern detection
  */
-export function getPulsesGroupedByTag(
+export async function getPulsesGroupedByTag(
   userId: number,
   daysAgo: number = 7
-): Record<PulseTag, PulseRecord[]> {
-  const db = getDb();
+): Promise<Record<PulseTag, PulseRecord[]>> {
+  const db = await getDb();
   const since = Math.floor(Date.now() / 1000) - daysAgo * 86400;
-  const rows = db
+  const rows = (await db
     .prepare(
       `SELECT id, user_id, question_id, content, tags, ai_response, rmc_episodic_id, created_at
        FROM daily_pulses
        WHERE user_id = ? AND created_at >= ?
        ORDER BY created_at DESC`
     )
-    .all(userId, since) as any[];
+    .all(userId, since)) as any[];
 
   const grouped: Record<string, PulseRecord[]> = {};
   for (const row of rows) {

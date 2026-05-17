@@ -38,7 +38,7 @@ async function SampleBriefContent({
   searchParams: Promise<{ id?: string }>;
 }) {
   const sp = await searchParams;
-  const rows = getSampleBriefs();
+  const rows = await getSampleBriefs();
   const copy = loadSampleBriefContent();
   const FRAMEWORK_LABEL = copy.frameworkLabels;
 

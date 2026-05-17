@@ -86,10 +86,10 @@ function SectionHeader({
 // B9 阈值: 累计满 20 份 brief 才发布有信号的 grader 评分.
 const GRADER_PUBLISH_MIN_N = 20;
 
-function GraderBlock() {
-  const scores = getDimensionScores();
-  const overall = getGraderOverallStats();
-  const scoreTrend = getGraderScoreTrend(20);
+async function GraderBlock() {
+  const scores = await getDimensionScores();
+  const overall = await getGraderOverallStats();
+  const scoreTrend = await getGraderScoreTrend(20);
 
   // 累计样本量决定 schema 视图 vs 完整评分
   const totalSamples = scores.reduce((sum, s) => sum + s.sampleSize, 0);
@@ -207,8 +207,8 @@ function GraderBlock() {
 // ============================================================================
 // 7 项 Inspector check 块
 // ============================================================================
-function InspectorBlock() {
-  const checks = getCheckStats();
+async function InspectorBlock() {
+  const checks = await getCheckStats();
   const totalHits = checks.reduce((s, c) => s + c.hits, 0);
   const activeCount = checks.filter((c) => c.mode === 'active').length;
 
@@ -271,10 +271,10 @@ function InspectorBlock() {
 // B11 阈值: N >= 10 才显示趋势 sparkline.
 const TRANSPARENCY_TREND_MIN_N = 10;
 
-function BriefBlock() {
-  const s = getBriefStats();
-  const latencyTrend = getBriefLatencyTrend(20);
-  const charTrend = getBriefCharCountTrend(20);
+async function BriefBlock() {
+  const s = await getBriefStats();
+  const latencyTrend = await getBriefLatencyTrend(20);
+  const charTrend = await getBriefCharCountTrend(20);
   const showTrends = s.total >= TRANSPARENCY_TREND_MIN_N;
 
   /** C3 · label · value row, 不再用 bordered tile box */

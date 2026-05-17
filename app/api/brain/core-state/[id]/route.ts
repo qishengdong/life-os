@@ -14,10 +14,10 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const body = await req.json();
-    const r = updateCoreState({
+    const r = await updateCoreState({
       userId,
       id: parseInt(id, 10),
       factText: body.factText,
@@ -37,9 +37,9 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
 export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
-    const ok = deleteCoreState({ userId, id: parseInt(id, 10) });
+    const ok = await deleteCoreState({ userId, id: parseInt(id, 10) });
     if (!ok) return NextResponse.json({ error: 'not found' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (e: any) {

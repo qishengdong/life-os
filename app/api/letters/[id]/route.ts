@@ -30,14 +30,14 @@ interface RouteContext {
 
 export async function GET(req: NextRequest, ctx: RouteContext) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const letterId = parseInt(id, 10);
     if (isNaN(letterId)) {
       return NextResponse.json({ error: 'letter id 必须是数字' }, { status: 400 });
     }
 
-    const letter = getLetterById(letterId, userId);
+    const letter = await getLetterById(letterId, userId);
     if (!letter) {
       return NextResponse.json({ error: '信件不存在或无权访问' }, { status: 404 });
     }
@@ -57,14 +57,14 @@ export async function GET(req: NextRequest, ctx: RouteContext) {
 
 export async function POST(req: NextRequest, ctx: RouteContext) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const letterId = parseInt(id, 10);
     if (isNaN(letterId)) {
       return NextResponse.json({ error: 'letter id 必须是数字' }, { status: 400 });
     }
 
-    const letter = getLetterById(letterId, userId);
+    const letter = await getLetterById(letterId, userId);
     if (!letter) {
       return NextResponse.json({ error: '信件不存在或无权访问' }, { status: 404 });
     }
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
     }
 
     // 重置 + 同步重跑 LLM (Vercel serverless 不能 fire-and-forget)
-    let reset = resetLetterToPending({ letterId, userId });
+    let reset = await resetLetterToPending({ letterId, userId });
     if (!reset) {
       return NextResponse.json({ error: 'retry 失败 (无法重置状态)' }, { status: 500 });
     }
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
         letterNumber: letter.letterNumber,
       });
       if (result.success && result.reply) {
-        reset = updateLetterReply({
+        reset = await updateLetterReply({
           letterId,
           replyContent: result.reply,
           tokensUsed: result.tokensUsed,
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
           frameworkMatched: result.framework,
         });
       } else {
-        reset = markLetterFailed({
+        reset = await markLetterFailed({
           letterId,
           reason: result.error || 'retry 仍失败',
           durationMs: result.durationMs,
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
       }
     } catch (e: any) {
       console.error('[letters retry] pipeline failed:', e);
-      reset = markLetterFailed({ letterId, reason: e?.message || '后台异常' });
+      reset = await markLetterFailed({ letterId, reason: e?.message || '后台异常' });
     }
 
     return NextResponse.json({ success: true, letter: reset });

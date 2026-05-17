@@ -89,18 +89,18 @@ export async function shouldConsolidate(userId: number): Promise<{
   decisionCount: number;
   lastConsolidatedAt: number | null;
 }> {
-  const db = getDb();
+  const db = await getDb();
 
   // 总决策数
-  const decRow = db
+  const decRow = (await db
     .prepare('SELECT COUNT(*) as n FROM decisions WHERE user_id = ?')
-    .get(userId) as { n: number };
+    .get(userId)) as { n: number };
   const decisionCount = decRow.n;
 
   // 上次 consolidation 时间 (从 user_brain.updated_at 取)
-  const brainRow = db
+  const brainRow = (await db
     .prepare('SELECT updated_at, version FROM user_brain WHERE user_id = ?')
-    .get(userId) as { updated_at: number; version: number } | undefined;
+    .get(userId)) as { updated_at: number; version: number } | undefined;
 
   const now = Math.floor(Date.now() / 1000);
   const lastConsolidatedAt = brainRow?.updated_at ?? null;
@@ -139,12 +139,12 @@ export async function shouldConsolidate(userId: number): Promise<{
   // 决策数比上次 consolidation 时多 5+ → 跑 (V1: 加 last_consolidation_decision_count 字段更精确)
   // V0 简化: 距上次 < 7 天 但决策很多 → 也跑一次
   // 这里我们查 user_brain 的 version (每次跑递增)
-  const cardsSinceLastRow = db
+  const cardsSinceLastRow = (await db
     .prepare(
       `SELECT COUNT(*) as n FROM relationship_memory_cards
        WHERE user_id = ? AND created_at > ?`
     )
-    .get(userId, lastTs) as { n: number };
+    .get(userId, lastTs)) as { n: number };
 
   if (cardsSinceLastRow.n >= 10) {
     return {
@@ -173,14 +173,14 @@ export async function consolidateBrain(userId: number): Promise<{
   error?: string;
 }> {
   const startTime = Date.now();
-  const db = getDb();
+  const db = await getDb();
 
   try {
     // 1. 拉用户全部 memory
-    const memory = fetchUserMemory(userId);
+    const memory = await fetchUserMemory(userId);
 
     // 2. 拉决策历史 (最近 20 次)
-    const decisions = db
+    const decisions = (await db
       .prepare(
         `SELECT id, question, ai_response, framework, created_at
          FROM decisions
@@ -188,10 +188,10 @@ export async function consolidateBrain(userId: number): Promise<{
          ORDER BY created_at DESC
          LIMIT 20`
       )
-      .all(userId) as ConsolidationDecision[];
+      .all(userId)) as ConsolidationDecision[];
 
     // 3. 拉 commitments
-    const commitments = db
+    const commitments = (await db
       .prepare(
         `SELECT commitment_text, commitment_kind, status, created_at
          FROM life_os_commitments
@@ -199,7 +199,7 @@ export async function consolidateBrain(userId: number): Promise<{
          ORDER BY created_at DESC
          LIMIT 20`
       )
-      .all(userId) as Array<{
+      .all(userId)) as Array<{
         commitment_text: string;
         commitment_kind: string;
         status: string;
@@ -275,9 +275,9 @@ ${commitmentsSection}
     brainContent = appendAIDisclosure(brainContent);
 
     // 6. 写入 user_brain
-    const existingRow = db
+    const existingRow = (await db
       .prepare('SELECT user_id, version FROM user_brain WHERE user_id = ?')
-      .get(userId) as { user_id: number; version: number } | undefined;
+      .get(userId)) as { user_id: number; version: number } | undefined;
 
     if (existingRow) {
       db.prepare(

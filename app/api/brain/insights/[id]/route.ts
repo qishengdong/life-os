@@ -23,7 +23,7 @@ const VALID_STATUSES: InsightStatus[] = [
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const body = await req.json();
 

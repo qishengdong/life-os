@@ -45,17 +45,17 @@ const DIMENSION_DESC_CN: Record<string, string> = {
   not_substitute_for_real: '主动声明不替代医生 / 律师 / 治疗师',
 };
 
-export function getDimensionScores(): DimensionScore[] {
+export async function getDimensionScores(): Promise<DimensionScore[]> {
   try {
-    const db = getDb();
-    const rows = db
+    const db = await getDb();
+    const rows = (await db
       .prepare(
         `SELECT dimension, AVG(score) as avg_score, COUNT(*) as n
          FROM grader_scores
          GROUP BY dimension
          ORDER BY avg_score DESC`
       )
-      .all() as Array<{ dimension: string; avg_score: number; n: number }>;
+      .all()) as Array<{ dimension: string; avg_score: number; n: number }>;
     return rows.map((r) => ({
       dimension: r.dimension,
       avgScore: r.avg_score,
@@ -77,10 +77,10 @@ export function getDimensionDesc(dim: string): string {
 // ============================================================================
 // Grader 跑过的 run 总览
 // ============================================================================
-export function getGraderOverallStats() {
+export async function getGraderOverallStats() {
   try {
-    const db = getDb();
-    const row = db
+    const db = await getDb();
+    const row = (await db
       .prepare(
         `SELECT
           COUNT(*) as run_count,
@@ -89,11 +89,11 @@ export function getGraderOverallStats() {
           MIN(avg_score) as worst_run
         FROM grader_runs`
       )
-      .get() as { run_count: number; overall_avg: number; best_run: number; worst_run: number };
+      .get()) as { run_count: number; overall_avg: number; best_run: number; worst_run: number };
 
-    const lastRun = db
+    const lastRun = (await db
       .prepare(`SELECT created_at FROM grader_runs ORDER BY created_at DESC LIMIT 1`)
-      .get() as { created_at: number } | undefined;
+      .get()) as { created_at: number } | undefined;
 
     return {
       runCount: row?.run_count || 0,
@@ -177,16 +177,16 @@ const CHECK_DEFINITIONS: Omit<CheckStat, 'hits'>[] = [
   },
 ];
 
-export function getCheckStats(): CheckStat[] {
+export async function getCheckStats(): Promise<CheckStat[]> {
   try {
-    const db = getDb();
-    const counts = db
+    const db = await getDb();
+    const counts = (await db
       .prepare(
         `SELECT check_code, COUNT(*) as n
          FROM inspector_audit
          GROUP BY check_code`
       )
-      .all() as Array<{ check_code: string; n: number }>;
+      .all()) as Array<{ check_code: string; n: number }>;
 
     const countMap = Object.fromEntries(counts.map((c) => [c.check_code, c.n]));
 
@@ -202,10 +202,10 @@ export function getCheckStats(): CheckStat[] {
 // ============================================================================
 // Brief 总览
 // ============================================================================
-export function getBriefStats() {
+export async function getBriefStats() {
   try {
-    const db = getDb();
-    const row = db
+    const db = await getDb();
+    const row = (await db
       .prepare(
         `SELECT
           COUNT(*) as n,
@@ -216,7 +216,7 @@ export function getBriefStats() {
           SUM(CASE WHEN editor_pass_used = 1 THEN 1 ELSE 0 END) as editor_pass_count
         FROM decision_briefs`
       )
-      .get() as any;
+      .get()) as any;
 
     return {
       total: row?.n || 0,
@@ -246,10 +246,10 @@ export function getBriefStats() {
  * 最近 N 份 brief 的 analyst 耗时序列 (ms).
  * 用于 transparency 页 "撰稿速度趋势" sparkline.
  */
-export function getBriefLatencyTrend(n: number = 20): number[] {
+export async function getBriefLatencyTrend(n: number = 20): Promise<number[]> {
   try {
-    const db = getDb();
-    const rows = db
+    const db = await getDb();
+    const rows = (await db
       .prepare(
         `SELECT duration_analyst_ms
          FROM decision_briefs
@@ -257,7 +257,7 @@ export function getBriefLatencyTrend(n: number = 20): number[] {
          ORDER BY authored_at DESC
          LIMIT ?`,
       )
-      .all(n) as Array<{ duration_analyst_ms: number }>;
+      .all(n)) as Array<{ duration_analyst_ms: number }>;
     return rows.map((r) => r.duration_analyst_ms).reverse(); // 旧 → 新
   } catch {
     return [];
@@ -268,10 +268,10 @@ export function getBriefLatencyTrend(n: number = 20): number[] {
  * 最近 N 份 brief 的字数序列.
  * 用于 "篇幅稳定度" sparkline.
  */
-export function getBriefCharCountTrend(n: number = 20): number[] {
+export async function getBriefCharCountTrend(n: number = 20): Promise<number[]> {
   try {
-    const db = getDb();
-    const rows = db
+    const db = await getDb();
+    const rows = (await db
       .prepare(
         `SELECT total_char_count
          FROM decision_briefs
@@ -279,7 +279,7 @@ export function getBriefCharCountTrend(n: number = 20): number[] {
          ORDER BY authored_at DESC
          LIMIT ?`,
       )
-      .all(n) as Array<{ total_char_count: number }>;
+      .all(n)) as Array<{ total_char_count: number }>;
     return rows.map((r) => r.total_char_count).reverse();
   } catch {
     return [];
@@ -290,10 +290,10 @@ export function getBriefCharCountTrend(n: number = 20): number[] {
  * 最近 N 次 grader 总分序列.
  * 用于 "评分趋势" sparkline.
  */
-export function getGraderScoreTrend(n: number = 20): number[] {
+export async function getGraderScoreTrend(n: number = 20): Promise<number[]> {
   try {
-    const db = getDb();
-    const rows = db
+    const db = await getDb();
+    const rows = (await db
       .prepare(
         `SELECT avg_score
          FROM grader_runs
@@ -301,7 +301,7 @@ export function getGraderScoreTrend(n: number = 20): number[] {
          ORDER BY created_at DESC
          LIMIT ?`,
       )
-      .all(n) as Array<{ avg_score: number }>;
+      .all(n)) as Array<{ avg_score: number }>;
     return rows.map((r) => r.avg_score).reverse();
   } catch {
     return [];

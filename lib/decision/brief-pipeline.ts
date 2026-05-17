@@ -98,7 +98,7 @@ export async function generateBrief(
   const route = input.forceFramework
     ? { framework: input.forceFramework as any, confidence: 1.0 }
     : await routeDecision(input.decision);
-  const memory = input.injectedMemory ?? fetchUserMemory(input.userId);
+  const memory = input.injectedMemory ?? await fetchUserMemory(input.userId);
   const memBlocks = renderMemoryForPrompt(memory);
   const memoryContext = [memBlocks.hardAnchorsBlock, memBlocks.contextBlock]
     .filter(Boolean)

@@ -92,8 +92,8 @@ function mapRow(row: any): LetterRecord {
 // Create — 用户写完信, 立刻入库 (pending 状态)
 // ============================================================================
 
-export function createLetter(args: { userId: number; userContent: string }): LetterRecord {
-  const db = getDb();
+export async function createLetter(args: { userId: number; userContent: string }): Promise<LetterRecord> {
+  const db = await getDb();
   const userCharCount = countCharsCN(args.userContent);
 
   // 处理重号: 每次 retry 重新生成 letter_number (用稍微偏移的 Date)
@@ -102,13 +102,13 @@ export function createLetter(args: { userId: number; userContent: string }): Let
   let letterNumber = generateLetterNumber();
   while (attempts < 5) {
     try {
-      const result = db
+      const result = await db
         .prepare(
           `INSERT INTO letters (user_id, user_content, user_char_count, letter_number, status)
            VALUES (?, ?, ?, ?, 'pending')`,
         )
         .run(args.userId, args.userContent, userCharCount, letterNumber);
-      row = db.prepare(`SELECT * FROM letters WHERE id = ?`).get(result.lastInsertRowid) as any;
+      row = (await db.prepare(`SELECT * FROM letters WHERE id = ?`).get(result.lastInsertRowid)) as any;
       break;
     } catch (e: any) {
       if (e.code === 'SQLITE_CONSTRAINT_UNIQUE' && attempts < 4) {
@@ -131,7 +131,7 @@ export function createLetter(args: { userId: number; userContent: string }): Let
 // Update — pipeline 完成回信后调用
 // ============================================================================
 
-export function updateLetterReply(args: {
+export async function updateLetterReply(args: {
   letterId: number;
   replyContent: string;
   tokensUsed?: number;
@@ -140,8 +140,8 @@ export function updateLetterReply(args: {
   canonQuotesUsed?: string[];
   brainFactsUsed?: string[];
   frameworkMatched?: string;
-}): LetterRecord {
-  const db = getDb();
+}): Promise<LetterRecord> {
+  const db = await getDb();
   const replyCharCount = countCharsCN(args.replyContent);
   const now = Math.floor(Date.now() / 1000);
 
@@ -172,7 +172,7 @@ export function updateLetterReply(args: {
     args.letterId,
   );
 
-  const row = db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId) as any;
+  const row = (await db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId)) as any;
   return mapRow(row);
 }
 
@@ -180,19 +180,19 @@ export function updateLetterReply(args: {
 // Mark failed — pipeline 失败时调用
 // ============================================================================
 
-export function markLetterFailed(args: {
+export async function markLetterFailed(args: {
   letterId: number;
   reason: string;
   durationMs?: number;
-}): LetterRecord {
-  const db = getDb();
+}): Promise<LetterRecord> {
+  const db = await getDb();
   db.prepare(
     `UPDATE letters
      SET status = 'failed', failure_reason = ?, duration_ms = ?
      WHERE id = ?`,
   ).run(args.reason, args.durationMs ?? null, args.letterId);
 
-  const row = db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId) as any;
+  const row = (await db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId)) as any;
   return mapRow(row);
 }
 
@@ -200,14 +200,14 @@ export function markLetterFailed(args: {
 // Reset to pending — 用户主动 retry 一封 failed 的信
 // ============================================================================
 
-export function resetLetterToPending(args: {
+export async function resetLetterToPending(args: {
   letterId: number;
   userId: number; // 防止跨用户 reset
-}): LetterRecord | null {
-  const db = getDb();
-  const row = db
+}): Promise<LetterRecord | null> {
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT * FROM letters WHERE id = ? AND user_id = ?`)
-    .get(args.letterId, args.userId) as any;
+    .get(args.letterId, args.userId)) as any;
   if (!row) return null;
 
   db.prepare(
@@ -216,7 +216,7 @@ export function resetLetterToPending(args: {
      WHERE id = ? AND user_id = ?`,
   ).run(args.letterId, args.userId);
 
-  const updated = db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId) as any;
+  const updated = (await db.prepare(`SELECT * FROM letters WHERE id = ?`).get(args.letterId)) as any;
   return mapRow(updated);
 }
 
@@ -224,11 +224,11 @@ export function resetLetterToPending(args: {
 // Read — 单封信 (含 user_id check)
 // ============================================================================
 
-export function getLetterById(letterId: number, userId: number): LetterRecord | null {
-  const db = getDb();
-  const row = db
+export async function getLetterById(letterId: number, userId: number): Promise<LetterRecord | null> {
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT * FROM letters WHERE id = ? AND user_id = ?`)
-    .get(letterId, userId) as any;
+    .get(letterId, userId)) as any;
   return row ? mapRow(row) : null;
 }
 
@@ -236,16 +236,16 @@ export function getLetterById(letterId: number, userId: number): LetterRecord | 
 // List — 用户所有信, 最新在前
 // ============================================================================
 
-export function listLettersByUser(userId: number, limit = 100): LetterRecord[] {
-  const db = getDb();
-  const rows = db
+export async function listLettersByUser(userId: number, limit = 100): Promise<LetterRecord[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT * FROM letters
        WHERE user_id = ?
        ORDER BY authored_at DESC
        LIMIT ?`,
     )
-    .all(userId, limit) as any[];
+    .all(userId, limit)) as any[];
   return rows.map(mapRow);
 }
 
@@ -253,14 +253,14 @@ export function listLettersByUser(userId: number, limit = 100): LetterRecord[] {
 // Counts / metrics
 // ============================================================================
 
-export function countLettersByUser(userId: number): {
+export async function countLettersByUser(userId: number): Promise<{
   total: number;
   replied: number;
   pending: number;
   failed: number;
-} {
-  const db = getDb();
-  const row = db
+}> {
+  const db = await getDb();
+  const row = (await db
     .prepare(
       `SELECT
         COUNT(*) as total,
@@ -270,7 +270,7 @@ export function countLettersByUser(userId: number): {
        FROM letters
        WHERE user_id = ?`,
     )
-    .get(userId) as any;
+    .get(userId)) as any;
   return {
     total: row?.total || 0,
     replied: row?.replied || 0,

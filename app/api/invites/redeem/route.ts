@@ -32,7 +32,7 @@ const Schema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json();
     const parsed = Schema.safeParse(body);
     if (!parsed.success) {
@@ -40,9 +40,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 已经 invited 了 — 幂等返回成功 (也回传 recovery_code, 万一用户重新看)
-    const currentStatus = getUserAccessStatus(userId);
+    const currentStatus = await getUserAccessStatus(userId);
     if (currentStatus === 'invited') {
-      const recoveryCode = ensureRecoveryCode(userId);
+      const recoveryCode = await ensureRecoveryCode(userId);
       const res = NextResponse.json({
         ok: true,
         alreadyInvited: true,
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 兑换
-    const result = redeemInvite({ code: normalized, userId });
+    const result = await redeemInvite({ code: normalized, userId });
     if (!result.ok) {
       const reasonMap: Record<string, string> = {
         not_found: '邀请码不存在',
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 兑换成功 · 生成恢复码 (一次性 · 屏幕显示 · 用户必须截图)
-    const recoveryCode = ensureRecoveryCode(userId);
+    const recoveryCode = await ensureRecoveryCode(userId);
 
     const res = NextResponse.json({
       ok: true,

@@ -62,62 +62,60 @@ function rowToLetter(r: any): UnsentLetter {
 }
 
 /** 创建新信件 · 默认 status='drafted'. */
-export function createUnsentLetter(args: {
+export async function createUnsentLetter(args: {
   userId: number;
   category: UnsentCategory;
   recipientLabel?: string | null;
   content: string;
-}): UnsentLetter {
-  const db = getDb();
+}): Promise<UnsentLetter> {
+  const db = await getDb();
   const trimmed = args.content.trim();
   if (!trimmed) throw new Error('content 不能为空');
   if (trimmed.length > 5000) throw new Error('单封信 5000 字以内');
 
-  const res = db
+  const res = await db
     .prepare(
       `INSERT INTO unsent_letters (user_id, category, recipient_label, content)
        VALUES (?, ?, ?, ?)`,
     )
     .run(args.userId, args.category, args.recipientLabel || null, trimmed);
 
-  const row = db
+  const row = await db
     .prepare(`SELECT * FROM unsent_letters WHERE id = ?`)
     .get(res.lastInsertRowid as number);
   return rowToLetter(row);
 }
 
 /** 列用户所有信件 · 按 createdAt desc · 可按 category 过滤. */
-export function listUnsentLetters(args: {
+export async function listUnsentLetters(args: {
   userId: number;
   category?: UnsentCategory;
   limit?: number;
-}): UnsentLetter[] {
-  const db = getDb();
+}): Promise<UnsentLetter[]> {
+  const db = await getDb();
   const limit = args.limit ?? 200;
   if (args.category) {
-    return db
+    return (await db
       .prepare(
         `SELECT * FROM unsent_letters
          WHERE user_id = ? AND category = ?
          ORDER BY created_at DESC LIMIT ?`,
       )
-      .all(args.userId, args.category, limit)
-      .map(rowToLetter);
+      .all(args.userId, args.category, limit)).map(rowToLetter);
   }
-  return db
+  return (await db
     .prepare(
       `SELECT * FROM unsent_letters
        WHERE user_id = ?
        ORDER BY created_at DESC LIMIT ?`,
     )
-    .all(args.userId, limit)
-    .map(rowToLetter);
+    .all(args.userId, limit)).map(rowToLetter);
 }
 
 /** 拿单封 · 校验 userId 防越权. */
-export function getUnsentLetter(args: { userId: number; id: number }): UnsentLetter | null {
-  const db = getDb();
-  const row = db
+export async function getUnsentLetter(args: { userId: number; id: number }): Promise<UnsentLetter | null> {
+  const db = await getDb();
+  const row = await db
     .prepare(`SELECT * FROM unsent_letters WHERE id = ? AND user_id = ?`)
     .get(args.id, args.userId);
   return row ? rowToLetter(row) : null;
@@ -131,9 +129,9 @@ const CALLBACK_DELAY_DAYS = 7;
 const CALLBACK_DELAY_SECONDS = CALLBACK_DELAY_DAYS * 86400;
 
 /** 用户选"想寄出" · drafted → send_intended · 设 7d callback. */
-export function markSendIntended(args: { userId: number; id: number }): UnsentLetter | null {
-  const db = getDb();
-  const letter = getUnsentLetter(args);
+export async function markSendIntended(args: { userId: number; id: number }): Promise<UnsentLetter | null> {
+  const db = await getDb();
+  const letter = await getUnsentLetter(args);
   if (!letter) return null;
   if (letter.status !== 'drafted') {
     throw new Error(`letter ${args.id} 不在 drafted 状态 (当前: ${letter.status}), 不能 mark send_intended`);
@@ -144,13 +142,13 @@ export function markSendIntended(args: { userId: number; id: number }): UnsentLe
      SET status = 'send_intended', callback_due_at = ?, updated_at = unixepoch()
      WHERE id = ? AND user_id = ?`,
   ).run(due, args.id, args.userId);
-  return getUnsentLetter(args);
+  return await getUnsentLetter(args);
 }
 
 /** 用户选"不寄, 留档" · drafted → archived · 不催. */
-export function markArchived(args: { userId: number; id: number }): UnsentLetter | null {
-  const db = getDb();
-  const letter = getUnsentLetter(args);
+export async function markArchived(args: { userId: number; id: number }): Promise<UnsentLetter | null> {
+  const db = await getDb();
+  const letter = await getUnsentLetter(args);
   if (!letter) return null;
   if (letter.status !== 'drafted') {
     throw new Error(`letter ${args.id} 不在 drafted 状态, 不能 archive`);
@@ -160,17 +158,17 @@ export function markArchived(args: { userId: number; id: number }): UnsentLetter
      SET status = 'archived', updated_at = unixepoch()
      WHERE id = ? AND user_id = ?`,
   ).run(args.id, args.userId);
-  return getUnsentLetter(args);
+  return await getUnsentLetter(args);
 }
 
 /** Callback 时用户确认: 寄了 / 没寄 · send_intended → sent / not_sent. */
-export function resolveCallback(args: {
+export async function resolveCallback(args: {
   userId: number;
   id: number;
   outcome: 'sent' | 'not_sent';
-}): UnsentLetter | null {
-  const db = getDb();
-  const letter = getUnsentLetter(args);
+}): Promise<UnsentLetter | null> {
+  const db = await getDb();
+  const letter = await getUnsentLetter(args);
   if (!letter) return null;
   if (letter.status !== 'send_intended') {
     throw new Error(`letter ${args.id} 不在 send_intended 状态, 不能 resolve callback`);
@@ -180,7 +178,7 @@ export function resolveCallback(args: {
      SET status = ?, callback_done_at = unixepoch(), updated_at = unixepoch()
      WHERE id = ? AND user_id = ?`,
   ).run(args.outcome, args.id, args.userId);
-  return getUnsentLetter(args);
+  return await getUnsentLetter(args);
 }
 
 /** Admin 用 · 列出所有 callback 已到期但用户没答的信件 (跨用户). */
@@ -192,10 +190,10 @@ export interface PendingCallback {
   daysOverdue: number;
 }
 
-export function listPendingCallbacks(): PendingCallback[] {
-  const db = getDb();
+export async function listPendingCallbacks(): Promise<PendingCallback[]> {
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
-  const rows = db
+  const rows = (await db
     .prepare(
       `SELECT
          l.*,
@@ -208,7 +206,7 @@ export function listPendingCallbacks(): PendingCallback[] {
          AND l.callback_done_at IS NULL
        ORDER BY l.callback_due_at ASC`,
     )
-    .all(now) as Array<any>;
+    .all(now)) as Array<any>;
   return rows.map((r) => ({
     letter: rowToLetter(r),
     userId: r.u_id,
@@ -219,14 +217,14 @@ export function listPendingCallbacks(): PendingCallback[] {
 }
 
 /** 各 category 计数 · 用于 dashboard. */
-export function countUnsentByCategory(userId: number): Record<UnsentCategory, number> {
-  const db = getDb();
-  const rows = db
+export async function countUnsentByCategory(userId: number): Promise<Record<UnsentCategory, number>> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT category, COUNT(*) AS cnt FROM unsent_letters
        WHERE user_id = ? GROUP BY category`,
     )
-    .all(userId) as Array<{ category: UnsentCategory; cnt: number }>;
+    .all(userId)) as Array<{ category: UnsentCategory; cnt: number }>;
   const out: Record<UnsentCategory, number> = {
     parent: 0, child: 0, partner: 0, boss: 0, self: 0, 'past-self': 0,
   };

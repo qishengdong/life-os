@@ -46,16 +46,16 @@ export const KEY_OPENING_USER_PLACEHOLDER = '(KEY · 致每一位新通信人 ·
  */
 import { getDb } from '@/lib/db';
 
-export function createOnboardingLetterIfFirstVisit(userId: number): {
+export async function createOnboardingLetterIfFirstVisit(userId: number): Promise<{
   created: boolean;
   letterId?: number;
-} {
-  const db = getDb();
+}> {
+  const db = await getDb();
 
   // 已有 letter 就跳过
-  const existing = db
+  const existing = (await db
     .prepare(`SELECT COUNT(*) as n FROM letters WHERE user_id = ?`)
-    .get(userId) as { n: number };
+    .get(userId)) as { n: number };
   if (existing.n > 0) {
     return { created: false };
   }
@@ -69,7 +69,7 @@ export function createOnboardingLetterIfFirstVisit(userId: number): {
   const letterNumber = `LE-${yyyymmdd}-${seq}`;
 
   // 跟普通 letter 不同: user_content 是占位符, reply 是 hardcoded 开场信
-  const result = db
+  const result = await db
     .prepare(
       `INSERT INTO letters (
         user_id, user_content, user_char_count,
@@ -90,5 +90,5 @@ export function createOnboardingLetterIfFirstVisit(userId: number): {
       now,
     );
 
-  return { created: true, letterId: result.lastInsertRowid as number };
+  return { created: true, letterId: Number(result.lastInsertRowid) };
 }

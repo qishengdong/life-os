@@ -201,14 +201,14 @@ export function renderContradictionsForAnalyst(
 // ============================================================================
 // 写入 inspector_audit (C16)
 // ============================================================================
-export function writeC16Audit(args: {
+export async function writeC16Audit(args: {
   userId: number;
   decisionId: number | null;
   contradictions: Contradiction[];
-}): void {
+}): Promise<void> {
   if (args.contradictions.length === 0) return;
 
-  const db = getDb();
+  const db = await getDb();
   const stmt = db.prepare(
     `INSERT INTO inspector_audit
        (user_id, decision_id, check_code, severity, action, matched_text, detail)

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!userUid) {
       return NextResponse.json({ error: '缺少用户身份' }, { status: 400 });
     }
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
 
     const body = await req.json();
     const responses = body.responses as OnboardingResponse[];

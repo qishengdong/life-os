@@ -28,10 +28,10 @@ const PostSchema = z.object({
   content: z.string().min(1).max(5000),
 });
 
-function requireInvitedUserId(req: NextRequest): { userId: number } | NextResponse {
+async function requireInvitedUserId(req: NextRequest): Promise<{ userId: number } | NextResponse> {
   try {
-    const { userId } = resolveUserId(req);
-    const status = getUserAccessStatus(userId);
+    const { userId } = await resolveUserId(req);
+    const status = await getUserAccessStatus(userId);
     if (status !== 'invited') {
       return NextResponse.json({ error: '账户未激活' }, { status: 403 });
     }
@@ -45,7 +45,7 @@ function requireInvitedUserId(req: NextRequest): { userId: number } | NextRespon
 }
 
 export async function GET(req: NextRequest) {
-  const auth = requireInvitedUserId(req);
+  const auth = await requireInvitedUserId(req);
   if (auth instanceof NextResponse) return auth;
   try {
     const url = new URL(req.url);
@@ -53,11 +53,11 @@ export async function GET(req: NextRequest) {
     if (category && !CATEGORIES.includes(category)) {
       return NextResponse.json({ error: 'invalid category' }, { status: 400 });
     }
-    const letters = listUnsentLetters({
+    const letters = await listUnsentLetters({
       userId: auth.userId,
       category: category || undefined,
     });
-    const counts = countUnsentByCategory(auth.userId);
+    const counts = await countUnsentByCategory(auth.userId);
     return NextResponse.json({ letters, counts });
   } catch (e: any) {
     console.error('[api/unsent GET]', e);
@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = requireInvitedUserId(req);
+  const auth = await requireInvitedUserId(req);
   if (auth instanceof NextResponse) return auth;
   try {
     const body = await req.json();
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-    const letter = createUnsentLetter({
+    const letter = await createUnsentLetter({
       userId: auth.userId,
       category: parsed.data.category,
       recipientLabel: parsed.data.recipientLabel || null,

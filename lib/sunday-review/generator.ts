@@ -93,18 +93,18 @@ const SUNDAY_REVIEW_PROMPT = `你是 KEY 的 Weekly Pattern Recognizer.
 
 export async function generateReview(args: ReviewInput): Promise<ReviewResult> {
   const startTime = Date.now();
-  const db = getDb();
+  const db = await getDb();
 
   try {
     // 拉这周 Pulses
-    const pulsesRow = db
+    const pulsesRow = (await db
       .prepare(
         `SELECT id, question_id, content, tags, ai_response, created_at
          FROM daily_pulses
          WHERE user_id = ? AND created_at >= ? AND created_at <= ?
          ORDER BY created_at ASC`
       )
-      .all(args.userId, args.weekStart, args.weekEnd) as any[];
+      .all(args.userId, args.weekStart, args.weekEnd)) as any[];
 
     const pulseCount = pulsesRow.length;
     if (pulseCount < 3) {
@@ -120,19 +120,19 @@ export async function generateReview(args: ReviewInput): Promise<ReviewResult> {
     }
 
     // 拉这周 decisions
-    const decisionsRow = db
+    const decisionsRow = (await db
       .prepare(
         `SELECT id, question, ai_response, framework, created_at
          FROM decisions
          WHERE user_id = ? AND created_at >= ? AND created_at <= ?
          ORDER BY created_at ASC`
       )
-      .all(args.userId, args.weekStart, args.weekEnd) as any[];
+      .all(args.userId, args.weekStart, args.weekEnd)) as any[];
 
     const decisionCount = decisionsRow.length;
 
     // memory context
-    const memory = fetchUserMemory(args.userId);
+    const memory = await fetchUserMemory(args.userId);
 
     // 拼装输入
     const weekStartDate = new Date(args.weekStart * 1000).toLocaleDateString('zh-CN');

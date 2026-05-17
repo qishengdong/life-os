@@ -30,15 +30,15 @@ export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '100', 10);
 
     // 首次到访 → 自动生成 KEY 开场信 (B · KEY 先开口)
     createOnboardingLetterIfFirstVisit(userId);
 
-    const letters = listLettersByUser(userId, Math.min(limit, 200));
-    const counts = countLettersByUser(userId);
+    const letters = await listLettersByUser(userId, Math.min(limit, 200));
+    const counts = await countLettersByUser(userId);
 
     return NextResponse.json({
       letters,
@@ -66,7 +66,7 @@ const PostSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json();
     const parsed = PostSchema.safeParse(body);
     if (!parsed.success) {
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 创建 pending letter
-    let letter = createLetter({ userId, userContent: parsed.data.content });
+    let letter = await createLetter({ userId, userContent: parsed.data.content });
 
     // 同步等 LLM 回信完成 (Vercel serverless 必须如此 — 不能 fire-and-forget,
     // 函数返回后后台 task 会被 kill).
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (result.success && result.reply) {
-        letter = updateLetterReply({
+        letter = await updateLetterReply({
           letterId: letter.id,
           replyContent: result.reply,
           tokensUsed: result.tokensUsed,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
           frameworkMatched: result.framework,
         });
       } else {
-        letter = markLetterFailed({
+        letter = await markLetterFailed({
           letterId: letter.id,
           reason: result.error || '生成失败 (未知原因)',
           durationMs: result.durationMs,
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       }
     } catch (e: any) {
       console.error('[letters POST] reply pipeline failed:', e);
-      letter = markLetterFailed({
+      letter = await markLetterFailed({
         letterId: letter.id,
         reason: e?.message || '后台异常',
       });

@@ -20,15 +20,15 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const pulseCount = getUserPulseCount(userId);
-    const todayPulseCount = getTodayPulseCount(userId);
-    const weekPulseCount = getThisWeekPulseCount(userId);
+    const { userId } = await resolveUserId(req);
+    const pulseCount = await getUserPulseCount(userId);
+    const todayPulseCount = await getTodayPulseCount(userId);
+    const weekPulseCount = await getThisWeekPulseCount(userId);
     const todayQuestion = getNextQuestion(pulseCount);
 
     const url = new URL(req.url);
     const includeHistory = url.searchParams.get('history') === '1';
-    const history = includeHistory ? getUserPulses(userId, 30) : [];
+    const history = includeHistory ? await getUserPulses(userId, 30) : [];
 
     return NextResponse.json({
       todayQuestion,
@@ -59,7 +59,7 @@ const RequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
 
     const body = await req.json();
     const parsed = RequestSchema.safeParse(body);
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 持久化 Pulse 本体 (链接到刚创建的 RMC 卡)
-    const pulseId = addPulse({
+    const pulseId = await addPulse({
       userId,
       questionId: questionId as PulseQuestionId,
       content,
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 返回 stats + 回应 + 下一个问题
-    const newPulseCount = getUserPulseCount(userId);
+    const newPulseCount = await getUserPulseCount(userId);
     const nextQuestion = getNextQuestion(newPulseCount);
 
     return NextResponse.json({
@@ -101,8 +101,8 @@ export async function POST(req: NextRequest) {
       durationMs: result.durationMs,
       stats: {
         totalPulses: newPulseCount,
-        todayPulses: getTodayPulseCount(userId),
-        weekPulses: getThisWeekPulseCount(userId),
+        todayPulses: await getTodayPulseCount(userId),
+        weekPulses: await getThisWeekPulseCount(userId),
       },
       nextQuestion,
     });

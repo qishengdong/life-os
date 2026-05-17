@@ -38,8 +38,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'invalid id' }, { status: 400 });
     }
 
-    const { userId } = resolveUserId(req);
-    if (getUserAccessStatus(userId) !== 'invited') {
+    const { userId } = await resolveUserId(req);
+    if (await getUserAccessStatus(userId) !== 'invited') {
       return NextResponse.json({ error: '账户未激活' }, { status: 403 });
     }
 
@@ -53,16 +53,16 @@ export async function PATCH(
     try {
       switch (parsed.data.action) {
         case 'send_intent':
-          letter = markSendIntended({ userId, id });
+          letter = await markSendIntended({ userId, id });
           break;
         case 'archive':
-          letter = markArchived({ userId, id });
+          letter = await markArchived({ userId, id });
           break;
         case 'callback_sent':
-          letter = resolveCallback({ userId, id, outcome: 'sent' });
+          letter = await resolveCallback({ userId, id, outcome: 'sent' });
           break;
         case 'callback_not_sent':
-          letter = resolveCallback({ userId, id, outcome: 'not_sent' });
+          letter = await resolveCallback({ userId, id, outcome: 'not_sent' });
           break;
       }
     } catch (e: any) {
@@ -92,11 +92,11 @@ export async function GET(
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: 'invalid id' }, { status: 400 });
     }
-    const { userId } = resolveUserId(req);
-    if (getUserAccessStatus(userId) !== 'invited') {
+    const { userId } = await resolveUserId(req);
+    if (await getUserAccessStatus(userId) !== 'invited') {
       return NextResponse.json({ error: '账户未激活' }, { status: 403 });
     }
-    const letter = getUnsentLetter({ userId, id });
+    const letter = await getUnsentLetter({ userId, id });
     if (!letter) {
       return NextResponse.json({ error: 'letter not found' }, { status: 404 });
     }

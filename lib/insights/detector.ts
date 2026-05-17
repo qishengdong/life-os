@@ -88,40 +88,40 @@ const PATTERN_DETECTOR_SYSTEM_PROMPT = `你是 KEY 的 Pattern Detector. 任务:
 // ============================================================================
 export async function detectPatternsForUser(input: DetectorInput): Promise<DetectorResult> {
   const t0 = Date.now();
-  const db = getDb();
+  const db = await getDb();
   const lookbackDays = (input.lookbackWeeks ?? 4) * 7;
   const since = input.weekStart - lookbackDays * 86400;
 
   // 1. 拉数据 (用户最近 N 周)
-  const pulses = db
+  const pulses = (await db
     .prepare(
       `SELECT id, question_id, content, tags, created_at
        FROM daily_pulses
        WHERE user_id = ? AND created_at >= ?
        ORDER BY created_at DESC LIMIT 80`,
     )
-    .all(input.userId, since) as any[];
+    .all(input.userId, since)) as any[];
 
-  const decisions = db
+  const decisions = (await db
     .prepare(
       `SELECT id, question, framework, created_at
        FROM decisions
        WHERE user_id = ? AND created_at >= ?
        ORDER BY created_at DESC LIMIT 30`,
     )
-    .all(input.userId, since) as any[];
+    .all(input.userId, since)) as any[];
 
-  const outcomes = db
+  const outcomes = (await db
     .prepare(
       `SELECT id, checkpoint_days, user_response, outcome_judgment, asked_at
        FROM decision_outcomes
        WHERE user_id = ? AND asked_at IS NOT NULL AND asked_at >= ?
        ORDER BY asked_at DESC LIMIT 20`,
     )
-    .all(input.userId, since) as any[];
+    .all(input.userId, since)) as any[];
 
   // 拉现有 brain (RMC) 供 LLM 看背景
-  const memory = fetchUserMemory(input.userId);
+  const memory = await fetchUserMemory(input.userId);
 
   // 2. 建立合法 ID 白名单 (C30 校验用)
   const validPulseIds = new Set(pulses.map((p) => p.id));
@@ -137,7 +137,7 @@ export async function detectPatternsForUser(input: DetectorInput): Promise<Detec
 
   // 3. 数据太少跳过 (避免 spam)
   if (pulses.length < 6 && decisions.length < 2) {
-    const runId = startInsightRun({
+    const runId = await startInsightRun({
       userId: input.userId,
       weekStart: input.weekStart,
       pulsesSeen: pulses.length,
@@ -159,7 +159,7 @@ export async function detectPatternsForUser(input: DetectorInput): Promise<Detec
     };
   }
 
-  const runId = startInsightRun({
+  const runId = await startInsightRun({
     userId: input.userId,
     weekStart: input.weekStart,
     pulsesSeen: pulses.length,
@@ -226,7 +226,7 @@ export async function detectPatternsForUser(input: DetectorInput): Promise<Detec
       continue; // C30 守门
     }
 
-    const result = saveInsight({
+    const result = await saveInsight({
       userId: input.userId,
       patternType: c.pattern_type,
       title: (c.title || '').slice(0, 80),

@@ -78,7 +78,7 @@ export interface RunSummary {
 // ============================================================================
 export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
   const t0 = Date.now();
-  const db = getDb();
+  const db = await getDb();
 
   // 1. 选 scenarios
   let scenarios = SCENARIOS_V3.slice();
@@ -99,7 +99,7 @@ export async function runTestBattery(opts: RunOptions): Promise<RunSummary> {
   }
 
   // 2. 起 run 记录
-  const runRes = db
+  const runRes = await db
     .prepare(
       `INSERT INTO test_runs (label, mode, total_cases) VALUES (?, ?, ?)`,
     )

@@ -19,16 +19,15 @@ export const dynamic = 'force-dynamic';
 // ============================================================================
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const url = new URL(req.url);
 
-    const current = getCurrentWeekReview(userId);
-    const history = getUserReviews(userId, 12);
-    const hasUnread = hasUnreadReview(userId);
+    const current = await getCurrentWeekReview(userId);
+    const history = await getUserReviews(userId, 12);
+    const hasUnread = await hasUnreadReview(userId);
 
-    // 自动 markRead 当前周 (如果指定 mark=1)
     if (url.searchParams.get('mark') === '1' && current && !current.readAt) {
-      markReviewRead(current.id);
+      await markReviewRead(current.id);
     }
 
     return NextResponse.json({
@@ -51,7 +50,7 @@ export async function GET(req: NextRequest) {
 // ============================================================================
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { weekStart, weekEnd } = getWeekRange();
 
     // 如果已经有这周 review, 默认不重复跑 (除非 force=1)

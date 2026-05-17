@@ -40,7 +40,7 @@ export function getWeekRange(now: Date = new Date()): { weekStart: number; weekE
   };
 }
 
-export function saveReview(args: {
+export async function saveReview(args: {
   userId: number;
   weekStart: number;
   weekEnd: number;
@@ -48,9 +48,9 @@ export function saveReview(args: {
   pulseCount: number;
   decisionCount: number;
   tokensUsed?: number;
-}): number {
-  const db = getDb();
-  const result = db
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .prepare(
       `INSERT INTO sunday_reviews (user_id, week_start, week_end, content, pulse_count, decision_count, char_count, tokens_used)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -75,44 +75,44 @@ export function saveReview(args: {
   return result.lastInsertRowid as number;
 }
 
-export function getUserReviews(userId: number, limit = 12): SundayReviewRecord[] {
-  const db = getDb();
-  const rows = db
+export async function getUserReviews(userId: number, limit = 12): Promise<SundayReviewRecord[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(
       `SELECT * FROM sunday_reviews
        WHERE user_id = ?
        ORDER BY week_start DESC
        LIMIT ?`
     )
-    .all(userId, limit) as any[];
+    .all(userId, limit)) as any[];
   return rows.map(rowToReview);
 }
 
-export function getCurrentWeekReview(userId: number): SundayReviewRecord | null {
+export async function getCurrentWeekReview(userId: number): Promise<SundayReviewRecord | null> {
   const { weekStart } = getWeekRange();
-  const db = getDb();
-  const row = db
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT * FROM sunday_reviews WHERE user_id = ? AND week_start = ?`)
-    .get(userId, weekStart) as any;
+    .get(userId, weekStart)) as any;
   return row ? rowToReview(row) : null;
 }
 
-export function getLatestReview(userId: number): SundayReviewRecord | null {
-  const db = getDb();
-  const row = db
+export async function getLatestReview(userId: number): Promise<SundayReviewRecord | null> {
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT * FROM sunday_reviews WHERE user_id = ? ORDER BY week_start DESC LIMIT 1`)
-    .get(userId) as any;
+    .get(userId)) as any;
   return row ? rowToReview(row) : null;
 }
 
-export function hasUnreadReview(userId: number): boolean {
-  const latest = getLatestReview(userId);
+export async function hasUnreadReview(userId: number): Promise<boolean> {
+  const latest = await getLatestReview(userId);
   return latest ? latest.readAt === null : false;
 }
 
-export function markReviewRead(reviewId: number): void {
-  const db = getDb();
-  db.prepare(`UPDATE sunday_reviews SET read_at = unixepoch() WHERE id = ? AND read_at IS NULL`).run(reviewId);
+export async function markReviewRead(reviewId: number): Promise<void> {
+  const db = await getDb();
+  await db.prepare(`UPDATE sunday_reviews SET read_at = unixepoch() WHERE id = ? AND read_at IS NULL`).run(reviewId);
 }
 
 function rowToReview(row: any): SundayReviewRecord {

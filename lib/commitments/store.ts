@@ -10,16 +10,16 @@ import type {
   ExtractedCommitment,
 } from './types';
 
-export function addCommitment(args: {
+export async function addCommitment(args: {
   userId: number;
   commitmentText: string;
   commitmentKind: CommitmentKind;
   duePhrase?: string | null;
   dueAt?: number | null;
   sourceDecisionId?: number | null;
-}): number {
-  const db = getDb();
-  const result = db
+}): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .prepare(
       `INSERT INTO life_os_commitments
          (user_id, commitment_text, commitment_kind, due_phrase, due_at, source_decision_id)
@@ -36,26 +36,26 @@ export function addCommitment(args: {
   return result.lastInsertRowid as number;
 }
 
-export function getUserCommitments(
+export async function getUserCommitments(
   userId: number,
   status?: CommitmentStatus
-): Commitment[] {
-  const db = getDb();
+): Promise<Commitment[]> {
+  const db = await getDb();
   const rows = status
-    ? (db
+    ? ((await db
         .prepare(
           `SELECT * FROM life_os_commitments
            WHERE user_id = ? AND status = ?
            ORDER BY created_at DESC`
         )
-        .all(userId, status) as any[])
-    : (db
+        .all(userId, status)) as any[])
+    : ((await db
         .prepare(
           `SELECT * FROM life_os_commitments
            WHERE user_id = ?
            ORDER BY created_at DESC`
         )
-        .all(userId) as any[]);
+        .all(userId)) as any[]);
   return rows.map(rowToCommitment);
 }
 
@@ -64,12 +64,12 @@ export function getUserCommitments(
  * - status='pending'
  * - due_at <= now (到期了) 或 due_at IS NULL (无限期, 但 promised 已超过 7 天)
  */
-export function getDueCommitments(userId: number): Commitment[] {
-  const db = getDb();
+export async function getDueCommitments(userId: number): Promise<Commitment[]> {
+  const db = await getDb();
   const now = Math.floor(Date.now() / 1000);
   const sevenDaysAgo = now - 7 * 86400;
 
-  const rows = db
+  const rows = (await db
     .prepare(
       `SELECT * FROM life_os_commitments
        WHERE user_id = ?
@@ -80,27 +80,27 @@ export function getDueCommitments(userId: number): Commitment[] {
          )
        ORDER BY due_at ASC, promised_at ASC`
     )
-    .all(userId, now, sevenDaysAgo) as any[];
+    .all(userId, now, sevenDaysAgo)) as any[];
 
   return rows.map(rowToCommitment);
 }
 
-export function markFulfilled(commitmentId: number): void {
-  const db = getDb();
+export async function markFulfilled(commitmentId: number): Promise<void> {
+  const db = await getDb();
   db.prepare(
     `UPDATE life_os_commitments SET status = 'fulfilled', fulfilled_at = unixepoch() WHERE id = ?`
   ).run(commitmentId);
 }
 
-export function markCancelled(commitmentId: number): void {
-  const db = getDb();
+export async function markCancelled(commitmentId: number): Promise<void> {
+  const db = await getDb();
   db.prepare(`UPDATE life_os_commitments SET status = 'cancelled' WHERE id = ?`).run(
     commitmentId
   );
 }
 
-export function setApologyPushed(commitmentId: number): void {
-  const db = getDb();
+export async function setApologyPushed(commitmentId: number): Promise<void> {
+  const db = await getDb();
   db.prepare(
     `UPDATE life_os_commitments SET apology_pushed_at = unixepoch() WHERE id = ?`
   ).run(commitmentId);

@@ -20,10 +20,10 @@ export const dynamic = 'force-dynamic';
 // ============================================================================
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const due = getDueOutcomes(userId);
-    const resolved = getResolvedOutcomes(userId, 30);
-    const stats = getUserOutcomeStats(userId);
+    const { userId } = await resolveUserId(req);
+    const due = await getDueOutcomes(userId);
+    const resolved = await getResolvedOutcomes(userId, 30);
+    const stats = await getUserOutcomeStats(userId);
 
     return NextResponse.json({
       due,
@@ -48,7 +48,7 @@ const RequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json();
     const parsed = RequestSchema.safeParse(body);
     if (!parsed.success) {
@@ -59,13 +59,13 @@ export async function POST(req: NextRequest) {
     }
 
     // 安全: 确认 outcome 属于当前用户
-    const db = getDb();
-    const outcomeRow = db
+    const db = await getDb();
+    const outcomeRow = (await db
       .prepare(
         `SELECT id, decision_id, user_id, checkpoint_days FROM decision_outcomes
          WHERE id = ? AND user_id = ?`
       )
-      .get(parsed.data.outcomeId, userId) as any;
+      .get(parsed.data.outcomeId, userId)) as any;
 
     if (!outcomeRow) {
       return NextResponse.json({ error: 'Outcome 不存在或不属于你' }, { status: 403 });
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 保存
-    saveOutcomeResponse({
+    await saveOutcomeResponse({
       outcomeId: outcomeRow.id,
       userResponse: parsed.data.userResponse,
       outcomeJudgment: result.outcomeJudgment,
@@ -90,12 +90,12 @@ export async function POST(req: NextRequest) {
 
     // JOB-017 · 回写 brain: 把 outcome 答案做成一张 episodic RMC 卡, AI 之后跨决策能看到
     try {
-      const decisionRow = db
+      const decisionRow = (await db
         .prepare(`SELECT question FROM decisions WHERE id = ?`)
-        .get(outcomeRow.decision_id) as { question: string } | undefined;
+        .get(outcomeRow.decision_id)) as { question: string } | undefined;
       const decisionShort = (decisionRow?.question || '').slice(0, 40);
       const judgmentLabel = JUDGMENT_DISPLAY[result.outcomeJudgment] || result.outcomeJudgment;
-      addMemoryCard({
+      await addMemoryCard({
         userId,
         cardType: 'episodic',
         title: `${outcomeRow.checkpoint_days}d outcome · ${decisionShort}${decisionShort.length === 40 ? '...' : ''}`,
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         const nextCheckpoint = outcomeRow.checkpoint_days === 30 ? 90 : 365;
         const nextDueAt =
           Math.floor(Date.now() / 1000) + (nextCheckpoint - outcomeRow.checkpoint_days) * 86400;
-        addOpenLoop({
+        await addOpenLoop({
           userId,
           title: `${nextCheckpoint}d 复盘: 当前 ${outcomeRow.checkpoint_days}d 的判断是 "${result.outcomeJudgment}"`,
           description: result.aiReflection.slice(0, 300),
@@ -152,20 +152,20 @@ export async function POST(req: NextRequest) {
 // ============================================================================
 export async function PATCH(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json();
     const outcomeId = Number(body.outcomeId);
     if (!outcomeId) {
       return NextResponse.json({ error: '缺少 outcomeId' }, { status: 400 });
     }
 
-    const db = getDb();
-    const row = db.prepare(`SELECT id FROM decision_outcomes WHERE id = ? AND user_id = ?`).get(outcomeId, userId);
+    const db = await getDb();
+    const row = await db.prepare(`SELECT id FROM decision_outcomes WHERE id = ? AND user_id = ?`).get(outcomeId, userId);
     if (!row) {
       return NextResponse.json({ error: 'Outcome 不存在或不属于你' }, { status: 403 });
     }
 
-    markOutcomeAsked(outcomeId);
+    await markOutcomeAsked(outcomeId);
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     if (e instanceof InvalidUserUidError) {

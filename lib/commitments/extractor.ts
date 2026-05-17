@@ -174,7 +174,7 @@ export async function extractCommitmentsFromDecision(args: {
   let count = 0;
   for (const c of extracted) {
     try {
-      addCommitment({
+      await addCommitment({
         userId: args.userId,
         commitmentText: c.text,
         commitmentKind: c.kind,

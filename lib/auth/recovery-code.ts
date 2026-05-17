@@ -32,18 +32,18 @@ export function generateRecoveryCode(): string {
  * 已有 code 不覆盖 (idempotent).
  * 返回当前生效的 code (新生成 or 已存的).
  */
-export function ensureRecoveryCode(userId: number): string {
-  const db = getDb();
-  const existing = db
+export async function ensureRecoveryCode(userId: number): Promise<string> {
+  const db = await getDb();
+  const existing = (await db
     .prepare(`SELECT recovery_code FROM users WHERE id = ?`)
-    .get(userId) as { recovery_code: string | null } | undefined;
+    .get(userId)) as { recovery_code: string | null } | undefined;
   if (existing?.recovery_code) return existing.recovery_code;
 
   // 重试一次防极小概率碰撞 (UNIQUE index 兜底)
   for (let attempt = 0; attempt < 3; attempt++) {
     const code = generateRecoveryCode();
     try {
-      db.prepare(`UPDATE users SET recovery_code = ? WHERE id = ?`).run(code, userId);
+      await db.prepare(`UPDATE users SET recovery_code = ? WHERE id = ?`).run(code, userId);
       return code;
     } catch (e: any) {
       if (!String(e?.message).includes('UNIQUE')) throw e;
@@ -53,27 +53,27 @@ export function ensureRecoveryCode(userId: number): string {
 }
 
 /** 标记用户已 confirm "我已截图" (确保用户真看到 + 保存了). */
-export function acknowledgeRecoveryCode(userId: number): void {
-  const db = getDb();
-  db.prepare(`UPDATE users SET recovery_code_acknowledged_at = unixepoch() WHERE id = ?`).run(userId);
+export async function acknowledgeRecoveryCode(userId: number): Promise<void> {
+  const db = await getDb();
+  await db.prepare(`UPDATE users SET recovery_code_acknowledged_at = unixepoch() WHERE id = ?`).run(userId);
 }
 
 /**
  * 用恢复码 swap user_uid · /recover 流程核心.
  * 返回 { userId, oldUid, newUid } or null (code 不存在).
  */
-export function swapUserUidByRecoveryCode(args: {
+export async function swapUserUidByRecoveryCode(args: {
   recoveryCode: string;
   newUserUid: string;
-}): { userId: number; oldUid: string | null; newUid: string } | null {
-  const db = getDb();
+}): Promise<{ userId: number; oldUid: string | null; newUid: string } | null> {
+  const db = await getDb();
   const code = normalizeRecoveryCode(args.recoveryCode);
-  const row = db
+  const row = (await db
     .prepare(`SELECT id, user_uid FROM users WHERE recovery_code = ?`)
-    .get(code) as { id: number; user_uid: string | null } | undefined;
+    .get(code)) as { id: number; user_uid: string | null } | undefined;
   if (!row) return null;
 
-  db.prepare(`UPDATE users SET user_uid = ?, last_active_at = unixepoch() WHERE id = ?`).run(
+  await db.prepare(`UPDATE users SET user_uid = ?, last_active_at = unixepoch() WHERE id = ?`).run(
     args.newUserUid,
     row.id,
   );
@@ -86,10 +86,10 @@ export function normalizeRecoveryCode(raw: string): string {
 }
 
 /** 检查 user 是否已 acknowledged recovery code (没 ack 不让进 product routes). */
-export function hasAcknowledgedRecoveryCode(userId: number): boolean {
-  const db = getDb();
-  const row = db
+export async function hasAcknowledgedRecoveryCode(userId: number): Promise<boolean> {
+  const db = await getDb();
+  const row = (await db
     .prepare(`SELECT recovery_code_acknowledged_at FROM users WHERE id = ?`)
-    .get(userId) as { recovery_code_acknowledged_at: number | null } | undefined;
+    .get(userId)) as { recovery_code_acknowledged_at: number | null } | undefined;
   return !!row?.recovery_code_acknowledged_at;
 }

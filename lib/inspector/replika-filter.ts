@@ -122,18 +122,18 @@ export function detectAvoidRealWorld(userText: string): ReplikaDetection {
 // 跨 turn 检测 (需要查 DB)
 // ============================================================================
 
-export function detectNoHumanMentionedLong(userId: number): ReplikaDetection {
-  const db = getDb();
+export async function detectNoHumanMentionedLong(userId: number): Promise<ReplikaDetection> {
+  const db = await getDb();
   const sinceTs = Math.floor(Date.now() / 1000) - 30 * 86400;
 
   // 取过去 30 天用户的 decision 内容
-  const decisions = db
+  const decisions = (await db
     .prepare(
       `SELECT question FROM decisions
        WHERE user_id = ? AND created_at >= ?
        ORDER BY created_at DESC`
     )
-    .all(userId, sinceTs) as Array<{ question: string }>;
+    .all(userId, sinceTs)) as Array<{ question: string }>;
 
   if (decisions.length < 3) {
     // 数据不够, 不下结论
@@ -166,15 +166,15 @@ export function detectNoHumanMentionedLong(userId: number): ReplikaDetection {
 // 主入口
 // ============================================================================
 
-export function runReplikaChecks(args: {
+export async function runReplikaChecks(args: {
   userId: number;
   userText: string;
-}): ReplikaDetection[] {
+}): Promise<ReplikaDetection[]> {
   const results: ReplikaDetection[] = [];
   results.push(detectParasocialOverreach(args.userText));
   results.push(detectOnlyYouUnderstand(args.userText));
   results.push(detectAvoidRealWorld(args.userText));
-  results.push(detectNoHumanMentionedLong(args.userId));
+  results.push(await detectNoHumanMentionedLong(args.userId));
   return results;
 }
 

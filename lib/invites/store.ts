@@ -47,19 +47,19 @@ function rowToInvite(r: any): Invite {
 // ============================================================================
 // 创建
 // ============================================================================
-export function createInvite(args: {
+export async function createInvite(args: {
   recipientName?: string;
   recipientEmail?: string;
   invitedBy?: string;
   note?: string;
-}): Invite {
-  const db = getDb();
+}): Promise<Invite> {
+  const db = await getDb();
 
   // 防 code 冲突: 最多 retry 5 次 (10^12 概率几乎不可能, 但稳健)
   for (let i = 0; i < 5; i++) {
     const code = generateInviteCode();
     try {
-      const result = db
+      const result = await db
         .prepare(
           `INSERT INTO invites (code, recipient_name, recipient_email, invited_by, note)
            VALUES (?, ?, ?, ?, ?)`
@@ -72,7 +72,7 @@ export function createInvite(args: {
           args.note ?? null
         );
       const id = result.lastInsertRowid as number;
-      const row = db.prepare(`SELECT * FROM invites WHERE id = ?`).get(id) as any;
+      const row = (await db.prepare(`SELECT * FROM invites WHERE id = ?`).get(id)) as any;
       return rowToInvite(row);
     } catch (e: any) {
       if (!String(e.message).includes('UNIQUE')) throw e;
@@ -85,11 +85,11 @@ export function createInvite(args: {
 // ============================================================================
 // 列表 (admin)
 // ============================================================================
-export function listInvites(limit = 200): Invite[] {
-  const db = getDb();
-  const rows = db
+export async function listInvites(limit = 200): Promise<Invite[]> {
+  const db = await getDb();
+  const rows = (await db
     .prepare(`SELECT * FROM invites ORDER BY created_at DESC LIMIT ?`)
-    .all(limit) as any[];
+    .all(limit)) as any[];
   return rows.map(rowToInvite);
 }
 
@@ -100,9 +100,9 @@ export interface InviteSummary {
   revoked: number;
 }
 
-export function getInviteSummary(): InviteSummary {
-  const db = getDb();
-  const row = db
+export async function getInviteSummary(): Promise<InviteSummary> {
+  const db = await getDb();
+  const row = (await db
     .prepare(
       `SELECT
          COUNT(*) as total,
@@ -111,7 +111,7 @@ export function getInviteSummary(): InviteSummary {
          SUM(CASE WHEN revoked_at IS NOT NULL THEN 1 ELSE 0 END) as revoked
        FROM invites`
     )
-    .get() as any;
+    .get()) as any;
 
   return {
     total: row?.total || 0,
@@ -124,9 +124,9 @@ export function getInviteSummary(): InviteSummary {
 // ============================================================================
 // 查询单个 (按 code)
 // ============================================================================
-export function findInviteByCode(code: string): Invite | null {
-  const db = getDb();
-  const row = db.prepare(`SELECT * FROM invites WHERE code = ?`).get(code) as any;
+export async function findInviteByCode(code: string): Promise<Invite | null> {
+  const db = await getDb();
+  const row = (await db.prepare(`SELECT * FROM invites WHERE code = ?`).get(code)) as any;
   return row ? rowToInvite(row) : null;
 }
 
@@ -137,33 +137,31 @@ export type RedeemResult =
   | { ok: true; invite: Invite }
   | { ok: false; reason: 'not_found' | 'already_redeemed' | 'revoked' };
 
-export function redeemInvite(args: { code: string; userId: number }): RedeemResult {
-  const db = getDb();
-  const tx = db.transaction(() => {
-    const row = db.prepare(`SELECT * FROM invites WHERE code = ?`).get(args.code) as any;
+export async function redeemInvite(args: { code: string; userId: number }): Promise<RedeemResult> {
+  const db = await getDb();
+  return db.transaction(async (txdb) => {
+    const row = (await txdb.prepare(`SELECT * FROM invites WHERE code = ?`).get(args.code)) as any;
     if (!row) return { ok: false, reason: 'not_found' as const };
     if (row.revoked_at) return { ok: false, reason: 'revoked' as const };
     if (row.redeemed_at) return { ok: false, reason: 'already_redeemed' as const };
 
-    // 标记 invite + 标记 user
-    db.prepare(
-      `UPDATE invites SET redeemed_by_user_id = ?, redeemed_at = unixepoch() WHERE id = ?`
+    await txdb.prepare(
+      `UPDATE invites SET redeemed_by_user_id = ?, redeemed_at = unixepoch() WHERE id = ?`,
     ).run(args.userId, row.id);
 
-    db.prepare(`UPDATE users SET access_status = 'invited' WHERE id = ?`).run(args.userId);
+    await txdb.prepare(`UPDATE users SET access_status = 'invited' WHERE id = ?`).run(args.userId);
 
-    const updated = db.prepare(`SELECT * FROM invites WHERE id = ?`).get(row.id) as any;
+    const updated = (await txdb.prepare(`SELECT * FROM invites WHERE id = ?`).get(row.id)) as any;
     return { ok: true, invite: rowToInvite(updated) };
-  });
-  return tx() as RedeemResult;
+  }) as Promise<RedeemResult>;
 }
 
 // ============================================================================
 // 撤销 (admin)
 // ============================================================================
-export function revokeInvite(id: number): boolean {
-  const db = getDb();
-  const r = db
+export async function revokeInvite(id: number): Promise<boolean> {
+  const db = await getDb();
+  const r = await db
     .prepare(`UPDATE invites SET revoked_at = unixepoch() WHERE id = ? AND revoked_at IS NULL`)
     .run(id);
   return r.changes > 0;
@@ -174,8 +172,8 @@ export function revokeInvite(id: number): boolean {
 // ============================================================================
 export type AccessStatus = 'guest' | 'invited' | 'suspended';
 
-export function getUserAccessStatus(userId: number): AccessStatus {
-  const db = getDb();
-  const row = db.prepare(`SELECT access_status FROM users WHERE id = ?`).get(userId) as any;
+export async function getUserAccessStatus(userId: number): Promise<AccessStatus> {
+  const db = await getDb();
+  const row = (await db.prepare(`SELECT access_status FROM users WHERE id = ?`).get(userId)) as any;
   return (row?.access_status as AccessStatus) || 'guest';
 }

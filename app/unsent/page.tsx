@@ -320,7 +320,7 @@ export default function UnsentPage() {
   );
 }
 
-function LetterCard({
+async function LetterCard({
   letter: l,
   userUid,
   onChanged,

@@ -15,10 +15,10 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const body = await req.json();
-    const r = updateMemoryCard({
+    const r = await updateMemoryCard({
       userId,
       id: parseInt(id, 10),
       title: body.title,
@@ -39,9 +39,9 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
 export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
-    const ok = deleteMemoryCard({ userId, id: parseInt(id, 10) });
+    const ok = await deleteMemoryCard({ userId, id: parseInt(id, 10) });
     if (!ok) return NextResponse.json({ error: 'not found' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (e: any) {
@@ -55,9 +55,9 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
 /** POST = 确认 (verify) 这条卡, 不动内容. */
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
-    const ok = reverifyCard({ userId, id: parseInt(id, 10) });
+    const ok = await reverifyCard({ userId, id: parseInt(id, 10) });
     if (!ok) return NextResponse.json({ error: 'not found' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (e: any) {

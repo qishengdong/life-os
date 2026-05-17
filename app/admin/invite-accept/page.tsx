@@ -21,7 +21,7 @@ export default function InviteAcceptPage() {
   );
 }
 
-function Inner() {
+async function Inner() {
   const router = useRouter();
   const sp = useSearchParams();
   const token = sp.get('token');

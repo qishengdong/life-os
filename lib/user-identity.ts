@@ -29,9 +29,9 @@ export function getUserUidFromRequest(req: NextRequest): string {
   return uid.toLowerCase();
 }
 
-export function resolveUserId(req: NextRequest): { userId: number; userUid: string } {
+export async function resolveUserId(req: NextRequest): Promise<{ userId: number; userUid: string }> {
   const userUid = getUserUidFromRequest(req);
-  const userId = findOrCreateUserByUid(userUid);
+  const userId = await findOrCreateUserByUid(userUid);
   return { userId, userUid };
 }
 

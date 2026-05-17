@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    const pending = listPendingCallbacks();
+    const pending = await listPendingCallbacks();
     const items = pending.map((p) => ({
       letterId: p.letter.id,
       userId: p.userId,

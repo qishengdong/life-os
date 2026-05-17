@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   let userId: number;
   let userUid: string;
   try {
-    const resolved = resolveUserId(req);
+    const resolved = await resolveUserId(req);
     userId = resolved.userId;
     userUid = resolved.userUid;
   } catch (e) {
@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
     }
 
     const input = parsed.data;
-    updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
-    const memory = fetchUserMemory(userId);
+    await updateUserProfile(userId, { birthDate: input.birthDate, gender: input.gender });
+    const memory = await fetchUserMemory(userId);
 
     // ===== Safety gate (输入端 short-circuit) =====
     // 决策入口对 crisis / blocklist short-circuit. medical/legal/finance 不 short-circuit
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ===== Replika risk check (输入端) =====
-    const replikaDetections = runReplikaChecks({
+    const replikaDetections = await runReplikaChecks({
       userId,
       userText: input.decision,
     });
@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
             if (chunk.type === 'done') {
               // 合规: 给保存的内容追加 AI 生成标识 footer
               const contentWithDisclosure = appendAIDisclosure(fullContent);
-              const decisionId = saveDecision({
+              const decisionId = await saveDecision({
                 userId,
                 question: input.decision,
                 aiResponse: contentWithDisclosure,
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
 
               // 自动 schedule 3 个 outcome checkpoint (30/90/365 day)
               try {
-                const outcomeIds = scheduleOutcomes(decisionId, userId);
+                const outcomeIds = await scheduleOutcomes(decisionId, userId);
                 if (outcomeIds.length > 0) {
                   console.log(`[outcomes] decision ${decisionId}: scheduled ${outcomeIds.length} checkpoints (30/90/365 day)`);
                 }
@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
 
               // Inspector
               try {
-                const inspectorReport = runInspector({
+                const inspectorReport = await runInspector({
                   userId,
                   decisionId,
                   userQuestion: input.decision,

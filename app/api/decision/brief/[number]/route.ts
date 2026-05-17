@@ -18,7 +18,7 @@ export async function GET(
 ) {
   const { number: briefNumber } = await params;
 
-  const row = getBriefByNumber(briefNumber);
+  const row = await getBriefByNumber(briefNumber);
   if (!row) {
     return NextResponse.json({ error: '简报不存在' }, { status: 404 });
   }
@@ -39,7 +39,7 @@ export async function GET(
 
   // 私人 brief — 验身份
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     if (row.user_id !== userId) {
       return NextResponse.json({ error: '无权访问' }, { status: 403 });
     }

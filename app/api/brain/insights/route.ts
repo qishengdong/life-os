@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const includeArchived =
       new URL(req.url).searchParams.get('include') === 'archived';
     const insights = listInsights(userId, { includeArchived });

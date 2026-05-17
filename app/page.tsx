@@ -37,7 +37,7 @@ export default async function HomePage() {
   const FIVE_DOMAINS = fiveDomains.items;
 
   // 拉一份 sample brief 作为首页 pull-quote (优先用 parent-care)
-  const sampleRows = getSampleBriefs();
+  const sampleRows = await getSampleBriefs();
   const teaserRow =
     sampleRows.find((r: any) => r.framework === 'parent-care') || sampleRows[0];
   const teaserBrief: DecisionBrief | null = teaserRow

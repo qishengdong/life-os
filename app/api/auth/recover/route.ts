@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '请输入恢复码' }, { status: 400 });
     }
 
-    const result = swapUserUidByRecoveryCode({
+    const result = await swapUserUidByRecoveryCode({
       recoveryCode: parsed.data.recoveryCode,
       newUserUid,
     });

@@ -113,7 +113,7 @@ export async function extractFactsFromDecision(args: {
             errors.push(`core_state missing kind: ${fact.title}`);
             continue;
           }
-          addCoreState({
+          await addCoreState({
             userId: args.userId,
             kind: fact.kind,
             factText: fact.content,
@@ -122,7 +122,7 @@ export async function extractFactsFromDecision(args: {
           });
           extracted++;
         } else {
-          addMemoryCard({
+          await addMemoryCard({
             userId: args.userId,
             cardType: fact.type as CardType,
             title: fact.title,

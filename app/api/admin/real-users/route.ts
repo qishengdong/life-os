@@ -24,10 +24,10 @@ export async function GET(req: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    const db = getDb();
+    const db = await getDb();
 
     // 拉 users + 邀请关联 + 各类计数 · 一条 SQL
-    const rows = db
+    const rows = (await db
       .prepare(
         `SELECT
            u.id,
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
          WHERE u.access_status IN ('invited','suspended')
          ORDER BY u.created_at DESC`,
       )
-      .all() as Array<any>;
+      .all()) as Array<any>;
 
     const users = rows.map((r) => ({
       id: r.id,
@@ -109,8 +109,8 @@ export async function PATCH(req: NextRequest) {
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json({ error: 'invalid id' }, { status: 400 });
     }
-    const db = getDb();
-    const res = db.prepare(`UPDATE users SET wechat_id = ? WHERE id = ?`).run(wechatId, id);
+    const db = await getDb();
+    const res = await db.prepare(`UPDATE users SET wechat_id = ? WHERE id = ?`).run(wechatId, id);
     if (res.changes === 0) {
       return NextResponse.json({ error: 'user not found' }, { status: 404 });
     }

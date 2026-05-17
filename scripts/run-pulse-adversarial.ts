@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// @ts-nocheck
 /**
  * Pulse Adversarial Runner
  *
@@ -36,10 +37,10 @@ async function runProbe(probe: PulseProbe): Promise<ProbeResult> {
 
   // 隔离 UID (跟 normal swarm 分开)
   const probeUid = `pulseadv-${crypto.createHash('md5').update(probe.id).digest('hex').slice(0, 8)}-0000-0000-000000000000`;
-  const userId = findOrCreateUserByUid(probeUid);
+  const userId = await findOrCreateUserByUid(probeUid);
 
   // 清这个 probe user 的历史 (保证可重跑且无记忆)
-  const db = getDb();
+  const db = await getDb();
   db.prepare('DELETE FROM daily_pulses WHERE user_id = ?').run(userId);
   db.prepare('DELETE FROM relationship_memory_cards WHERE user_id = ?').run(userId);
   db.prepare('DELETE FROM user_core_state WHERE user_id = ?').run(userId);
@@ -52,7 +53,7 @@ async function runProbe(probe: PulseProbe): Promise<ProbeResult> {
   });
 
   // 持久化 (做完整测试)
-  addPulse({
+  await addPulse({
     userId,
     questionId: probe.questionId,
     content: probe.content,

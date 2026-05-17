@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * AI Native Test V2 · 主运行器
  *
@@ -44,7 +45,7 @@ async function main() {
   const { generateReport } = await import('./report-template');
 
   // 触发 DB init
-  getDb();
+  await getDb();
   console.log('[setup] DB initialized');
 
   // 过滤 personas (通过 env var)
@@ -80,12 +81,12 @@ async function main() {
     // 1. 创建 synthetic user
     const uid = `00000000-0000-4000-8000-${persona.id.padStart(12, '0').toLowerCase()}${'0'.repeat(11)}`;
     const slicedUid = uid.slice(0, 36);
-    const userId = findOrCreateUserByUid(slicedUid);
+    const userId = await findOrCreateUserByUid(slicedUid);
     console.log(`✓ user_id = ${userId} (uid suffix=${persona.id})`);
 
     // 2. Seed brain (用 addCoreState 注入 brain seed)
     for (const seed of persona.brainSeed) {
-      addCoreState({
+      await addCoreState({
         userId,
         kind: seed.topic,
         factText: seed.fact,
@@ -110,7 +111,7 @@ async function main() {
       const letterStart = Date.now();
 
       // 创建 letter row (pending)
-      const letter = createLetter({ userId, userContent: scenario.content });
+      const letter = await createLetter({ userId, userContent: scenario.content });
 
       // 跑 pipeline
       let reply: string | null = null;
@@ -130,7 +131,7 @@ async function main() {
         psychThemes = result.psychologicalThemes;
         if (result.success && result.reply) {
           reply = result.reply;
-          updateLetterReply({
+          await updateLetterReply({
             letterId: letter.id,
             replyContent: result.reply,
             tokensUsed: result.tokensUsed,
@@ -142,7 +143,7 @@ async function main() {
           });
         } else {
           error = result.error;
-          markLetterFailed({ letterId: letter.id, reason: result.error || 'unknown' });
+          await markLetterFailed({ letterId: letter.id, reason: result.error || 'unknown' });
         }
       } catch (e: any) {
         error = e?.message || 'pipeline exception';

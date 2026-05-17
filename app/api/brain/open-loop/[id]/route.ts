@@ -13,11 +13,11 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const { id } = await ctx.params;
     const body = await req.json();
     const status: 'resolved' | 'cancelled' = body.status === 'cancelled' ? 'cancelled' : 'resolved';
-    const ok = resolveOpenLoop({ userId, id: parseInt(id, 10), status });
+    const ok = await resolveOpenLoop({ userId, id: parseInt(id, 10), status });
     if (!ok) return NextResponse.json({ error: 'not found' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (e: any) {

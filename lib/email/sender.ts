@@ -28,12 +28,12 @@ function unsubUrl(userId: number, emailType: string): string {
 // sendWelcome
 // ============================================================================
 export async function sendWelcome(userId: number) {
-  const user = getUser(userId);
+  const user = await getUser(userId);
   if (!user?.email) return { skipped: true, reason: 'no email' };
-  const prefs = getUserEmailPrefs(userId);
+  const prefs = await getUserEmailPrefs(userId);
   if (!prefs.welcome) return { skipped: true, reason: 'opted out' };
 
-  const memory = fetchUserMemory(userId);
+  const memory = await fetchUserMemory(userId);
   const brainSnippet = memory.brainContent
     ? memory.brainContent.slice(0, 400) + '...'
     : undefined;
@@ -64,9 +64,9 @@ export async function sendSundayReviewNotification(args: {
   reviewContent: string;
   pulseCount: number;
 }) {
-  const user = getUser(args.userId);
+  const user = await getUser(args.userId);
   if (!user?.email) return { skipped: true, reason: 'no email' };
-  const prefs = getUserEmailPrefs(args.userId);
+  const prefs = await getUserEmailPrefs(args.userId);
   if (!prefs.sunday_review) return { skipped: true, reason: 'opted out' };
 
   // 节选 first 节 (Section 1 — 反复提到什么)
@@ -109,9 +109,9 @@ export async function sendOutcomeDueNotification(args: {
   decisionCreatedAt: number;
   decisionQuestion: string;
 }) {
-  const user = getUser(args.userId);
+  const user = await getUser(args.userId);
   if (!user?.email) return { skipped: true, reason: 'no email' };
-  const prefs = getUserEmailPrefs(args.userId);
+  const prefs = await getUserEmailPrefs(args.userId);
   if (!prefs.outcome_due) return { skipped: true, reason: 'opted out' };
 
   const decisionDate = new Date(args.decisionCreatedAt * 1000);
@@ -148,9 +148,9 @@ export async function sendCommitmentReminderEmail(args: {
   commitmentText: string;
   daysAgo: number;
 }) {
-  const user = getUser(args.userId);
+  const user = await getUser(args.userId);
   if (!user?.email) return { skipped: true, reason: 'no email' };
-  const prefs = getUserEmailPrefs(args.userId);
+  const prefs = await getUserEmailPrefs(args.userId);
   if (!prefs.commitment) return { skipped: true, reason: 'opted out' };
 
   const { subject, text, html } = buildCommitmentEmail({

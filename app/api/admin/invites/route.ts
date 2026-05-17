@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const invite = createInvite({
+    const invite = await createInvite({
       recipientName: parsed.data.recipientName,
       recipientEmail: parsed.data.recipientEmail || undefined,
       invitedBy: parsed.data.invitedBy,
@@ -75,8 +75,8 @@ export async function GET(req: NextRequest) {
   const gate = adminGate(req);
   if (gate) return gate;
 
-  const invites = listInvites();
-  const summary = getInviteSummary();
+  const invites = await listInvites();
+  const summary = await getInviteSummary();
   return NextResponse.json({
     summary,
     invites: invites.map((i) => ({ ...i, status: getInviteStatus(i) })),

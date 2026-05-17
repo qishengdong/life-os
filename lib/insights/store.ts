@@ -43,7 +43,7 @@ function tryParseArr(s: string | null): number[] {
 }
 
 /** 写入 insight · Inspector C30 守门: evidence_count < 3 直接拒收. */
-export function saveInsight(args: {
+export async function saveInsight(args: {
   userId: number;
   patternType: PatternType;
   title: string;
@@ -54,7 +54,7 @@ export function saveInsight(args: {
   evidenceRmcIds?: number[];
   confidence?: number;
   detectionRunId?: number;
-}): { ok: true; id: number } | { ok: false; reason: 'c30_insufficient_evidence' } {
+}): Promise<{ ok: true; id: number } | { ok: false; reason: 'c30_insufficient_evidence' }> {
   const evidenceCount =
     (args.evidencePulseIds?.length || 0) +
     (args.evidenceDecisionIds?.length || 0) +
@@ -66,8 +66,8 @@ export function saveInsight(args: {
     return { ok: false, reason: 'c30_insufficient_evidence' };
   }
 
-  const db = getDb();
-  const res = db
+  const db = await getDb();
+  const res = await db
     .prepare(
       `INSERT INTO brain_insights (
         user_id, pattern_type, title, description,
@@ -89,44 +89,44 @@ export function saveInsight(args: {
       args.confidence ?? 0.7,
       args.detectionRunId ?? null,
     );
-  return { ok: true, id: res.lastInsertRowid as number };
+  return { ok: true, id: Number(res.lastInsertRowid) };
 }
 
 /** 取 user 的 insights · 默认排除 archived/rejected. */
-export function listInsights(
+export async function listInsights(
   userId: number,
   opts: { includeArchived?: boolean; limit?: number } = {},
-): Insight[] {
-  const db = getDb();
+): Promise<Insight[]> {
+  const db = await getDb();
   const where = opts.includeArchived
     ? `user_id = ?`
     : `user_id = ? AND status NOT IN ('archived', 'rejected')`;
   const limit = opts.limit ?? 50;
-  const rows = db
+  const rows = (await db
     .prepare(
       `SELECT * FROM brain_insights WHERE ${where}
        ORDER BY status = 'unreviewed' DESC, detected_at DESC LIMIT ?`,
     )
-    .all(userId, limit) as any[];
+    .all(userId, limit)) as any[];
   return rows.map(rowToInsight);
 }
 
-function ownsInsight(userId: number, id: number): boolean {
-  const db = getDb();
-  const r = db
+async function ownsInsight(userId: number, id: number): Promise<boolean> {
+  const db = await getDb();
+  const r = (await db
     .prepare(`SELECT user_id FROM brain_insights WHERE id = ?`)
-    .get(id) as { user_id: number } | undefined;
+    .get(id)) as { user_id: number } | undefined;
   return !!r && r.user_id === userId;
 }
 
-export function updateInsightStatus(args: {
+export async function updateInsightStatus(args: {
   userId: number;
   id: number;
   status: InsightStatus;
   userCorrection?: string;
-}): boolean {
+}): Promise<boolean> {
   if (!ownsInsight(args.userId, args.id)) return false;
-  const db = getDb();
+  const db = await getDb();
   db.prepare(
     `UPDATE brain_insights
        SET status = ?, user_correction = ?, reviewed_at = unixepoch()
@@ -139,36 +139,36 @@ export function updateInsightStatus(args: {
 // Run audit table
 // ============================================================================
 
-export function startInsightRun(args: {
+export async function startInsightRun(args: {
   userId: number;
   weekStart: number;
   pulsesSeen: number;
   decisionsSeen: number;
-}): number {
-  const db = getDb();
+}): Promise<number> {
+  const db = await getDb();
   // 同一 (user_id, week_start) 已存在 → 删了重跑
-  db.prepare(`DELETE FROM brain_insight_runs WHERE user_id = ? AND week_start = ?`).run(
+  await db.prepare(`DELETE FROM brain_insight_runs WHERE user_id = ? AND week_start = ?`).run(
     args.userId,
     args.weekStart,
   );
-  const res = db
+  const res = await db
     .prepare(
       `INSERT INTO brain_insight_runs (user_id, week_start, pulses_seen, decisions_seen)
        VALUES (?, ?, ?, ?)`,
     )
     .run(args.userId, args.weekStart, args.pulsesSeen, args.decisionsSeen);
-  return res.lastInsertRowid as number;
+  return Number(res.lastInsertRowid);
 }
 
-export function finishInsightRun(args: {
+export async function finishInsightRun(args: {
   runId: number;
   insightsGenerated: number;
   insightsPassedC30: number;
   tokensUsed?: number;
   durationMs?: number;
   error?: string;
-}): void {
-  const db = getDb();
+}): Promise<void> {
+  const db = await getDb();
   db.prepare(
     `UPDATE brain_insight_runs
        SET insights_generated = ?, insights_passed_c30 = ?,
@@ -185,13 +185,13 @@ export function finishInsightRun(args: {
 }
 
 /** 最近一次 run, 用于 UI 显示"上次分析时间". */
-export function getLastInsightRun(userId: number): InsightRun | null {
-  const db = getDb();
-  const row = db
+export async function getLastInsightRun(userId: number): Promise<InsightRun | null> {
+  const db = await getDb();
+  const row = (await db
     .prepare(
       `SELECT * FROM brain_insight_runs WHERE user_id = ? ORDER BY created_at DESC LIMIT 1`,
     )
-    .get(userId) as any;
+    .get(userId)) as any;
   if (!row) return null;
   return {
     id: row.id,

@@ -13,14 +13,14 @@ export async function GET(req: NextRequest) {
   const auth = requireAdmin(req);
   if (auth instanceof NextResponse) return auth;
 
-  const db = getDb();
+  const db = await getDb();
   const url = new URL(req.url);
   const runIdParam = url.searchParams.get('runId');
 
   if (runIdParam) {
     // 单次 run 详情 + 所有 case
-    const run = db.prepare(`SELECT * FROM test_runs WHERE id = ?`).get(parseInt(runIdParam, 10));
-    const results = db
+    const run = await db.prepare(`SELECT * FROM test_runs WHERE id = ?`).get(parseInt(runIdParam, 10));
+    const results = await db
       .prepare(
         `SELECT id, scenario_id, persona_id, trap_type, stage,
                 layer_a_pass, layer_a_fails, layer_c_pass, layer_c_focus_avg, layer_c_overall_avg,
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   }
 
   // 列最近 20 次 run
-  const runs = db
+  const runs = await db
     .prepare(
       `SELECT id, label, mode, total_cases, passed_a, passed_c, tokens_used,
               duration_ms, created_at

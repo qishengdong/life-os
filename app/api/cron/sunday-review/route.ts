@@ -36,10 +36,10 @@ function isAuthorized(req: NextRequest): boolean {
 
 async function runSundayReviewWork() {
   const { weekStart, weekEnd } = getWeekRange();
-  const db = getDb();
+  const db = await getDb();
 
   // 找过去 7 天 ≥3 Pulse 的用户, 且本周没生成 review
-  const candidates = db
+  const candidates = (await db
     .prepare(
       `SELECT u.id AS user_id,
               COUNT(p.id) AS pulse_count
@@ -52,7 +52,7 @@ async function runSundayReviewWork() {
            SELECT user_id FROM sunday_reviews WHERE week_start = ?
          )`
     )
-    .all(weekStart, weekEnd, weekStart) as Array<{ user_id: number; pulse_count: number }>;
+    .all(weekStart, weekEnd, weekStart)) as Array<{ user_id: number; pulse_count: number }>;
 
   const results: any[] = [];
   for (const c of candidates) {
@@ -131,18 +131,18 @@ export async function GET(req: NextRequest) {
   }
   // diagnostic: 列 candidates 不实跑
   const { weekStart, weekEnd } = getWeekRange();
-  const db = getDb();
-  const candidates = db
+  const db = await getDb();
+  const candidates = (await db
     .prepare(
       `SELECT u.id AS user_id, u.user_uid, COUNT(p.id) AS pulse_count
        FROM users u JOIN daily_pulses p ON p.user_id = u.id
        WHERE p.created_at >= ? AND p.created_at <= ?
        GROUP BY u.id HAVING pulse_count >= 3`,
     )
-    .all(weekStart, weekEnd) as any[];
-  const existingReviews = db
+    .all(weekStart, weekEnd)) as any[];
+  const existingReviews = (await db
     .prepare(`SELECT user_id FROM sunday_reviews WHERE week_start = ?`)
-    .all(weekStart) as Array<{ user_id: number }>;
+    .all(weekStart)) as Array<{ user_id: number }>;
   const reviewedSet = new Set(existingReviews.map((r) => r.user_id));
   return NextResponse.json({
     mode: 'dry-run (not authorized for live)',

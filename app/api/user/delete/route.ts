@@ -39,7 +39,7 @@ const CHILD_TABLES = [
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json().catch(() => ({}));
     const parsed = Schema.safeParse(body);
     if (!parsed.success) {
@@ -49,25 +49,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const db = getDb();
-    const tx = db.transaction(() => {
+    const db = await getDb();
+    await db.transaction(async (txdb) => {
       for (const table of CHILD_TABLES) {
         try {
-          db.prepare(`DELETE FROM ${table} WHERE user_id = ?`).run(userId);
+          await txdb.prepare(`DELETE FROM ${table} WHERE user_id = ?`).run(userId);
         } catch {
           // 表可能在某些环境不存在, 忽略
         }
       }
-      // 邀请记录: 不删 invites 行, 但解绑 redeemed_by_user_id 防止 FK orphan
       try {
-        db.prepare(
+        await txdb.prepare(
           `UPDATE invites SET redeemed_by_user_id = NULL WHERE redeemed_by_user_id = ?`,
         ).run(userId);
       } catch {}
-      // 最后删 user 本体
-      db.prepare(`DELETE FROM users WHERE id = ?`).run(userId);
+      await txdb.prepare(`DELETE FROM users WHERE id = ?`).run(userId);
     });
-    tx();
 
     const res = NextResponse.json({ ok: true, message: '所有数据已删除. 谢谢使用过 KEY.' });
     clearUserCookies(res);

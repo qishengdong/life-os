@@ -24,13 +24,13 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    if (getUserAccessStatus(userId) !== 'invited') {
+    const { userId } = await resolveUserId(req);
+    if (await getUserAccessStatus(userId) !== 'invited') {
       return NextResponse.json({ error: '账户未激活' }, { status: 403 });
     }
 
-    const db = getDb();
-    const profile = db
+    const db = await getDb();
+    const profile = await db
       .prepare(
         `SELECT id, user_uid, birth_date, gender, created_at, onboarding_completed_at,
                 access_status, last_active_at, recovery_code_acknowledged_at, wechat_id

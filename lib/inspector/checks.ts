@@ -195,7 +195,7 @@ export function checkC5(ctx: InspectorContext): CheckResult {
 // 这里只检查 (1): 引用过去承诺时不能编.
 // ============================================================================
 
-export function checkC14(ctx: InspectorContext): CheckResult {
+export async function checkC14(ctx: InspectorContext): Promise<CheckResult> {
   const refPatterns = [
     /我(?:之前|上次|早就)(?:答应|承诺|说过要|说过会|许诺)/,
     /(?:之前|上次)(?:我答应|我承诺|我说要)/,
@@ -206,7 +206,7 @@ export function checkC14(ctx: InspectorContext): CheckResult {
     if (match) {
       // 查 commitments 表
       try {
-        const commitments = getUserCommitments(ctx.userId);
+        const commitments = await getUserCommitments(ctx.userId);
         if (commitments.length === 0) {
           return {
             code: 'C14',
@@ -281,7 +281,7 @@ function extractRealAge(ctx: InspectorContext): number | null {
 
 // C16 (用户跨决策矛盾) 是 pre-generation 检测, 不在这里跑.
 // 它由 lib/decision/contradiction-detector.ts 在 brief-pipeline 里前置注入.
-const ALL_CHECKS: Partial<Record<CheckCode, (ctx: InspectorContext) => CheckResult>> = {
+const ALL_CHECKS: Partial<Record<CheckCode, (ctx: InspectorContext) => CheckResult | Promise<CheckResult>>> = {
   C1: checkC1,
   C2: checkC2,
   C3: checkC3,
@@ -290,12 +290,12 @@ const ALL_CHECKS: Partial<Record<CheckCode, (ctx: InspectorContext) => CheckResu
   C15: checkC15,
 };
 
-export function runAllChecks(ctx: InspectorContext): CheckResult[] {
+export async function runAllChecks(ctx: InspectorContext): Promise<CheckResult[]> {
   const results: CheckResult[] = [];
   for (const [code, fn] of Object.entries(ALL_CHECKS)) {
     if (!fn) continue;
     try {
-      const result = fn(ctx);
+      const result = await fn(ctx);
       results.push(result);
     } catch (e: any) {
       console.error(`[inspector] check ${code} threw:`, e);

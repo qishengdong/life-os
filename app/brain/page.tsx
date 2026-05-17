@@ -295,7 +295,7 @@ function EmptyState({ text }: { text: string }) {
   return <p className="font-serif italic text-[14px] text-ink-400 py-4">{text}</p>;
 }
 
-function CoreStateRow({
+async function CoreStateRow({
   item,
   userUid,
   onChange,
@@ -395,7 +395,7 @@ function CoreStateRow({
   );
 }
 
-function CardRow({
+async function CardRow({
   card,
   userUid,
   onChange,
@@ -524,7 +524,7 @@ function CardRow({
   );
 }
 
-function InsightRow({
+async function InsightRow({
   insight,
   userUid,
   onChange,
@@ -660,7 +660,7 @@ function InsightRow({
   );
 }
 
-function OpenLoopRow({
+async function OpenLoopRow({
   loop,
   userUid,
   onChange,

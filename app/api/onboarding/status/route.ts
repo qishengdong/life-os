@@ -17,9 +17,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const completed = isOnboardingComplete(userId);
-    const user = getUser(userId);
+    const { userId } = await resolveUserId(req);
+    const completed = await isOnboardingComplete(userId);
+    const user = await getUser(userId);
     return NextResponse.json({
       completed,
       completedAt: completed ? user?.onboarding_completed_at ?? null : null,

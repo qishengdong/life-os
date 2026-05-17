@@ -63,8 +63,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { userId } = resolveUserId(req);
-    const user = getUser(userId);
+    const { userId } = await resolveUserId(req);
+    const user = await getUser(userId);
     if (!user?.email) {
       return NextResponse.json(
         { error: '当前用户没有设邮箱. 先去 /account 设邮箱再测.' },
@@ -104,8 +104,8 @@ export async function POST(req: NextRequest) {
 // GET — 查邮件链路状态 (不发, 只读)
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const user = getUser(userId);
+    const { userId } = await resolveUserId(req);
+    const user = await getUser(userId);
     return NextResponse.json({
       currentUser: {
         userId,

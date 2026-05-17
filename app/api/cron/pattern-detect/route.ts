@@ -41,12 +41,12 @@ function getThisWeekStart(): number {
 }
 
 async function runPatternDetection() {
-  const db = getDb();
+  const db = await getDb();
   const weekStart = getThisWeekStart();
   const lookbackSince = weekStart - 4 * 7 * 86400;
 
   // 找过去 4 周有数据的用户 (≥6 pulse 或 ≥2 decision), 跳过本周已跑过
-  const candidates = db
+  const candidates = (await db
     .prepare(
       `SELECT u.id AS user_id,
               (SELECT COUNT(*) FROM daily_pulses WHERE user_id = u.id AND created_at >= ?) AS pulse_count,
@@ -59,7 +59,7 @@ async function runPatternDetection() {
        )
          AND u.id NOT IN (SELECT user_id FROM brain_insight_runs WHERE week_start = ?)`,
     )
-    .all(lookbackSince, lookbackSince, lookbackSince, lookbackSince, weekStart) as Array<{
+    .all(lookbackSince, lookbackSince, lookbackSince, lookbackSince, weekStart)) as Array<{
     user_id: number;
     pulse_count: number;
     decision_count: number;
@@ -113,10 +113,10 @@ export async function GET(req: NextRequest) {
     return runPatternDetection();
   }
   // diagnostic — 列 candidates 不实跑
-  const db = getDb();
+  const db = await getDb();
   const weekStart = getThisWeekStart();
   const lookbackSince = weekStart - 4 * 7 * 86400;
-  const candidates = db
+  const candidates = (await db
     .prepare(
       `SELECT u.id AS user_id,
               (SELECT COUNT(*) FROM daily_pulses WHERE user_id = u.id AND created_at >= ?) AS pulse_count,
@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
          SELECT user_id FROM decisions WHERE created_at >= ?
        )`,
     )
-    .all(lookbackSince, lookbackSince, lookbackSince, lookbackSince) as any[];
+    .all(lookbackSince, lookbackSince, lookbackSince, lookbackSince)) as any[];
   return NextResponse.json({
     mode: 'dry-run',
     weekStart,

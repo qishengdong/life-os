@@ -267,7 +267,7 @@ export async function generateReply(args: GenerateReplyArgs): Promise<GenerateRe
   let brainContextBlock = '';
   let brainFactsUsed: string[] = [];
   try {
-    const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
+    const memory = args.injectedMemory ?? await fetchUserMemory(args.userId);
     const rendered = renderMemoryForPrompt(memory);
     brainContextBlock = (rendered.hardAnchorsBlock || '') + '\n\n' + (rendered.contextBlock || '');
     brainContextBlock = brainContextBlock.trim();

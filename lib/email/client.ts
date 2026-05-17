@@ -72,12 +72,12 @@ export interface SendResult {
 }
 
 export async function sendEmail(args: SendArgs): Promise<SendResult> {
-  const db = getDb();
+  const db = await getDb();
   const mode = getSendMode();
   const from = process.env.EMAIL_FROM || 'KEY <noreply@lifeos.local>';
 
   // 1. 写入 emails_sent (status='queued')
-  const result = db
+  const result = await db
     .prepare(
       `INSERT INTO emails_sent (user_id, email_type, recipient, subject, body_text, body_html, send_mode, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'queued')`
@@ -139,8 +139,8 @@ export async function sendEmail(args: SendArgs): Promise<SendResult> {
 /**
  * 查邮件历史 (admin / 自助查看)
  */
-export function getEmailsForUser(userId: number, limit = 50) {
-  const db = getDb();
+export async function getEmailsForUser(userId: number, limit = 50) {
+  const db = await getDb();
   return db
     .prepare(
       `SELECT id, email_type, recipient, subject, send_mode, status, sent_at, opened_at, error_message, created_at

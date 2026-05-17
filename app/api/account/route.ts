@@ -18,9 +18,9 @@ export const dynamic = 'force-dynamic';
 // ============================================================================
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
-    const user = getUser(userId);
-    const prefs = getUserEmailPrefs(userId);
+    const { userId } = await resolveUserId(req);
+    const user = await getUser(userId);
+    const prefs = await getUserEmailPrefs(userId);
     const emails = getEmailsForUser(userId, 20);
     return NextResponse.json({
       email: user?.email || null,
@@ -52,13 +52,13 @@ const Schema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = resolveUserId(req);
+    const { userId } = await resolveUserId(req);
     const body = await req.json();
     const parsed = Schema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.errors[0]?.message || '格式错误' }, { status: 400 });
     }
-    updateUserEmail({ userId, ...parsed.data });
+    await updateUserEmail({ userId, ...parsed.data });
     return NextResponse.json({ success: true });
   } catch (e: any) {
     if (e instanceof InvalidUserUidError) {

@@ -46,7 +46,7 @@ export async function POST(
     return NextResponse.json({ error: 'bad id' }, { status: 400 });
   }
 
-  const ok = revokeInvite(numId);
+  const ok = await revokeInvite(numId);
   if (!ok) {
     return NextResponse.json({ error: '已撤销或不存在' }, { status: 404 });
   }

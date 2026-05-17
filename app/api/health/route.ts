@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const db = getDb();
-    const row = db.prepare('SELECT COUNT(*) as n FROM users').get() as { n: number };
+    const db = await getDb();
+    const row = (await db.prepare('SELECT COUNT(*) as n FROM users').get()) as { n: number };
     return NextResponse.json({
       ok: true,
       uptime: process.uptime(),

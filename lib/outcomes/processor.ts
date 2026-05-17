@@ -100,17 +100,17 @@ export async function processOutcomeResponse(args: ProcessInput): Promise<Proces
     if (args.injectedDecision) {
       decision = args.injectedDecision;
     } else {
-      const db = getDb();
-      const row = db
+      const db = await getDb();
+      const row = (await db
         .prepare(`SELECT question, ai_response, framework, created_at FROM decisions WHERE id = ?`)
-        .get(args.decisionId) as any;
+        .get(args.decisionId)) as any;
       if (!row) {
         throw new Error(`Decision ${args.decisionId} not found`);
       }
       decision = row;
     }
 
-    const memory = args.injectedMemory ?? fetchUserMemory(args.userId);
+    const memory = args.injectedMemory ?? await fetchUserMemory(args.userId);
     const brainSnippet = memory.brainContent ? memory.brainContent.slice(0, 800) + '...' : '(无)';
 
     const decisionAgeDays = Math.floor((Date.now() / 1000 - decision.created_at) / 86400);
