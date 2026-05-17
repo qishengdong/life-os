@@ -22,23 +22,42 @@ export interface DbClient {
   transaction<T>(fn: (db: DbClient) => Promise<T>): Promise<T>;
 }
 
+/**
+ * libSQL 默认把 INTEGER 列序列化成 BigInt (≥2^53). NextResponse.json 不支持 BigInt
+ * (会扔 "Do not know how to serialize a BigInt"). 这里在 wrap 层统一转 number.
+ *
+ * 备选方案: createTursoClient({ intMode: 'number' }) — 但官方文档说大整数会丢精度.
+ * 我们的 schema 里 INTEGER 全是 id / unix timestamp / count, 都不会超过 2^53,
+ * 安全用 Number().
+ */
+function normalizeRow<T>(row: T): T {
+  if (!row || typeof row !== 'object') return row;
+  const out: any = {};
+  for (const [k, v] of Object.entries(row as any)) {
+    out[k] = typeof v === 'bigint' ? Number(v) : v;
+  }
+  return out;
+}
+
 function wrapTurso(client: TursoClient): DbClient {
   return {
     prepare(sql: string): DbStatement {
       return {
         async get(...args: any[]) {
           const r = await client.execute({ sql, args });
-          return r.rows[0];
+          return r.rows[0] ? normalizeRow(r.rows[0]) : undefined;
         },
         async all(...args: any[]) {
           const r = await client.execute({ sql, args });
-          return r.rows as any[];
+          return r.rows.map(normalizeRow) as any[];
         },
         async run(...args: any[]) {
           const r = await client.execute({ sql, args });
           return {
             changes: Number(r.rowsAffected),
-            lastInsertRowid: r.lastInsertRowid ?? 0n,
+            lastInsertRowid: typeof r.lastInsertRowid === 'bigint'
+              ? Number(r.lastInsertRowid)
+              : (r.lastInsertRowid ?? 0),
           };
         },
       };
