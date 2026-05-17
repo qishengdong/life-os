@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
   );
 }
 
-async function AdminLoginInner() {
+function AdminLoginInner() {
   const router = useRouter();
   const sp = useSearchParams();
   const from = sp.get('from') || '/admin/cms';

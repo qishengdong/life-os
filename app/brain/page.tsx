@@ -295,7 +295,7 @@ function EmptyState({ text }: { text: string }) {
   return <p className="font-serif italic text-[14px] text-ink-400 py-4">{text}</p>;
 }
 
-async function CoreStateRow({
+function CoreStateRow({
   item,
   userUid,
   onChange,

@@ -21,7 +21,7 @@ export default function SetupPage() {
   );
 }
 
-async function SetupInner() {
+function SetupInner() {
   const router = useRouter();
   const [setupCompleted, setSetupCompleted] = useState<boolean | null>(null);
   const [bootstrapKeyRequired, setBootstrapKeyRequired] = useState(false);
