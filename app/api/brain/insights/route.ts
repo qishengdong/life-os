@@ -16,8 +16,8 @@ export async function GET(req: NextRequest) {
     const { userId } = await resolveUserId(req);
     const includeArchived =
       new URL(req.url).searchParams.get('include') === 'archived';
-    const insights = listInsights(userId, { includeArchived });
-    const lastRun = getLastInsightRun(userId);
+    const insights = await listInsights(userId, { includeArchived });
+    const lastRun = await getLastInsightRun(userId);
     return NextResponse.json({ insights, lastRun });
   } catch (e: any) {
     if (e instanceof InvalidUserUidError) {

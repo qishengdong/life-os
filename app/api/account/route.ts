@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const { userId } = await resolveUserId(req);
     const user = await getUser(userId);
     const prefs = await getUserEmailPrefs(userId);
-    const emails = getEmailsForUser(userId, 20);
+    const emails = await getEmailsForUser(userId, 20);
     return NextResponse.json({
       email: user?.email || null,
       emailVerifiedAt: user?.email_verified_at || null,

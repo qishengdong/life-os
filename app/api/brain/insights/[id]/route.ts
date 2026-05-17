@@ -35,7 +35,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       );
     }
 
-    const ok = updateInsightStatus({
+    const ok = await updateInsightStatus({
       userId,
       id: parseInt(id, 10),
       status,

@@ -84,7 +84,9 @@ export default function BrainPage() {
         setMemory(memData.memory as UserMemoryContext);
       }
       if (insightsRes.ok) {
-        setInsights((insightsData.insights as Insight[]) || []);
+        // Defensive: API 可能返回非 array (历史 bug: 漏 await 导致 insights={})
+        const list = insightsData.insights;
+        setInsights(Array.isArray(list) ? (list as Insight[]) : []);
         setLastInsightRun(
           insightsData.lastRun
             ? {

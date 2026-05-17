@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     // 如果已经有这周 review, 默认不重复跑 (除非 force=1)
     const url = new URL(req.url);
     const force = url.searchParams.get('force') === '1';
-    const existing = getCurrentWeekReview(userId);
+    const existing = await getCurrentWeekReview(userId);
     if (existing && !force) {
       return NextResponse.json({
         success: true,
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const reviewId = saveReview({
+    const reviewId = await saveReview({
       userId,
       weekStart,
       weekEnd,
