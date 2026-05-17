@@ -8,20 +8,28 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
 <style>
   :root {
-    --ink: #111111;
-    --paper: #F7F3EA;
-    --paper-soft: #EFE9DC;
-    --warm-gray: #BDB6AA;
-    --warm-gray-light: #D9D3C5;
-    --burgundy: #6E1F2A;
-    --navy: #141923;
-    --rule: rgba(17, 17, 17, 0.12);
-    --rule-strong: rgba(17, 17, 17, 0.28);
+    /* v4 visual sync · Steel Blue + Signal Orange */
+    --ink: #0A0E1A;
+    --ink-soft: #1A1F2E;
+    --paper: #F8F6F0;
+    --paper-soft: #EFEBE0;
+    --warm-gray: #908A7D;
+    --warm-gray-light: #C9C3B5;
+    --burgundy: #1E3A52;     /* legacy var name, now Steel Blue */
+    --steel: #1E3A52;
+    --steel-light: #345670;
+    --steel-soft: #E8EEF2;
+    --signal: #B85C42;
+    --navy: #0A0E1A;
+    --rule: rgba(10, 14, 26, 0.10);
+    --rule-strong: rgba(10, 14, 26, 0.22);
+    --rule-steel: rgba(30, 58, 82, 0.18);
   }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   body {
