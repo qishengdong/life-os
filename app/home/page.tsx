@@ -29,6 +29,8 @@ interface OutcomeRow {
   id: number;
   decisionId: number;
   decisionQuestion: string;
+  decisionFramework?: string;
+  decisionCreatedAt?: number;
   checkpointDays: number;
   dueAt: number;
 }
@@ -133,6 +135,12 @@ export default function HomePage() {
   const nextOutcomeDays = nextOutcome
     ? Math.max(0, Math.ceil((nextOutcome.dueAt - Date.now() / 1000) / 86400))
     : null;
+  // P6 · 5/18 ship · outcome 真到期了 = 大字 hero card
+  // 判定: dueAt <= now (已经到期; getDueOutcomes 已经过滤过)
+  const hasDueOutcome = outcomes.length > 0;
+  const overdueDays = nextOutcome
+    ? Math.floor((Date.now() / 1000 - nextOutcome.dueAt) / 86400)
+    : 0;
 
   return (
     <div className="min-h-screen bg-paper text-ink-900">
@@ -154,6 +162,46 @@ export default function HomePage() {
           </p>
         </header>
 
+        {/* P6 · 5/18 ship · outcome 该回访了 = 第 1 优先级大字 hero card */}
+        {!loading && hasDueOutcome && nextOutcome && (
+          <section className="mb-12 border-2 border-seal-500 bg-paper-50 px-8 py-8">
+            <div className="flex items-baseline justify-between mb-4">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500">
+                · 该回访了 · {nextOutcome.checkpointDays} 天回访 ·
+              </p>
+              {overdueDays > 0 && (
+                <p className="font-mono text-[11px] text-ember">
+                  · 已逾期 {overdueDays} 天 ·
+                </p>
+              )}
+            </div>
+            <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight mb-4">
+              {nextOutcome.checkpointDays} 天前你问过 KEY:
+            </h2>
+            <p className="font-serif italic text-reading text-ink-700 leading-relaxed mb-6 border-l-2 border-seal-500/40 pl-5">
+              &ldquo;{nextOutcome.decisionQuestion?.slice(0, 200)}&rdquo;
+              {nextOutcome.decisionQuestion && nextOutcome.decisionQuestion.length > 200 && '…'}
+            </p>
+            <p className="font-serif text-reading text-ink-700 mb-6 leading-relaxed">
+              这就是 KEY 跟其他 AI 真正不同的地方 —
+              {nextOutcome.checkpointDays === 30 ? ' 1 个月前你担心的事, 现在真发生了吗?' : nextOutcome.checkpointDays === 90 ? ' 3 个月前的选择, 走到这里你怎么看?' : ' 1 年前的判断, 现在能比对真实结果了.'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 items-baseline">
+              <Link
+                href="/outcomes"
+                className="px-8 py-3 font-serif text-base text-paper bg-ink-900 hover:bg-seal-500 transition-colors inline-block"
+              >
+                现在回答 →
+              </Link>
+              {outcomes.length > 1 && (
+                <p className="font-serif italic text-[13px] text-ink-500">
+                  · 还有 {outcomes.length - 1} 件待回访
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* 今天的 KEY · 5/18 P2 ship · 闭环可见 · 这是用户进 KEY 第一眼 */}
         {!loading && (
           <section className="mb-12 border-y border-paper-300 py-8">
@@ -173,17 +221,9 @@ export default function HomePage() {
                 </div>
               ) : null}
 
-              {/* 2. 即将回访 */}
-              {nextOutcome && nextOutcomeDays !== null && (
-                <div className="flex justify-between items-baseline gap-4">
-                  <dt className="text-ink-500 italic">· 即将回访</dt>
-                  <dd>
-                    <Link href="/outcomes" className="text-ink-900 hover:text-seal-500 transition-colors">
-                      &ldquo;{(nextOutcome.decisionQuestion || '').slice(0, 30)}&hellip;&rdquo; 还有 {nextOutcomeDays} 天 →
-                    </Link>
-                  </dd>
-                </div>
-              )}
+              {/* 2. 即将回访 · 仅当无 due (那种已是顶部 hero) 时显示 */}
+              {/* 注: 当前 /api/outcomes 只返回 due (已到期), 未来 outcomes 暂没 surface */}
+              {/*    P6 hero 已覆盖 due 场景 · 这条目前 always 隐藏, 留位等 future outcomes 接入 */}
 
               {/* 3. 本周反复 */}
               {repeatingTags.length > 0 && (
