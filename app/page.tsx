@@ -15,6 +15,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getSampleBriefs } from '@/lib/db';
 import type { DecisionBrief } from '@/lib/decision/brief-schema';
 import KeyWordmark from '@/components/KeyWordmark';
@@ -29,7 +31,21 @@ const FRAMEWORK_LABEL: Record<string, string> = {
   'child-education': '子女教育',
 };
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ show?: string }>;
+}) {
+  // 老用户 redirect 到 /home dashboard (5/18 ship · 用户反馈"再登录看营销页很怪")
+  // 例外: ?show=landing 强制看营销页 (给老用户截图分享给朋友用)
+  const sp = (await searchParams) || {};
+  if (sp.show !== 'landing') {
+    const cookieStore = await cookies();
+    if (cookieStore.get('key_invited')?.value === '1') {
+      redirect('/home');
+    }
+  }
+
   // CMS 可编辑内容 (lib/content/data/home.json)
   const content = loadHomeContent();
   const { hero, editorial, whatYouGet, fiveDomains, footer } = content;

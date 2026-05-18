@@ -38,6 +38,7 @@ const USER_PROTECTED_PATHS = [
   '/unsent',
   '/settings',
   '/your-pattern',  // 5/18 ship · 决策人格画像
+  '/home',          // 5/18 ship · 老用户客厅 dashboard
 ];
 
 export function middleware(req: NextRequest) {
@@ -95,5 +96,6 @@ export const config = {
     '/unsent/:path*',
     '/settings/:path*',
     '/your-pattern/:path*',
+    '/home/:path*',
   ],
 };

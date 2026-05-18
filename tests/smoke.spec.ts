@@ -32,6 +32,7 @@ const PROTECTED_PATHS = [
   '/unsent',
   '/settings',
   '/your-pattern',  // 5/18 ship
+  '/home',          // 5/18 ship · 老用户客厅
 ];
 
 // public path · 不需要 cookie
