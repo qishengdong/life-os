@@ -41,10 +41,13 @@ function NewDecisionPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isFirstRun = searchParams.get('welcome') === '1';
+  // P4 · 5/18 ship · 从 signal 转化 (?prefill=...) 自动填表
+  const prefillContent = searchParams.get('prefill') || '';
+  const fromSignal = !!prefillContent;
   const [userUid, setUserUid] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState<'female' | 'male' | 'other'>('female');
-  const [decision, setDecision] = useState('');
+  const [decision, setDecision] = useState(prefillContent);
   const [submitting, setSubmitting] = useState(false);
   const [progressLabel, setProgressLabel] = useState(PROGRESS_STAGES[0].label);
   const [error, setError] = useState<string | null>(null);
@@ -138,6 +141,18 @@ function NewDecisionPageInner() {
       <KeyHeader current="decisions" />
 
       <main className="max-w-prose-lg mx-auto px-6 pb-20">
+        {/* P4 · 从 signal 转化进来 · 显示来源 + 鼓励加背景 */}
+        {fromSignal && !submitting && (
+          <div className="mt-6 mb-2 px-6 py-4 border-l-2 border-seal-500 bg-paper-50">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · 从你的今日一句来的 ·
+            </p>
+            <p className="font-serif italic text-[14px] text-ink-700 leading-relaxed">
+              KEY 已经把那条信号填到下面 · 加一点背景 (谁 / 卡在哪 / 关键约束), 简报会更准.
+            </p>
+          </div>
+        )}
+
         {/* First-run welcome banner · 仅兑换后第一次显示 (?welcome=1) */}
         {isFirstRun && !submitting && (
           <div className="mt-6 mb-2 px-6 py-5 border-l-2 border-seal-500 bg-paper-50">

@@ -235,7 +235,7 @@ test.describe('authed user flow', () => {
 test.describe('decision brief E2E', () => {
   test('submit 真不让前端炸 (无论 LLM 真成功还是失败)', async ({ page, context }) => {
     // brief gen on prod 可能跑 45-60s (Inspector 自审等), 默认 60s test timeout 不够
-    test.setTimeout(120_000);
+    test.setTimeout(150_000);
     const uid = crypto.randomUUID();
     const url = new URL(BASE_URL);
     await context.addCookies([{
@@ -255,10 +255,10 @@ test.describe('decision brief E2E', () => {
     await page.fill('textarea', '我在考虑要不要换工作. 现在薪水还行, 但 3 年了没成长.');
     await page.fill('input[type="date"]', '1985-06-01');
 
-    // 提交 · 等 70s (LLM 真跑时最多 ~60s)
+    // 提交 · 等 100s (LLM 真跑 deepseek 偶尔冷启 70-90s)
     const submitPromise = page.waitForResponse(
       (r) => r.url().includes('/api/decision/brief') && r.request().method() === 'POST',
-      { timeout: 70_000 },
+      { timeout: 100_000 },
     );
     await page.click('button[type="submit"]');
     const resp = await submitPromise;

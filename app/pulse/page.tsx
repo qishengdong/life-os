@@ -325,9 +325,28 @@ export default function Home() {
                 <h1 className="font-serif text-editorial-lg text-ink-900 mb-3 tracking-tighter leading-tight">
                   {todayQuestion.prompt}
                 </h1>
-                <p className="font-serif text-sm text-ink-500 mb-8 italic">
+                <p className="font-serif text-sm text-ink-500 mb-3 italic">
                   {todayQuestion.helper}
                 </p>
+                {/* Honesty Ladder 提示 · 5/18 P3 · 按 archive 深度变 */}
+                {(() => {
+                  const total = pulseStats.totalPulses;
+                  let hint = '';
+                  if (total < 3) {
+                    hint = '你刚开始 · 写一句就行, 不用想太重. KEY 在学着懂你.';
+                  } else if (total < 10) {
+                    hint = `你已经写了 ${total} 条 · KEY 在积累你的信号. 试试更具体的一句 (谁 / 哪个时刻 / 哪句话没说).`;
+                  } else if (total < 30) {
+                    hint = `${total} 条信号 · KEY 已经看见你某些反复. 这次写一件你"知道但不想写"的事 — 这种最有用.`;
+                  } else {
+                    hint = `${total} 条 · 你跟 KEY 走得够久了. 这次可以问自己: 这件事跟我 1 个月前的状态比, 变了吗?`;
+                  }
+                  return (
+                    <p className="font-serif italic text-[12px] text-seal-500 mb-8 border-l-2 border-seal-500/40 pl-3">
+                      {hint}
+                    </p>
+                  );
+                })()}
 
                 <form onSubmit={submitPulse} className="space-y-4">
                   <textarea
@@ -622,6 +641,25 @@ export default function Home() {
                           {replyingId === p.id ? '生成中...' : '继续 →'}
                         </button>
                       </div>
+                    </div>
+                    {/* P4 · 5/18 ship · signal 转化通道 (Signal → Brief / 未完的事) */}
+                    <div className="mt-4 pt-3 border-t border-paper-200 flex flex-wrap gap-3 items-baseline">
+                      <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-ink-400 mr-2">
+                        · 或者把这条 ·
+                      </p>
+                      <Link
+                        href={`/decisions/new?prefill=${encodeURIComponent(p.content)}`}
+                        className="font-serif text-[13px] text-seal-500 hover:underline"
+                      >
+                        整理成决策简报 →
+                      </Link>
+                      <span className="font-mono text-[10px] text-ink-400">·</span>
+                      <Link
+                        href={`/unsent?fromPulse=${p.id}`}
+                        className="font-serif text-[13px] text-seal-500 hover:underline"
+                      >
+                        加进未完的事 →
+                      </Link>
                     </div>
                   </article>
                 );
