@@ -10,22 +10,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
+import KeyHeader from '@/components/KeyHeader';
 import KeyWordmark from '@/components/KeyWordmark';
 import PageMasthead from '@/components/PageMasthead';
 
 function TopNav() {
   return (
-    <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-      <Link href="/" aria-label="KEY home" className="block">
-        <KeyWordmark variant="nav" height={22} />
-      </Link>
-      <div className="flex gap-6 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500">
-        <Link href="/pulse" className="hover:text-seal-500 transition-colors">Pulse</Link>
-        <Link href="/brain" className="hover:text-seal-500 transition-colors">Brain</Link>
-        <Link href="/unsent" className="hover:text-seal-500 transition-colors">未交付的信</Link>
-        <Link href="/" className="hover:text-seal-500 transition-colors">← Home</Link>
-      </div>
-    </nav>
+    <KeyHeader current="settings" />
   );
 }
 

@@ -16,7 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import KeyWordmark from './KeyWordmark';
 
-type NavId = 'home' | 'decisions' | 'brain' | 'pulse' | 'unsent' | 'history' | 'settings' | 'recover' | 'your-pattern' | null;
+type NavId = 'home' | 'decisions' | 'brain' | 'pulse' | 'unsent' | 'history' | 'settings' | 'recover' | 'your-pattern' | 'outcomes' | 'review' | 'letters' | null;
 
 export default function KeyHeader({
   current,
@@ -69,7 +69,10 @@ export default function KeyHeader({
                 <div className="absolute right-0 top-full mt-3 bg-paper border border-paper-300 shadow-md min-w-[140px] py-2 z-50">
                   <DropdownItem href="/pulse" current={current === 'pulse'}>今日一句</DropdownItem>
                   <DropdownItem href="/unsent" current={current === 'unsent'}>未交付的信</DropdownItem>
+                  <DropdownItem href="/letters/new" current={current === 'letters'}>写给 KEY</DropdownItem>
                   <DropdownItem href="/history" current={current === 'history'}>历史决策</DropdownItem>
+                  <DropdownItem href="/outcomes" current={current === 'outcomes'}>决策回访 (30/90/365)</DropdownItem>
+                  <DropdownItem href="/review" current={current === 'review'}>Weekly</DropdownItem>
                   <DropdownItem href="/your-pattern" current={current === 'your-pattern'}>决策画像</DropdownItem>
                   <div className="my-1.5 border-t border-paper-200" />
                   <DropdownItem href="/settings" current={current === 'settings'}>设置</DropdownItem>

@@ -17,7 +17,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
-import KeyWordmark from '@/components/KeyWordmark';
+import KeyHeader from '@/components/KeyHeader';
 import { LETTER_STARTERS, BLANK_STARTER_ID } from '@/lib/letters/starters';
 
 function formatTodayHeader(): string {
@@ -99,18 +99,7 @@ export default function NewLetterPage() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       {/* Top nav */}
-      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-baseline">
-        <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
-        </Link>
-        <div className="flex gap-x-4 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
-          <Link href="/pulse" className="hover:text-seal-500 transition-colors">Pulse</Link>
-          <Link href="/unsent" className="hover:text-seal-500 transition-colors">未交付的信</Link>
-          <Link href="/brain" className="hover:text-seal-500 transition-colors">Brain</Link>
-          <Link href="/letters" className="hover:text-seal-500 transition-colors">通信集</Link>
-          <Link href="/settings" className="hover:text-seal-500 transition-colors">设置</Link>
-        </div>
-      </nav>
+      <KeyHeader current="letters" />
 
       <main className="max-w-prose-xl mx-auto px-6 pt-16 pb-32">
         {/* Step 1 · 选起点 (批改模板, 还没进信纸) */}

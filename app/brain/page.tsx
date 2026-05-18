@@ -22,7 +22,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
-import KeyWordmark from '@/components/KeyWordmark';
+import KeyHeader from '@/components/KeyHeader';
 import type { UserMemoryContext, MemoryCard, CoreState, OpenLoop } from '@/lib/memory/types';
 import type { Insight, InsightStatus } from '@/lib/insights/types';
 import { PATTERN_TYPE_LABEL, PATTERN_TYPE_HINT } from '@/lib/insights/types';
@@ -109,19 +109,7 @@ export default function BrainPage() {
 
   return (
     <div className="min-h-screen bg-paper text-ink-900">
-      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-center">
-        <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
-        </Link>
-        <div className="flex gap-x-5 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
-          <Link href="/pulse" className="hover:text-seal-500 transition-colors">Pulse</Link>
-          <Link href="/unsent" className="hover:text-seal-500 transition-colors">未交付的信</Link>
-          <Link href="/letters/new" className="hover:text-seal-500 transition-colors">写给 KEY</Link>
-          <Link href="/decisions/new" className="hover:text-seal-500 transition-colors">写决定</Link>
-          <Link href="/settings" className="hover:text-seal-500 transition-colors">设置</Link>
-          <Link href="/" className="hover:text-seal-500 transition-colors">← Home</Link>
-        </div>
-      </nav>
+      <KeyHeader current="brain" />
 
       <main className="max-w-prose-xl mx-auto px-6 pb-24">
         <header className="pt-12 pb-10 border-b border-paper-300">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
-import KeyWordmark from '@/components/KeyWordmark';
+import KeyHeader from '@/components/KeyHeader';
 
 const JUDGMENT_LABEL: Record<string, string> = {
   'as-expected': '基本符合预期',
@@ -109,16 +109,7 @@ export default function OutcomesPage() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
-        </Link>
-        <div className="flex gap-6 text-sm text-ink-500">
-          <Link href="/pulse" className="hover:text-seal transition-colors">← Pulse</Link>
-          <Link href="/review" className="hover:text-seal transition-colors">Weekly Review</Link>
-          <Link href="/brain" className="hover:text-seal transition-colors">Life Brain</Link>
-        </div>
-      </nav>
+      <KeyHeader current="outcomes" />
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
         {/* Header */}

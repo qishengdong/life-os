@@ -19,7 +19,7 @@ import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
-import KeyWordmark from '@/components/KeyWordmark';
+import KeyHeader from '@/components/KeyHeader';
 
 const PROGRESS_STAGES = [
   { ms: 0, label: '正在准备 ...' },
@@ -135,17 +135,7 @@ function NewDecisionPageInner() {
   return (
     <div className="min-h-screen bg-paper text-ink-900">
       {/* Top nav */}
-      <nav className="max-w-prose-xl mx-auto px-6 pt-10 pb-6 flex justify-between items-center">
-        <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
-        </Link>
-        <Link
-          href="/"
-          className="text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 hover:text-seal-500 transition-colors"
-        >
-          ← Home
-        </Link>
-      </nav>
+      <KeyHeader current="decisions" />
 
       <main className="max-w-prose-lg mx-auto px-6 pb-20">
         {/* First-run welcome banner · 仅兑换后第一次显示 (?welcome=1) */}

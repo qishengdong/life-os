@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import type { PulseQuestion, PulseTag } from '@/lib/pulse/schema';
 import { TAG_DISPLAY } from '@/lib/pulse/schema';
-import KeyWordmark from '@/components/KeyWordmark';
+import KeyHeader from '@/components/KeyHeader';
 
 interface PulseStats {
   totalPulses: number;
@@ -182,20 +182,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <nav className="max-w-prose-xl mx-auto px-6 pt-8 pb-6 flex justify-between items-baseline">
-        <Link href="/" aria-label="KEY home" className="block">
-          <KeyWordmark variant="nav" height={22} />
-        </Link>
-        <div className="flex gap-x-4 gap-y-2 text-sm text-ink-500 flex-wrap justify-end">
-          <Link href="/unsent" className="hover:text-seal transition-colors">未交付的信</Link>
-          <Link href="/letters/new" className="hover:text-seal transition-colors">写给 KEY</Link>
-          <Link href="/review" className="hover:text-seal transition-colors">Weekly</Link>
-          <Link href="/outcomes" className="hover:text-seal transition-colors">账本</Link>
-          <Link href="/brain" className="hover:text-seal transition-colors">Brain</Link>
-          <Link href="/history" className="hover:text-seal transition-colors">历史</Link>
-          <Link href="/settings" className="hover:text-seal transition-colors">设置</Link>
-        </div>
-      </nav>
+      <KeyHeader current="pulse" />
 
       <main className="max-w-prose-xl mx-auto px-6 pb-20">
 
