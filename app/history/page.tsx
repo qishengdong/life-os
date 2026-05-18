@@ -188,8 +188,8 @@ export default function HistoryPage() {
                     AI 还没认识你. 跑几次决策, 它就会自动从对话里抽出关于你的硬锚点 / 事实 / 边界 / 事件 / 关系 / 心理信号.
                   </p>
                   <p className="font-serif text-sm text-ink-400 mt-4">
-                    完整叙事备忘录见{' '}
-                    <Link href="/brain" className="text-seal underline">我的 Life Brain</Link>
+                    完整档案见{' '}
+                    <Link href="/brain" className="text-seal underline">你的档案</Link>
                   </p>
                 </div>
               )}

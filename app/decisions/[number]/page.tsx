@@ -139,9 +139,9 @@ export default function DecisionBriefDetailPage() {
                   href="/brain"
                   className="group block py-6 px-4 border border-paper-200 hover:border-seal-500 transition-colors"
                 >
-                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">看 KEY 怎么记得你</p>
+                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">你的档案</p>
                   <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
-                    Brain 是你的私人档案. 不准就改, 不该有就删.
+                    KEY 记得的全部事实. 决策简报的证据来源. 不准就改.
                   </p>
                 </Link>
               </div>

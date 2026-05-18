@@ -56,7 +56,7 @@ export default function KeyHeader({
           <>
             <Link href="/home" className={linkCls('home')}>Home</Link>
             <Link href="/decisions/new" className={linkCls('decisions')}>写决定</Link>
-            <Link href="/brain" className={linkCls('brain')}>Brain</Link>
+            <Link href="/brain" className={linkCls('brain')}>档案</Link>
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}

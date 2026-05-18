@@ -252,7 +252,7 @@ export default function YourPatternPage() {
                   href="/brain"
                   className="px-8 py-3 font-serif text-base text-paper bg-ink-900 hover:bg-seal-500 transition-colors"
                 >
-                  看 KEY 知道你的全部 →
+                  看你的档案 →
                 </Link>
                 <Link
                   href="/decisions/new"

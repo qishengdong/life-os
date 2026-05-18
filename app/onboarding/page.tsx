@@ -190,7 +190,7 @@ export default function OnboardingPage() {
               看你的决策画像 →
             </Link>
             <Link href="/brain" className="btn-ghost px-8 py-3 rounded-sm text-center">
-              直接看 KEY 怎么记得我
+              直接看你的档案
             </Link>
           </div>
         </main>

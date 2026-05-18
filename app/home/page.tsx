@@ -179,10 +179,10 @@ export default function HomePage() {
               · 3. 你的档案 ·
             </p>
             <h2 className="font-serif text-xl text-ink-900 group-hover:text-seal-500 tracking-tightish mb-2">
-              看 KEY 记得我什么 →
+              你的档案 →
             </h2>
             <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
-              你的事实卡 / 关系 / 反复 pattern. 不准就改.
+              KEY 记得的事实 / 关系 / 反复 pattern. 决策简报的证据来源. 不准就改.
             </p>
           </Link>
 

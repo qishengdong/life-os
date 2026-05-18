@@ -114,23 +114,26 @@ export default function BrainPage() {
       <main className="max-w-prose-xl mx-auto px-6 pb-24">
         <header className="pt-12 pb-10 border-b border-paper-300">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
-            · KEY · 关于你的私人档案 ·
+            · KEY · 你的档案 ·
           </p>
           <h1 className="font-serif text-editorial-xl text-ink-900 tracking-tighter mb-4 leading-tight">
-            你的 Brain
+            你的档案.
           </h1>
           <p className="font-serif italic text-reading text-ink-700 editorial-leading max-w-prose-lg">
-            你说过的, KEY 都记得. 这是你的私人档案 — 不准就改, 不该有就删. 删了也不会忘 (有审计).
+            你说过的, KEY 都记得 — 这里是它的归档. 不准就改, 不该有就删. 删了也不会忘 (有审计).<br />
+            <span className="text-[14px] text-ink-500">
+              你的档案 = 未来重大决定的证据. 每一份决策简报都会从这里调出相关 fact 引用.
+            </span>
           </p>
           {memory && (
             <p className="font-mono text-[11px] text-ink-500 mt-6">
-              第 {memory.stats.accountAgeDays} 天 · {memory.stats.totalCards} 张记忆卡 · {memory.stats.totalDecisions} 份决策
+              第 {memory.stats.accountAgeDays} 天 · {memory.stats.totalCards} 张事实 · {memory.stats.totalDecisions} 份决策简报
             </p>
           )}
         </header>
 
         {loading && (
-          <p className="font-serif italic text-ink-400 text-center py-20">加载 brain ...</p>
+          <p className="font-serif italic text-ink-400 text-center py-20">加载档案 ...</p>
         )}
 
         {error && !loading && (
@@ -222,12 +225,12 @@ export default function BrainPage() {
             )}
 
             <SectionWrapper
-              eyebrow="· LAYER 2 · 待跟进 ·"
-              title={`待跟进 (${memory.openLoops.length})`}
+              eyebrow="· 未完的事 ·"
+              title={`未完的事 (${memory.openLoops.length})`}
               hint="跟你之前对话中产生的待办: 跟进 / 回访 / 复盘. 处理完点'已完成'."
             >
               {memory.openLoops.length === 0 ? (
-                <EmptyState text="暂无待跟进项." />
+                <EmptyState text="暂无未完的事." />
               ) : (
                 <div className="space-y-3">
                   {memory.openLoops.map((l) => (
@@ -242,7 +245,7 @@ export default function BrainPage() {
                 · 隐私 ·
               </p>
               <p className="font-serif italic text-[14px] text-ink-500 max-w-prose-md mx-auto leading-relaxed">
-                所有 brain 数据只属于你. 删除是软删 (硬锚点) 或硬删 (卡 / 待跟进), 不进任何训练数据.
+                你的档案数据只属于你. 删除是软删 (硬锚点) 或硬删 (卡 / 未完的事), 不进任何训练数据.
                 <br />
                 改了之后, 下次跟 KEY 聊或写决定, 它会按新版本记得.
               </p>
