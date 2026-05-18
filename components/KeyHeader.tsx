@@ -67,7 +67,7 @@ export default function KeyHeader({
               </button>
               {menuOpen && (
                 <div className="absolute right-0 top-full mt-3 bg-paper border border-paper-300 shadow-md min-w-[140px] py-2 z-50">
-                  <DropdownItem href="/pulse" current={current === 'pulse'}>今日 Pulse</DropdownItem>
+                  <DropdownItem href="/pulse" current={current === 'pulse'}>今日一句</DropdownItem>
                   <DropdownItem href="/unsent" current={current === 'unsent'}>未交付的信</DropdownItem>
                   <DropdownItem href="/history" current={current === 'history'}>历史决策</DropdownItem>
                   <DropdownItem href="/your-pattern" current={current === 'your-pattern'}>决策画像</DropdownItem>

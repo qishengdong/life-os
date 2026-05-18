@@ -164,10 +164,10 @@ export default function HomePage() {
               · 2. 每日 ·
             </p>
             <h2 className="font-serif text-xl text-ink-900 group-hover:text-seal-500 tracking-tightish mb-2">
-              今日 Pulse →
+              今日一句 →
             </h2>
             <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
-              30 秒一句话写今天的状态. 累计成 brain.
+              30 秒写一句今天的状态. 累计成 KEY 越来越懂你的素材.
             </p>
           </Link>
 

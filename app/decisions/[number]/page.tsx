@@ -133,7 +133,7 @@ export default function DecisionBriefDetailPage() {
                   href="/pulse"
                   className="group block py-6 px-4 border border-paper-200 hover:border-seal-500 transition-colors"
                 >
-                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">每天 1 分钟 · Pulse</p>
+                  <p className="font-serif text-base text-ink-900 mb-2 group-hover:text-seal-500">今日一句 · 每天 30 秒</p>
                   <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
                     一句话写今天的状态. 累计成 KEY 越来越懂你的素材.
                   </p>

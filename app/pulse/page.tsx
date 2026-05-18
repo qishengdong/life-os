@@ -43,6 +43,10 @@ export default function Home() {
   const [pulseLoading, setPulseLoading] = useState(false);
   const [pulseError, setPulseError] = useState<string | null>(null);
   const [pulseResponse, setPulseResponse] = useState<{ aiResponse: string; tags: PulseTag[] } | null>(null);
+  // 5/18 加历史 · 用户反馈 "我写过的 Pulse 和 KEY 的回复都找不到了"
+  const [pulseHistory, setPulseHistory] = useState<Array<{
+    id: number; questionId: string; content: string; aiResponse: string | null; createdAt: number; tags: string[];
+  }>>([]);
 
   // Decision state
   const [birthDate, setBirthDate] = useState('');
@@ -62,16 +66,17 @@ export default function Home() {
     const uid = getOrCreateClientUid();
     setUserUid(uid);
     Promise.all([
-      fetch('/api/pulse', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
+      // ?history=1 拿历史 · 5/18 ship 用户反馈
+      fetch('/api/pulse?history=1', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
       fetch('/api/commitments?due=1', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
       fetch('/api/sunday-review', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
       fetch('/api/outcomes', { headers: { [UID_HEADER]: uid } }).then((r) => r.json()),
     ])
       .then(([pulseData, commitData, reviewData, outcomeData]) => {
         // Defensive: API 错误时 stats / todayQuestion 可能 undefined
-        // 之前直接 setPulseStats(undefined) 后续读 .totalPulses 崩 → 用户截图 5/17
         if (pulseData?.todayQuestion) setTodayQuestion(pulseData.todayQuestion);
         if (pulseData?.stats) setPulseStats(pulseData.stats);
+        if (Array.isArray(pulseData?.history)) setPulseHistory(pulseData.history);
         setDueCommits(commitData?.commitments || []);
         setHasUnreadReview(reviewData?.hasUnread || false);
         setDueOutcomesCount((outcomeData?.due || []).length);
@@ -256,10 +261,10 @@ export default function Home() {
             {pulseStats.totalPulses === 0 && (
               <div className="mb-10 pb-8 border-b border-paper-300">
                 <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-400 mb-3">
-                  · 今天就先试一个 Pulse — 3 分钟 ·
+                  · 今天就先写一句 — 3 分钟 ·
                 </p>
                 <p className="font-serif text-sm text-ink-500 max-w-prose-lg editorial-leading">
-                  Pulse 不是日记, 是"人生信号采集". 5 类轮换问题, 每天 3 分钟.
+                  &ldquo;今日一句&rdquo; 不是日记, 是&ldquo;人生信号采集&rdquo;. 5 类轮换问题, 每天 3 分钟.
                   累积起来, AI 看见你的 pattern; 重大决策来时, 它已经懂你的背景, 不用从头解释.
                 </p>
               </div>
@@ -267,7 +272,7 @@ export default function Home() {
 
             <div className="flex justify-between items-baseline mb-6">
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal">
-                · Daily Pulse · Pulse #{pulseStats.totalPulses + 1} ·
+                · 今日一句 · 第 {pulseStats.totalPulses + 1} 条 ·
               </p>
               {pulseStats.weekPulses > 0 && (
                 <p className="font-mono text-xs text-ink-400">
@@ -310,7 +315,7 @@ export default function Home() {
                           href="/history"
                           className="text-sm text-ink-500 hover:text-seal transition-colors px-4 py-2"
                         >
-                          看我的 Pulse 历史
+                          看历史
                         </Link>
                       )}
                       <button
@@ -357,7 +362,7 @@ export default function Home() {
                     · 真正卡了几周的决定 ·
                   </p>
                   <p className="font-serif text-reading text-ink-500 editorial-leading mb-4 max-w-prose-lg">
-                    Pulse 是日常信号. 真正卡了几周的决定 — 父母养老、孩子留学、要不要离职、要不要离婚 —
+                    &ldquo;今日一句&rdquo; 是日常信号. 真正卡了几周的决定 — 父母养老、孩子留学、要不要离职、要不要离婚 —
                     用 Decision Deep Dive 一层层想清楚. 12 维拆解, 不替你做决定, 让你看见代价.
                   </p>
                   <button
@@ -397,7 +402,7 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <button onClick={startAnotherPulse} className="btn-seal px-6 py-3 rounded-sm">
-                再写一条 Pulse →
+                再写一条 →
               </button>
               <button onClick={() => { setMode('decision'); setPulseResponse(null); }} className="btn-ghost px-6 py-3 rounded-sm">
                 把这件事想清楚 (Deep Dive)
@@ -405,7 +410,7 @@ export default function Home() {
             </div>
 
             <p className="mt-10 pt-6 border-t border-paper-300 font-sans text-xs text-ink-400">
-              这条 Pulse 已写入你的 RMC episodic.
+              这条&ldquo;今日一句&rdquo;已写入你的记忆库.
               累积到一定量, AI 会在 Weekly Review 里识别你的 pattern.
               当前共 {pulseStats.totalPulses} 条 / 本周 {pulseStats.weekPulses} 条.
             </p>
@@ -416,7 +421,7 @@ export default function Home() {
         {mode === 'decision' && (
           <section className="pt-8 pb-12 animate-fade-in-soft">
             <button onClick={() => setMode('pulse')} className="text-sm text-ink-500 hover:text-seal mb-4">
-              ← 回到 Pulse
+              ← 回到今日一句
             </button>
             <p className="font-sans text-xs uppercase tracking-[0.2em] text-seal mb-4">
               · Decision Deep Dive · 12 维协议 ·
@@ -500,6 +505,50 @@ export default function Home() {
           </section>
         )}
 
+        {/* 历史 · 5/18 ship · 用户反馈 "找不到自己写过的 + KEY 回复" */}
+        {pulseHistory.length > 0 && (
+          <section className="mt-20 pt-10 border-t border-paper-300">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · 你的今日一句 · 历史 ·
+            </p>
+            <h2 className="font-serif text-2xl text-ink-900 tracking-tightish mb-2">
+              你写过 {pulseStats.totalPulses} 条 · KEY 都还记得.
+            </h2>
+            <p className="font-serif italic text-[13px] text-ink-500 mb-8">
+              下面是最近 {pulseHistory.length} 条 · 倒序 · 含 KEY 当时的回应.
+            </p>
+            <div className="space-y-10">
+              {pulseHistory.map((p) => {
+                const date = new Date(p.createdAt * 1000);
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                return (
+                  <article key={p.id} className="border-l-2 border-paper-300 pl-6">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-ink-400 mb-3">
+                      {dateStr}
+                      {Array.isArray(p.tags) && p.tags.length > 0 && (
+                        <span className="ml-3">· {p.tags.join(' / ')}</span>
+                      )}
+                    </p>
+                    <p className="font-serif text-reading text-ink-900 leading-relaxed mb-4">
+                      你写: {p.content}
+                    </p>
+                    {p.aiResponse && (
+                      <div className="border-l-2 border-seal-500/40 pl-4">
+                        <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-seal-500 mb-2">
+                          · KEY 回 ·
+                        </p>
+                        <p className="font-serif italic text-[14px] text-ink-700 leading-relaxed whitespace-pre-line">
+                          {p.aiResponse}
+                        </p>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* Footer */}
         {userUid && (
           <footer className="mt-32 pt-8 border-t border-paper-300 text-xs text-ink-400 font-mono">
@@ -508,7 +557,7 @@ export default function Home() {
               <span>id: {userUid.slice(0, 8)}…{userUid.slice(-4)}</span>
             </div>
             <p className="mt-3 text-ink-400 font-sans">
-              所有数据只在你 Mac 本地 · 永不上传 · 永不外泄
+              所有数据存在 Turso · 永不进训练数据
             </p>
           </footer>
         )}
