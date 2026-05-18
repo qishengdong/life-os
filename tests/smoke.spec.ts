@@ -213,3 +213,52 @@ test.describe('authed user flow', () => {
     });
   }
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// E2E: 真提交 brief 表单 + 等结果页
+//   防 5/18 灾难: 我之前 21/21 PASS 但只测 "页面加载", 没真提交.
+//   用户点提交 → 504 timeout → 前端炸 "Unexpected token A". 这种必须 smoke 抓.
+// ─────────────────────────────────────────────────────────────────────────────
+test.describe('decision brief E2E', () => {
+  test('短决策真生成 brief 不超时', async ({ page, context }) => {
+    const uid = crypto.randomUUID();
+    const url = new URL(BASE_URL);
+    await context.addCookies([{
+      name: 'key_invited', value: '1',
+      domain: url.hostname, path: '/', sameSite: 'Lax',
+    }]);
+    await page.addInitScript((u) => {
+      try { localStorage.setItem('life_os_uid', u); } catch {}
+    }, uid);
+
+    const { errors, pageErrors } = trackErrors(page);
+
+    await page.goto(`${BASE_URL}/decisions/new`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1500);
+
+    // 填表 · 短输入 (full pipeline 应能 <60s)
+    await page.fill('textarea', '我在考虑要不要换工作. 现在的薪水还行, 但 3 年了感觉没成长, 老板对我也不够认可.');
+    await page.fill('input[type="date"]', '1985-06-01');
+
+    const submitPromise = page.waitForResponse(
+      (r) => r.url().includes('/api/decision/brief') && r.request().method() === 'POST',
+      { timeout: 70_000 },
+    );
+    await page.click('button[type="submit"]');
+    const resp = await submitPromise;
+
+    expect.soft(resp.status(), 'brief POST 状态码').toBeLessThan(500);
+    const ct = resp.headers()['content-type'] || '';
+    expect.soft(ct, 'brief POST content-type').toContain('application/json');
+
+    await page.waitForTimeout(3000);
+    const finalUrl = page.url();
+    const html = await page.content();
+    const hasJsonParseErr = html.includes('Unexpected token') || html.includes('is not valid JSON');
+    const onResultPage = /\/decisions\/\w+/.test(finalUrl) && !finalUrl.endsWith('/decisions/new');
+
+    expect.soft(hasJsonParseErr, 'frontend 不能出 JSON parse error').toBe(false);
+    expect.soft(onResultPage, '应跳到 /decisions/[number] 结果页').toBe(true);
+    expect.soft(pageErrors, '提交 pageErrors').toEqual([]);
+  });
+});

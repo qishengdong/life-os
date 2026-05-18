@@ -67,7 +67,14 @@ function NewDecisionPageInner() {
   }, [submitting]);
 
   const charCount = decision.length;
-  const canSubmit = userUid && birthDate && decision.trim().length >= 20 && !submitting;
+  // 生日 sanity check: 1920-当年, 防止 1876 这种 typo 进 brain context
+  const birthYear = birthDate ? parseInt(birthDate.slice(0, 4), 10) : 0;
+  const thisYear = new Date().getFullYear();
+  const birthDateValid = birthYear >= 1920 && birthYear <= thisYear;
+  const birthDateError = birthDate && !birthDateValid
+    ? `生日年份要在 1920-${thisYear} 之间 (你填的是 ${birthYear})`
+    : null;
+  const canSubmit = userUid && birthDate && birthDateValid && decision.trim().length >= 20 && !submitting;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -75,11 +82,38 @@ function NewDecisionPageInner() {
     setSubmitting(true);
     setError(null);
     try {
+      // 长输入 → 跳 Editor pass (Hotfix 5/18 · 防 60s timeout)
+      // Editor 加 15-25s, 复杂决策必 504. Analyst 草稿仍然 publication-grade.
+      // 用户可以之后在简报页点 "再润色一次" (待 ship) 触发 Editor.
+      const skipEditor = decision.trim().length > 100;
+
       const res = await fetch('/api/decision/brief', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
-        body: JSON.stringify({ birthDate, gender, decision: decision.trim() }),
+        body: JSON.stringify({ birthDate, gender, decision: decision.trim(), skipEditor }),
       });
+
+      // Vercel timeout (504) 时, response 是纯文本 "An error occurred..." 不是 JSON
+      // 必须先看 status, 不能直接 .json() 否则 "Unexpected token A" 把用户吓崩
+      if (res.status === 504 || res.status === 502 || res.status === 408) {
+        setError(
+          '生成超时了 — KEY 后台可能还在跑. ' +
+          '请 30 秒后刷新 /history 看看, 简报可能已经存进去了. ' +
+          '若没有, 把决策缩短到 80 字以内重试 (避免触发超时).',
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) {
+        // 非 JSON 响应 · Vercel runtime error 或网关错误
+        const txt = await res.text().catch(() => 'no body');
+        setError(`服务器返回非 JSON (${res.status}). ${txt.slice(0, 100)}`);
+        setSubmitting(false);
+        return;
+      }
+
       const data = await res.json();
       if (data.shortCircuit) {
         setError(`安全短路 (${data.trigger}): ${data.response}`);
@@ -176,9 +210,16 @@ function NewDecisionPageInner() {
                   type="date"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
+                  min="1920-01-01"
+                  max={`${new Date().getFullYear()}-12-31`}
                   required
-                  className="w-full px-4 py-3 bg-paper-50 border border-paper-300 focus:border-seal-500 focus:outline-none transition-colors font-mono text-sm"
+                  className={`w-full px-4 py-3 bg-paper-50 border focus:outline-none transition-colors font-mono text-sm ${
+                    birthDateError ? 'border-ember focus:border-ember' : 'border-paper-300 focus:border-seal-500'
+                  }`}
                 />
+                {birthDateError && (
+                  <p className="font-serif italic text-[12px] text-ember mt-1.5">{birthDateError}</p>
+                )}
               </div>
               <div>
                 <label className="font-sans text-[10px] uppercase tracking-[0.25em] text-seal-500 block mb-2">
