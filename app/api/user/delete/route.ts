@@ -46,6 +46,7 @@ const CHILD_TABLES = [
   'inspector_audit',               // P0 fix 2026-05-17: AI 行为审计
   'emails_sent',
   'sunday_reviews',
+  'user_decision_personality',     // 2026-05-18 ship: 决策人格画像
 ];
 
 export async function POST(req: NextRequest) {

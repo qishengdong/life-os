@@ -186,11 +186,11 @@ export default function OnboardingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/pulse" className="btn-seal px-8 py-3 rounded-sm text-center">
-              写今天的第一条 Pulse →
+            <Link href="/your-pattern" className="btn-seal px-8 py-3 rounded-sm text-center">
+              看你的决策画像 →
             </Link>
             <Link href="/brain" className="btn-ghost px-8 py-3 rounded-sm text-center">
-              看 AI 怎么记得我
+              直接看 KEY 怎么记得我
             </Link>
           </div>
         </main>

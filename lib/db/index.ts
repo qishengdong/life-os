@@ -427,6 +427,21 @@ async function initSchema(db: DbClient): Promise<void> {
     UNIQUE(user_id, week_start)
   )`);
   await db.exec(`CREATE INDEX IF NOT EXISTS idx_insight_runs_user ON brain_insight_runs(user_id, created_at DESC)`);
+
+  // user_decision_personality (2026-05-18 ship · onboarding 兑现)
+  await db.exec(`CREATE TABLE IF NOT EXISTS user_decision_personality (
+    user_id INTEGER PRIMARY KEY,
+    type TEXT NOT NULL CHECK(type IN ('foundation','cartographer','connector','adaptor','contrarian','integrator')),
+    headline TEXT NOT NULL,
+    signatures_json TEXT NOT NULL,
+    blind_spot_json TEXT NOT NULL,
+    growth_direction_json TEXT NOT NULL,
+    based_on_stages TEXT,
+    llm_model TEXT,
+    version INTEGER DEFAULT 1,
+    generated_at INTEGER DEFAULT (unixepoch()),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  )`);
 }
 
 // ============================================================================

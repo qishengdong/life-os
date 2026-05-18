@@ -31,6 +31,7 @@ const PROTECTED_PATHS = [
   '/review',
   '/unsent',
   '/settings',
+  '/your-pattern',  // 5/18 ship
 ];
 
 // public path · 不需要 cookie

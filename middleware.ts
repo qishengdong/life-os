@@ -37,6 +37,7 @@ const USER_PROTECTED_PATHS = [
   '/inbox',
   '/unsent',
   '/settings',
+  '/your-pattern',  // 5/18 ship · 决策人格画像
 ];
 
 export function middleware(req: NextRequest) {
@@ -93,5 +94,6 @@ export const config = {
     '/inbox/:path*',
     '/unsent/:path*',
     '/settings/:path*',
+    '/your-pattern/:path*',
   ],
 };

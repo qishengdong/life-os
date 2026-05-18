@@ -61,11 +61,10 @@ export default function InvitePage() {
         setSubmitting(false);
         return;
       }
-      // 兑换成功 → 直接进决策入口 (跳 /onboarding · 方向 A · 5/17 ship)
-      // 用户反馈: /onboarding 多 stage 表单是混乱根源 · 改"最少 friction, 最快到价值"
-      // ?welcome=1 触发 /decisions/new 顶部欢迎 banner
-      // 想填完整 profile 之后 /settings 有入口 (后续 ship)
-      router.push('/decisions/new?welcome=1');
+      // 兑换成功 → 进 6 步 onboarding (5/18 revert UX A · 用户拍 + 测试人反馈)
+      // 建档是 trust ritual, 不是 friction. onboarding 完了去 /your-pattern
+      // 看决策人格画像 (兑现 9 分钟价值) → /brain → /decisions/new
+      router.push('/onboarding');
     } catch (e: any) {
       setError(e.message);
       setSubmitting(false);
