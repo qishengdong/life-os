@@ -147,8 +147,8 @@ export default function BrainPage() {
           <div className="pt-12 space-y-16">
             {memory.brainContent && (
               <SectionWrapper
-                eyebrow="· 卷首 · BRAIN NARRATIVE ·"
-                title="AI 是怎么理解你的"
+                eyebrow="· 卷首 · 档案叙事 ·"
+                title="KEY 是怎么理解你的"
                 hint="LLM 综合你的全部记忆写的概述. 跟 onboarding 一起生成, 之后 weekly consolidation 更新."
               >
                 <div className="font-serif text-reading text-ink-700 editorial-leading whitespace-pre-line border-l-2 border-seal-500/40 pl-6">
@@ -159,8 +159,8 @@ export default function BrainPage() {
 
             {/* JOB-020 · Pattern detection · grounded insights */}
             <SectionWrapper
-              eyebrow="· LAYER · PATTERN ·"
-              title={`AI 在你身上看见的 (${insights.length})`}
+              eyebrow="· 反复 pattern ·"
+              title={`KEY 在你身上看见的反复 (${insights.length})`}
               hint="每条 pattern 都至少 3 条具体证据 — 没的就不在这. Inspector C30 守门."
             >
               {lastInsightRun && (
@@ -180,7 +180,7 @@ export default function BrainPage() {
             </SectionWrapper>
 
             <SectionWrapper
-              eyebrow="· LAYER 0 · 硬锚点 ·"
+              eyebrow="· 硬锚点 · 永远成立的事实 ·"
               title={`硬锚点 (${memory.coreState.length})`}
               hint="永远成立的事实 — KEY 每次跟你聊任何事都会优先记得这些."
             >
@@ -206,7 +206,7 @@ export default function BrainPage() {
                 return (
                   <SectionWrapper
                     key={type}
-                    eyebrow={`· LAYER 1 · ${CARD_TYPE_LABEL[type].toUpperCase()} ·`}
+                    eyebrow={`· ${CARD_TYPE_LABEL[type]} ·`}
                     title={`${CARD_TYPE_LABEL[type]} (${cards.length})`}
                     hint={CARD_TYPE_HINT[type]}
                   >
@@ -227,7 +227,7 @@ export default function BrainPage() {
             <SectionWrapper
               eyebrow="· 未完的事 ·"
               title={`未完的事 (${memory.openLoops.length})`}
-              hint="跟你之前对话中产生的待办: 跟进 / 回访 / 复盘. 处理完点'已完成'."
+              hint="跟你之前对话中产生的未完事项: 跟进 / 回访 / 复盘. 处理完点'已完成'."
             >
               {memory.openLoops.length === 0 ? (
                 <EmptyState text="暂无未完的事." />
@@ -426,7 +426,7 @@ function CardRow({
 
   async function hardDelete() {
     if (!userUid) return;
-    if (!confirm('这条 RMC 卡会被永久删除. 确定?')) return;
+    if (!confirm('这条事实卡会被永久删除. 确定?')) return;
     await fetch(`/api/brain/card/${card.id}`, {
       method: 'DELETE',
       headers: { [UID_HEADER]: userUid },

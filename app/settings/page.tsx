@@ -109,7 +109,7 @@ export default function SettingsPage() {
           </h1>
           <div className="font-serif italic text-reading text-ink-500 leading-relaxed mb-10 space-y-3">
             <p>
-              brain / 决策 / 简报 / Pulse / 信件 / 未交付的信 / outcome — 全部删了.
+              档案 / 决策 / 简报 / 今日一句 / 信件 / 未交付的信 / 决策账本 — 全部删了.
             </p>
             <p className="text-[14px] text-ink-400">
               你现在是 keypoint.life 的匿名访客. 之前的恢复码 (KEY-XXXX-XXXX) 也作废.
@@ -158,7 +158,7 @@ export default function SettingsPage() {
           </p>
           <p>
             换 iPhone / 清 Safari / 误删 KEY 数据时, 去 <Link href="/recover" className="text-seal-500 underline underline-offset-2 hover:text-seal-700">/recover</Link>
-            输入恢复码, brain 会跟过来.
+            输入恢复码, 你的档案会跟过来.
           </p>
           <p className="text-[14px] text-ink-500 italic">
             建议: 复制到密码管理器 (1Password / Bitwarden) 或截图存到 iCloud 相册.
@@ -176,8 +176,8 @@ export default function SettingsPage() {
           一份 JSON, 你 own.
         </h2>
         <p className="font-serif text-reading text-ink-700 editorial-leading mb-6">
-          含 profile / 决策 / 简报 / Pulse / 信件 / 未交付的信 / brain / outcome /
-          pattern insight 全部.
+          含 profile / 决策 / 简报 / 今日一句 / 信件 / 未交付的信 / 档案 / 决策账本 /
+          pattern 洞察 全部.
         </p>
         <button
           type="button"
@@ -199,8 +199,8 @@ export default function SettingsPage() {
         </h2>
         <div className="space-y-4 font-serif text-reading text-ink-700 editorial-leading mb-6">
           <p>
-            点了之后, KEY 会立刻删除你所有数据 (brain, 决策, 简报, Pulse, 信件, 未交付的信,
-            outcome, insight) — 不能撤销, 也找不回.
+            点了之后, KEY 会立刻删除你所有数据 (档案, 决策, 简报, 今日一句, 信件, 未交付的信,
+            决策账本, 洞察) — 不能撤销, 也找不回.
           </p>
           <p className="text-[14px] text-ink-500 italic">
             建议先 "下载 JSON" 留一份 backup.
