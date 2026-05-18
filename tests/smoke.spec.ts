@@ -234,6 +234,8 @@ test.describe('authed user flow', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 test.describe('decision brief E2E', () => {
   test('submit 真不让前端炸 (无论 LLM 真成功还是失败)', async ({ page, context }) => {
+    // brief gen on prod 可能跑 45-60s (Inspector 自审等), 默认 60s test timeout 不够
+    test.setTimeout(120_000);
     const uid = crypto.randomUUID();
     const url = new URL(BASE_URL);
     await context.addCookies([{
