@@ -428,6 +428,22 @@ async function initSchema(db: DbClient): Promise<void> {
   )`);
   await db.exec(`CREATE INDEX IF NOT EXISTS idx_insight_runs_user ON brain_insight_runs(user_id, created_at DESC)`);
 
+  // pulse_turns (2026-05-18 ship · 用户反馈 "Pulse 应该可以继续聊")
+  // turn 0 = 用户原话 (在 daily_pulses.content)
+  // turn 1 = KEY 首次回应 (在 daily_pulses.ai_response)
+  // turn ≥ 2 = 后续来回 (本表)
+  await db.exec(`CREATE TABLE IF NOT EXISTS pulse_turns (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pulse_id INTEGER NOT NULL,
+    turn_number INTEGER NOT NULL,
+    role TEXT NOT NULL CHECK(role IN ('user','ai')),
+    content TEXT NOT NULL,
+    created_at INTEGER DEFAULT (unixepoch()),
+    FOREIGN KEY (pulse_id) REFERENCES daily_pulses(id),
+    UNIQUE(pulse_id, turn_number)
+  )`);
+  await db.exec(`CREATE INDEX IF NOT EXISTS idx_pulse_turns_pulse ON pulse_turns(pulse_id, turn_number)`);
+
   // user_decision_personality (2026-05-18 ship · onboarding 兑现)
   await db.exec(`CREATE TABLE IF NOT EXISTS user_decision_personality (
     user_id INTEGER PRIMARY KEY,

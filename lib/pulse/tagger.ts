@@ -287,3 +287,110 @@ function parseProcessorOutput(content: string): {
     return { tags: [], aiResponse: '我看见了.' };
   }
 }
+
+// ============================================================================
+// processPulseFollowup · 续聊一轮 (5/18 ship)
+//
+// 用户在已有 pulse 下继续回复, KEY 看全对话 + brain context, 生成回应.
+// 不重新打 tag (turn 0 已 tag), 不写 RMC (已写入), 只生成回应.
+// 安全检测仍跑 (新内容可能含 crisis 信号).
+// ============================================================================
+
+interface FollowupResult {
+  aiResponse: string;
+  durationMs: number;
+  safetyTrigger?: string;
+}
+
+const FOLLOWUP_SYSTEM_PROMPT = `你是 KEY 的 Pulse 处理器, 现在跟用户在一个已经开始的 Pulse 对话里继续聊.
+
+# 危机检测 · 仍要做
+跟初次回应一样, 任何 turn 出现 L3 危机 / 医疗诊断红线 / 法律 / 投资 等 → 立刻短路给资源 (规则同初次).
+
+# 续聊风格
+你之前已经回了一句, 用户接着回了你的话. 现在你要再答一句.
+
+- **接住, 不重启**: 不要重新介绍 / 不要"看起来你...", 直接接着上一句对话推进
+- **30-80 字 · 同初次**
+- **可问 0-1 个问题**: 如果用户的回复给了你新信号, 顺势再追一句 (不强求)
+- **不堆问题**: 一个 turn 1 个核心问题是上限
+- **看见反复**: 如果用户在这 thread 里第 N 次绕回同一处, surface 它 ("你这是这段对话里第 X 次说到 [X]")
+- **不替决定**: 别开 framework, 别给 action plan
+- **不哄**: 不"加油"不"你已经很棒"
+
+# brain context (优先级)
+{brain_context}
+
+# 输出
+直接出回应文字, 不要 JSON, 不要前缀解释. 30-80 字.`;
+
+export async function processPulseFollowup(args: {
+  userId: number;
+  pulseId: number;
+  newUserMessage: string;
+  // 完整对话历史 · 最新一句不在这里 (newUserMessage 才是)
+  priorTurns: Array<{ role: 'user' | 'ai'; content: string }>;
+  injectedMemory?: UserMemoryContext;
+}): Promise<FollowupResult> {
+  const t0 = Date.now();
+
+  // Safety check on new message
+  const safety = checkInputSafety(args.newUserMessage);
+  if (safety.triggered) {
+    return {
+      aiResponse: safety.response || '我听见你说的了. 你现在身边有谁能陪你说一句话?',
+      durationMs: Date.now() - t0,
+      safetyTrigger: safety.trigger,
+    };
+  }
+
+  // brain context
+  const memory = args.injectedMemory || (await fetchUserMemory(args.userId));
+  const brainContext = buildBrainContextString(memory);
+  const systemPrompt = FOLLOWUP_SYSTEM_PROMPT.replace('{brain_context}', brainContext);
+
+  // 构造 multi-turn messages
+  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+    { role: 'system', content: systemPrompt },
+    ...args.priorTurns.map((t) => ({
+      role: t.role === 'user' ? ('user' as const) : ('assistant' as const),
+      content: t.content,
+    })),
+    { role: 'user', content: args.newUserMessage },
+  ];
+
+  const resp = await modelRouter.complete({
+    messages,
+    provider: 'deepseek',
+    temperature: 0.7,
+    maxTokens: 300,
+  });
+
+  const sanitized = sanitizeOutput(resp.content.trim());
+  const aiResponse = typeof sanitized === 'string' ? sanitized : sanitized.clean;
+  return { aiResponse, durationMs: Date.now() - t0 };
+}
+
+// brain context builder · 复用 processPulse 内部逻辑结构
+function buildBrainContextString(memory: UserMemoryContext): string {
+  const parts: string[] = [];
+  if (memory.coreState.length > 0) {
+    parts.push(
+      '## 硬锚点\n' +
+        memory.coreState.slice(0, 8).map((c) => `- ${c.factText}`).join('\n'),
+    );
+  }
+  if (memory.boundary.length > 0) {
+    parts.push(
+      '## 边界\n' +
+        memory.boundary.slice(0, 6).map((c) => `- ${c.title}`).join('\n'),
+    );
+  }
+  if (memory.factual.length > 0) {
+    parts.push(
+      '## 已知事实\n' +
+        memory.factual.slice(0, 10).map((c) => `- ${c.title}: ${c.content}`).join('\n'),
+    );
+  }
+  return parts.length > 0 ? parts.join('\n\n') : '(brain 仍很浅, 主要靠 user 本次输入)';
+}

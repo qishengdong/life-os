@@ -44,9 +44,57 @@ export default function Home() {
   const [pulseError, setPulseError] = useState<string | null>(null);
   const [pulseResponse, setPulseResponse] = useState<{ aiResponse: string; tags: PulseTag[] } | null>(null);
   // 5/18 加历史 · 用户反馈 "我写过的 Pulse 和 KEY 的回复都找不到了"
+  // 5/18 v2 · 用户反馈 "需要可以接着 KEY 的回复继续聊"
   const [pulseHistory, setPulseHistory] = useState<Array<{
     id: number; questionId: string; content: string; aiResponse: string | null; createdAt: number; tags: string[];
+    turns?: Array<{ id: number; turnNumber: number; role: 'user' | 'ai'; content: string; createdAt: number }>;
   }>>([]);
+  // 续聊 inline 输入 · 每个 pulse_id 独立
+  const [replyDraft, setReplyDraft] = useState<Record<number, string>>({});
+  const [replyingId, setReplyingId] = useState<number | null>(null);
+  const [replyError, setReplyError] = useState<Record<number, string>>({});
+
+  async function submitReply(pulseId: number) {
+    if (!userUid) return;
+    const text = (replyDraft[pulseId] || '').trim();
+    if (!text) return;
+    setReplyingId(pulseId);
+    setReplyError((prev) => ({ ...prev, [pulseId]: '' }));
+    try {
+      const res = await fetch(`/api/pulse/${pulseId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', [UID_HEADER]: userUid },
+        body: JSON.stringify({ content: text }),
+      });
+      if (res.status === 504 || res.status === 502 || res.status === 408) {
+        setReplyError((prev) => ({ ...prev, [pulseId]: '生成超时, 稍后刷新本页看 KEY 回了没有.' }));
+        return;
+      }
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) {
+        setReplyError((prev) => ({ ...prev, [pulseId]: `服务器错 (${res.status}), 重试一下` }));
+        return;
+      }
+      const data = await res.json();
+      if (!res.ok) {
+        setReplyError((prev) => ({ ...prev, [pulseId]: data.error || '续聊失败' }));
+        return;
+      }
+      // 追加新 turns 到 history 显示
+      setPulseHistory((prev) =>
+        prev.map((p) => {
+          if (p.id !== pulseId) return p;
+          const newTurns = [...(p.turns || []), data.userTurn, data.aiTurn];
+          return { ...p, turns: newTurns };
+        }),
+      );
+      setReplyDraft((prev) => ({ ...prev, [pulseId]: '' }));
+    } catch (e: any) {
+      setReplyError((prev) => ({ ...prev, [pulseId]: e.message || '网络错误' }));
+    } finally {
+      setReplyingId(null);
+    }
+  }
 
   // Decision state
   const [birthDate, setBirthDate] = useState('');
@@ -492,7 +540,7 @@ export default function Home() {
           </section>
         )}
 
-        {/* 历史 · 5/18 ship · 用户反馈 "找不到自己写过的 + KEY 回复" */}
+        {/* 历史 · 5/18 ship · 用户反馈 "找不到自己写过的 + KEY 回复" + "需要可以继续聊" */}
         {pulseHistory.length > 0 && (
           <section className="mt-20 pt-10 border-t border-paper-300">
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
@@ -502,12 +550,13 @@ export default function Home() {
               你写过 {pulseStats.totalPulses} 条 · KEY 都还记得.
             </h2>
             <p className="font-serif italic text-[13px] text-ink-500 mb-8">
-              下面是最近 {pulseHistory.length} 条 · 倒序 · 含 KEY 当时的回应.
+              下面是最近 {pulseHistory.length} 条 · 倒序 · 可继续往下聊.
             </p>
-            <div className="space-y-10">
+            <div className="space-y-14">
               {pulseHistory.map((p) => {
                 const date = new Date(p.createdAt * 1000);
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                const followups = p.turns || [];
                 return (
                   <article key={p.id} className="border-l-2 border-paper-300 pl-6">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-ink-400 mb-3">
@@ -516,19 +565,64 @@ export default function Home() {
                         <span className="ml-3">· {p.tags.join(' / ')}</span>
                       )}
                     </p>
+                    {/* turn 0 · user 原话 */}
                     <p className="font-serif text-reading text-ink-900 leading-relaxed mb-4">
-                      你写: {p.content}
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-ink-400 mr-2">你 ·</span>
+                      {p.content}
                     </p>
+                    {/* turn 1 · KEY 首回 */}
                     {p.aiResponse && (
-                      <div className="border-l-2 border-seal-500/40 pl-4">
+                      <div className="border-l-2 border-seal-500/40 pl-4 mb-5">
                         <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-seal-500 mb-2">
-                          · KEY 回 ·
+                          · KEY ·
                         </p>
                         <p className="font-serif italic text-[14px] text-ink-700 leading-relaxed whitespace-pre-line">
                           {p.aiResponse}
                         </p>
                       </div>
                     )}
+                    {/* turn ≥ 2 · 续聊 */}
+                    {followups.map((t) => (
+                      <div key={t.id} className={t.role === 'user' ? 'mb-4' : 'border-l-2 border-seal-500/40 pl-4 mb-5'}>
+                        <p className={`font-sans text-[10px] uppercase tracking-[0.2em] mb-2 ${t.role === 'user' ? 'text-ink-400' : 'text-seal-500'}`}>
+                          · {t.role === 'user' ? '你' : 'KEY'} ·
+                        </p>
+                        <p className={`font-serif ${t.role === 'user' ? 'text-reading text-ink-900' : 'italic text-[14px] text-ink-700'} leading-relaxed whitespace-pre-line`}>
+                          {t.content}
+                        </p>
+                      </div>
+                    ))}
+                    {/* 续聊输入 */}
+                    <div className="mt-4 pt-4 border-t border-paper-200">
+                      <textarea
+                        value={replyDraft[p.id] || ''}
+                        onChange={(e) => setReplyDraft((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                        placeholder="接着 KEY 的回继续说... (Cmd/Ctrl+Enter 发送)"
+                        rows={2}
+                        maxLength={2000}
+                        disabled={replyingId === p.id}
+                        onKeyDown={(e) => {
+                          if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                            e.preventDefault();
+                            submitReply(p.id);
+                          }
+                        }}
+                        className="w-full px-3 py-2 bg-paper-50 border border-paper-300 focus:border-seal-500 focus:outline-none transition-colors font-serif text-[14px] text-ink-900 resize-y"
+                      />
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="font-mono text-[10px] text-ink-400">
+                          {replyError[p.id] && <span className="text-ember">{replyError[p.id]}</span>}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => submitReply(p.id)}
+                          disabled={replyingId === p.id || !(replyDraft[p.id] || '').trim()}
+                          className="px-4 py-1.5 font-serif text-[13px] text-paper bg-ink-900 hover:bg-seal-500 disabled:bg-ink-400 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {replyingId === p.id ? '生成中...' : '继续 →'}
+                        </button>
+                      </div>
+                    </div>
                   </article>
                 );
               })}

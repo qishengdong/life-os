@@ -7,6 +7,7 @@ import {
   getUserPulseCount,
   getThisWeekPulseCount,
   getTodayPulseCount,
+  getPulseTurns,
 } from '@/lib/pulse/store';
 import { processPulse } from '@/lib/pulse/tagger';
 import { getNextQuestion, type PulseQuestionId, PULSE_QUESTIONS } from '@/lib/pulse/schema';
@@ -28,7 +29,17 @@ export async function GET(req: NextRequest) {
 
     const url = new URL(req.url);
     const includeHistory = url.searchParams.get('history') === '1';
-    const history = includeHistory ? await getUserPulses(userId, 30) : [];
+    let history: any[] = [];
+    if (includeHistory) {
+      const pulses = await getUserPulses(userId, 30);
+      // 每条 pulse 拉续聊 turns (5/18 ship)
+      history = await Promise.all(
+        pulses.map(async (p) => ({
+          ...p,
+          turns: await getPulseTurns(p.id),
+        })),
+      );
+    }
 
     return NextResponse.json({
       todayQuestion,

@@ -47,6 +47,7 @@ const CHILD_TABLES = [
   'emails_sent',
   'sunday_reviews',
   'user_decision_personality',     // 2026-05-18 ship: 决策人格画像
+  'pulse_turns',                   // 2026-05-18 ship: pulse 续聊 turns
 ];
 
 export async function POST(req: NextRequest) {

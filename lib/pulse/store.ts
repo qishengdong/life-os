@@ -129,3 +129,66 @@ function rowToPulse(row: any): PulseRecord {
     createdAt: row.created_at,
   };
 }
+
+// ============================================================================
+// pulse_turns · 续聊 (5/18 ship)
+// turn 0 = user 原话 (daily_pulses.content) · turn 1 = KEY 首回应 (daily_pulses.ai_response)
+// turn ≥ 2 = 用户续问 + KEY 续答 (本表)
+// ============================================================================
+
+export interface PulseTurn {
+  id: number;
+  pulseId: number;
+  turnNumber: number;
+  role: 'user' | 'ai';
+  content: string;
+  createdAt: number;
+}
+
+/** 拿某 pulse 的所有 turn (≥2). */
+export async function getPulseTurns(pulseId: number): Promise<PulseTurn[]> {
+  const db = await getDb();
+  const rows = (await db
+    .prepare(
+      `SELECT id, pulse_id, turn_number, role, content, created_at
+       FROM pulse_turns WHERE pulse_id = ? ORDER BY turn_number ASC`,
+    )
+    .all(pulseId)) as any[];
+  return rows.map((r) => ({
+    id: r.id,
+    pulseId: r.pulse_id,
+    turnNumber: r.turn_number,
+    role: r.role,
+    content: r.content,
+    createdAt: r.created_at,
+  }));
+}
+
+/** 追加一个 turn · 自动计算下一个 turn_number. */
+export async function addPulseTurn(args: {
+  pulseId: number;
+  role: 'user' | 'ai';
+  content: string;
+}): Promise<{ id: number; turnNumber: number }> {
+  const db = await getDb();
+  // 当前最大 turn_number · daily_pulses 的 user+ai 占 0 + 1, 所以 default 1
+  const row = (await db
+    .prepare(`SELECT MAX(turn_number) as maxn FROM pulse_turns WHERE pulse_id = ?`)
+    .get(args.pulseId)) as { maxn: number | null } | undefined;
+  const nextTurn = (row?.maxn ?? 1) + 1;
+  const result = await db
+    .prepare(
+      `INSERT INTO pulse_turns (pulse_id, turn_number, role, content) VALUES (?, ?, ?, ?)`,
+    )
+    .run(args.pulseId, nextTurn, args.role, args.content);
+  return { id: Number(result.lastInsertRowid), turnNumber: nextTurn };
+}
+
+/** 验证某 pulse 是否属于这个 user (跨用户访问防御). */
+export async function pulseBelongsToUser(pulseId: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  const row = (await db
+    .prepare(`SELECT user_id FROM daily_pulses WHERE id = ?`)
+    .get(pulseId)) as { user_id: number } | undefined;
+  return !!row && row.user_id === userId;
+}
