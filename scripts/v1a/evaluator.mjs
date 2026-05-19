@@ -86,7 +86,7 @@ top_issues 列 3-5 个**真问题**:
 - 编造 log 里没有的事; 找 issue 必须 evidence 指向 Day X
 - 笼统 "整体不错" · 必须给具体证据`;
 
-export async function runEvaluator({ log, finalBrain, finalHistory }) {
+export async function runEvaluator({ log, finalBrain, finalHistory, personaInfo }) {
   // 构造 user message · 含全部 log + 关键 brain state
   const timeline = log.map((e) => {
     const lines = [`[Day ${e.day} · ${e.type}]`];
@@ -126,10 +126,12 @@ ${(finalBrain?.psychSignal || []).map((c) => `- ${c.title}`).join('\n')}
 ${(finalBrain?.openLoops || []).map((c) => `- ${c.title}`).join('\n')}
 `;
 
-  const userMessage = `# Persona 信息
-林知见 · 42 · 北京投资 MD · 母亲 73 失智 · 父亲 5 年前过世 · 哥在美国
-她的硬边界: 绝不接母亲同住
-她的反复 pattern: "我撑不到她不需要我的那天"
+  const personaBlock = personaInfo
+    ? `# Persona 信息
+${personaInfo.name} · ${personaInfo.age || 'n/a'} · ${personaInfo.shortDesc || ''}
+${personaInfo.hiddenTensions ? '她/他没明说的事: ' + personaInfo.hiddenTensions.join(' / ') : ''}`
+    : '# Persona 信息\n(未提供 · 评估只看 log + brain)';
+  const userMessage = `${personaBlock}
 
 # 14 天完整 log
 ${timeline}

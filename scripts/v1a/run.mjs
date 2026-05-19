@@ -178,6 +178,14 @@ async function runOnePersona(profile) {
     log,
     finalBrain: brain.memory || brain,
     finalHistory: history.briefs || history,
+    personaInfo: {
+      name: profile.name,
+      age: new Date().getFullYear() - parseInt(profile.birthDate.slice(0, 4), 10),
+      shortDesc: profile.systemPrompt.split('\n').find((l) => l.startsWith('姓名:'))?.replace('姓名: ', '') || '',
+      hiddenTensions: profile.systemPrompt.includes('# 你没告诉')
+        ? profile.systemPrompt.split('# 你没告诉')[1]?.split('\n').filter((l) => /^\d+\./.test(l.trim()))
+        : [],
+    },
   });
 
   // ─── 写报告 ────────────────────────────────────────────────────────────
