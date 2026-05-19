@@ -39,6 +39,7 @@ const USER_PROTECTED_PATHS = [
   '/settings',
   '/your-pattern',  // 5/18 ship · 决策人格画像
   '/home',          // 5/18 ship · 老用户客厅 dashboard
+  '/welcome',       // 5/19 ship A2 · 兑换后 1 屏说明 · 必须 invited 才看
 ];
 
 export function middleware(req: NextRequest) {
@@ -97,5 +98,6 @@ export const config = {
     '/settings/:path*',
     '/your-pattern/:path*',
     '/home/:path*',
+    '/welcome/:path*',
   ],
 };

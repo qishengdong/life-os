@@ -82,6 +82,16 @@ export default function DecisionBriefDetailPage() {
 
         {brief && (
           <div className="pt-8">
+            {/* A3 inline hint · 5/19 ship · brief 顶贴 · 告诉用户这份是证据, 不是答案 */}
+            <div className="mb-10 max-w-prose-md mx-auto px-4 py-3 border-l-2 border-seal-500/40 bg-paper-50">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-1.5">
+                · 这是你的第 {number} 份决策简报 ·
+              </p>
+              <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                30 / 90 / 365 天后 KEY 会回头问你 — 你担心的事真发生了吗?
+                简报不是答案, 是你做决定时拿在手里的证据.
+              </p>
+            </div>
             <BriefRenderer brief={brief} showSeal={false} compactHeader={false} />
 
             {/* 底部 next-actions */}

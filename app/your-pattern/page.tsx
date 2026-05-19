@@ -127,9 +127,18 @@ export default function YourPatternPage() {
             这是 KEY 第一次, 把你看清楚.
           </h1>
           <p className="font-serif italic text-reading text-ink-500 max-w-prose-md mx-auto leading-relaxed">
-            不是评价, 没有对错. 是描述 — 你做决策时的习惯锚点 / 反复出现的签名 / 可能没看到的角. <br />
-            这页**会变** — 随你跟 KEY 做更多决策, 它自动重写.
+            不是评价, 没有对错. 是描述 — 你做决策时的习惯锚点 / 反复出现的签名 / 可能没看到的角.
           </p>
+          {/* A3 inline hint · 5/19 ship · 强调画像会演化 · 用户兑现 9 分钟问卷价值后看到长期承诺 */}
+          <div className="mt-6 max-w-prose-md mx-auto px-4 py-3 border-l-2 border-seal-500/40 bg-paper-50 text-left">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-1.5">
+              · 这页会变 ·
+            </p>
+            <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+              这不是 MBTI 那种"一次测完就锁死"的结果. 你每天写的"今日一句" + 每份决策简报,
+              都在重写这页. 90 天后再回来看 — KEY 对你的理解会比现在深 3 层.
+            </p>
+          </div>
         </header>
 
         {/* 加载中 / 生成中 */}

@@ -61,10 +61,10 @@ export default function InvitePage() {
         setSubmitting(false);
         return;
       }
-      // 兑换成功 → 进 6 步 onboarding (5/18 revert UX A · 用户拍 + 测试人反馈)
-      // 建档是 trust ritual, 不是 friction. onboarding 完了去 /your-pattern
-      // 看决策人格画像 (兑现 9 分钟价值) → /brain → /decisions/new
-      router.push('/onboarding');
+      // 5/19 ship A2 · 兑换成功 → /welcome 30 秒说明 → /onboarding 建档
+      // 用户 5/19 反馈: KEY 太创新, 直接进 9 分钟问卷会被吓跑
+      // /welcome 是 trust primer (产品逻辑), /onboarding 是 trust ritual (建档)
+      router.push('/welcome');
     } catch (e: any) {
       setError(e.message);
       setSubmitting(false);

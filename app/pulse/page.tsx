@@ -463,11 +463,16 @@ export default function Home() {
               </button>
             </div>
 
-            <p className="mt-10 pt-6 border-t border-paper-300 font-sans text-xs text-ink-400">
-              这条&ldquo;今日一句&rdquo;已写入你的记忆库.
-              累积到一定量, AI 会在 Weekly Review 里识别你的 pattern.
-              当前共 {pulseStats.totalPulses} 条 / 本周 {pulseStats.weekPulses} 条.
-            </p>
+            {/* A3 inline hint · 5/19 ship · 让用户在关键时刻看到 KEY 的长期承诺 */}
+            <div className="mt-10 pt-6 border-t border-paper-300">
+              <p className="font-sans text-xs text-seal-500 mb-2">
+                ✓ 已存进你的档案 · 这是第 {pulseStats.totalPulses} 条
+              </p>
+              <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                30 / 90 天后写决策简报时, KEY 会把这一条调出来作为你的真话证据 —
+                不是分析, 不是建议, 是你自己说过的话.
+              </p>
+            </div>
           </section>
         )}
 
