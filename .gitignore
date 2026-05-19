@@ -71,3 +71,4 @@ scripts/test_turso*.mjs
 scripts/*.mjs
 test-results/
 playwright-report/
+docs/simulations/
