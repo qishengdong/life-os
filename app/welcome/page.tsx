@@ -15,6 +15,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import KeyWordmark from '@/components/KeyWordmark';
+import InstallButton from '@/components/InstallButton';
 
 /**
  * 判断当前在微信内置浏览器, 还是 iOS Safari, 还是安卓 Chrome.
@@ -173,6 +174,9 @@ export default function WelcomePage() {
 
           {guideOpen && (
             <div className="mt-6 space-y-6">
+              {/* 一键安装 · Android Chrome 真主动触发 (iOS 没这个 API) */}
+              <InstallButton variant="primary" />
+
               {/* 微信单独警告 · 国内最大坑 */}
               {platform === 'wechat' && (
                 <div className="p-4 border-l-2 border-ember bg-paper-50">
@@ -253,39 +257,54 @@ export default function WelcomePage() {
 
               {/* 安卓 · 3 步 */}
               {activeTab === 'android' && (
-                <ol className="space-y-5 font-serif text-[14px] text-ink-700 leading-relaxed">
-                  <li className="flex gap-4">
-                    <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">1</span>
-                    <div>
-                      <p>
-                        在 <strong className="text-ink-900">Chrome / 浏览器</strong> 里打开 keypoint.life.
-                        <span className="block font-serif italic text-[13px] text-ink-500 mt-1">
-                          (如果你现在在微信里, 先点右上角 <span className="font-mono">⋯</span> → "在浏览器中打开")
-                        </span>
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex gap-4">
-                    <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">2</span>
-                    <div>
-                      <p>
-                        点屏幕右上角 <strong className="text-ink-900">⋮ (三点菜单)</strong>.
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex gap-4">
-                    <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">3</span>
-                    <div>
-                      <p>
-                        选 <strong className="text-ink-900">"添加到主屏幕"</strong>
-                        (或 "安装应用" / "Install app") → 确认.
-                      </p>
-                      <p className="font-serif italic text-[13px] text-ink-500 mt-2">
-                        桌面会出现 KEY 图标 — 像 App 一样, 点开全屏, 没浏览器地址栏.
-                      </p>
-                    </div>
-                  </li>
-                </ol>
+                <>
+                  <ol className="space-y-5 font-serif text-[14px] text-ink-700 leading-relaxed">
+                    <li className="flex gap-4">
+                      <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">1</span>
+                      <div>
+                        <p>
+                          在 <strong className="text-ink-900">Chrome / 浏览器</strong> 里打开 keypoint.life.
+                          <span className="block font-serif italic text-[13px] text-ink-500 mt-1">
+                            (如果你现在在微信里, 先点右上角 <span className="font-mono">⋯</span> → "在浏览器中打开")
+                          </span>
+                        </p>
+                      </div>
+                    </li>
+                    <li className="flex gap-4">
+                      <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">2</span>
+                      <div>
+                        <p>
+                          点屏幕右上角 <strong className="text-ink-900">⋮ (三点菜单)</strong>.
+                        </p>
+                      </div>
+                    </li>
+                    <li className="flex gap-4">
+                      <span className="font-mono text-[11px] text-seal-500 shrink-0 w-7 h-7 border border-seal-500/40 rounded-full flex items-center justify-center">3</span>
+                      <div>
+                        <p>
+                          选 <strong className="text-ink-900">"安装应用"</strong>
+                          (或 "添加到主屏幕" / "Install app") → 确认.
+                        </p>
+                      </div>
+                    </li>
+                  </ol>
+
+                  {/* P3 关键提示 · 5/20 用户真实 bug 反馈 · 安装后默认在应用抽屉, 不在桌面 */}
+                  <div className="mt-6 p-4 border-l-2 border-ember bg-paper-50">
+                    <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ember mb-2">
+                      · 装了找不到? 看这里 ·
+                    </p>
+                    <p className="font-serif text-[14px] text-ink-700 leading-relaxed">
+                      安卓 Chrome 装完<strong>默认放在"应用抽屉"里, 不在桌面</strong>.
+                      上滑屏幕进应用抽屉 (App Drawer) → 找 KEY 图标 →
+                      <strong>长按图标拖到桌面</strong>.
+                    </p>
+                    <p className="mt-2 font-serif italic text-[13px] text-ink-500 leading-relaxed">
+                      部分国产 ROM (MIUI / EMUI / OriginOS) 默认就放桌面, 跳过这步.
+                      华为/小米/OPPO 上点"安装"没反应的, 通常是这个原因 — 已经装了, 在抽屉里.
+                    </p>
+                  </div>
+                </>
               )}
 
               <p className="pt-4 border-t border-paper-200 font-serif italic text-[13px] text-ink-500 leading-relaxed">

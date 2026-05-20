@@ -13,7 +13,7 @@
  *   3. 弱网/无网时, 静态页 + offline fallback, 不假装能用
  */
 
-const SW_VERSION = 'v1-2026-05-20';
+const SW_VERSION = 'v2-2026-05-20-install-fix';
 const SHELL_CACHE = `key-shell-${SW_VERSION}`;
 const STATIC_CACHE = `key-static-${SW_VERSION}`;
 
