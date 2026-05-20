@@ -1,6 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Source_Serif_4, Noto_Serif_SC, Noto_Sans_SC, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import PWARegister from '@/components/PWARegister';
 
 // English sans (UI / nav / labels) — Inter
 const inter = Inter({
@@ -47,6 +48,16 @@ export const metadata: Metadata = {
   title: 'KEY · Find the key before you decide.',
   description:
     '决定之前, 先找到关键. KEY 是一项 AI 原生人生决策顾问服务. 它记得你的真实背景, 把复杂选择整理成一份可阅读、可行动、可复盘的私人决策简报.',
+  manifest: '/manifest.webmanifest',
+  applicationName: 'KEY',
+  appleWebApp: {
+    capable: true,
+    title: 'KEY',
+    statusBarStyle: 'default',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -63,6 +74,15 @@ export const metadata: Metadata = {
   },
 };
 
+// PWA · status bar 颜色 + 缩放 (Next.js 15+ 需要单独导出 viewport)
+export const viewport: Viewport = {
+  themeColor: '#F7F3EA',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -73,7 +93,10 @@ export default function RootLayout({
       lang="zh-CN"
       className={`${inter.variable} ${sourceSerif.variable} ${notoSerifSC.variable} ${notoSansSC.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="bg-paper text-ink-900 antialiased">{children}</body>
+      <body className="bg-paper text-ink-900 antialiased">
+        {children}
+        <PWARegister />
+      </body>
     </html>
   );
 }
