@@ -17,6 +17,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyHeader from '@/components/KeyHeader';
+import MorningMirror from '@/components/MorningMirror';
+import WeeklyPatternMirror from '@/components/WeeklyPatternMirror';
 
 interface BrainData {
   stats?: { accountAgeDays?: number; totalCards?: number; totalDecisions?: number };
@@ -161,6 +163,13 @@ export default function HomePage() {
               : '今天开始第一件 — 写下你最近最难的决定.'}
           </p>
         </header>
+
+        {/* 早镜面 · 5/20 ship · C1 · "你 X 天前写过 Y · 顺手问你 Z" */}
+        {/* 静默失败原则: 没合格 pulse / 已显示过今天 / LLM 失败 → 不显示 */}
+        <MorningMirror />
+
+        {/* 周末关联 · 5/20 ship · C2 · 仅周六/周日 · 本周 ≥3 pulse + 真重复 pattern */}
+        <WeeklyPatternMirror />
 
         {/* P6 · 5/18 ship · outcome 该回访了 = 第 1 优先级大字 hero card */}
         {!loading && hasDueOutcome && nextOutcome && (

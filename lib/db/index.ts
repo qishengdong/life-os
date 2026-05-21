@@ -458,6 +458,23 @@ async function initSchema(db: DbClient): Promise<void> {
     generated_at INTEGER DEFAULT (unixepoch()),
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
+
+  // morning_mirror_log (2026-05-20 ship · C1 · Linda × 5 retention 武器)
+  // 用户每天 /home 顶部看到 "你 X 天前写过 Y · 顺手问你 Z"
+  // 防重复: 同一 pulse 7 天内不再做 mirror; 同一用户当天只 mirror 一次
+  await db.exec(`CREATE TABLE IF NOT EXISTS morning_mirror_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    pulse_id INTEGER NOT NULL,
+    mirror_question TEXT NOT NULL,
+    shown_at INTEGER DEFAULT (unixepoch()),
+    user_action TEXT CHECK(user_action IN ('respond','dismiss','timeout')),
+    acted_at INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (pulse_id) REFERENCES daily_pulses(id)
+  )`);
+  await db.exec(`CREATE INDEX IF NOT EXISTS idx_mirror_user_shown ON morning_mirror_log(user_id, shown_at DESC)`);
+  await db.exec(`CREATE INDEX IF NOT EXISTS idx_mirror_pulse ON morning_mirror_log(pulse_id, shown_at DESC)`);
 }
 
 // ============================================================================
