@@ -58,48 +58,49 @@ export default function WelcomePage() {
             进去之前, 30 秒看清楚.
           </h1>
           <p className="font-serif italic text-reading text-ink-500 leading-relaxed">
-            KEY 不是日记, 不是 ChatGPT, 不是教练.<br />
-            它是把你每天的真实信号, 变成未来重大决定的证据.
+            KEY 不替你做决定.<br />
+            它帮你在重大决定之前, 看清最可能让你后悔的风险.
           </p>
         </header>
 
-        {/* 3 步说明 · 极简 · 每段 1 句 + 1 副词 */}
+        {/* 3 步说明 · Signal → Risk → Brief / Action / Review */}
         <section className="space-y-8 mb-12">
           <div className="border-l-2 border-seal-500/40 pl-6">
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
-              · 1. 每天 ·
+              · 1. 每天 30 秒 · 信号 ·
             </p>
             <h2 className="font-serif text-xl text-ink-900 tracking-tightish mb-2">
-              你写一句真话.
+              你写一句今天没说出口的真信号.
             </h2>
             <p className="font-serif italic text-[14px] text-ink-500 leading-relaxed">
-              30 秒. 想到什么写什么. 不用工整. KEY 记得.
+              不是日记, 不是心情. 是今天哪个小事让你不安, 你回避了什么, 你又一次妥协了什么.
+              KEY 标记到 6 类风险域 — 关系 / 事业 / 父母 / 身体 / 资产 / 自我.
             </p>
           </div>
 
           <div className="border-l-2 border-seal-500/40 pl-6">
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
-              · 2. 真正卡的时候 ·
+              · 2. 大决定来临 · 风险简报 ·
             </p>
             <h2 className="font-serif text-xl text-ink-900 tracking-tightish mb-2">
-              KEY 把你之前的真话调出来.
+              KEY 把你之前的真话调出来, 整理成 10 维必答的风险简报.
             </h2>
             <p className="font-serif italic text-[14px] text-ink-500 leading-relaxed">
-              写一份决策简报, KEY 会真引用你 X 天前说过的话作为证据.
-              不是 ChatGPT 那种泛建议.
+              接父母同住 / 离不离 / 跳不跳 / 卖不卖学区房 — 这种回不来的决定面前,
+              KEY 真引用你 30 天前说过的担心、边界、犹豫. 不是 ChatGPT 给的"最佳实践".
             </p>
           </div>
 
           <div className="border-l-2 border-seal-500/40 pl-6">
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
-              · 3. 30 天后 ·
+              · 3. 30 / 90 / 365 天后 · 复盘 ·
             </p>
             <h2 className="font-serif text-xl text-ink-900 tracking-tightish mb-2">
-              KEY 回头问你 — 真发生了吗?
+              KEY 主动回来问 — 担心的事真发生了吗?
             </h2>
             <p className="font-serif italic text-[14px] text-ink-500 leading-relaxed">
-              这是 KEY 跟其他 AI 真正不同的地方.
-              其他 AI 答完就走, KEY 等你的真实结果, 看你判断准不准.
+              其他 AI 答完就走. KEY 等你的真实结果, 看你判断准不准.
+              一年后, 你手里有一本自己的判断力档案.
             </p>
           </div>
         </section>
@@ -110,14 +111,15 @@ export default function WelcomePage() {
             · 第一步: 9 分钟建档 ·
           </p>
           <p className="font-serif text-reading text-ink-700 leading-relaxed mb-3">
-            KEY 想真懂你, 得先听你说一遍你是谁.
+            KEY 想在你大决定时真引用得上你, 得先听你说一遍你是谁 —
+            你的家庭结构, 你正在做的事, 你正在卡的决定, 你过去犯过的同一种错.
           </p>
           <p className="font-serif text-reading text-ink-700 leading-relaxed mb-3">
-            6 步 · 共 9 分钟 · 不催. 你写的所有答案都进你的私人档案 —
-            之后每份决策简报都会从这里调引用.
+            6 步 · 共 9 分钟 · 不催. 你写的所有答案进你的私人档案 —
+            之后每份决策风险简报都会从这里调引用.
           </p>
           <p className="font-serif italic text-[13px] text-ink-500 leading-relaxed">
-            没建档的话, KEY 第 1 份简报会冷启动, 质量会差很多.
+            没建档的话, KEY 第 1 份简报会冷启动, 没你真档案, 给不出你能用的真证据.
           </p>
         </section>
 

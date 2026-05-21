@@ -69,31 +69,20 @@ export default async function HomePage({
         <Link href="/" aria-label="KEY home" className="block">
           <KeyWordmark variant="display" height={66} />
         </Link>
-        <div className="flex gap-x-5 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
-          {/* 5/20 ship · 战略叙事入口 · Linda 可转 · 投资人尽调第一站 */}
+        {/* 5/21 ship · 4 项 nav 纪律 · 主页只展 4 个核心入口 ·
+            其余 (manifesto / methodology / letters / recover) 移到 footer 或子页底部 */}
+        <div className="flex gap-x-6 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
           <Link href="/why-key" className="text-seal-500 hover:text-seal-700 transition-colors font-semibold">
             为什么 KEY
           </Link>
           <Link href="/how-it-works" className="hover:text-seal-500 transition-colors">
             如何工作
           </Link>
-          <Link href="/manifesto" className="hover:text-seal-500 transition-colors">
-            宣言
-          </Link>
-          <Link href="/letters" className="hover:text-seal-500 transition-colors">
-            通信集
-          </Link>
-          <Link href="/methodology" className="hover:text-seal-500 transition-colors">
-            方法论
-          </Link>
           <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">
             样品
           </Link>
           <Link href="/invite" className="hover:text-seal-500 transition-colors">
             加入
-          </Link>
-          <Link href="/recover" className="hover:text-seal-500 transition-colors" title="换设备找回身份">
-            找回
           </Link>
         </div>
       </nav>
