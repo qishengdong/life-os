@@ -13,7 +13,7 @@
  *   3. 弱网/无网时, 静态页 + offline fallback, 不假装能用
  */
 
-const SW_VERSION = 'v2-2026-05-20-install-fix';
+const SW_VERSION = 'v3-2026-05-20-new-nav';
 const SHELL_CACHE = `key-shell-${SW_VERSION}`;
 const STATIC_CACHE = `key-static-${SW_VERSION}`;
 
@@ -21,6 +21,8 @@ const STATIC_CACHE = `key-static-${SW_VERSION}`;
 const SHELL_URLS = [
   '/',
   '/how-it-works',
+  '/why-key',         // 5/20 ship · 战略叙事核心
+  '/manifesto',       // 5/20 ship · 创始人宣言
   '/offline',
   '/favicon.svg',
   '/manifest.webmanifest',

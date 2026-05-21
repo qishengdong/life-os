@@ -70,7 +70,17 @@ export default async function HomePage({
           <KeyWordmark variant="display" height={66} />
         </Link>
         <div className="flex gap-x-5 gap-y-2 text-[11px] font-sans uppercase tracking-[0.2em] text-ink-500 flex-wrap justify-end">
-          <Link href="/letters" className="text-seal-500 hover:text-seal-700 transition-colors">
+          {/* 5/20 ship · 战略叙事入口 · Linda 可转 · 投资人尽调第一站 */}
+          <Link href="/why-key" className="text-seal-500 hover:text-seal-700 transition-colors font-semibold">
+            为什么 KEY
+          </Link>
+          <Link href="/how-it-works" className="hover:text-seal-500 transition-colors">
+            如何工作
+          </Link>
+          <Link href="/manifesto" className="hover:text-seal-500 transition-colors">
+            宣言
+          </Link>
+          <Link href="/letters" className="hover:text-seal-500 transition-colors">
             通信集
           </Link>
           <Link href="/methodology" className="hover:text-seal-500 transition-colors">
@@ -78,12 +88,6 @@ export default async function HomePage({
           </Link>
           <Link href="/sample-brief" className="hover:text-seal-500 transition-colors">
             样品
-          </Link>
-          <Link href="/membership" className="hover:text-seal-500 transition-colors">
-            会员
-          </Link>
-          <Link href="/transparency" className="hover:text-seal-500 transition-colors">
-            透明度
           </Link>
           <Link href="/invite" className="hover:text-seal-500 transition-colors">
             加入
