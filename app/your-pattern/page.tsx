@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getOrCreateClientUid, UID_HEADER } from '@/lib/client-uid';
 import KeyHeader from '@/components/KeyHeader';
+import DecisionAssetDashboard from '@/components/DecisionAssetDashboard';
 
 const TYPE_META: Record<string, { name: string; nameEn: string; anchor: string }> = {
   foundation:   { name: '奠基者', nameEn: 'Foundation',   anchor: '价值' },
@@ -119,6 +120,9 @@ export default function YourPatternPage() {
       <KeyHeader current="your-pattern" />
 
       <main className="max-w-prose-lg mx-auto px-6 pb-24">
+        {/* 5/22 ship · 决策资产仪表盘 · 4 维成长可见度 (放画像之上, 让用户先看资产) */}
+        <DecisionAssetDashboard />
+
         <header className="pt-10 pb-12 text-center">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-6">
             · 你的决策画像 · 9 分钟建档的兑现 ·

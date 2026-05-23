@@ -13,7 +13,7 @@
  *   3. 弱网/无网时, 静态页 + offline fallback, 不假装能用
  */
 
-const SW_VERSION = 'v4-2026-05-21-risk-narrative';
+const SW_VERSION = 'v5-2026-05-22-3layer-asset';
 const SHELL_CACHE = `key-shell-${SW_VERSION}`;
 const STATIC_CACHE = `key-static-${SW_VERSION}`;
 

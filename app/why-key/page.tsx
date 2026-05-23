@@ -200,17 +200,17 @@ export default function WhyKeyPage() {
 
             <div className="border-l-2 border-seal-500/40 pl-6">
               <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
-                · 真理 4 ·
+                · 真理 4 · 5/22 升级 ·
               </p>
               <h3 className="font-serif text-xl text-ink-900 tracking-tightish mb-3">
-                决策力是新型个人资产 (早期形态).
+                决策力档案是 3 层结构, 不是单层数据.
               </h3>
               <p className="font-serif text-reading text-ink-700 leading-relaxed mb-2">
-                <strong className="text-ink-900">大众共识</strong>: 个人资产 = 钱 + 房 + 人脉.
+                <strong className="text-ink-900">大众共识</strong>: 数据就是数据, 量越多越值钱.
               </p>
               <p className="font-serif text-reading text-ink-700 leading-relaxed">
-                <strong className="text-ink-900">KEY 反向</strong>: 第四类资产正在出现 — "过往判断力的可证档案". 用户拥有, 不被打分, 不被出示, 不被审判.
-                <span className="font-serif italic text-ink-500"> 这是个人资产的早期形态, 不是评分体系.</span>
+                <strong className="text-ink-900">KEY 反向</strong>: 决策资产是 <strong>事实 → 模式 → 元认知</strong> 三层. Layer 1 (事实) 线性累积; Layer 2 (模式) 指数累积; Layer 3 (元认知) 也指数累积.
+                <span className="font-serif italic text-ink-500"> 用 1 年 vs 5 年, 资产差距不是 5 倍, 是 25-50 倍. 这是真复利护城河 — 切换品牌 = 失去模式 + 元认知, 不只是失去真话.</span>
               </p>
             </div>
 
@@ -233,11 +233,87 @@ export default function WhyKeyPage() {
         </section>
 
         {/* ============================================================ */}
+        {/* III.5 · 3 层决策资产模型 · 5/22 加 · KEY 卖什么的最深答     */}
+        {/* ============================================================ */}
+        <section className="mb-20 border-t border-paper-300 pt-16">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4">
+            · III. KEY 卖给你的是 3 层资产 ·
+          </p>
+          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight mb-6">
+            事实 · 模式 · 元认知 · 3 层全部自然涌现.
+          </h2>
+          <p className="font-serif text-reading text-ink-700 editorial-leading mb-12">
+            KEY 卖的不是"AI 给你建议", 也不只是"事实存档". 是 3 层资产同时累积、互相支撑、复利增长 — 全部来自你自己, 全部你拥有.
+          </p>
+
+          {/* Layer 3 · Metacognition */}
+          <div className="mb-8 border border-seal-500/40 bg-paper-50 p-6">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · Layer 3 · 元认知能力 ·
+            </p>
+            <h3 className="font-serif text-xl text-ink-900 tracking-tightish mb-3">
+              你对"自己怎么做决定"的觉察能力.
+            </h3>
+            <p className="font-serif text-reading text-ink-700 leading-relaxed mb-3">
+              用 KEY 1 年后, 你能说出: "我现在知道自己每次做这类决定时倾向于低估代价" / "我能在自己冲动前停 3 秒" / "我能识别父母给我的真相和事实的差别".
+            </p>
+            <p className="font-serif italic text-[14px] text-ink-500 leading-relaxed">
+              这是真成长. 即使行为不变 — Kahneman / Beck / Munger 都共识, 元认知本身就是 80% 成年人真实成长的形态. KEY 不教这件事, 是你的累积档案让它自然长出来.
+            </p>
+          </div>
+
+          {/* Layer 2 · Patterns */}
+          <div className="mb-8 border-l-2 border-seal-500/40 pl-6">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · Layer 2 · 模式识别 ·
+            </p>
+            <h3 className="font-serif text-xl text-ink-900 tracking-tightish mb-3">
+              你的真话累积成可见的反复模式.
+            </h3>
+            <p className="font-serif text-reading text-ink-700 leading-relaxed">
+              "30 天里你 5 次提到'再等等'" / "90 天里 8 次出现'我应该更负责'" — KEY 摆出来给你看, 不解读, 不下结论. 模式本身是你的"自我知识资产".
+            </p>
+          </div>
+
+          {/* Layer 1 · Facts */}
+          <div className="mb-10 border-l-2 border-seal-500/40 pl-6">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-2">
+              · Layer 1 · 事实档案 ·
+            </p>
+            <h3 className="font-serif text-xl text-ink-900 tracking-tightish mb-3">
+              你写的 verbatim 真话, 永不改写.
+            </h3>
+            <p className="font-serif text-reading text-ink-700 leading-relaxed">
+              真信号 + 决策风险简报 + 30/90/365 复盘. 一字不改, 任何人 (包括你自己) 都不能 narrative-化重写.
+              这是 KEY 工程铁律 (anti-hallucination + 用户主权 + 永不进训练) 的真根据.
+            </p>
+          </div>
+
+          {/* 真复利 callout */}
+          <div className="border-2 border-ink-900 p-6 bg-paper">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-ink-900 mb-3">
+              · 真复利 ·
+            </p>
+            <p className="font-serif text-reading text-ink-900 leading-relaxed mb-2">
+              <strong>Layer 1 线性累积. Layer 2 指数累积. Layer 3 也指数累积.</strong>
+            </p>
+            <p className="font-serif text-reading text-ink-700 leading-relaxed">
+              用 1 年 vs 用 5 年, 资产差距不是 5 倍, 是 <strong className="text-seal-500">25-50 倍</strong>.
+              这是 KEY 真护城河 — 6 个月后切换品牌 = 失去的不只是真话, 是模式 + 元认知.
+            </p>
+          </div>
+
+          <p className="mt-10 font-serif italic text-reading text-ink-500 leading-relaxed text-center">
+            "KEY 不假设用户会改变行为. KEY 假设用户会发展元认知. 这是真成长, 即使你下次还做同样选择."
+          </p>
+        </section>
+
+        {/* ============================================================ */}
         {/* IV · Signal → Risk → Brief → Action → Review 闭环              */}
         {/* ============================================================ */}
         <section className="mb-20 border-t border-paper-300 pt-16">
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4">
-            · III. KEY 怎么工作 · 5 步闭环 ·
+            · IV. KEY 怎么工作 · 5 步闭环 ·
           </p>
           <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight mb-8">
             信号 → 风险 → 简报 → 行动 → 复盘.
