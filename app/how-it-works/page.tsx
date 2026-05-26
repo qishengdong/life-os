@@ -260,6 +260,27 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ============================================================ */}
+        {/* 看一个真案例 · 5/22 ship · 接 Essay 2 完整 5-step 应用       */}
+        {/* ============================================================ */}
+        <section className="mb-20 border-y border-paper-300 py-12 text-center">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-seal-500 mb-4">
+            · 看 5-step 真应用 ·
+          </p>
+          <h2 className="font-serif text-editorial text-ink-900 tracking-tightish leading-tight mb-6">
+            一个具体 case: 为什么你妈一打电话, 你就很累?
+          </h2>
+          <p className="font-serif italic text-reading text-ink-500 leading-relaxed mb-8 max-w-prose-md mx-auto">
+            KEY 把这条信号跑完 Signal → Risk → Brief → Action → Review 全 5 步. 你可以看到 KEY 真应用到一个 35-45 中产真日常困境的全过程.
+          </p>
+          <Link
+            href="/essay/relational-drain-as-risk"
+            className="inline-block px-8 py-3 font-serif text-base text-paper bg-seal-500 hover:bg-seal-700 transition-colors"
+          >
+            读完整 case →
+          </Link>
+        </section>
+
+        {/* ============================================================ */}
         {/* CTA                                                            */}
         {/* ============================================================ */}
         <div className="text-center space-y-5 mt-20">
